@@ -6,213 +6,347 @@ output:
     vertical_layout: scroll
 ---
 
-# Intro {.sidebar}
+# Intro {.sidebar data-width=300}
 
-This dashboard covers the course materials for the course [***Fundamental Techniques in Data Science with R***](https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2020&taal=en)
+This dashboard covers the course materials for the course 
+[***Fundamental Techniques in Data Science with R***](https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2020&taal=en)
 
 ---
 
-Course leader: [Gerko Vink](https://www.gerkovink.com) <br>
-Workgroup leader: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+Lecture Instructor: [Kyle Lang](https://www.kylemlang.com) <br>
+Workgroup Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam <br>
-[Course SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF)
+[Course SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk)
 
 ---
 
-| When?  |         | Where?      |
-|--------|---------|-------------|
-| 19-Nov | 5.15 pm | MS Teams |
-| 16-Nov | 5.15 pm | MS Teams |
-| 23-Nov | 5.15 pm | MS Teams |
-| 30-Nov | 5.15 pm | MS Teams |
-| 07-Dec | 5.15 pm | MS Teams |
-| 14-Dec | 5.15 pm | MS Teams |
-| 11-Jan | 5.15 pm | MS Teams |
-| 18-Jan | 5.15 pm | MS Teams |
-| 25-Jan | 7-9 pm | pending  |
-
-
+| What?   | When?               | Where?                |
+|---------|---------------------|-----------------------|
+| Lecture | 2021-11-15<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-11-18<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-11-18<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-11-22<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-11-25<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-11-25<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-11-29<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-12-02<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-12-02<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-12-06<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-12-09<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-12-09<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-12-13<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-12-16<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-12-16<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-12-20<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-12-23<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-12-23<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-01-10<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-01-13<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-01-13<br>11:00 | Ruppert<br>011        |
+| Lecture | 2021-01-17<br>17:15 | Ruppert<br>Blauw      |
+| WG1     | 2021-01-20<br>09:00 | Ruppert<br>011        |
+| WG2     | 2021-01-20<br>11:00 | Ruppert<br>011        |
+| Exam    | 2021-01-26<br>19:00 | Education<br>Theatron |
 
 ---
 
 # Quick Overview
 
-## Column 1
+## Column 1 {data-width=400}
 
-### Fundamental Techniques in Data Science with `R` 
-In nine weeks you will learn the basics of data handling with R and the details about regression techniques in the context of statistical inference, as well as the connection to research philosophy. During every lecture we will treat a different theoretical aspect. Following each lecture there will be a computer lab exercise that connects the statistical theory to practice, as well as a workgroup meeting wherein you will work on solving motivating real-world case studies. 
+### 
+
+In nine weeks, you will learn the basics of data handling with R and details 
+about regression techniques in the context of statistical inference. We will 
+also cover the connection between these concepts and research philosophy. During 
+every lecture, we will cover a different theoretical topic. In addition to the 
+lectures, there will also be a weekly computer lab exercise that connects the 
+statistical theory to practice. You will also attend weekly workgroup meetings 
+wherein you will work on solving motivating, real-world case studies. 
 
 ### Assignment and Grading
 
 The final grade is computed as follows
 
-| Graded part       | Weight      |
+| Grade Component | Weight |
 |:-------|:------|
-| Linear Regression Assignment and presentation | 25 % |
-| Logistic Regression Assignment | 25 % |
-| Written Exam | 50 % |
+| Linear Regression Assignment & Presentation | 25% |
+| Logistic Regression Assignment | 25% |
+| Written Exam | 50% |
 
-To develop the necessary skills for completing the assignments and the presentations, 7 `R` exercises must be made and submitted. These exercises are not graded, but students must fulfil them to pass the course.
+In addition to the grade components listed above, you will also do seven `R` 
+exercises. These exercises will develop the skills needed to successfully 
+complete the assignments and the presentations. The exercises will be graded on 
+a completion basis, and you must finish each exercise to pass the course.
 
-In order to pass the course, the final grade must be 5.5 or higher, your contribution to the course should be sufficient and all assignments and `R` exercises should be handed in and/or passed. Otherwise, additional work is required concerning the assignments and/or exercises you have failed.
+To pass the course:
 
-## Column 2
+1. Your final grade must be 5.5 or higher
+1. You must pass both assignments
+1. You must submit all seven `R` exercises
+
+## Column 2 {data-width=400}
 
 ### Schedule
-
 
 | Week #  | Topic   | `R`-practical | Workgroup | 
 |---|---------|-----------|-----------|
 | 1 | The elemental building blocks of `R` | Assigning objects and elements; creating vectors, matrices, dataframes and lists | Receive instructions and form groups |
-| 2 | Finding the least squares solution; simple linear regression | Subsetting data; using pipes to simplify the workflow | Locate a data set for predictive modeling and formulate a research hypothesis; make sure that the set facilitates continuous and dichotomous outcomes |
-| 3 | Linear modeling in `R`; testing assumptions; standardized residuals, leverage and Cook's distance | Class `lm` in `R`; modeling, prediction and visualization | Fit your defined model; evaluate if assumptions are met |
-| 4 | Inferential modeling; Confidence intervals and hypothesis testing, non-constant error variance | Investigate the assumptions about linear modeling | Test and quantify the effect of the defined model; continue the project in `rmarkdown` |
-| 5 | Model evaluation; cross-validation; categorical variables, non-linear relations, interactions and higher-order polynomials | Cross-validation and model fit in `R` | Evaluate if the model can be improved; **Prepare assignment A; evaluate the final linear model on your own data** |
-| 6 | Simple logistic regression | Class `glm(formula, family = "binomial")` in `R`; modeling, prediction and visualization | Fit your defined model; evaluate if assumptions are met |
-| 7 | Formulating the logistic model and interpreting the parameters; marginal effects | Parameter transformations; scale of the predictor/outcome and prediction and confidence intervals | Test and quantify the effect of the defined model |
-| 8 | Logistic regression model evaluation; cross-validation; multiple regression; interactions | Multiple logistic regression and cross-validating the logistic regression in `R` | Evaluate if the model can be improved; **Prepare assignment B; evaluate the final logistic model on your own data** |
+| 2 | Finding the least squares solution; simple linear regression | Subsetting data; using pipes to simplify the workflow | Locate a data set for predictive modeling and formulate a research hypothesis; make sure the data can support both linear and logistic regression |
+| 3 | Linear modeling in `R`; testing assumptions; standardized residuals, leverage, and Cook's distance | The `lm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if assumptions are met |
+| 4 | Inferential modeling; Confidence intervals and hypothesis testing, non-constant error variance | Investigate the assumptions of linear modeling | Test and quantify the effect of the defined model; continue the project in `rmarkdown` |
+| 5 | Model evaluation; cross-validation; categorical variables, non-linear relations, interactions, and higher-order polynomials | Cross-validation and model fit in `R` | Evaluate if the model can be improved; **Prepare Assignment 1; evaluate the final linear model on your own data** |
+| 6 | Simple logistic regression | The `glm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if the assumptions are met |
+| 7 | Formulating a logistic regression model and interpreting the parameters; marginal effects | Parameter transformations; scale of the linear predictor/outcome; prediction and confidence intervals | Test and quantify the effect of the defined model |
+| 8 | Logistic regression model evaluation; cross-validation; multiple logistic regression; interactions | Multiple logistic regression and cross-validating the logistic regression model in `R` | Evaluate if the model can be improved; **Prepare Assignment 2; evaluate the final logistic model on your own data** |
 
+<!----------------------------------------------------------------------------->
 
 # Course Manual
 
 ## Column 1
 
 ### Course description
-Regression techniques are widely used to quantify the relationship between two or more variables. In data science it is very common to investigate this relation and linear and logistic regression are proven to be very powerful techniques. However, it is essential to understand how and when it is appropriate to apply these regression techniques. In this course, students will learn exactly how to do that with the statistical software package `R`. 
+
+Regression techniques are widely used to quantify the relationship between two 
+or more variables, and investigating such relations is common in data science. 
+Linear and logistic regression are well-established and powerful 
+techniques for analyzing the relations between a set of (predictor) variables 
+and a single (outcome) variable. However, you must understand how and when it is 
+appropriate to apply these regression techniques before you can use them in any 
+beneficial way. In this course, you will learn exactly that: how and when to 
+apply linear and logistic regression with the statistical software package `R`. 
  
-This course gives students a new set of tools to explore the issues and problems so many people care about. The course will help students get acquainted with the principles of analytical data science, linear and logistic regression and introduces the basics of statistical learning. These techniques will be presented in the context of estimation, testing and prediction. Students will learn to adapt these techniques in their way of thinking about statistical inference, which will help students to quantify the uncertainty and measure the accuracy of statistical estimates. Students will develop fundamental `R` programming skills and will gain experience with `tidyverse`, visualize data with `ggplot2` and perform basic data wrangling techniques with `dplyr`. This course makes students better equipped for a further career (e.g. junior researcher or research assistant) or education in research, such as a (research) Master program, or a PhD. 
+This course gives students a new set of tools that they can apply to real-world 
+data to explore interesting issues and problems. The course will introduce 
+students to the principles of analytic data science, linear and 
+logistic regression, and the basics of statistical learning. These techniques 
+will be presented in the context of estimation, testing, and prediction. 
+Students will learn to think carefully and critically about statistical 
+inference, quantifying uncertainty, and measuring the accuracy of statistical 
+estimates. Students will also develop fundamental `R` programming skills and 
+will gain experience with `tidyverse`: visualizing data with `ggplot2` and 
+performing basic data wrangling with `dplyr`. This course will prepare students 
+for basic research tasks (e.g. junior researcher or research assistant) or 
+further education in research, such as a (research) Master program. 
 
-### Assignment
-Students will form groups to choose work on two assigments. Students will need to perform calculations and program code for these assigments. All work needs to be combined in an easy understandable and insightful `R` project and must be submitted to the [Surfdrive file drop environment]((https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF). Each assigment will be graded will be graded on 
+### Assignments
 
-1. Quality of the methodological application
-2. Model evaluation and assumptions checking
-3. Quality of the code and scripts 
+Students will form groups to work on two assignments. Students will need to 
+perform calculations and write `R` code for these assignments. All work must be 
+combined into an understandable and insightful `R` project and must be 
+submitted to the [Surfdrive file drop environment]((https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk)). 
+
+Each assignment will be graded on the quality of the following components:
+
+1. The methodological application
+1. The model evaluation and assumption checking
+1. The code and scripts 
 
 ### Grading
+
 Students will be evaluated on the following aspects:
  
-1. apply and interpret the basic methodological and statistical concepts that are associated with doing predictive and/or inferential research;
+1. Apply and interpret the basic methodological and statistical concepts 
+underlying predictive and/or inferential research.
 
-a. explain concepts from inferential statistics, such as probability, inference and modeling; and apply them in practice. 
-b. make an informed choice for research designs that are suitable for regression analyses.
-c. apply and explain the choice for techniques to investigate data problems.
-d. apply and explain the concepts of linearity and non-linearity.
-e. interpret statistical software output and report software output following APA reporting guidelines.
-f. explain and conceptualize statistical inference and its relation to statistical theory.
-g. perform the different steps in solving basic regression analysis problems and report on these steps.
+   a. Explain concepts from inferential statistics, such as probability, 
+   inference, and modeling; apply these concepts in practice. 
+   a. Make an informed choice of research designs that are suitable for 
+   regression analyses.
+   a. Apply and explain the choice of techniques for investigating data problems.
+   a. Apply and explain the concepts of linearity and non-linearity.
+   a. Interpret statistical software output, and report software output 
+   following APA reporting guidelines.
+   a. Explain and conceptualize statistical inference and its relation to 
+   statistical theory.
+   a. Perform the different steps of solving basic regression analysis problems 
+   and report on these steps.
+
+<br>
+
+2. Apply and interpret important techniques in linear and logistic regression 
+analysis.
+
+   a. Perform, interpret, and evaluate quantitative (causal) analyses on data 
+   with the statistical software platform `R`.
+   a. Perform analyses in statistical software.
  
-2. apply and interpret important techniques in linear and logistic regression analysis;
+### Relation between Assessment and Objective
 
-a. perform, interpret and evaluate quantitative (causal) analyses on data with the statistical software platform R.
-b. perform analyses in statistical software.
- 
-### Relation between assessment and objective
-- With the exam the knowledge from methodological and statistical concepts is evaluated (learning goals 1a, 1d, 1f), as well as the application of these concepts to research scenarios (learning goals 1b and 1c). During the exam students need to interpret statistical software output (learning goal 1e).
-- With the practical lab it is tested if the student has sufficient skills to solve basic analysis problems and execute quantitative analyses on real-life data sets (learning goals 2a and 2b).
-- The work groups focuses on applying the newly gained knowledge and skills through a series of motivating real-world case studies aimed at solving relevant data analysis problems and reporting on the steps taken to obtain a solution (learning goal 1g).
+In this course, skills and knowledge are evaluated in three separate ways:
 
-After taking this course students can understand innovations in statistical markup, statistical simulation and reproducible research. Students are also able to approach challenges from different professional viewpoints. They have gained experience in marking up a professional manuscript and designing a state-of-the-art statistical archive in an open source repository.
+- The exam evaluates the knowledge of methodological and statistical concepts 
+(learning goals 1a, 1d, 1f), as well as the application of these concepts to 
+research scenarios (learning goals 1b and 1c). During the exam students will 
+need to interpret statistical software output (learning goal 1e).
 
-# How to prepare
+- The practical labs test if the student has sufficient skills to solve basic 
+analysis problems and execute quantitative analyses on real-life data sets 
+(learning goals 2a and 2b).
+
+- The workgroups focus on applying the newly gained knowledge and skills to 
+solving relevant data analysis problems and reporting on the steps taken to 
+obtain a solution (learning goal 1g).
+
+<!----------------------------------------------------------------------------->
+
+# Preparation
 
 ## Column 1
 
-### Preparing your machine for the course
-Dear all, 
+###
 
-This semester you will participate in the **Fundamental Techniques in Data Science with `R`** course at Utrecht University. To realize a steeper learning curve, we will use some functionality that is not part of the base installation for `R`. The below steps guide you through installing both `R` as well as the necessary additions. Please do so before the first meeting. 
+Hello All, 
 
-I look forward to see you all,  
+This semester, you will participate in the **Fundamental Techniques in Data 
+Science with `R`** course at Utrecht University. In this course, you will use 
+both `R` and `RStudio`. The below steps guide you through installing both `R` 
+and `RStudio`. Please do so before the first meeting. 
 
-*Gerko Vink*
+Regards,  
+Kyle & Laura
 
 ### **System requirements**
 
-Bring a laptop computer to the course and make sure that you have full write access and administrator rights to the machine. We will explore programming and compiling in this course. This means that you need full access to your machine. Some corporate laptops come with limited access for their users, I therefore advice you to bring a personal laptop computer to the workgroup meetings. 
+Bring a laptop computer to the course and make sure that you have full write 
+access and administrator rights on the machine. We will explore programming and 
+compiling in this course, so you will need full access to your machine. Some 
+corporate laptops come with limited access for their users, I therefore advise 
+you to bring a personal laptop to the workgroup meetings. 
 
 ### **1. Install `R`**
-`R` can be obtained [here](https://cran.r-project.org). We won't use `R` directly in the course, but rather call `R` through `RStudio`. Therefore it needs to be installed. 
+
+You can obtain a copy of `R` [here](https://cran.r-project.org). We won't use 
+`R` directly in the course. Rather, we'll call `R` through `RStudio`. Therefore, 
+you also need to install `RStudio`. 
 
 ### **2. Install `RStudio` Desktop**
 
-Rstudio is an Integrated Development Environment (IDE). It can be obtained as stand-alone software [here](https://www.rstudio.com/products/rstudio/download/#download). The free and open source `RStudio Desktop` version is sufficient.
+`RStudio` is an Integrated Development Environment (IDE) for `R`. You can 
+download `RStudio` as stand-alone software [here](https://www.rstudio.com/products/rstudio/download/#download). 
+The free and open-source `RStudio Desktop` version is sufficient.
 
 ### **3. Start RStudio and install the following packages. **
 
-Execute the following lines of code in the console window:
+Open `RStudio`, and copy-paste the following lines of code into the console 
+window to execute them.
 
-```{r eval=FALSE, echo = TRUE}
-install.packages(c("ggplot2", "tidyverse", "magrittr", "micemd", "jomo", "pan", 
-                 "lme4", "knitr", "rmarkdown", "plotly", "ggplot2", "shiny", 
-                 "devtools", "boot", "class", "car", "MASS", "ggplot2movies", 
-                 "ISLR", "DAAG", "mice"), 
+- If nothing happens after you paste the code, try hitting the "Enter/Return" 
+key.
+
+```{r eval = FALSE, echo = TRUE}
+install.packages(c("ggplot2", 
+                   "tidyverse", 
+                   "magrittr", 
+                   "micemd", 
+                   "jomo", 
+                   "pan", 
+                   "lme4", 
+                   "knitr", 
+                   "rmarkdown", 
+                   "plotly", 
+                   "ggplot2", 
+                   "shiny", 
+                   "devtools", 
+                   "boot", 
+                   "class", 
+                   "car", 
+                   "MASS", 
+                   "ggplot2movies", 
+                   "ISLR", 
+                   "DAAG", 
+                   "mice"), 
                  dependencies = TRUE)
 ```
 
-
-If you are not sure where to execute code, use the following figure to identify the console:
+If you are not sure where to paste the code, use the following figure to 
+identify the console:
 
 <center>
   <img src="console.png" alt="HTML5 Icon" width = 70%>
 </center>
 
-Just copy and paste the installation command and press the return key. When asked 
+When you are asked the following:
 
 ```{r eval = FALSE, echo = TRUE}
 Do you want to install from sources the package which needs 
 compilation? (Yes/no/cancel)
 ```
 
-type `Yes` in the console and press the return key. 
+Type `Yes` in the console, and press the "Enter/Return" key (or click the 
+corresponding button if the question presents as a dialog box). 
 
 ## Column 2
 
 ### **What if the steps to the left do not work for me?**
-If all fails and you have insufficient rights to your machine, the following web-based service will offer a solution. 
 
-1. Open a free account on [rstudio.cloud](https://rstudio.cloud). You can run your own cloud-based `RStudio` environment there. 
-2. Use Utrecht University's [MyWorkPlace](https://myworkplace.uu.nl/). You would have access to `R` and `RStudio` there. You may need to install packages for new sessions during the course. 
+If the suggested steps fail or you have insufficient rights on your machine, you 
+can use the following web-based solutions. 
 
-Naturally, you will need internet access for these services to be accessed. 
+1. Open a free account on [rstudio.cloud](https://rstudio.cloud). 
 
+   - You can run your own cloud-based `RStudio` environment there.
+   
+<br>
+
+2. Use Utrecht University's [MyWorkPlace](https://myworkplace.uu.nl/). 
+
+   - You will have access to `R` and `RStudio` there. When you start a new 
+   MyWorkPlace session, you may need to (re)install packages. 
+
+Naturally, you will need internet access to use these services. 
+
+<!----------------------------------------------------------------------------->
 
 # Week 1
 
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture is about the elemental building blocks of `R`. We discuss what the object-oriented programming language `R` is, why we use `RStudio`, how to 'speak' `S`, the scripting language that is used in `R` and how to work with objects and elements. 
 
-You can find the [slides here](Wk1/Lecture-1_FTID.html)
+Today's lecture is about the elemental building blocks of `R`. We will discuss 
+what `R` actually is, why we use `RStudio`, how to 'speak' `R`, and how to work 
+with `R` objects. 
+
+You can find the slides [here](wk1/lecture1.html)
 
 ### Workgroup (Thursday)
 
-**Today's workgroup is online. See the Teams channel.**
+You should attend all workgroup meetings; however, **today's meeting is vital**! 
+We will form groups, and we will discuss the assignments and expectations for 
+your work in this course. 
 
-Make sure that you attend all workgroup meetings: However **today's meeting is vital**. We will form groups and I will tell you all about the assignments and management of expectations. 
-
-**Please do not forget to complete [Exercise 1](Wk1/Exercise/Exercise_1_walkthrough.html) before the workgroup meeting!**
-
-All the best, 
-
-Gerko
+**Please do not forget to complete 
+[`R` Exercise 1](Wk1/Exercise/Exercise_1_walkthrough.html) before the workgroup 
+meeting!**
 
 ### Useful Information and links
-- [The tidyverse style guide](https://style.tidyverse.org)
-- [R for Data Science](https://r4ds.had.co.nz): a wonderful book that details a usefull toolset for current and aspiring data scientists. 
 
-The above links are useful references that connect to this week's materials. 
+These links point to useful references that connect to this week's material. 
+
+- [The tidyverse style guide](https://style.tidyverse.org)
+- [R for Data Science](https://r4ds.had.co.nz): A great book that details a 
+useful toolset for current and aspiring data scientists.
 
 ## Column 2
 
 ### `R` exercise
-This week's `R` exercise is threefold. We need to cover a lot of ground this week to get you started for the rest of the course.
+This week's `R` exercise comes in three parts. We need to cover a lot of ground 
+this week to get you up and running for the rest of the course.
 
-- Make [Exercise 1](Wk1/Exercise/Exercise_1_walkthrough.html) before Thursday's workgroup. This exercise will get you started with `R` and `RStudio`.
-- Make [Exercise 2](Wk1/Exercise/Exercise_2_walkthrough.html) during Thursday's workgroup timeslot. Laura will be available in the Teams channels and/or meeting to help you during that time. 
-- Complete and hand in [Exercise 3](Wk1/Exercise/Exercise_3_walkthrough.html) before the next lecture. For this week it is sufficient if you present the code to the relevant exercises.
+- Complete [Exercise 1](wk1/exercise/exercise1_walkthrough.html) before 
+Thursday's workgroup. This exercise will get you started with `R` and `RStudio`.
+
+- Complete [Exercise 2](wk1/exercise/exercise2_walkthrough.html) during 
+Thursday's workgroup meeting. Laura will be available to help you during that 
+time. 
+
+- Complete and submit [Exercise 3](wk1/exercise/exercise3_walkthrough.html) 
+before the next lecture. For this week, you only need to present the `R` code 
+for the relevant exercises.
 
 A video discussion of the exercises will be available below after the second lecture.  
 
@@ -224,6 +358,8 @@ The videodiscussion for the practical exercises:
 - [Exercise 1 discussion](https://www.dropbox.com/s/qgxlrrl808klmjq/Exercise1_discussion.mp4?dl=0)
 - [Exercise 2 discussion](https://www.dropbox.com/s/7bxqj6gn7occ0yr/Exercise%202_discussion.mp4?dl=0)
 - [Exercise 3 discussion](https://www.dropbox.com/s/dl5jklj4oixfpxd/Exercise3_discussion.mp4?dl=0)
+
+<!----------------------------------------------------------------------------->
 
 # Week 2
 
