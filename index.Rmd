@@ -15,7 +15,8 @@ This dashboard covers the course materials for the course
 
 Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
 Lecture Instructor: [Kyle Lang](https://www.kylemlang.com) <br>
-Workgroup Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+WG Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+WG Instructor: [Rianne Kraakman](https://www.uu.nl/staff/AMKraakman) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam <br>
 [Course SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk)
@@ -79,13 +80,15 @@ The final grade is computed as follows
 In addition to the grade components listed above, you will also do seven `R` 
 exercises. These exercises will develop the skills needed to successfully 
 complete the assignments and the presentations. The exercises will be graded on 
-a completion basis, and you must finish each exercise to pass the course.
+a completion basis. 
+
+- You must finish 6 out of the 7 exercises to pass the course.
 
 To pass the course:
 
 1. Your final grade must be 5.5 or higher
 1. You must pass both assignments
-1. You must submit all seven `R` exercises
+1. You must submit at least 6 `R` exercises
 
 ## Column 2 {data-width=400}
 
@@ -108,7 +111,7 @@ To pass the course:
 
 ## Column 1
 
-### Course description
+### Course Description
 
 Regression techniques are widely used to quantify the relationship between two 
 or more variables, and investigating such relations is common in data science. 
@@ -323,7 +326,7 @@ your work in this course.
 [`R` Exercise 1](Wk1/Exercise/Exercise_1_walkthrough.html) before the workgroup 
 meeting!**
 
-### Useful Information and links
+### Useful Information and Links
 
 These links point to useful references that connect to this week's material. 
 
@@ -333,12 +336,13 @@ useful toolset for current and aspiring data scientists.
 
 ## Column 2
 
-### `R` exercise
+### `R` Exercise
 This week's `R` exercise comes in three parts. We need to cover a lot of ground 
-this week to get you up and running for the rest of the course.
+this week to get you ready for the rest of the course.
 
 - Complete [Exercise 1](wk1/exercise/exercise1_walkthrough.html) before 
-Thursday's workgroup. This exercise will get you started with `R` and `RStudio`.
+Thursday's workgroup meeting. This exercise will get you started with `R` and 
+`RStudio`.
 
 - Complete [Exercise 2](wk1/exercise/exercise2_walkthrough.html) during 
 Thursday's workgroup meeting. Laura will be available to help you during that 
@@ -348,12 +352,15 @@ time.
 before the next lecture. For this week, you only need to present the `R` code 
 for the relevant exercises.
 
-A video discussion of the exercises will be available below after the second lecture.  
+A video discussion of the exercises is available below.  
 
-Hand in a markdown compiled `html` + `Rmd` file for exercise 3 to the [SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop folder. Name the file `Yourname.Rmd`, where `Yourname` is your name. Do this ***before the next lecture on Monday***. 
+Submit an `R` script containing your answers to Exercise 3 to the 
+[SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop 
+folder. Name the file `Yourname.R`, where `Yourname` is your name. Do this 
+***before the next lecture***. 
 
-### Exercise discussion
-The videodiscussion for the practical exercises:
+### Exercise Discussion
+The video discussions for the practical exercises:
 
 - [Exercise 1 discussion](https://www.dropbox.com/s/qgxlrrl808klmjq/Exercise1_discussion.mp4?dl=0)
 - [Exercise 2 discussion](https://www.dropbox.com/s/7bxqj6gn7occ0yr/Exercise%202_discussion.mp4?dl=0)
