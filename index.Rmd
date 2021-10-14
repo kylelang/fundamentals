@@ -9,7 +9,7 @@ output:
 # Intro {.sidebar data-width=300}
 
 This dashboard covers the course materials for the course 
-[***Fundamental Techniques in Data Science with R***](https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2020&taal=en)
+[***Fundamental Techniques in Data Science with R***][ftds]
 
 ---
 
@@ -19,7 +19,7 @@ WG Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br
 WG Instructor: [Rianne Kraakman](https://www.uu.nl/staff/AMKraakman) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam <br>
-[Course SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk)
+[Course SurfDrive folder][sd]
 
 ---
 
@@ -140,7 +140,7 @@ further education in research, such as a (research) Master program.
 Students will form groups to work on two assignments. Students will need to 
 perform calculations and write `R` code for these assignments. All work must be 
 combined into an understandable and insightful `R` project and must be 
-submitted to the [Surfdrive file drop environment]((https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk)). 
+submitted to the [Surfdrive file drop environment][sd]. 
 
 Each assignment will be graded on the quality of the following components:
 
@@ -210,7 +210,7 @@ both `R` and `RStudio`. The below steps guide you through installing both `R`
 and `RStudio`. Please do so before the first meeting. 
 
 Regards,  
-Kyle & Laura
+Instructor Team
 
 ### **System requirements**
 
@@ -269,7 +269,7 @@ If you are not sure where to paste the code, use the following figure to
 identify the console:
 
 <center>
-  <img src="console.png" alt="HTML5 Icon" width = 70%>
+  <img src="images/console.png" alt="HTML5 Icon" width = 70%>
 </center>
 
 When you are asked the following:
@@ -323,8 +323,7 @@ We will form groups, and we will discuss the assignments and expectations for
 your work in this course. 
 
 **Please do not forget to complete 
-[`R` Exercise 1](Wk1/Exercise/Exercise_1_walkthrough.html) before the workgroup 
-meeting!**
+[`R` Exercise 1](wk1/exercise/exercise1.html) before the workgroup meeting!**
 
 ### Useful Information and Links
 
@@ -340,24 +339,21 @@ useful toolset for current and aspiring data scientists.
 This week's `R` exercise comes in three parts. We need to cover a lot of ground 
 this week to get you ready for the rest of the course.
 
-- Complete [Exercise 1](wk1/exercise/exercise1_walkthrough.html) before 
-Thursday's workgroup meeting. This exercise will get you started with `R` and 
-`RStudio`.
+- Complete [Exercise 1](wk1/exercise/exercise1.html) before Thursday's workgroup 
+meeting. This exercise will get you started with `R` and `RStudio`.
 
-- Complete [Exercise 2](wk1/exercise/exercise2_walkthrough.html) during 
-Thursday's workgroup meeting. Laura will be available to help you during that 
-time. 
+- Complete [Exercise 2](wk1/exercise/exercise2.html) during Thursday's workgroup 
+meeting. Laura will be available to help you during that time. 
 
-- Complete and submit [Exercise 3](wk1/exercise/exercise3_walkthrough.html) 
-before the next lecture. For this week, you only need to present the `R` code 
-for the relevant exercises.
+- Complete and submit [Exercise 3](wk1/exercise/exercise3.html) before the next 
+lecture. For this week, you only need to present the `R` code for the relevant 
+exercises.
 
 A video discussion of the exercises is available below.  
 
 Submit an `R` script containing your answers to Exercise 3 to the 
-[SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop 
-folder. Name the file `Yourname.R`, where `Yourname` is your name. Do this 
-***before the next lecture***. 
+[SurfDrive][sd] drop folder. Name the file `Yourname.R`, where `Yourname` is 
+your name. Do this ***before the next lecture***. 
 
 ### Exercise Discussion
 The video discussions for the practical exercises:
@@ -391,7 +387,7 @@ This week's `R` exercise is about getting familiar with pipes and exploring the 
 
 - Make [Exercise 4](Wk2/Exercise/Exercise_4_walkthrough.html) before Thursday's workgroup.
 
-Hand in a markdown compiled `html` + `Rmd` file for Exercise 4: Question 11 to the [SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop folder. Name the file `Yourname.Rmd/html`, where `Yourname` is your name. Do this ***before the next lecture on Monday***.  
+Hand in a markdown compiled `html` + `Rmd` file for Exercise 4: Question 11 to the [SurfDrive][sd] drop folder. Name the file `Yourname.Rmd/html`, where `Yourname` is your name. Do this ***before the next lecture on Monday***.  
 
 ### Useful References
 
@@ -424,7 +420,7 @@ This week's `R` exercise is about getting familiar with the linear model.
 
 - Make [Exercise 5](Wk3/Exercise/Exercise-5.html) before Thursday's workgroup.
 
-Hand in a markdown compiled `html` file for Exercise 5 to the [SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop folder. Do this ***before the next lecture on Monday***.
+Hand in a markdown compiled `html` file for Exercise 5 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
 
 <!-- ### Solution to the exercise -->
 <!-- You can find the answers to this week's exercise in [the exercise for next week](Wk4/Exercise/Exercise_6.html). -->
@@ -458,7 +454,7 @@ This week's `R` exercise is about getting familiar with the linear model.
 
 - Make [Exercise 6](Wk4/Exercise/Exercise_6.html) before Thursday's workgroup.
 
-Hand in a markdown compiled `html` file for Exercise 6 to the [SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop folder. Do this ***before the next lecture on Monday***.
+Hand in a markdown compiled `html` file for Exercise 6 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
 
 ### Solution to the exercise
 You can find the answers to this week's exercise and to the previous week's exercise [here](Wk4/Exercise/Exercise_6_answers.html). Use these answers only when you are stuck. 
@@ -570,7 +566,7 @@ This week's exercise is to:
   - The model with all variables (excluding `Name`!) can be simply fit with `glm(Survived ~ . * ., data = titanic[, -3])`
   - The `.` here implies all remaining columns in the data. `. * .` yields the full factorial model between all these columns. 
 
-Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive](https://surfdrive.surf.nl/files/index.php/s/LqUCEt3MWVsW7DF) drop folder. Do this ***before the next lecture on Monday***.
+Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
 
 ### Useful Information and links
 - [Study this page on inspecting logistic regression](https://stats.idre.ucla.edu/r/dae/logit-regression/)
@@ -652,3 +648,7 @@ Your knowledge of matrix algebra will not be tested. So, there is no need to mem
 If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl?subject=Question About Exam Materials) and I'd be more than happy to explain. 
 
 **The second half of the last lecture is dedicated to a Q&A**
+
+
+[ftds]: https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2021&taal=en
+[sd]: https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk

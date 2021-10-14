@@ -1,0 +1,75 @@
+---
+title: "Exercises in Markdown"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+output: html_document
+---
+
+---
+
+1. **Create an object a with value 1**
+```{r}
+a <- 1
+```
+
+--- 
+
+2. **Verify that 1 is stored in a**
+```{r}
+a
+```
+
+---
+
+3. **Square a**
+
+```{r}
+a^2
+```
+
+---
+
+4. **Assign a + a to the object b, and check if b is equal to a + a.**
+
+```{r}
+b <- a + a
+b == a + a
+```
+
+---
+
+5. 
+a. **Square b**
+a. **Multiply the answer by a over b**
+a. **Assign the result to c**
+a. **Take the square root of c to the power b**
+a. **Multiply the answer by a over (b to the power 6)**
+
+
+```{r}
+c <- b^2 * (a / b)
+sqrt(c^b) * (a / b^6)
+```
+
+---
+
+6. **Round the answer from the previous question to 3 decimal places.**
+
+```{r}
+round(sqrt(c^b) * (a / b^6), 3)
+```
+
+OR
+
+```{r}
+d <- sqrt(c^b) * (a / b^6)
+round(d, 3)
+```
+
+Do you notice that the first solution is shorter, but the second is much more
+insightful? If you share your code, or plan to use it later on, clarity very
+important. A little effort now, saves you hours later.
+
+---
+
+Now you know how to use R as a calculator and rmarkdown for typesetting.

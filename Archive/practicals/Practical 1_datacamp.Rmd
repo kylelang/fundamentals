@@ -1,0 +1,179 @@
+---
+title: "Practical 1"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Datascience with R"
+output: 
+   html_document:
+    toc: false
+    toc_depth: 5
+    toc_float: true
+    number_sections: true
+runtime: shiny_prerendered
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+---
+
+```{r setup, include=FALSE}
+library(learnr)
+tutorial::go_interactive()
+```
+
+Today we will get acquainted with `R`. A convenient way to work with `R` is with `RStudio`, as `RStudio` adds many features and convenient accessibility options to the plain `R` you have obtained from http://r-project.org. Most of these features go beyond the scope of this course, but as you will develop your `R` skillset, you might run into the need for `RStudio` at a later moment. Best to get to know `RStudio` now. 
+ 
+If you have no experience with `R`, you will learn the most from following this document. If you have some experience with `R` already,  I suggest you try solving the questions without looking at the answers/walkthrough. You can then refer to the solutions at any time, if needed. 
+
+If you have any questions or if you feel that some code should be elaborated, feel free to ask.
+
+
+---
+
+We start with the very basics and will move towards more advanced operations in `R`. First we will get acquainted with the language (which is called `S` - to keep it simple) and the environment we work in. 
+
+---
+
+## Exercises
+
+`R` is an object oriented language. This means that elements, such as numbers or characters, are assigned to objects. The below code block assigns the value `1` to object `a`. 
+
+```{r}
+# This is the first exercise
+a <- 1
+```
+
+The `#` tells `R` that everything that follows in that specific line is not to be considered as code. In other words, you can use `#` to comment in your own `R`-scripts. I used `#` here to elaborate that the following line is the code from exercise 1. 
+
+The line `a <- 1` assigns the value `1` to object `a`. When you run your code, it will be saved. The value 1 and the letter `a` are chosen to illustrate assigning in `R`. You might as well assign `123` to `banana` if you like. Really, anything goes. 
+
+---
+
+### 1. Run the below code example and see what happens. 
+
+```{r assigning}
+# This is the first exercise
+a <- 1
+a
+```
+
+---
+
+### 2. Add the following to the above code example:
+
+- assign the value `2` to object `b`
+- evaluate object `b`, just like object `a` is evaluated in the above example
+- multiply objects `a` and `b` (Hint: use `*` as the multiplier symbol)
+- store the result of `a * b` in object `c`
+- take the square root of object `c` (use `sqrt(c)`)
+
+---
+
+### 3. Two questions to evaluate your progress.
+
+```{r letter-a, echo=FALSE}
+question("The square root of object `c` is",
+  answer("1.414214", correct = TRUE),
+  answer("1", message = "You calculated the `sqrt(a)`, not the `sqrt(c)`"),
+  answer("Error: object 'b' not found", message = "You forgot to run/evaluate the code that generates object `b`"),
+  answer("Error in sqrt(c) : non-numeric argument to mathematical function", message = "You forgot to run/evaluate the code that generates object `c`")
+)
+``` 
+```{r letter-b, echo=FALSE}
+question("After each code change, the code needs to be re-evaluated for the changes to take effect",
+  answer("FALSE"),
+  answer("TRUE", correct = TRUE)
+)
+```
+
+---
+
+### 4. Square `a`
+```{r squaring}
+a <- 1
+a^2
+```
+
+Still 1, that's nice!
+
+---
+
+### 5. Create a new `b` and assign `a+a`. Check if `b` is indeed `a+a`. 
+```{r evaluating}
+a <- 1
+b <- a + a
+b == a + a
+```
+
+`True!` R is telling us that the equality we tested is indeed true. In other 
+words, everything before the == is equal to that which is posed after the ==. 
+Now we are talking.  Our previous `b` with value `2` is now effectively overwritten. 
+
+---
+
+### 6. Square `b`, multiply the answer with $\frac{a}{b}$ and call the result `c`. Then, take the square root of $c^b$ and multiply it with $\frac{a}{b^6}$. 
+```{r multiplying}
+a <- 1
+b <- a + a
+c <- b^2 * (a / b)
+sqrt(c^b) * (a / b^6)
+```
+
+Nice! But anything beyond a couple of decimals may not be relevant. 
+
+---
+
+### 7. Round the answer from the previous exercise to 3 decimals.
+```{r rounding}
+a <- 1
+b <- a + a
+c <- b^2 * (a / b)
+round(sqrt(c^b) * (a / b^6), digits = 3)
+```
+
+or, alternatively
+```{r rounding2}
+a <- 1
+b <- a + a
+c <- b^2 * (a / b)
+d <- sqrt(c^b) * (a / b^6)
+round(d, digits = 3)
+```
+
+
+Do you notice that the first solution is shorter, but the second is much more 
+insightful? If you share your code, or plan to use it later on, clarity is of
+great importance. A small effort now, saves you hours later. 
+
+Now you know how to use `R` as a calculator and `R-Studio` as a typesetting 
+device. 
+
+---
+
+End of exercise
