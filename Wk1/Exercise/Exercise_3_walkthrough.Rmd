@@ -1,13 +1,15 @@
 ---
-title: "Practical C"
-author: "Gerko Vink"
+title: "Practical 3"
+author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: true
 output: 
    html_document:
     toc: true
-    toc_depth: 5
+    toc_depth: 1
     toc_float: true
-    number_sections: false
+    number_sections: true
 ---
 
 <style type="text/css">
@@ -39,67 +41,148 @@ pre { /* Code block - determines code spacing between lines */
 }
 </style>
 
-
-
----
-
-# Exercises
-Begin this practical exercise by setting the maximum line length in `R-Studio` to 80 characters. Go to `RStudio`'s `Preferences` (or `Global Options` under `Tools`) --> `Code` --> `Display`, and tick the `show margin` box. Make sure that the `margin column` is set to `80`
+```{r, echo = FALSE}
+knitr::opts_chunk$set(include = params$answers, echo = params$answer)
+```
 
 ---
 
-## Exercise 1-5
+Begin this practical by setting the maximum line length in R-Studio to 80 
+characters. 
+
+1. Go to *Preferences* (or *Global Options* under *Tools*) --> *Code* --> 
+*Display*.
+1. Tick the *Show margin* box. 
+1. Set the *Margin column* to *80*.
 
 ---
 
-1. **Install package `mice`. **
-
-Go to `Tools` > `Install Packages` in `RStudio`. If you are connected to the internet, select  `Repository` under `Install From` and type `mice` under `Packages`. Leave the `Install to Library` at default and make sure that `Install Dependencies` is selected. Click install. If you are not connected to the internet, select `Package Archive File` under "Install from" and navigate to the respective file on your drive. 
-
-Some packages depend on other packages, meaning that their functionality may be limited if their dependencies are not installed. Installing dependencies is therefor recommended, but internet connectivity is required. 
-
-If all is right, you will receive a message in the console that the package has been installed (as well as its dependencies. 
-
-ALternatively, if you know the name of the package you would like to install - in this case `mice` - you can also call `install.packages("mice")` in the console window.
+# Data I/O
 
 ---
 
-2. **Load package `mice`. **
-Loading packages can be done through functions `library()` and `require()`.
+##
+
+**Install the *mice* package**
+
+Use the `install.packages()` function to install the  the **mice** package.
+
+```{r, eval = FALSE}
+install.packages("mice")
+```
+
+```{asis}
+If all went well, you will receive a message in the console telling you that the 
+package has been installed. 
+```
+
+---
+
+##
+
+**Load the *mice* package**
+
+Use the `library()` function to load installed packages.
+
+- Installing the package only makes the package available on your machine.
+- You have to load the package every time you want to use it in a new R session.
+
 ```{r}
 library(mice)
 ```
 
-If you use `require()` within a function, and the required package is not available, `require()` will yield a warning and the remainder of the function is still executed, whereas `library()` will yield an error and terminate all executions. The use of `library()` when not doing too complicated things is preferred - `require()` would result in more computational overhead because it calls `library()` itself. 
-
 ---
 
-3. **Most packages have datasets included. Open the `mammalsleep` dataset from package `mice` by typing `mammalsleep` in the console, and subsequently by using the function `View()`. **
+##
 
-Using `View()` is preferred for inspecting datasets that are large. `View()` opens the dataset in a spreadsheet-like window (conform MS Excel, or SPSS). If you `View()` your own datasets, you can even edit the datasets' contents. 
+**View the `mammalsleep` data**
 
----
+Most packages have datasets included. Open the `mammalsleep` dataset from the 
+**mice** package in two ways:
 
-4. **Write the mammalsleep dataset from package `mice` to the work directory as a tab-delimited text file with `.` as a decimal seperator. Name the file `mammalsleep.txt`**
+1. By evaluating its name, `mammalsleep`, directly
+1. By using the `View()` function
 
-```{r, warning=FALSE, message=FALSE}
-library(mice)
-write.table(mammalsleep, "mammalsleep.txt", sep = "\t", dec = ".", row.names = FALSE)
+```{r, eval = FALSE}
+## I'm not actually running these lines because the results would clutter 
+## this document too much.
+mammalSleep
+View(mammalSleep)
 ```
-The command `sep = "\t"` indicates that the file is tabulated and the command `dec = "."` indicates that a point is used as the decimal seperator (instead of a comma). `row.names = FALSE` tells `R` that row names are not to be included in exported file. 
+
+```{asis}
+Using `View()` is preferred for inspecting large datasets because `View()` opens 
+the dataset in a spreadsheet-like window. 
+```
 
 ---
 
-5. **Import the `mammalsleep.txt` file. **
+##
+
+**Write the `mammalsleep` dataset to disk**
+
+Save the `mammalsleep` dataset that you viewed above to your working directory. 
+
+- Save the data as a tab-delimited text file.
+- Use the `.` character as the decimal seperator. 
+- Name the file `mammalsleep.txt`
+
 ```{r}
-sleepdata <- read.table("mammalsleep.txt", sep = "\t", dec = ".", header = TRUE, stringsAsFactors = TRUE)
+write.table(mammalsleep, 
+            file = "mammalsleep.txt", 
+            sep = "\t", 
+            dec = ".", 
+            row.names = FALSE)
 ```
 
-The command `sep = "\t"` indicates that the file is tabulated and the command `dec = "."` indicates that a point is used as the decimal seperator (instead of a comma). `header = TRUE` tells `R` that variable names are included in the header.
+```{asis}
+- The command `sep = "\t"` creates a tab-delimited file
+- The command `dec = "."` specifies the `.` character as the decimal seperator 
+(instead of a comma). 
+- The command `row.names = FALSE` tells R not to include row names in the 
+exported file. 
+```
 
-All files that are presented in the work directory of the current `R` project, can essentially be imported into the workspace (the space that contains all environments) directly. All other locations require you to specify the specific path from the root of your machine. To find out what the current work directory is, you can type `getwd()` and to change the work directory you can use `setwd()`. The beauty of using projects in RStudio is that you would never have to change the work directory, as the work directory is automatically set, relative to your projects' `R`-scripts. 
+---
 
-There are many packages that facilitate importing datasets from other statistical software packages, such as SPSS (e.g. function `read_spss` from package `haven`), Mplus (package `MplusAutomation`), Stata (`read.dta()` in `foreign`), SAS (`sasxport.get()` from package `Hmisc`) and from spreadsheet software, such as MS Excel (function `read.xlsx()` from package `xlsx`). For a short guideline to import multiple formats into `R`, see e.g. http://www.statmethods.net/input/importingdata.html. 
+##
+
+**Read the `mammalsleep.txt` file from disk**
+
+Read in the data that you just saved to disk and save it as a new R object 
+called `sleepdata`.
+
+```{r}
+sleepdata <- read.table("mammalsleep.txt", 
+                        sep = "\t", 
+                        dec = ".", 
+                        header = TRUE, 
+                        stringsAsFactors = TRUE)
+```
+
+- The command `sep = "\t"` indicates that the file is tab-delimited
+- The command `dec = "."` indicates that a `.` is used as the decimal seperator
+- The command `header = TRUE` tells R that the first row of data contains the 
+variable names
+- The `stringsAsFactors = TRUE` command will automatically convert any character 
+variables to factors
+
+You can read files that live in the working directory by specifying only the 
+file name (with the file extension). To read files that live in any other 
+location, you need to specify the full file path (either relative to the working 
+directory or an absolute path). To find the current working directory, you can 
+run `getwd()`. To change the working directory, you can use `setwd()`. One 
+benefit of using RStudio projects is that the working directory is automatically 
+set to the main project directory. 
+
+There are many packages that facilitate data I/O from other statistical software 
+packages such as SPSS (e.g. `read_spss()` from the **haven** package), Mplus 
+(routines in the **MplusAutomation** package), Stata (`read.dta()` in the 
+**foreign** package), SAS (`sasxport.get()` from the **Hmisc** package). There 
+are also packages to read data from spreadsheet software such as MS Excel 
+(`read.xlsx()` from the `xlsx` package). For a short guide on importing multiple 
+file formats into R, see 
+[this page](http://www.statmethods.net/input/importingdata.html).
 
 ---
 
@@ -109,7 +192,7 @@ There are many packages that facilitate importing datasets from other statistica
 
 6. **The dataset we've just imported contains the sleepdata by Allison & Cicchetti (1976). Inspect the sleepdata and make yourself familiar with it. **
 
-If you would like to know more about this dataset, you can open the help for the `mammalsleep` dataset in package `mice` through `?mammalsleep`. Don't forget to load package `mice` first. 
+If you would like to know more about this dataset, you can open the help for the `mammalsleep` dataset in package **mice** through `?mammalsleep`. Don't forget to load package **mice** first. 
 
 Inspecting the sleepdata could be done by 
 ```{r}
@@ -124,7 +207,7 @@ Note that the sleepdata dataset is automatically recognized as a dataframe. Afte
 
 The functions `head()` and `tail()` are very useful functions. As is function `str` as it gives you a quick overview of the measurement levels in `mammalsleep`. 
 
-Since `mammalsleep` is an `R`-dataset, there should be a help file. Taking a look at `?mammalsleep` may yield valuable insight about the measurements and origin of the variables. 
+Since `mammalsleep` is an R-dataset, there should be a help file. Taking a look at `?mammalsleep` may yield valuable insight about the measurements and origin of the variables. 
 
 One thing that may have caught your attention is the relation between `ts`, `ps` and `sws`. This is a deterministic relation where total sleep (`ts`) is the sum of paradoxical sleep (`ps`) and short-wave sleep (`sws`). In the event that you would model the data, you need to take such relations into account. 
 
@@ -210,7 +293,7 @@ plot(brw ~ species, data = sleepdata3)
 
 ---
 
-If your current software-analysis platform is different from `R`, chances are that you prepare your data in the software of your choice. In `R` there are fantastic facilities for importing and exporting data and I would specifically like to pinpoint you to package [`haven`](https://haven.tidyverse.org/index.html) by [Hadley Wickham](http://hadley.nz). It provides wonderful functions to import and export many data types from software such as Stata, SAS and SPSS.
+If your current software-analysis platform is different from R, chances are that you prepare your data in the software of your choice. In R there are fantastic facilities for importing and exporting data and I would specifically like to pinpoint you to package [`haven`](https://haven.tidyverse.org/index.html) by [Hadley Wickham](http://hadley.nz). It provides wonderful functions to import and export many data types from software such as Stata, SAS and SPSS.
 
 ---
 

@@ -3,7 +3,7 @@ title: "Exercise 2"
 author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 params:
-  answers: false
+  answers: true
 output: 
    bookdown::html_document2:
     toc: true
