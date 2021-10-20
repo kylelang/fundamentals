@@ -38,3 +38,6 @@ rsconnect/
 Wk1/.DS_Store
 Exam/.DS_Store
 .DS_Store
+
+# Emacs autosave files
+*~

@@ -288,10 +288,6 @@ pre { /* Code block - determines code spacing between lines */
 <li>One named <code>vec1</code> containing the integers 1 through 6</li>
 <li>One named <code>vec2</code> with letters A through F</li>
 </ol>
-<pre class="r"><code>vec1 &lt;- c(1, 2, 3, 4, 5, 6)
-vec2 &lt;- c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;, &quot;E&quot;, &quot;F&quot;)</code></pre>
-<p>We can use concatenation function, <code>c()</code>, to create a vector. A vector is just a
-series of numbers, letters, or other data elements.</p>
 <hr />
 </div>
 <div id="section-1" class="section level2" number="1.2">
@@ -302,31 +298,12 @@ series of numbers, letters, or other data elements.</p>
 <li>One from <code>vec2</code></li>
 </ol>
 <p>Define both matrices to have 3 rows and 2 columns.</p>
-<pre class="r"><code>mat1 &lt;- matrix(vec1, nrow = 3, ncol = 2)
-mat2 &lt;- matrix(vec2, nrow = 3, ncol = 2)</code></pre>
-<p>We can use the <code>matrix()</code> function to create a matrix. When we create a matrix,
-we need to specify the dimensions (in this case 3 <span class="math inline">\(\times\)</span> 2).</p>
 <hr />
 </div>
 <div id="section-2" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> </h2>
 <p><strong>Inspect <code>vec1</code>, <code>vec2</code>, <code>mat1</code>, and <code>mat2</code></strong></p>
 <p>Are they all numeric?</p>
-<pre class="r"><code>vec1</code></pre>
-<pre><code>## [1] 1 2 3 4 5 6</code></pre>
-<pre class="r"><code>vec2</code></pre>
-<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot;</code></pre>
-<pre class="r"><code>mat1</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,]    1    4
-## [2,]    2    5
-## [3,]    3    6</code></pre>
-<pre class="r"><code>mat2</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,] &quot;A&quot;  &quot;D&quot; 
-## [2,] &quot;B&quot;  &quot;E&quot; 
-## [3,] &quot;C&quot;  &quot;F&quot;</code></pre>
-<p>No. <code>vec1</code> and <code>mat1</code> contain numbers, but <code>vec2</code> and <code>mat2</code> contain characters.</p>
 <hr />
 </div>
 <div id="matrixQ" class="section level2" number="1.4">
@@ -337,34 +314,6 @@ we need to specify the dimensions (in this case 3 <span class="math inline">\(\t
 <li>Use <code>vec2</code> to populate the second column</li>
 </ol>
 <p>Inspect this matrix.</p>
-<pre class="r"><code>mat3 &lt;- matrix(c(vec1, vec2), 6, 2)
-mat3</code></pre>
-<pre><code>##      [,1] [,2]
-## [1,] &quot;1&quot;  &quot;A&quot; 
-## [2,] &quot;2&quot;  &quot;B&quot; 
-## [3,] &quot;3&quot;  &quot;C&quot; 
-## [4,] &quot;4&quot;  &quot;D&quot; 
-## [5,] &quot;5&quot;  &quot;E&quot; 
-## [6,] &quot;6&quot;  &quot;F&quot;</code></pre>
-<p>OR</p>
-<pre class="r"><code>mat3b &lt;- cbind(vec1, vec2)
-mat3b</code></pre>
-<pre><code>##      vec1 vec2
-## [1,] &quot;1&quot;  &quot;A&quot; 
-## [2,] &quot;2&quot;  &quot;B&quot; 
-## [3,] &quot;3&quot;  &quot;C&quot; 
-## [4,] &quot;4&quot;  &quot;D&quot; 
-## [5,] &quot;5&quot;  &quot;E&quot; 
-## [6,] &quot;6&quot;  &quot;F&quot;</code></pre>
-<p>All elements in a matrix must have the same type. So, if one or more elements in
-the matrix are characters, all other elements are converted to characters.</p>
-<p>Notice that the second approach (using the column bind function, <code>cbind()</code>)
-returns a matrix with the column names set to the names of the bound objects.</p>
-<p>To create a rectangular dataset that contains different types of data (e.g.,
-both numeric and character variables), we can create a data frame. When working
-with real datasets (which often contain diverse data types), data frames are
-usually preferred over matrices. We only really use matrices when doing pure
-numerical calculation, such as in matrix algebra.</p>
 <hr />
 </div>
 <div id="dfQ1" class="section level2" number="1.5">
@@ -375,15 +324,6 @@ numerical calculation, such as in matrix algebra.</p>
 <li>Set <code>vec1</code> and <code>vec2</code> as the columns.</li>
 <li>Name the columns <code>v1</code> and <code>v2</code>, respectively.</li>
 </ol>
-<pre class="r"><code>dat3 &lt;- data.frame(v1 = vec1, v2 = vec2)
-dat3</code></pre>
-<pre><code>##   v1 v2
-## 1  1  A
-## 2  2  B
-## 3  3  C
-## 4  4  D
-## 5  5  E
-## 6  6  F</code></pre>
 <hr />
 </div>
 </div>
@@ -401,13 +341,6 @@ dat3</code></pre>
 </ol>
 <p>Are the types of the <code>v1</code> and <code>v2</code> columns the same as the types of <code>vec1</code> and
 <code>vec2</code>, respectively?</p>
-<pre class="r"><code>dat3b &lt;- as.data.frame(mat3, stringsAsFactors = TRUE)
-(colnames(dat3b) &lt;- c(&quot;v1&quot;, &quot;v2&quot;))</code></pre>
-<pre><code>## [1] &quot;v1&quot; &quot;v2&quot;</code></pre>
-<p>This is a tricky situation. At face value, everything may seem fine, but, we
-need to be careful. The above code may not be doing what you expected.
-Because every element of <code>mat3</code> is a character, we have lost the numeric nature
-of <code>vec1</code>.</p>
 <hr />
 </div>
 <div id="section-3" class="section level2" number="2.2">
@@ -415,23 +348,6 @@ of <code>vec1</code>.</p>
 <p><strong>Check if the first columns in the data frames from Questions <a href="#dfQ1">1.5</a> and
 <a href="#dfQ2">2.1</a> are numeric</strong></p>
 <p>If these columns are not numeric, determine their type.</p>
-<pre class="r"><code>is.numeric(dat3[, 1])</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<pre class="r"><code>is.numeric(dat3b[, 1])</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<p>The first column in <code>dat3b</code> (from Question <a href="#dfQ2">2.1</a>) is not numeric. As a
-matter of fact, it is not a character vector, either.</p>
-<pre class="r"><code>is.character(dat3b[, 1])</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<p>Rather tricky; the function <code>as.data.frame()</code> has converted the first variable
-to a factor.</p>
-<pre class="r"><code>is.factor(dat3b[, 1])</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<p>Factors are used to represent categorical variables. Character vectors are not
-converted to factors by default, but the argument <code>stringsAsFactors = TRUE</code>
-forces the conversion. Hopefully, you can now see that there is a difference
-between character vectors and factors. Now, you also know how to force the
-conversion from character vectors to factors when creating a data frame.</p>
 <hr />
 </div>
 <div id="section-4" class="section level2" number="2.3">
@@ -443,23 +359,6 @@ conversion from character vectors to factors when creating a data frame.</p>
 <li>The second column</li>
 <li>The intersection of the above</li>
 </ol>
-<pre class="r"><code>dat3[3, ] # 3rd row</code></pre>
-<pre><code>##   v1 v2
-## 3  3  C</code></pre>
-<pre class="r"><code>dat3[, 2] # 2nd column</code></pre>
-<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot;</code></pre>
-<pre class="r"><code>dat3$v2   # Also 2nd column</code></pre>
-<pre><code>## [1] &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; &quot;E&quot; &quot;F&quot;</code></pre>
-<pre class="r"><code>dat3[3, 2] # Intersection</code></pre>
-<pre><code>## [1] &quot;C&quot;</code></pre>
-<p>The matrix-style subsetting operator, <code>[ , ]</code>, is very useful in R. For matrices
-and data frames, the first number (before the comma) indexes rows and the
-second number (after the comma) indexes columns. Vectors don’t have dimensions,
-so we only need to provide one number for subsetting. For example, <code>vec1[3]</code>
-would yield <code>3</code>. Try it.</p>
-<p>In data frames, columns can also be extracted with the <code>$</code> sign, but only if a
-name has been assigned to the column. If you do not name the columns of your
-data frame, R will assign default column names.</p>
 <hr />
 </div>
 <div id="section-5" class="section level2" number="2.4">
@@ -468,17 +367,6 @@ data frame, R will assign default column names.</p>
 <a href="#dfQ1">1.5</a>.</strong></p>
 <p>The structure function, <code>str()</code>, allows us to inspect the structure of an R
 object. Try using it here.</p>
-<pre class="r"><code>str(dat3)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    6 obs. of  2 variables:
-##  $ v1: num  1 2 3 4 5 6
-##  $ v2: chr  &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;D&quot; ...</code></pre>
-<p>Inspecting the structure of your data is vital. If, when we start analyzing our
-data, we assume the wrong measurement level for some of our variables, we may
-run into serious problems. One frequent problem occurs when categorical
-variables are represented on the data as numeric vectors and not factors.</p>
-<p>Notice how the information returned by <code>str()</code> mirrors the information in
-RStudio’s environment pane. The environment pane is simply reported the ouptut
-from the <code>str()</code> function in a beautified format.</p>
 <hr />
 </div>
 <div id="section-6" class="section level2" number="2.5">
@@ -495,22 +383,6 @@ information about cities.</strong></p>
 <li>Rome</li>
 <li>Cape Town</li>
 </ul>
-<pre class="r"><code>dat3$v1 &lt;- factor(dat3$v1, 
-                  labels = c(&quot;Utrecht&quot;, 
-                             &quot;New York&quot;, 
-                             &quot;London&quot;, 
-                             &quot;Singapore&quot;, 
-                             &quot;Rome&quot;, 
-                             &quot;Cape Town&quot;)
-                  )
-dat3</code></pre>
-<pre><code>##          v1 v2
-## 1   Utrecht  A
-## 2  New York  B
-## 3    London  C
-## 4 Singapore  D
-## 5      Rome  E
-## 6 Cape Town  F</code></pre>
 <hr />
 </div>
 </div>
@@ -520,33 +392,6 @@ dat3</code></pre>
 <div id="section-7" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> </h2>
 <p><strong>Load the workspace <code>boys.RData</code></strong></p>
-<p>There are a few ways to go about load workspaces that are available on the
-internet. We’ll use the <em>boys.RData</em> workspace to demonstrate.</p>
-<ol style="list-style-type: decimal">
-<li>You can download the <em>boys.RData</em> file from the course page and use the
-<code>load()</code> function to load it into your environment.
-<ul>
-<li>Note that the following code assumes you have saved <em>boys.RData</em> in a
-subdirectory of your project folder called “data”.</li>
-</ul></li>
-</ol>
-<pre class="r"><code>load(&quot;data/boys.RData&quot;)</code></pre>
-<ol start="2" style="list-style-type: decimal">
-<li>You can double-click the <code>boys.RData</code> file in your operating system’s file
-browser
-<ul>
-<li>If the file opens in R and not RStudio, you will need to right-click and
-select the menu option: “Open with” &gt; “RStudio”.</li>
-</ul></li>
-<li>You can import workspaces directly from the internet by creating and loading
-a connection.</li>
-</ol>
-<pre class="r"><code>con &lt;- url(&quot;https://www.kylemlang.com/fundamentals/data/boys.RData&quot;)
-load(con)</code></pre>
-<p>In the above code, we store the connection in the object <code>con</code>, and then we load
-the connection with <code>load(con)</code>.</p>
-<p>After executing any of the above options, the <code>boys</code> object will be added to
-your Global Environment. You can then use the <code>boys</code> data in your analyses.</p>
 <hr />
 <p>Most R packages ship with datasets included (these datasets are most often used
 for examples to demonstrate the functionality of the package). Since you have
@@ -560,95 +405,25 @@ the <strong>mice</strong> package) as a stand-alone workspace.</p>
 <li>By executing <code>boys</code> in the console</li>
 <li>By using the <code>View()</code> function</li>
 </ol>
-<pre class="r"><code>boys
-View(boys)</code></pre>
-<p>The output is not displayed here as it is simply too large.</p>
-<p>Using <code>View()</code> is preferred for inspecting all but the smallest datasets.
-<code>View()</code> shows the contents of the dataset in a spreadsheet-like window.
-<code>View()</code> is only or viewing the data; you can not edit the dataset’s contents
-through the window generated by <code>View()</code>..</p>
 <hr />
 </div>
 <div id="section-9" class="section level2" number="3.3">
 <h2><span class="header-section-number">3.3</span> </h2>
 <p><strong>Find the dimensions of the <code>boys</code> dataset</strong></p>
-<pre class="r"><code>dim(boys)</code></pre>
-<pre><code>## [1] 748   9</code></pre>
-<p>There are <code>r nrow(boys)</code> cases on <code>r ncol(boys)</code> variables.</p>
 </div>
 <div id="section-10" class="section level2" number="3.4">
 <h2><span class="header-section-number">3.4</span> </h2>
 <p><strong>Inspect the first 6 cases and the final 6 cases in the dataset</strong></p>
-<pre class="r"><code>boys[1:6, ]</code></pre>
-<pre><code>##      age  hgt   wgt   bmi   hc  gen  phb tv   reg
-## 3  0.035 50.1 3.650 14.54 33.7 &lt;NA&gt; &lt;NA&gt; NA south
-## 4  0.038 53.5 3.370 11.77 35.0 &lt;NA&gt; &lt;NA&gt; NA south
-## 18 0.057 50.0 3.140 12.56 35.2 &lt;NA&gt; &lt;NA&gt; NA south
-## 23 0.060 54.5 4.270 14.37 36.7 &lt;NA&gt; &lt;NA&gt; NA south
-## 28 0.062 57.5 5.030 15.21 37.3 &lt;NA&gt; &lt;NA&gt; NA south
-## 36 0.068 55.5 4.655 15.11 37.0 &lt;NA&gt; &lt;NA&gt; NA south</code></pre>
-<pre class="r"><code>boys[743:748, ]</code></pre>
-<pre><code>##         age   hgt  wgt   bmi   hc  gen  phb tv   reg
-## 7410 20.372 188.7 59.8 16.79 55.2 &lt;NA&gt; &lt;NA&gt; NA  west
-## 7418 20.429 181.1 67.2 20.48 56.6 &lt;NA&gt; &lt;NA&gt; NA north
-## 7444 20.761 189.1 88.0 24.60   NA &lt;NA&gt; &lt;NA&gt; NA  west
-## 7447 20.780 193.5 75.4 20.13   NA &lt;NA&gt; &lt;NA&gt; NA  west
-## 7451 20.813 189.0 78.0 21.83 59.9 &lt;NA&gt; &lt;NA&gt; NA north
-## 7475 21.177 181.8 76.5 23.14   NA &lt;NA&gt; &lt;NA&gt; NA  east</code></pre>
-<p>OR</p>
-<pre class="r"><code>head(boys)</code></pre>
-<pre><code>##      age  hgt   wgt   bmi   hc  gen  phb tv   reg
-## 3  0.035 50.1 3.650 14.54 33.7 &lt;NA&gt; &lt;NA&gt; NA south
-## 4  0.038 53.5 3.370 11.77 35.0 &lt;NA&gt; &lt;NA&gt; NA south
-## 18 0.057 50.0 3.140 12.56 35.2 &lt;NA&gt; &lt;NA&gt; NA south
-## 23 0.060 54.5 4.270 14.37 36.7 &lt;NA&gt; &lt;NA&gt; NA south
-## 28 0.062 57.5 5.030 15.21 37.3 &lt;NA&gt; &lt;NA&gt; NA south
-## 36 0.068 55.5 4.655 15.11 37.0 &lt;NA&gt; &lt;NA&gt; NA south</code></pre>
-<pre class="r"><code>tail(boys)</code></pre>
-<pre><code>##         age   hgt  wgt   bmi   hc  gen  phb tv   reg
-## 7410 20.372 188.7 59.8 16.79 55.2 &lt;NA&gt; &lt;NA&gt; NA  west
-## 7418 20.429 181.1 67.2 20.48 56.6 &lt;NA&gt; &lt;NA&gt; NA north
-## 7444 20.761 189.1 88.0 24.60   NA &lt;NA&gt; &lt;NA&gt; NA  west
-## 7447 20.780 193.5 75.4 20.13   NA &lt;NA&gt; &lt;NA&gt; NA  west
-## 7451 20.813 189.0 78.0 21.83 59.9 &lt;NA&gt; &lt;NA&gt; NA north
-## 7475 21.177 181.8 76.5 23.14   NA &lt;NA&gt; &lt;NA&gt; NA  east</code></pre>
-<p>The functions <code>head()</code> and <code>tail()</code> are very useful. For example, by comparing
-the output from these functions, we can infer that the data are very likely
-sorted on <code>age</code>.</p>
 <hr />
 </div>
 <div id="section-11" class="section level2" number="3.5">
 <h2><span class="header-section-number">3.5</span> </h2>
 <p><strong>Check if the <code>boys</code> data are sorted on <code>age</code></strong></p>
-<p>To verify if the data are sorted, we can use the <code>is.unsorted()</code> function to
-test the inverse of that statement.</p>
-<p>Remember that we can always search the help for functions. For example, we could
-have searched using <code>?sort</code> or <code>??sorted</code> and quickly found the function
-<code>is.unsorted()</code>.</p>
-<pre class="r"><code>is.unsorted(boys$age)</code></pre>
-<pre><code>## [1] FALSE</code></pre>
-<p>Since this function returns <code>FALSE</code>, we know that <code>boys$age</code> is sorted. To
-directly test if <code>boys$age</code> is sorted, we could have used:</p>
-<pre class="r"><code>!is.unsorted(boys$age)</code></pre>
-<pre><code>## [1] TRUE</code></pre>
-<p>This expression tests if <code>boys$age</code> is NOT unsorted, so the return value of
-<code>TRUE</code> tells us that <code>boys$age</code> is sorted.</p>
 <hr />
 </div>
 <div id="section-12" class="section level2" number="3.6">
 <h2><span class="header-section-number">3.6</span> </h2>
 <p><strong>Inspect the <code>boys</code> dataset with <code>str()</code></strong></p>
-<pre class="r"><code>str(boys)</code></pre>
-<pre><code>## &#39;data.frame&#39;:    748 obs. of  9 variables:
-##  $ age: num  0.035 0.038 0.057 0.06 0.062 0.068 0.068 0.071 0.071 0.073 ...
-##  $ hgt: num  50.1 53.5 50 54.5 57.5 55.5 52.5 53 55.1 54.5 ...
-##  $ wgt: num  3.65 3.37 3.14 4.27 5.03 ...
-##  $ bmi: num  14.5 11.8 12.6 14.4 15.2 ...
-##  $ hc : num  33.7 35 35.2 36.7 37.3 37 34.9 35.8 36.8 38 ...
-##  $ gen: Ord.factor w/ 5 levels &quot;G1&quot;&lt;&quot;G2&quot;&lt;&quot;G3&quot;&lt;..: NA NA NA NA NA NA NA NA NA NA ...
-##  $ phb: Ord.factor w/ 6 levels &quot;P1&quot;&lt;&quot;P2&quot;&lt;&quot;P3&quot;&lt;..: NA NA NA NA NA NA NA NA NA NA ...
-##  $ tv : int  NA NA NA NA NA NA NA NA NA NA ...
-##  $ reg: Factor w/ 5 levels &quot;north&quot;,&quot;east&quot;,..: 4 4 4 4 4 4 4 3 3 2 ...</code></pre>
 <hr />
 </div>
 <div id="section-13" class="section level2" number="3.7">
@@ -657,36 +432,12 @@ directly test if <code>boys$age</code> is sorted, we could have used:</p>
 distribution</strong></p>
 <p>At least show the minimum, the maximum, the mean, and the median for all of the
 variables.</p>
-<pre class="r"><code>summary(boys)</code></pre>
-<pre><code>##       age              hgt              wgt              bmi       
-##  Min.   : 0.035   Min.   : 50.00   Min.   :  3.14   Min.   :11.77  
-##  1st Qu.: 1.581   1st Qu.: 84.88   1st Qu.: 11.70   1st Qu.:15.90  
-##  Median :10.505   Median :147.30   Median : 34.65   Median :17.45  
-##  Mean   : 9.159   Mean   :132.15   Mean   : 37.15   Mean   :18.07  
-##  3rd Qu.:15.267   3rd Qu.:175.22   3rd Qu.: 59.58   3rd Qu.:19.53  
-##  Max.   :21.177   Max.   :198.00   Max.   :117.40   Max.   :31.74  
-##                   NA&#39;s   :20       NA&#39;s   :4        NA&#39;s   :21     
-##        hc          gen        phb            tv           reg     
-##  Min.   :33.70   G1  : 56   P1  : 63   Min.   : 1.00   north: 81  
-##  1st Qu.:48.12   G2  : 50   P2  : 40   1st Qu.: 4.00   east :161  
-##  Median :53.00   G3  : 22   P3  : 19   Median :12.00   west :239  
-##  Mean   :51.51   G4  : 42   P4  : 32   Mean   :11.89   south:191  
-##  3rd Qu.:56.00   G5  : 75   P5  : 50   3rd Qu.:20.00   city : 73  
-##  Max.   :65.00   NA&#39;s:503   P6  : 41   Max.   :25.00   NA&#39;s :  3  
-##  NA&#39;s   :46                 NA&#39;s:503   NA&#39;s   :522</code></pre>
 <hr />
 </div>
 <div id="section-14" class="section level2" number="3.8">
 <h2><span class="header-section-number">3.8</span> </h2>
 <p><strong>Give the standard deviations for <code>age</code> and <code>bmi</code></strong></p>
 <p>Tip: Use the help (?) and help search (??) functionality in R, if you get stuck.</p>
-<pre class="r"><code>sd(boys$age) # SD for age</code></pre>
-<pre><code>## [1] 6.894052</code></pre>
-<pre class="r"><code>sd(boys$bmi, na.rm = TRUE) # SD for bmi</code></pre>
-<pre><code>## [1] 3.053421</code></pre>
-<p>Note that <code>bmi</code> contains 21 missing values (you can see these missing values in
-the summary information). Therefore, we need to use <code>na.rm = TRUE</code> to calculate
-the standard deviation from the observed cases only.</p>
 <hr />
 </div>
 </div>
@@ -697,40 +448,18 @@ the standard deviation from the observed cases only.</p>
 <h2><span class="header-section-number">4.1</span> </h2>
 <p><strong>Create a new data frame containing only the boys that are 20 years old or older</strong></p>
 <p>How many boys are at least 20 years old?</p>
-<pre class="r"><code>boys2 &lt;- boys[boys$age &gt;= 20, ]
-nrow(boys2)</code></pre>
-<pre><code>## [1] 12</code></pre>
-<p>OR</p>
-<pre class="r"><code>boys2 &lt;- subset(boys, age &gt;= 20)
-nrow(boys2)</code></pre>
-<pre><code>## [1] 12</code></pre>
-<p>Logical vectors can be very powerful tools in R. For example, in the first
-solution, we selected the boys that are at least 20 by indexing the rows of the
-data frame with an appropriately defined logical vector.</p>
 <hr />
 </div>
 <div id="section-16" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> </h2>
 <p><strong>Select all boys that are older than 19 but younger than 19.5</strong></p>
 <p>How many boys are between the ages of 19 and 19.5?</p>
-<pre class="r"><code>boys3 &lt;- boys[boys$age &gt; 19 &amp; boys$age &lt; 19.5, ]
-nrow(boys3)</code></pre>
-<pre><code>## [1] 18</code></pre>
-<p>OR</p>
-<pre class="r"><code>boys3.2 &lt;- subset(boys, age &gt; 19 &amp; age &lt; 19.5)
-nrow(boys3.2)</code></pre>
-<pre><code>## [1] 18</code></pre>
 <hr />
 </div>
 <div id="section-17" class="section level2" number="4.3">
 <h2><span class="header-section-number">4.3</span> </h2>
 <p><strong>Compute the mean age of boys younger than 15 years old that do not live in
 region <code>north</code></strong></p>
-<pre class="r"><code>mean(boys$age[boys$age &lt; 15 &amp; boys$reg != &quot;north&quot; ], na.rm = TRUE)</code></pre>
-<pre><code>## [1] 6.044461</code></pre>
-<p>OR</p>
-<pre class="r"><code>mean(subset(boys, age &lt; 15 &amp; reg != &quot;north&quot;)$age, na.rm = TRUE)</code></pre>
-<pre><code>## [1] 6.044461</code></pre>
 <hr />
 <p>In this exercise, you have learned some basic R usage. The approaches we used
 for this exercise offer tremendous flexibility but may also be inefficient in

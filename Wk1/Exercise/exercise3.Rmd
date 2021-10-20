@@ -548,9 +548,7 @@ functions to import and export data from software such as Stata, SAS, and SPSS.
 
 ---
 
-End of Practical 
-
----
+End of Exercise 3
 
 
 
