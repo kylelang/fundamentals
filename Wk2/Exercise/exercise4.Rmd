@@ -5,7 +5,7 @@ date: "Fundamental Techniques in Data Science with R"
 params:
   answers: true
 output: 
-   html_document:
+   bookdown::html_document2:
     toc: true
     toc_depth: 1
     toc_float: true
@@ -42,6 +42,13 @@ pre { /* Code block - determines code spacing between lines */
 </style>
 
 ```{r setup, echo = FALSE}
+library(knitr)
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
 knitr::opts_chunk$set(include = params$answers, 
                       echo = params$answers, 
                       message = FALSE, 
@@ -227,13 +234,13 @@ boys %>%
 ```{r echo = FALSE}
 x <- rnorm(100, mean = 3, sd = 7)
 y <- c(rnorm(50, mean = 2, sd = 3), rnorm(50, mean = 9, sd = 2))
-save(x, y, file = "exercise4_data.RData")
+save(x, y, file = "data/exercise4_data.RData")
 ```
 
 
 In the following questions, you will investigate least-squares estimation of the 
 mean. You can find the necessary data the workspace 
-[*exercise4_data.RData*](exercise4_data.RData). 
+[*exercise4_data.RData*](data/exercise4_data.RData). 
 
 You can load this workspace in two ways:
 
@@ -242,19 +249,20 @@ manually with the `load()` function.
 1. Create a connection to download the file from the course website, and load 
 via that connection. The code for this approach is shown below.
 
-```{r eval = FALSE, echo = TRUE}
-con <- url("https://www.kylemlang.com/fundamentals/wk2/exercise/exercise4_data.RData")
+```{r eval = FALSE, echo = TRUE, include = TRUE}
+con <- url("https://www.kylemlang.com/fundamentals/wk2/exercise/data/exercise4_data.RData")
 load(con)
 ```
 
-The `exercise4_data` workspace contains two vectors: `x` and `y`. Use these 
-vectors to answer the following questions.
+The *exercise4_data.RData* workspace contains two vectors: `x` and `y`. Use 
+these vectors to answer the following questions.
 
 ---
 
-##
+## {#meanQ}
 
 **Calculate the sample mean of the values in `x`**
+
 ```{r}
 mean(x)
 ```
@@ -283,7 +291,7 @@ ssd <- sum((x - mu)^2)
 
 ---
 
-We have already seen many examples or R functions (e.g., `mean()`, , `sum()`, 
+We have already seen many examples or R functions (e.g., `mean()`, `sum()`, 
 `cor()`). As you progress in your programming/data analytic career, however, you 
 will frequently encounter situations wherein it will be useful to define your 
 own functions. 
@@ -291,7 +299,7 @@ own functions.
 In R, we use the `function()` function to define a new function. The following 
 pseudo code illustrates the usage of `function()`.
 
-```{r, echo = TRUE, eval = FALSE}
+```{r, include = TRUE, echo = TRUE, eval = FALSE}
 myFunction <- function(arg1, arg2, ..., argN) {
   Code to do something using {arg1, arg2, ..., argN}
 }
@@ -354,9 +362,18 @@ whenever doing so makes sense.
 
 ---
 
-##
+## {#lsFunQ}
 
-**Create a function that calculates the sum of squares for any given $\mu$**
+**Create a function that calculates the sum of squares for any given $\mu$ and 
+vector of data**
+
+Your function should take two arguments.
+
+1. The first argument should be the value of $\mu$.
+1. The second argument should be the vector of data.
+
+Be sure to define the arguments in the order requested above. The order of the 
+arguments will be important in answering the next question.
 
 ```{asis}
 Here are three potential solutions.
@@ -365,7 +382,7 @@ We can define our function as a simple "one-liner":
 ```
 
 ```{r}
-lsFun <- function(x, mu) sum((x - mu)^2)
+lsFun <- function(mu, data) sum((data - mu)^2)
 ```
 
 ```{asis}
@@ -374,8 +391,8 @@ contents in braces. We can also do so here, without any ill-effects:
 ```
 
 ```{r}
-lsFun <- function(x, mu) {
-  sum((x - mu)^2)
+lsFun <- function(mu, data) {
+  sum((data - mu)^2)
 }
 ```
 
@@ -384,7 +401,7 @@ We could also do the calculations with a pipe:
 ```
 
 ```{r}
-lsFun <- function(x, mu) (x - mu)^2 %>% sum()
+lsFun <- function(mu, data) (data - mu)^2 %>% sum()
 ```
 
 ---
@@ -393,60 +410,139 @@ lsFun <- function(x, mu) (x - mu)^2 %>% sum()
 
 **Plot the curve of your least square solutions**
 
-Use the `curve()` function to plot the least squares solutions returned by your 
-function for a range of $\mu$ values.
+Use the `plotCurve()` function defined below to plot the least squares solutions 
+returned by your function for a range of $\mu$ values.
 
 - Choose the range of $\mu$ such that you can identify the minimum of the curve 
 (i.e. the value of $\mu$ where the sum of the squared deviations is smallest)
 
-```{r}
-curve(lsFun, from = 1, to = 8, x = x)
+```{r, include = TRUE, echo = TRUE}
+plotCurve <- function(fun, data, from, to) {
+  x <- seq(from, to, length.out = 100)
+  y <- rep(NA, length(x))
+  
+  for(i in 1 : length(x)) y[i] <- fun(x[i], data)
+  
+  plot(y = y, x = x, type = "l")
+}
 ```
 
-We can see that the minimum lies somewhere above, but near the value 4. We already know from exercise 7 that the mean is equal to `r mean(x)`, and that is the `x` coordinate for the abscissa. To verify this, we can change the range of the plotted curve to zoom in on `r mean(x)`:
+To use the above `plotCurve()` function, you must specify each of the following 
+arguments:
+
+- `fun`: The function to use in generating the y-values of the plot (the 
+function you defined in Question \@ref(lsFunQ), in this case)
+- `data`: The data vector to use in calculating the devations from $\mu$ (`x` 
+from the *exercise4_data.RData* workspace, in this case)
+- `from`: The minimum value of $\mu$ to plot on the x-axis
+- `to`: The maximum value of $\mu$ to plot on the x-axis
 
 ```{r}
-curve(lsfun, from = 4.16, to = 4.17)
+plotCurve(lsFun, x, 1, 8)
+```
+
+```{asis}
+We can see that the minimum lies somewhere between $\mu = 1$  and $\mu = 8$, 
+pretty close to $\mu = 4$. From Question \@ref(meanQ), we know that the mean of `x` is 
+equal to `r round(mean(x), 2)`. 
+
+- To verify that the mean of `x` minimizes the sum of squared deviations, change 
+the range of the x-axis in the plot to zoom in on `r round(mean(x), 2)`.
+```
+
+```{r}
+plotCurve(lsFun, x, mean(x) - 0.1, mean(x) + 0.1)
 ```
 
 
 ---
 
-# Hand-in exercise
+# More Least Squares Fun
 
 ---
 
-11. **Repeat the experiment from 10 on object `y` from `Exercise4_data.RData`.**
+In this section, you will analyze the `y` variable that you loaded via the 
+`exercise4_data.RData` workspace.
 
-- Plot a histogram of `y` and report on the shape of the data
-  - What do you think the mean is, based on the plot?
-  - Calculate the mean (expected value) 
-  - Calculate the median (the center of the distribution) 
-  - Calculate the mode (the most observed value). Calculate the mode on rounded numbers (HINT: use `round()`).
-  - what do the mean, mode and median tell you about the shape of the data?
-- Plot the least squares curve from values 2 to 10, conform the previous exercise
-- Plot a curve that zooms in on the minimum (i.e. the least squared deviations)
-- Report the `meanestimate` that would minimize the least squares function
+##
 
-```{r eval = FALSE, echo = FALSE}
+**Plot a histogram of `y`**
+
+```{r}
 hist(y)
+```
+
+##
+
+**Calculate the sample mean of `y`** 
+
+```{r}
 mean(y)
+```
+##
+
+**Calculate the median of `y`**
+
+```{r}
 median(y)
-mode <- round(y) %>% table 
-# mode is equal to 10
-lsfun <- function(meanestimate) apply(outer(y, meanestimate, "-")^2, 2, sum)
-curve(lsfun, from = 2, to = 10)
-curve(lsfun, from = 2, to = 10)
+```
+##
+
+**What do the relative values of the mean and the median tell you about the 
+shape of the data?**
+  
+```{asis}
+The median is larger than the mean. This difference suggest that the 
+distribution of `y` is negatively skewed. The histogram clearly shows this skew. 
+
+- If we plot the density, the skew is even more apparent.
+```
+
+```{r}
+y %>% density() %>% plot()
+```
+
+
+##
+
+**Plot the least squares solutions**
+
+Use the `plotCurve()` function from above to plot the curve of least squares 
+solutions for the range $\mu = 2$ to $\mu = 10$.
+
+```{r}
+plotCurve(lsFun, y, 2, 10)
+```
+
+##
+
+**Plot a curve that zooms in on the minimum of the above figure**
+
+```{r}
+plotCurve(lsFun, y, mean(y) - 0.1, mean(y) + 0.1)
+```
+
+##
+
+**What value of $\mu$ would minimize the sum of squared deviations?**
+
+```{asis}
+Naturally, the sample mean of `y`, `r round( mean(y), 3)`, minimizes the sum of 
+squared deviations.
 ```
 
 ---
 
-End of practical. 
+End of Exercise 4 
 
- 
 ---
 
-# Useful References
+# Useful Links
 
-- [`magrittr`](https://magrittr.tidyverse.org)
-- [`R` for Data Science](http://r4ds.had.co.nz) - [Chapter 18 on pipes](http://r4ds.had.co.nz/pipes.html)
+---
+
+Here are some useful links related to the topics covered in this exercise.
+
+- [**magrittr**](https://magrittr.tidyverse.org)
+- [R for Data Science](http://r4ds.had.co.nz)
+   - [Chapter 18 on pipes](http://r4ds.had.co.nz/pipes.html)
