@@ -1,0 +1,433 @@
+---
+title: "Exercise 4"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: true
+output: 
+   html_document:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r setup, echo = FALSE}
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+The following packages are required for this practical.
+
+```{r, include = TRUE, echo = TRUE}
+library(dplyr)
+library(magrittr)
+library(mice)
+```
+
+If you'd like to replicate my results, you can set the random seed via:
+
+```{r, include = TRUE, echo = TRUE}
+set.seed(235711)
+```
+
+---
+
+# Working with Pipes
+
+---
+
+When answering the questions in this section, use either the standard pipe, 
+`%>%`,  or the exposition pipe, `%$%`, to structure your solutions into 
+pipelines, whenever possible.
+
+##
+
+**Complete the following steps in a single pipeline**
+
+1. Use the `rnorm()` funciton to draw 1000 random values from a normal 
+distribution with `mean = 5` and `sd = 1` 
+1. Place these random draws in a 500 $\times$ 2 matrix wherein the first 500 
+values populate the first column, and the second 500 values populate the second 
+column.
+1. Make a scatterplot of these two columns.
+
+```{r}
+rnorm(1000, 5) %>%
+  matrix(ncol = 2) %>%
+  plot()
+```
+
+---
+
+##
+
+**Calculate the correlation matrix of the `anscombe` data set**
+
+```{r}
+anscombe %>% cor()
+```
+
+---
+
+##
+
+**Calculate the correlation for the variables `x4` and `y4` from the `anscombe` 
+data set**
+
+```{asis}
+Using the standard pipe:
+```
+
+```{r}
+anscombe %>%
+  subset(select = c(x4, y4)) %>%
+  cor()
+```
+
+```{asis}
+Using the exposition pipe:
+```
+
+```{r}
+anscombe %$% cor(x4, y4)
+```
+
+---
+
+##
+
+**Calculate the correlation between `hgt` and `wgt` in the `boys` dataset from 
+the *mice* package**
+
+```{asis}
+The `boys` dataset has missings values on almost all variables, so we must do 
+something to address the missing data (e.g., excluding incomplete cases) before 
+calculating the correlation.
+
+Using the standard pipe:
+```
+
+```{r}
+boys %>%
+  subset(select = c("wgt", "hgt")) %>%
+  cor(use = "pairwise.complete.obs")
+```
+
+```{asis}
+The `use = "pairwise.complete.obs"` argument tells the `cor()` function to use
+only cases that are non-missing for both `wgt` and `hgt` when calculating the 
+correlation.
+
+The above is equivalent to:
+```
+
+```{r}
+boys %>%
+  subset(select = c("wgt", "hgt")) %>%
+  na.omit() %>%
+  cor()
+```
+
+```{asis}
+Notice that we selected the columns with which we would be working before 
+running `na.omit()`. The `na.omit()` function excludes all incomplete cases, so 
+we would throw out many more cases than necessary if we ran `na.omit()` on the 
+entire dataset. 
+
+Alternatively, we can use the exposition pipe for a more elegant solution.
+```
+
+```{r}
+boys %$% cor(hgt, wgt, use = "pairwise.complete.obs")
+```
+
+```{asis}
+The exposition pipe *exposes* the variable names of the `boys` dataset, so we 
+can refer to them directly.
+```
+
+---
+
+##
+
+**Transform `hgt`**
+
+In the `boys` dataset, `hgt` is recorded in centimeters. 
+
+1. Transform the scale of `hgt` to meters
+1. Assign the transformed variable to a new column in the `boys` dataset 
+named `hgt_meters`
+1. Verify the transformation.
+
+```{r}
+boys <- boys %>% transform(hgt_meters = hgt / 100)
+
+boys %$% hist(hgt)
+boys %$% hist(hgt_meters)
+```
+
+
+##
+
+**Create two scatterplots of *height* against *weight***
+
+1. In the first figure, plot height in meters.
+   - Make the points for the meters plot blue.
+1. In the second figure, plot height in centimeters.
+   - Make the points for the centimiters plot red.
+   
+```{r}
+boys %>%
+  subset(select = c(hgt, wgt)) %>%
+  plot(col = "red", main = "Height in Centimeters") 
+
+boys %>%
+  subset(select = c(hgt_meters, wgt)) %>%
+  plot(col = "blue", main = "Height in Meters")
+```
+
+---
+
+# Working with Squared Deviations
+
+---
+
+```{r echo = FALSE}
+x <- rnorm(100, mean = 3, sd = 7)
+y <- c(rnorm(50, mean = 2, sd = 3), rnorm(50, mean = 9, sd = 2))
+save(x, y, file = "exercise4_data.RData")
+```
+
+
+In the following questions, you will investigate least-squares estimation of the 
+mean. You can find the necessary data the workspace 
+[*exercise4_data.RData*](exercise4_data.RData). 
+
+You can load this workspace in two ways:
+
+1. Download the workspace via the link above and load it into your environment 
+manually with the `load()` function.
+1. Create a connection to download the file from the course website, and load 
+via that connection. The code for this approach is shown below.
+
+```{r eval = FALSE, echo = TRUE}
+con <- url("https://www.kylemlang.com/fundamentals/wk2/exercise/exercise4_data.RData")
+load(con)
+```
+
+The `exercise4_data` workspace contains two vectors: `x` and `y`. Use these 
+vectors to answer the following questions.
+
+---
+
+7. **Obtain the sample mean of the values in `x`.**
+```{r}
+mean(x)
+```
+
+---
+
+The values in `x` have been drawn from a population with mean $\mu = 3$ and standard deviation $\sigma = 7$. 
+
+---
+
+8. **Calculate the sample mean's sum of squared deviations from $\mu$. The sum of squared deviations from mu is defined as: **
+$$ \text{ssd} = \sum_{i=1}^{100} (x_i - \mu)^2.$$
+There is a slow way
+```{r}
+mu = 3
+deviations <- x - mu
+ssd <- sum(deviations^2)
+```
+
+And a fast way with function apply, where a function is applied over the margin (1 = rows, 2 = columns) of some data. 
+```{r}
+ssd2 <- apply(X = outer(x, mu, FUN = "-")^2, 
+              MARGIN = 2, 
+              FUN = sum)
+
+x <- 1:10
+y <- 1:10
+
+outer(x, y)
+
+crossprod(x, y)
+
+crossprod(scale(x, scale = FALSE))
+
+sum((x - mean(x))^2)
+```
+Here `X = outer(x, mu, FUN = "-")^2` provides the data to apply. Remember that we have defined `x` and `mu` in the global environment. With the `outer()` function, we can quickly determine the outer product of some vectors. In this case we simply use subtraction `-` as our function to obtain for the column margin (`MARGIN = 2`) - which in this case is just the vector of squared deviations - and sum (`FUN = sum`) all these values into a single sum. The result is the sum of squared deviations. 
+
+Both solutions are identical
+```{r}
+identical(ssd, ssd2)
+```
+
+To see them, we can simply congatenate the two values:
+```{r}
+c(ssd, ssd2)
+```
+
+---
+
+# Functions in `R`
+
+The apply class of functions is very flexible and lightning fast, when compared to manual operations that could easily be defined in terms of functions. The only caveat is that you need a function to apply. Many such functions are already available in `R`, such as `mean()`, `mode()`, `sum()`, `cor()`, and so on. 
+
+However, if you need to perform more than a simple calculation, it is often necessary to create your own function. In `R` functions take the following form
+
+```{r}
+myfunction <- function(arguments){
+  hereyourfunctioncode
+}
+```
+
+For example, 
+```{r}
+mean.sd <- function(argument1, argument2){
+  mean1 <- mean(argument1) 
+  mean2 <- mean(argument2)
+  sd1 <- sd(argument1)
+  sd2 <- sd(argument2)
+  result <- data.frame(mean = c(mean1, mean2),
+                       sd = c(sd1, sd2), 
+                       row.names = c("first", "second"))
+  return(result)
+}
+```
+The above function calculates the means and standard deviations for two sources of input, then combines these statistics in a simple data frame and returns the data frame. The sources of input are defined in the function arguments `argument1` and `argument2`. The reason why we have to specify these arguments is simple:
+
+\[\text{EVERYTHING THAT HAPPENS IN A FUNCTION COMES FROM THE}\] 
+\[\text{FUNCTION AND STAYS IN THE FUNCTION!}\]
+
+This is because a function opens a seperate environment that only exists for as long as the function operates. This means:
+
+1. To get information from the global environment to the function's environment, we need arguments.
+2. To properly return information to the global environment, we should use `return()`. In general, using `return()` makes it explicit what your function's return is. For complicated functions this is proper coding procedure, but for simple functions it is not strictly necessary. 
+
+To put this example function to the test:
+```{r}
+mean.sd(argument1 = 1:10,
+        argument2 = 3:8)
+```
+
+or, simply:
+```{r}
+mean.sd(1:10, 3:8)
+```
+
+
+---
+
+## Exercises 9-10
+9. **Now create a function that automates the calculation of the sum of squares for any given $\mu$. Call the function `lsfun` because we are going to identify the least squares estimate and coding is fun!**
+
+We can use the 
+```{r}
+lsfun <- function(meanestimate) apply(outer(x, meanestimate, "-")^2, 2, sum)
+```
+
+or, 100% equivalently, but easier to spot as a function:
+```{r}
+lsfun2 <- function(meanestimate){
+  apply(outer(x, meanestimate, "-")^2, 
+        MARGIN =  2, 
+        FUN = sum)
+}
+```
+
+or, with a pipe
+```{r}
+lsfun3 <- function(meanestimate){
+  outer(x, meanestimate, "-")^2 %>%
+    apply(MARGIN = 2, FUN = sum)
+}
+```
+
+---
+
+10. **Plot the curve of your least square function such that you can identify the minimum of the curve (i.e. the location for $x$ where the sum of the squared deviations are the lowest).**
+```{r}
+curve(lsfun, from = 1, to = 8, ylab = "Sum of the squared deviations")
+```
+
+We can see that the minimum lies somewhere above, but near the value 4. We already know from exercise 7 that the mean is equal to `r mean(x)`, and that is the `x` coordinate for the abscissa. To verify this, we can change the range of the plotted curve to zoom in on `r mean(x)`:
+
+```{r}
+curve(lsfun, from = 4.16, to = 4.17)
+```
+
+
+---
+
+# Hand-in exercise
+
+---
+
+11. **Repeat the experiment from 10 on object `y` from `Exercise4_data.RData`.**
+
+- Plot a histogram of `y` and report on the shape of the data
+  - What do you think the mean is, based on the plot?
+  - Calculate the mean (expected value) 
+  - Calculate the median (the center of the distribution) 
+  - Calculate the mode (the most observed value). Calculate the mode on rounded numbers (HINT: use `round()`).
+  - what do the mean, mode and median tell you about the shape of the data?
+- Plot the least squares curve from values 2 to 10, conform the previous exercise
+- Plot a curve that zooms in on the minimum (i.e. the least squared deviations)
+- Report the `meanestimate` that would minimize the least squares function
+
+```{r eval = FALSE, echo = FALSE}
+hist(y)
+mean(y)
+median(y)
+mode <- round(y) %>% table 
+# mode is equal to 10
+lsfun <- function(meanestimate) apply(outer(y, meanestimate, "-")^2, 2, sum)
+curve(lsfun, from = 2, to = 10)
+curve(lsfun, from = 2, to = 10)
+```
+
+---
+
+End of practical. 
+
+ 
+---
+
+# Useful References
+
+- [`magrittr`](https://magrittr.tidyverse.org)
+- [`R` for Data Science](http://r4ds.had.co.nz) - [Chapter 18 on pipes](http://r4ds.had.co.nz/pipes.html)
