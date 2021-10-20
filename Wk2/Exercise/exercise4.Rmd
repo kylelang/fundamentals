@@ -252,136 +252,155 @@ vectors to answer the following questions.
 
 ---
 
-7. **Obtain the sample mean of the values in `x`.**
+##
+
+**Calculate the sample mean of the values in `x`**
 ```{r}
 mean(x)
 ```
 
 ---
 
-The values in `x` have been drawn from a population with mean $\mu = 3$ and standard deviation $\sigma = 7$. 
+##
 
----
+**Calculate the sum of squared deviations**
 
-8. **Calculate the sample mean's sum of squared deviations from $\mu$. The sum of squared deviations from mu is defined as: **
-$$ \text{ssd} = \sum_{i=1}^{100} (x_i - \mu)^2.$$
-There is a slow way
+The values in `x` have been drawn from a population with mean $\mu = 3$ and 
+standard deviation $\sigma = 7$. Calculate the sum of squared deviations from 
+$\mu$. 
+
+- The sum of squared deviations from mu is defined as:
+$$ \text{ssd} = \sum_{i = 1}^{N} (x_i - \mu)^2$$
+
 ```{r}
-mu = 3
-deviations <- x - mu
-ssd <- sum(deviations^2)
-```
-
-And a fast way with function apply, where a function is applied over the margin (1 = rows, 2 = columns) of some data. 
-```{r}
-ssd2 <- apply(X = outer(x, mu, FUN = "-")^2, 
-              MARGIN = 2, 
-              FUN = sum)
-
-x <- 1:10
-y <- 1:10
-
-outer(x, y)
-
-crossprod(x, y)
-
-crossprod(scale(x, scale = FALSE))
-
-sum((x - mean(x))^2)
-```
-Here `X = outer(x, mu, FUN = "-")^2` provides the data to apply. Remember that we have defined `x` and `mu` in the global environment. With the `outer()` function, we can quickly determine the outer product of some vectors. In this case we simply use subtraction `-` as our function to obtain for the column margin (`MARGIN = 2`) - which in this case is just the vector of squared deviations - and sum (`FUN = sum`) all these values into a single sum. The result is the sum of squared deviations. 
-
-Both solutions are identical
-```{r}
-identical(ssd, ssd2)
-```
-
-To see them, we can simply congatenate the two values:
-```{r}
-c(ssd, ssd2)
+mu  <- 3
+ssd <- sum((x - mu)^2)
 ```
 
 ---
 
-# Functions in `R`
-
-The apply class of functions is very flexible and lightning fast, when compared to manual operations that could easily be defined in terms of functions. The only caveat is that you need a function to apply. Many such functions are already available in `R`, such as `mean()`, `mode()`, `sum()`, `cor()`, and so on. 
-
-However, if you need to perform more than a simple calculation, it is often necessary to create your own function. In `R` functions take the following form
-
-```{r}
-myfunction <- function(arguments){
-  hereyourfunctioncode
-}
-```
-
-For example, 
-```{r}
-mean.sd <- function(argument1, argument2){
-  mean1 <- mean(argument1) 
-  mean2 <- mean(argument2)
-  sd1 <- sd(argument1)
-  sd2 <- sd(argument2)
-  result <- data.frame(mean = c(mean1, mean2),
-                       sd = c(sd1, sd2), 
-                       row.names = c("first", "second"))
-  return(result)
-}
-```
-The above function calculates the means and standard deviations for two sources of input, then combines these statistics in a simple data frame and returns the data frame. The sources of input are defined in the function arguments `argument1` and `argument2`. The reason why we have to specify these arguments is simple:
-
-\[\text{EVERYTHING THAT HAPPENS IN A FUNCTION COMES FROM THE}\] 
-\[\text{FUNCTION AND STAYS IN THE FUNCTION!}\]
-
-This is because a function opens a seperate environment that only exists for as long as the function operates. This means:
-
-1. To get information from the global environment to the function's environment, we need arguments.
-2. To properly return information to the global environment, we should use `return()`. In general, using `return()` makes it explicit what your function's return is. For complicated functions this is proper coding procedure, but for simple functions it is not strictly necessary. 
-
-To put this example function to the test:
-```{r}
-mean.sd(argument1 = 1:10,
-        argument2 = 3:8)
-```
-
-or, simply:
-```{r}
-mean.sd(1:10, 3:8)
-```
-
+# User-Defined Functions
 
 ---
 
-## Exercises 9-10
-9. **Now create a function that automates the calculation of the sum of squares for any given $\mu$. Call the function `lsfun` because we are going to identify the least squares estimate and coding is fun!**
+We have already seen many examples or R functions (e.g., `mean()`, , `sum()`, 
+`cor()`). As you progress in your programming/data analytic career, however, you 
+will frequently encounter situations wherein it will be useful to define your 
+own functions. 
 
-We can use the 
-```{r}
-lsfun <- function(meanestimate) apply(outer(x, meanestimate, "-")^2, 2, sum)
-```
+In R, we use the `function()` function to define a new function. The following 
+pseudo code illustrates the usage of `function()`.
 
-or, 100% equivalently, but easier to spot as a function:
-```{r}
-lsfun2 <- function(meanestimate){
-  apply(outer(x, meanestimate, "-")^2, 
-        MARGIN =  2, 
-        FUN = sum)
+```{r, echo = TRUE, eval = FALSE}
+myFunction <- function(arg1, arg2, ..., argN) {
+  Code to do something using {arg1, arg2, ..., argN}
 }
 ```
 
-or, with a pipe
-```{r}
-lsfun3 <- function(meanestimate){
-  outer(x, meanestimate, "-")^2 %>%
-    apply(MARGIN = 2, FUN = sum)
+For example, the following function computes the absolute value of the 
+difference between its inputs, {`x`, `y`}, and standardizes the result.
+
+```{r, include = TRUE, echo = TRUE}
+stdAbsDiff <- function(x, y) {
+  d <- x - y
+  (d - mean(d)) / sd(d)
 }
+```
+
+Notice how the code inside our function only uses data that we pass into the 
+function as arguments (`x` and `y`, in this case).
+
+- In nearly all circumstances, your function should only use its arguments to 
+derive its return value (i.e., the value produced when you run the function).
+- R uses something called *lexical scoping* to find the data used for a 
+calculation.
+   - Thanks to lexical scoping, it is technically possible to do calculations 
+   inside a function using objects defined only in the global environment.
+   - Using global objects inside a function is generally considered bad practice,
+   though, and should be avoided unless you have a very good reason not to.
+
+Another thing to notice about our function definition is the lack of an explicit 
+`return()` statement.
+
+- Although R does have a `return()` function that you can use to explicitly 
+"return" the result from a function, doing so is not necessary.
+   - An R function will return whatever value is produce by the last line of 
+   code inside the function (`(d - mean(d)) / sd(d)`, in our case).
+   - You should only use the `return()` function when you need to return early 
+   from a complicated function.
+
+The code above only defines the `stdAbsDiff()` function. To actually use this 
+function, we need to call `stdAbsDiff()` with some arguments.
+
+```{r, echo = TRUE, include = TRUE}
+stdAbsDiff(x = 1:10, y = -1:-10)
+```
+
+OR
+
+```{r, echo = TRUE, include = TRUE}
+stdAbsDiff(1:10, -1:-10)
+```
+
+The R programming philosophy is highly functional (with a healthy dose of 
+object-orientation sprinkled throughout).
+
+- When you write an R script, you should break down the problem into a series of 
+functions.
+- You should strive to compartmentalize your calculations into functions 
+whenever doing so makes sense.
+   - If you find yourself doing some operation repeatedly, you should probably 
+   write a function to do that operation.
+
+---
+
+##
+
+**Create a function that calculates the sum of squares for any given $\mu$**
+
+```{asis}
+Here are three potential solutions.
+
+We can define our function as a simple "one-liner":
+```
+
+```{r}
+lsFun <- function(x, mu) sum((x - mu)^2)
+```
+
+```{asis}
+If our function contained more than one line of code, we would need to wrap the 
+contents in braces. We can also do so here, without any ill-effects:
+```
+
+```{r}
+lsFun <- function(x, mu) {
+  sum((x - mu)^2)
+}
+```
+
+```{asis}
+We could also do the calculations with a pipe:
+```
+
+```{r}
+lsFun <- function(x, mu) (x - mu)^2 %>% sum()
 ```
 
 ---
 
-10. **Plot the curve of your least square function such that you can identify the minimum of the curve (i.e. the location for $x$ where the sum of the squared deviations are the lowest).**
+##
+
+**Plot the curve of your least square solutions**
+
+Use the `curve()` function to plot the least squares solutions returned by your 
+function for a range of $\mu$ values.
+
+- Choose the range of $\mu$ such that you can identify the minimum of the curve 
+(i.e. the value of $\mu$ where the sum of the squared deviations is smallest)
+
 ```{r}
-curve(lsfun, from = 1, to = 8, ylab = "Sum of the squared deviations")
+curve(lsFun, from = 1, to = 8, x = x)
 ```
 
 We can see that the minimum lies somewhere above, but near the value 4. We already know from exercise 7 that the mean is equal to `r mean(x)`, and that is the `x` coordinate for the abscissa. To verify this, we can change the range of the plotted curve to zoom in on `r mean(x)`:
