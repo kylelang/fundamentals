@@ -331,7 +331,7 @@ Today's lecture is about the elemental building blocks of `R`. We will discuss
 what `R` actually is, why we use `RStudio`, how to 'speak' `R`, and how to work 
 with `R` objects. 
 
-You can find the slides [here](www.kylemlang.com/wk1/lecture1.html)
+You can find the slides [here](../wk1/lecture1.html)
 
 ### Workgroup (Thursday)
 
