@@ -25,30 +25,47 @@ Assessment: Assignments and Exam <br>
 
 | What?   | When?               | Where?                |
 |---------|---------------------|-----------------------|
+|         |                     |                       |
 | Lecture | 2021-11-15<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-11-18<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-11-18<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-11-18<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-11-22<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-11-25<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-11-25<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-11-25<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-11-29<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-12-02<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-12-02<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-12-02<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-12-06<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-12-09<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-12-09<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-12-09<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-12-13<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-12-16<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-12-16<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-12-16<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-12-20<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-12-23<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-12-23<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-12-23<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-01-10<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-01-13<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-01-13<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-01-13<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Lecture | 2021-01-17<br>17:15 | Ruppert<br>Blauw      |
 | WG1     | 2021-01-20<br>09:00 | Ruppert<br>011        |
+| WG3     | 2021-01-20<br>09:00 | Androclus<br>C023     |
 | WG2     | 2021-01-20<br>11:00 | Ruppert<br>011        |
+|         |                     |                       |
 | Exam    | 2021-01-26<br>19:00 | Education<br>Theatron |
 
 ---
