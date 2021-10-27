@@ -59,7 +59,7 @@ knitr::opts_chunk$set(include = params$answers,
 
 We will use the following packages in this practical:
 
-```{r}
+```{r, echo = TRUE, include = TRUE}
 library(dplyr)
 library(magrittr)
 library(ggplot2)
