@@ -1,31 +1,22 @@
 ---
-title: "Linear modeling and its assumptions"
-author: "Gerko Vink"
+title: "Linear Modeling"
+author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 output:
   ioslides_presentation:
-    logo: logo.png
     smaller: yes
     widescreen: no
 ---
 
-## Last week
-
-- pipes with package `magrittr`
-  - `%>%`
-  - `%$%`
-
-- deviations
-  - from the mean
-  - standardized
-  - squared
-  
 ## Today
-- the linear model
-- assumptions associated with the linear model
 
-##  We use the following packages
-```{r message=FALSE}
+- The general linear model
+- Assumptions of the linear model
+
+
+## Packages
+
+```{r message = FALSE, warning = FALSE}
 library(dplyr)
 library(magrittr)
 library(ggplot2)

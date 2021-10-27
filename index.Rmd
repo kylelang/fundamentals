@@ -331,7 +331,7 @@ Today's lecture is about the elemental building blocks of `R`. We will discuss
 what `R` actually is, why we use `RStudio`, how to 'speak' `R`, and how to work 
 with `R` objects. 
 
-You can find the slides [here](../wk1/lecture1.html)
+You can find the slides [here](wk1/lecture1.html)
 
 ### Workgroup (Thursday)
 
@@ -372,12 +372,14 @@ Submit an `R` script containing your answers to Exercise 3 to the
 [SurfDrive][sd] drop folder. Name the file `Yourname.R`, where `Yourname` is 
 your name. Do this ***before the next lecture***. 
 
+<!--
 ### Exercise Discussion
 The video discussions for the practical exercises:
 
 - [Exercise 1 discussion](https://www.dropbox.com/s/qgxlrrl808klmjq/Exercise1_discussion.mp4?dl=0)
 - [Exercise 2 discussion](https://www.dropbox.com/s/7bxqj6gn7occ0yr/Exercise%202_discussion.mp4?dl=0)
 - [Exercise 3 discussion](https://www.dropbox.com/s/dl5jklj4oixfpxd/Exercise3_discussion.mp4?dl=0)
+-->
 
 <!----------------------------------------------------------------------------->
 

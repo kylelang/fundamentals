@@ -10,5 +10,5 @@ all: ${NAMES}
 
 ## Rule to compile both the RMD files with and without solutions: 
 %: %.Rmd
-	Rscript --vanilla render.R $@ TRUE
-	Rscript --vanilla render.R $@ FALSE
+	Rscript --vanilla ../../code/render.R $@ TRUE
+	Rscript --vanilla ../../code/render.R $@ FALSE
