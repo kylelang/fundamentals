@@ -1,0 +1,433 @@
+---
+title: "Exercise 7"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: true
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+  
+<style type="text/css">
+  
+body{ /* Normal  */
+  font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+  font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+  font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+  font-size: 14px;
+}
+</style>
+  
+---
+
+```{r setup, echo = FALSE}
+library(knitr)
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+In this practical, you will work through a more complete workflow for 
+(predictive) analytics than you have encounted in the previous practicals.
+
+---
+
+The following packages are required for this practical:
+
+```{r, echo = TRUE, include = TRUE}
+library(dplyr)
+library(magrittr)
+library(mice)
+library(ggplot2)
+library(DAAG)
+library(MASS)
+```
+
+---
+
+# Analyzing `elastic1` and `elastic2`
+
+---
+
+We will begin by analyzing the `elastic1` and `elastic2` datasets from the 
+**DAAG** package. 
+
+##
+
+**Visualize the data**
+
+Use `ggplot()` to create scatterplots of the data from the `elastic1` and 
+`elastic2` data frames.
+
+- Plot both sets of points on the same graph
+- Use different symbols and/or colors to differentiate the data sources
+- Overlay linear regression lines for each data source
+- Do not plot the standard error bands
+
+Do the two sets of results appear consistent?
+
+```{r}
+elastic <- rbind(elastic1, elastic2)
+elastic$source <- c(rep("elastic1", nrow(elastic1)), 
+                    rep("elastic2", nrow(elastic2))
+                    )
+
+elastic %>%
+  ggplot(aes(stretch, distance, colour = source)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+```{asis}
+The results seem quite consistent. The `elastic2` dataset has more observations 
+over a larger range, but both datasets result in similar regression lines.
+```
+
+---
+
+## {#modelEstQ}
+
+**Estimate regression models**
+
+For each of the data sets: `elastic1` and `elastic2`, regress `distance` onto 
+`stretch`. Report the summary of each model and compare the following results 
+from each model:
+
+- The coefficient estimates
+- The fitted values 
+- The standard errors of the residuals
+- The $R^2$ statistics
+
+What is the key difference between the two sets of data?
+
+```{asis}
+Estimate the two models:
+```
+
+```{r}
+fit1 <- lm(distance ~ stretch, data = elastic1)
+fit2 <- lm(distance ~ stretch, data = elastic2)
+```
+
+```{asis}
+Generate the model summaries:
+```
+
+```{r}
+(s1 <- summary(fit1))
+(s2 <- summary(fit2))
+```
+
+```{asis}
+Compare the estimated coefficients:
+``` 
+
+```{r}
+data.frame(elastic1 = coef(fit1), elastic2 = coef(fit2))
+```
+
+```{asis}
+Compare the fitted values:
+``` 
+
+```{r}
+data.frame(elastic1 = predict(fit1), elastic2 = predict(fit1))
+```
+
+```{asis}
+Compare the residual standard errors:
+``` 
+
+```{r}
+c(elastic1 = s1$sigma, elastic2 = s2$sigma)
+```
+
+```{asis}
+We see that `fit1` (based on `elastic1`) has a larger residual standard error 
+(i.e. `summary(fit1)$sigma`). 
+```
+
+```{asis}
+Compare the $R^2$ values:
+``` 
+
+```{r}
+c(elastic1 = s1$r.squared, elastic2 = s2$r.squared)
+```
+
+```{asis}
+The model based on `elastic2` has a smaller residual standard error and a larger 
+$R^2$. This better fit is due to the larger range of values in `elastic2`.
+```
+
+---
+
+##
+
+**Check for influential cases**
+
+Use the `plot()` function to generate a compare the *Residual vs Leverage* plots 
+for both of the models you estimated in Question \@ref(modelEstQ).
+
+```{r}
+plot(fit1, which = 5) # The 5th plot is the residuals vs leverage plot
+plot(fit2, which = 5)
+```
+
+```{asis}
+For `elastic1`, Case 2 has the largest influence on the estimation. However, 
+Case 2 does not have the largest residual:
+```
+
+```{r}
+## Extract estimated residuals:
+fit1$residuals
+```
+
+```{asis}
+Case 7 has the largest residual, but Case 2 is most influential because it has 
+both a relatively large residual and also a high leverage value.
+```
+
+```{r}
+## Compute leverage values:
+hatvalues(fit1)
+```
+
+---
+
+## {#predQ}
+
+**Generate predictions**
+
+Use the `stretch` variable from the `elastic2` dataset to generate predictions 
+from the model fitted to the `elastic1` dataset
+
+```{r}
+pred <- predict(fit1, newdata = elastic2)
+```
+
+---
+
+##
+
+**Compare predicted and observed values**
+
+Use `ggplot()` to make a scatterplot that compares the predicted values of 
+`stretch` you created in Question \@ref(predQ) to the observed values of 
+`stretch` in the `elastic2` dataset.
+
+```{r}
+dat1 <- data.frame(stretch = elastic2$stretch, 
+                   distance = c(elastic2$distance, pred)
+)
+
+dat1$source <- rep(c("original", "predicted"), each = nrow(elastic2))
+
+dat1 %>%
+  ggplot(aes(x = stretch, y = distance, colour = source)) +
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+```{asis}
+The predicted values are very similar to the observed values.
+```
+
+```{r}
+dat1 <- data.frame(observed = elastic2$distance, predicted = pred) 
+
+dat1 %>%
+  ggplot(aes(observed, predicted)) + 
+  geom_point()
+  
+```
+```{asis}
+The observed and predicted `distance` values are not identical because of 
+two sources of error
+
+1. We applied the `elastic1` model to `elastic2` data to generate the predictions
+1. We are comparing predictions to observed values 
+
+Considering these points, the predictions are very accurate and have a 
+remarkably high correlations with the observed values.
+```
+
+```{r}
+dat1 %$% cor(observed, predicted) 
+```
+
+---
+
+# Analyzing `mammalsleep`
+
+---
+
+The mammalsleep dataset is part of `mice`. It contains the Allison and Cicchetti (1976) data for mammalian species. To learn more about this data, type
+```{r, eval = FALSE}
+?mammalsleep
+```
+
+--- 
+
+7. **Fit and inspect a model where `brw` is modeled from `bw`**
+```{r}
+mammalsleep %$%
+  lm(brw ~ bw) %>%
+  anova()
+```
+It seems that we can model brain weight `brw` with body weight `bw`. If we inspect the linear model, we see that the $R^2$ is quite high:
+```{r}
+mammalsleep %$%
+  lm(brw ~ bw) %>%
+  summary()
+```
+
+---
+
+8. **Now fit and inspect a model where `brw` is predicted from both `bw` and `species`**
+```{r}
+mammalsleep %$%
+  lm(brw ~ bw + species) %>%
+  anova()
+```
+
+There seems to be a perfect fit and we don't get any p-values. If we inspect the linear model `summary()`, we find that every animal only is observed once. Adding species as a predictor yields the most overfitted model we may obtain and our residuals drop effectively to zero. 
+
+```{r}
+mammalsleep %$%
+  lm(brw ~ bw + species) %>%
+  summary()
+```
+
+The analysis we ran is in fact equivalent to running a fixed effects model on clusters of size 1. Since in that scenario there is no clustering, we should omit the fixed effect for `species` and just model the random variation (in this case done by the residual variance).
+
+---
+
+9. **Can you find a model that improves the $R^2$ in modeling `brw`?**
+
+Since we're considering linear models so far, I limit myself to linear models only. The basis of the linear model is the variance covariance matrix and how it translates to data relations. This is most easily linearly summarized in the correlation matrix:
+```{r}
+mammalsleep %>%
+  subset(select = -species) %>% #exclude factor species
+  cor(use = "pairwise.complete.obs") #pairwise deletion
+```
+
+This matrix contains quite a few cells. To obtain only the correlations with `brw` we could select the respective column:
+```{r}
+mammalsleep %>%
+  subset(select = -species) %>% #exclude factor species
+  cor(use = "pairwise.complete.obs") %>% #pairwise deletion
+  subset(select = brw) #only column brw from the correlation matrix
+```
+
+It seems that the following variables have a rather nice relation with `brw`:
+
+- `sws`: short wave sleep
+- `ts` : total sleep
+- `mls`: maximum life span
+- `gt` : gestation time
+- `sei`: sleep exposure index
+
+However, from the larger correlation matrix we can also see that `ts` is highly colinear with `sws` - in fact, `ts` is calculated as the sum over `sws` and `ps`. Including both variables will not hurt our $R^2$ per se, but it will certainly trouble the precision of our estimation as including both variables will yield much larger standard errors. It may be wise to select `sws` as a predictor: `ts` contains a source of *error* in the form of `ps`, so its linear association with `brw` is slightly weaker. However, `sws` misses 14 cases and `ts` misses only 4. 
+```{r}
+mammalsleep %>%
+  summary()
+```
+
+Therefore it is highly preferable to use `ts` in the model, despite its weaker association.
+
+We run the new model:
+```{r}
+fit <- 
+  mammalsleep %$%
+  lm(brw ~ bw + ts + mls + gt + sei)
+  
+fit %>%
+  summary()
+```
+and we have obtained a very high $R^2$. If prediction was our goal, we are doing great.
+
+---
+
+10. **Inspect the diagnostic plots for the model obtained in `exercise 16`. What issues can you detect?**
+```{r}
+fit %>%
+  plot(which = 1:6)
+```
+
+Some issues spring to mind:
+
+- There error variance seems to be heteroscedastic [but we have a rather small sample]
+- The residuals are not normally distributed in the extreme tails
+- The following case has a large leverage: 1
+- The following case has large residual: 5
+```{r}
+mammalsleep$species[c(1, 5)]
+```
+
+If we sort the `brw` variable together with its strongest predictor 
+```{r}
+mammalsleep %>% 
+  subset(select = c(species, brw, bw, ts, mls, gt, sei)) %>%
+  arrange(desc(brw)) #sort the data in descending order based on brw
+```
+
+we see that `Man` has a large `brw` for small `bw` and that `African elephant` is so large that it massively influences the model. For `Man` we would expect a much lighter brain given its body weight. We can also see this from the residuals:
+```{r}
+fit %>%
+  residuals()
+```
+
+from the influence statistics:
+```{r}
+fit %>%
+  influence()
+```
+From the influence we see:
+
+- the residual standard deviation `$sigma` would drop when the first case and the fifth case would be omitted.
+- the coefficients `$coefficients$ would dramatically change if cases 1 and 5 were omitted
+
+The `influence(fit)$coefficients` is equivalent to the `dfbeta()` return:
+```{r}
+head(influence(fit)$coefficients)
+
+fit %>%
+  dfbeta() %>%
+  head()
+```
+
+---
+
+End of `Practical`. 
