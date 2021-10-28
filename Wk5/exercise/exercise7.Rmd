@@ -3,7 +3,7 @@ title: "Exercise 7"
 author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 params:
-  answers: true
+  answers: false
 output: 
    bookdown::html_document2:
     toc: true
@@ -38,7 +38,10 @@ code.r{ /* Code block */
 }
 pre { /* Code block - determines code spacing between lines */
   font-size: 14px;
+  max-height: 500px;
+  overflow-y: auto;
 }
+
 </style>
   
 ---
@@ -86,8 +89,8 @@ We will begin by analyzing the `elastic1` and `elastic2` datasets from the
 
 **Visualize the data**
 
-Use `ggplot()` to create scatterplots of the data from the `elastic1` and 
-`elastic2` data frames.
+Use `ggplot()` to create a scatterplot of the `distance` variable against the 
+`stretch` variable using the data from the `elastic1` and `elastic2` data frames.
 
 - Plot both sets of points on the same graph
 - Use different symbols and/or colors to differentiate the data sources
@@ -162,7 +165,7 @@ Compare the fitted values:
 ``` 
 
 ```{r}
-data.frame(elastic1 = predict(fit1), elastic2 = predict(fit1))
+list(elastic1 = predict(fit1), elastic2 = predict(fit2))
 ```
 
 ```{asis}
@@ -293,65 +296,139 @@ dat1 %$% cor(observed, predicted)
 
 ---
 
-The mammalsleep dataset is part of `mice`. It contains the Allison and Cicchetti (1976) data for mammalian species. To learn more about this data, type
-```{r, eval = FALSE}
+For the remaining questions in this practical, you will analyze the `mammalsleep` 
+dataset. The `mammalsleep` dataset is part of the **mice** package. This dataset 
+contains the Allison and Cicchetti (1976) data on mammalian species. To learn 
+more about these data, call up the help file.
+
+```{r, echo = TRUE, include = TRUE, eval = FALSE}
 ?mammalsleep
 ```
 
 --- 
 
-7. **Fit and inspect a model where `brw` is modeled from `bw`**
+## {#slrQ}
+
+**Regress brain weight onto body weight**
+
+Use `lm()` to estimate a linear regression model wherein `brw` is predicted by 
+`bw`.
+
+- Inspect the fitted model.
+
 ```{r}
-mammalsleep %$%
-  lm(brw ~ bw) %>%
-  anova()
+fit1 <- lm(brw ~ bw, data = mammalsleep)
+
+summary(fit1)
 ```
-It seems that we can model brain weight `brw` with body weight `bw`. If we inspect the linear model, we see that the $R^2$ is quite high:
-```{r}
-mammalsleep %$%
-  lm(brw ~ bw) %>%
-  summary()
+
+```{asis}
+Body weight is a significant predictor of brain weight. If we inspect the model 
+fit, we see that the $R^2$ is quite high and significantly greater than zero.
 ```
 
 ---
 
-8. **Now fit and inspect a model where `brw` is predicted from both `bw` and `species`**
+##
+
+**Add `species` as a second predictor**
+
+Add the `species` variable (as a predictor) into the model that you estimated in 
+Question \@ref(slrQ).
+
+- Inspect the fitted model.
+
 ```{r}
-mammalsleep %$%
-  lm(brw ~ bw + species) %>%
-  anova()
+fit2 <- update(fit1, ". ~ . + species")
+
+summary(fit2)
 ```
 
-There seems to be a perfect fit and we don't get any p-values. If we inspect the linear model `summary()`, we find that every animal only is observed once. Adding species as a predictor yields the most overfitted model we may obtain and our residuals drop effectively to zero. 
+```{asis}
+Here, we use the `update()` function because we only want to add another 
+predictor to an existing model and refit the larger model to the same data.
 
-```{r}
-mammalsleep %$%
-  lm(brw ~ bw + species) %>%
-  summary()
+- The `update()` function allows us to make changes to an existing model and 
+refit the model without having to respecify the entire formula.
+   - This approach can be very useful when dealing with large, complex models 
+     that you just want to tweak a little bit.
+   - We can also use `update()` to refit the same model to a different dataset.
+
+Our new model looks pretty broken.
+
+- The model fits the data perfectly.
+   - All residuals are 0.
+- We don't get any standard error estimates (consequently, we get no t-values or 
+p-values, either). 
 ```
 
-The analysis we ran is in fact equivalent to running a fixed effects model on clusters of size 1. Since in that scenario there is no clustering, we should omit the fixed effect for `species` and just model the random variation (in this case done by the residual variance).
+```{r}
+table(mammalsleep$species)
+```
+```{asis}
+If we calculate the frequencies of the `species` variable, we see that every 
+animal is observed only once. Adding species as a predictor, therefore, yields a 
+perfectly fitting model (i.e., a model wherein the regression line touches every 
+data point.
+
+- Such a model has no residual variance.
+- We cannot use a perfectly fitting model for statistical inference.
+- Nor should we use a perfectly fitting model for prediction.
+
+We should omit the `species` variable and account for the between-species 
+variability via the residual variance.
+```
 
 ---
 
-9. **Can you find a model that improves the $R^2$ in modeling `brw`?**
+# Model Building
 
-Since we're considering linear models so far, I limit myself to linear models only. The basis of the linear model is the variance covariance matrix and how it translates to data relations. This is most easily linearly summarized in the correlation matrix:
-```{r}
-mammalsleep %>%
-  subset(select = -species) %>% #exclude factor species
-  cor(use = "pairwise.complete.obs") #pairwise deletion
+--- 
+
+Can you use the `mammalsleep` dataset to specify a (sensible) linear model that 
+explains more variability in `brw` than `bw` explains as the only predictor?
+
+##
+
+**Variable selection**
+
+Use some statistical rationale to select a set of additional predictors that 
+will improve the fit of the model you estimated in Question \@ref(slrQ).
+
+- Try to choose predictors that are actually "pulling their weight" and 
+explaining a substantial proportion of additional variability in `brw`. 
+
+```{asis}
+There are many ways that you could go about this task, but we'll employ a 
+"quick-and-dirty" method based on bivariate correlations. Since the regression 
+coefficients and the $R^2$ are both fancy flavors of correlations (i.e., 
+semi-partial correlations and squared multiple correlation, respectively), we 
+can get a sense for which variables are likely to be good predictors by 
+scrutinizing the bivariate correlations between the candidate variables and the 
+outcome.
 ```
 
-This matrix contains quite a few cells. To obtain only the correlations with `brw` we could select the respective column:
 ```{r}
-mammalsleep %>%
-  subset(select = -species) %>% #exclude factor species
-  cor(use = "pairwise.complete.obs") %>% #pairwise deletion
-  subset(select = brw) #only column brw from the correlation matrix
+(
+  corMat <- mammalsleep %>%
+    subset(select = -species) %>% # Exclude the species factor
+    cor(use = "pairwise.complete.obs") %>% # Use pairwise deletion to work around missing data
+    round(3) 
+) 
 ```
 
-It seems that the following variables have a rather nice relation with `brw`:
+```{asis}
+This matrix contains quite a lot of information that we don't need for our 
+variable selection task. To obtain only the correlations with `brw`, we can 
+select the relevant column.
+```
+
+```{r}
+corMat %>% subset(select = brw) 
+```
+
+```{asis}
+The following variables all have moderate to large correlations with `brw`:
 
 - `sws`: short wave sleep
 - `ts` : total sleep
@@ -359,75 +436,280 @@ It seems that the following variables have a rather nice relation with `brw`:
 - `gt` : gestation time
 - `sei`: sleep exposure index
 
-However, from the larger correlation matrix we can also see that `ts` is highly colinear with `sws` - in fact, `ts` is calculated as the sum over `sws` and `ps`. Including both variables will not hurt our $R^2$ per se, but it will certainly trouble the precision of our estimation as including both variables will yield much larger standard errors. It may be wise to select `sws` as a predictor: `ts` contains a source of *error* in the form of `ps`, so its linear association with `brw` is slightly weaker. However, `sws` misses 14 cases and `ts` misses only 4. 
-```{r}
-mammalsleep %>%
-  summary()
+However, from the larger correlation matrix, we can also see that `ts` is 
+strongly correlated with `sws`.
+
+- In fact, `ts` is calculated as the sum of `sws` and `ps`.
+
+Including both the `ts` and `sws` variables will not hurt the $R^2$, but doing 
+so will decrease the precision of our estimates (i.e., produce larger standard 
+errors). 
+
+It may be wise to select `sws` as a predictor because `ts` contains a source of 
+error, in the form of `ps`. So, the linear association between `brw` and `ts` 
+will be slightly weaker than the linear association between `sws` and `brw`. 
+That being said, `sws` is missing `r nm <- colSums(is.na(mammalsleep)); nm["sws"]` 
+cases whereas `ts` is missing only `r nm["ts"]` cases. 
 ```
 
-Therefore it is highly preferable to use `ts` in the model, despite its weaker association.
-
-We run the new model:
 ```{r}
-fit <- 
-  mammalsleep %$%
-  lm(brw ~ bw + ts + mls + gt + sei)
+summary(mammalsleep)
+```
+
+```{asis}
+Since our total sample size is only `r nrow(mammalsleep)`, the loss of 
+`r nm["sws"] - nm["ts"]` more cases is a substantial problem. Therefore, `ts` is 
+a much better candidate, despite its weaker association with the outcome.
+
+So, our new predictors will be:
   
-fit %>%
-  summary()
+- `bw`
+- `ts`
+- `mls`
+- `gt`
+- `sei`
 ```
-and we have obtained a very high $R^2$. If prediction was our goal, we are doing great.
 
 ---
 
-10. **Inspect the diagnostic plots for the model obtained in `exercise 16`. What issues can you detect?**
+## {#mlrQ}
+
+**Estimate the new model**
+
+Regress `brw` onto your selected predictors.
+
+- Inspect the fitted model.
+
 ```{r}
-fit %>%
-  plot(which = 1:6)
+fit3 <- update(fit1, ". ~ . + ts + mls + gt + sei")
+
+summary(fit3)
 ```
 
-Some issues spring to mind:
+```{asis}
+### Coefficient Estimates
 
-- There error variance seems to be heteroscedastic [but we have a rather small sample]
-- The residuals are not normally distributed in the extreme tails
-- The following case has a large leverage: 1
-- The following case has large residual: 5
+Notice that the regression coefficients associated with `ts` and `sei` are both 
+nonsignificant, even though both of these variables have moderately strong and 
+significant bivariate correlations with `brw`.
+```
+
+```{r}
+mammalsleep %$% cor.test(brw, ts)
+mammalsleep %$% cor.test(brw, sei)
+```
+
+```{asis}
+This incongruity is the effect of partialling between the predictors.
+
+- Even though both `ts` and `sei` are linearly associated with `brw`, the 
+aspects of `brw` explained by `ts` and `sei` are (mostly) also explained by `mls` 
+and `gt`.
+- After accounting for the effects of `mls` and `gt`, `ts` and `sei` cannot 
+explain much variability in `brw`.
+
+Partialling is one of the primary reasons to use multiple linear regression 
+instead of multiple bivariate correlations.
+
+- If the predictors are correlated, the bivariate correlations can produce 
+misleading results.
+
+### Model Fit
+
+The $R^2$ from our new model is indeed higher than the $R^2$ from the model with 
+`bw` as the only predictor (`r round(summary(fit3)$r.squared, 3)` vs. 
+`r round(summary(fit1)$r.squared, 3)`). So our new model explains a larger 
+proportion of variability in `brw`.
+
+Unfortunately, we cannot use the `anova()` function to test if our new model 
+explains *significantly more* variability in `brw` that the model from 
+\@ref(slrQ).
+```
+
+```{r, error = TRUE, eval = params$answers}
+anova(fit1, fit3)
+```
+
+```{asis}
+The use of listwise deletion to work around the missing data has deleted 
+`r nrow(mammalsleep) - sum(summary(fit3)$df[-3])` cases when estimating the 
+larger model. Since the models were not estimated from the same data, they are 
+not nested and cannot be compared with a $\Delta R^2$ test.
+
+Although we can compute AIC values for each of these models, comparing the two 
+AIC values is again invalid because the models were fit to different datasets.
+```
+
+```{r, warning = TRUE}
+AIC(fit1, fit3)
+```
+
+---
+
+# Assumption Checking
+
+---
+
+##
+
+**Inspect diagnostic plots**
+
+Use the `plot()` function to generate diagnostic plots for the model you 
+estimated in \@ref(mlrQ). 
+
+- What issues, if any, can you detect?
+
+```{r}
+plot(fit3)
+```
+```{asis}
+Cases 1 and 5 both seem to be highly influential.
+
+- Case 1 has very high leverage.
+- Case 5 looks like an outlier (with a large positive residual).
+
+Assessing the tenability of the model assumptions doesn't make any sense until 
+we address these influential cases.
+
+### Further Detective Work
+
+Let's see who's causing all the problems:
+``` 
+
 ```{r}
 mammalsleep$species[c(1, 5)]
 ```
 
-If we sort the `brw` variable together with its strongest predictor 
-```{r}
-mammalsleep %>% 
-  subset(select = c(species, brw, bw, ts, mls, gt, sei)) %>%
-  arrange(desc(brw)) #sort the data in descending order based on brw
+```{asis}
+And, what's so special about these trouble-makers?
 ```
 
-we see that `Man` has a large `brw` for small `bw` and that `African elephant` is so large that it massively influences the model. For `Man` we would expect a much lighter brain given its body weight. We can also see this from the residuals:
 ```{r}
-fit %>%
-  residuals()
+mammalsleep[c(1, 5), c("species", "brw", "bw", "ts", "mls", "gt", "sei")]
 ```
 
-from the influence statistics:
-```{r}
-fit %>%
-  influence()
+```{asis}
+Well, they're both big boys, for sure. The very large brain and body weights for 
+the two elephant species strongly influence the model.
+
+- For the African Elephant, the massive body weight produces high leverage.
+- For the Asian Elephant, the very large brain weight relative to the body 
+weight produces an outlier.
+
+Notice that the residual for Case 1 (African Elephant) is smaller than the 
+residual for Case 5 (Asian Elephant), even though the brain weight for Case 1 is 
+larger than the brain weight for Case 5.
+
+- Due to the huge body weight, the model expects the African Elephant to have 
+a very large brain.
+- The Asian Elephant, on the other hand, has an unexpectedly large brain for its 
+relatively small body.
 ```
-From the influence we see:
 
-- the residual standard deviation `$sigma` would drop when the first case and the fifth case would be omitted.
-- the coefficients `$coefficients$ would dramatically change if cases 1 and 5 were omitted
-
-The `influence(fit)$coefficients` is equivalent to the `dfbeta()` return:
 ```{r}
-head(influence(fit)$coefficients)
+residuals(fit3)
+```
 
-fit %>%
-  dfbeta() %>%
-  head()
+```{asis}
+We can get a sense for how much these cases are affecting the results by 
+examining the influence statistics.
+```
+
+```{r}
+influence(fit3)
+```
+
+```{asis}
+From these statistics, we can conclude:
+
+- Case 1 (African Elephant) has a very high leverage (as seen in the `$hat` 
+section).
+- The residual standard deviation would decrease if we exclude Cases 1 and 5 (as 
+seen in the `$sigma` section).
+- The coefficients would change dramatically if we exclude Cases 1 and 5 (as 
+seen in the `$coefficients` section).
+
+The information in the `$coefficients` section is equivalent to the output of 
+the `dfbeta()` function.:
+```
+
+```{r}
+head(influence(fit3)$coefficients)
+head(dfbeta(fit3))
+```
+
+```{asis}
+
+---
+
+# Warning
+
+---
+
+The variable selection and model building procedure illustrated above has only 
+produced a candidate model. We cannot use the model estimated in Question 
+\@ref(mlrQ) for inference or prediction.
+
+- This model almost certainly overfits the data.
+- We have used the same dataset for variable selection and model estimation.
+
+In general, we cannot use the same data for exploratory and confirmatory 
+analyses.
+
+- In this sense, examples of exploratory analyses include:
+   - Variable/model selection
+   - Parameter tuning
+   - Post hoc model modifications (i.e., modifying a model based on the model's 
+   estimates)
+   
+- Examples of confirmatory analyses include:
+   - Estimating population parameters
+   - Making statistical inferences about population parameters
+   - Quantifying prediction error
+   
+In the above example, we used the `mammalsleep` data to calculate bivariate 
+correlations with which we selected the predictors. We then estimated a model 
+using the same data.
+
+- The estimates from this model (the one we fit in Question \@ref(mlrQ)) are not 
+valid estimates of the population parameters of our model.
+- By using the same data to select the variables of our model and estimate the 
+model, we're "double-dipping" in the data.
+   - If we "ask" the data to tell us which variables are the best predictors, 
+   how can we then use the same data to confirm that those variables truly are 
+   meaningful predictors?
+   - Data are not susceptable to psychological tricks. If we "ask" the data the 
+   same question twice, we'll get the same answer (even if we use two different 
+   phrasings).
+      - Pretending that we've "asked" two different questions, when we've really 
+      only employed two different phrasings of the same question, will lead to 
+      invalid results and erroneous conclusions.
+   - What we want to do is "ask" the same question of two different datasets.
+      - We need to confirm our exploratory findings on new data.
+      
+All of these caveats do not make the variable selection procedure demonstrated 
+above wrong or useless; the procedure is perfectly fine. We can even use the 
+results of the fitted regression model from Question \@ref(mlrQ) to make 
+decisions about further model modifications (e.g., maybe we want to drop the 
+`ts` and `sei` variables).
+
+- This whole process must be viewed as an exploratory model-building process, 
+though.
+- We must confirm our final model (whatever it looks like) on a new sample!
+
+---
+
+##
+
+**Positive affirmation**
+
+Look at your reflection in a mirror, and repeat the following statement three 
+times.
+
+> I am a good person. I do not run exploratory and confirmatory analyses on the 
+same data.
 ```
 
 ---
 
-End of `Practical`. 
+End of Exercise 7
