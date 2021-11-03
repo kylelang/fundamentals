@@ -1,8 +1,0 @@
-
-args <- commandArgs(trailingOnly = TRUE)
-
-rmarkdown::render(input = paste0(args[1], ".Rmd"),
-                  params = list(answers = as.logical(args[2])),
-                  output_file = paste0(args[1], ".html"),
-                  envir = new.env()
-                  )

@@ -1,9 +1,0 @@
-# -*- Makefile -*-
-
-all: exercises solutions
-
-exercise1.html: exercise1.Rnw
-	Rscript --vanilla render.R exercise1 FALSE
-
-solutions: exercise1.Rnw
-	Rscript --vanilla render.R exercise1 TRUE
