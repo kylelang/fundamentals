@@ -1,0 +1,657 @@
+---
+title: "Data Manipulation, Pipes, and Least Squares Estimation"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    smaller: yes
+    widescreen: no
+---
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+
+set.seed(235711)
+
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+<!----------------------------------------------------------------------------->
+
+# Today 
+
+<!----------------------------------------------------------------------------->
+
+## This lecture
+
+- Data manipulation
+
+- Basic analysis (correlation & t-test)
+
+- Pipes
+
+- Deviations and modeling
+
+
+## New Packages
+
+```{r}
+library(MASS)     # The cats data
+library(dplyr)    # Data manipulation
+library(haven)    # Data I/O
+library(magrittr) # Pipes
+library(mice)     # The nhanes data
+```
+
+<img src="../figures/pipe.jpg" style="display:block;width:500px;margin-left:auto;margin-right:auto"></img>
+
+
+## New Functions
+
+- `transform()`: changing and adding columns
+- `dplyr::filter()`: row-wise selection (of cases)
+- `table()`: frequency tables
+- `class()`: object class
+- `levels()`: levels of a factor
+- `order()`: data entries in increasing order
+- `haven::read_sav()`: import SPSS data
+- `cor()`: bivariate correlation
+- `sample()`: sampling values from a vector
+- `t.test()`: t-test 
+
+
+<!----------------------------------------------------------------------------->
+
+# Data manipulation
+
+<!----------------------------------------------------------------------------->
+
+
+## The cats data
+
+```{r}
+head(cats)
+```
+
+```{r}
+str(cats)
+```
+
+
+## How to get only female cats?
+
+```{r}
+femCats <- cats[cats$Sex == "F", ]
+dim(femCats)
+head(femCats)
+```
+
+
+## How to get only "heavy" cats?
+
+```{r}
+heavyCats <- cats[cats$Bwt > 3, ]
+dim(heavyCats)
+head(heavyCats)
+```
+
+
+## How to get only "heavy" cats?
+
+```{r}
+heavyCats <- subset(cats, Bwt > 3)
+dim(heavyCats)
+head(heavyCats)
+```
+
+
+## How to get only "heavy" cats?
+
+We can also use the `filter()` function provided by **dplyer**.
+```{r}
+filter(cats, Bwt > 2, Bwt < 2.2, Sex == "F")
+```
+
+
+## Working with Factors
+
+```{r}
+class(cats$Sex)
+levels(cats$Sex)
+```
+
+
+## Working with Factors
+
+```{r}
+levels(cats$Sex) <- c("Female", "Male")
+table(cats$Sex)
+head(cats)
+```
+
+
+## Sorting 
+
+```{r}
+sortedCats <- cats[order(cats$Bwt), ]
+head(sortedCats)
+```
+
+
+## Combining Matrices or Data Frames
+
+```{r}
+catsNumeric <- cbind(weight = cats$Bwt, heartWeight = cats$Hwt)
+head(catsNumeric)
+```
+
+## Combining Matrices or Data Frames
+
+```{r}
+rbind(cats[1:3, ], cats[1:5, ])
+```
+
+<!----------------------------------------------------------------------------->
+
+# Basic analysis
+
+<!----------------------------------------------------------------------------->
+
+## Correlation
+
+```{r}
+cor(cats[, -1])
+```
+
+The `[, -1]` part excludes the first column.
+
+
+## Correlation
+
+Test the null hypothesis that the true correlation is equal to zero.
+
+```{r}
+cor.test(cats$Bwt, cats$Hwt)
+```
+
+What should we conclude?
+
+
+## Correlation
+
+```{r fig.width = 5}
+plot(cats$Bwt, cats$Hwt)
+```
+
+
+## T-test
+
+Test the null hypothesis that the mean heart weight for male cats is equal to 
+the mean heart weight for female cats.
+
+```{r}
+t.test(formula = Hwt ~ Sex, data = cats)
+```
+
+
+## T-test
+
+```{r fig.height = 5}
+plot(formula = Hwt ~ Sex, data = cats)
+```
+
+<!----------------------------------------------------------------------------->
+
+# Pipes
+
+<!----------------------------------------------------------------------------->
+
+## What are pipes?
+
+The `%>%` symbol represents the *pipe* operator.
+
+- We use the pipe operator to compose functions into a *pipeline*.
+
+The following code represents a pipeline.
+
+```{r eval = FALSE}
+firstBoys <- 
+  read_sav("../data/boys.sav") %>%
+  head()
+```
+
+This pipeline replaces the following code.
+
+```{r, eval = FALSE}
+firstBoys <- head(read_sav("../data/boys.sav"))
+```
+
+
+## Why are pipes useful?
+
+Let's assume that we want to:
+
+1. Load data
+1. Transform a variable
+1. Filter cases
+1. Select columns
+
+Without a pipe, we may do something like this:
+```{r}
+boys <- read_sav("../data/boys.sav")
+boys <- transform(boys, hgt = hgt / 100)
+boys <- filter(boys, age > 15)
+boys <- subset(boys, select = c(hgt, wgt, bmi))
+```
+
+
+## Why are pipes useful?
+
+Let's assume that we want to:
+
+1. Load data
+1. Transform a variable
+1. Filter cases
+1. Select columns
+
+With the pipe, we could do something like this:
+```{r}
+boys <-
+  read_sav("../data/boys.sav") %>%
+  transform(hgt = hgt / 100) %>%
+  filter(age > 15) %>%
+  subset(select = c(hgt, wgt, bmi))
+```
+
+With a pipeline, our code more clearly represents the sequence of steps in our 
+analysis.
+
+
+## Benefits of Pipes
+
+When you use pipes, your code becomes more readable.
+
+- Operations are structured from left-to-right and not from in-to-out
+- You can avoid many nested function calls
+- You don't have to keep track of intermediate objects
+- It's easy to add steps to the sequence
+
+In RStudio, you can use a keyboard shortcut to insert the `%>%` symbol.
+
+- Windows/Linux: *ctrl* + *shift* + *m*
+- Mac: *cmd* + *shift* + *m*
+
+
+## What do pipes do?
+
+Pipes compose R functions without nesting.
+
+- `f(x)` becomes `x %>% f()`
+
+```{r}
+mean(rnorm(10))
+rnorm(10) %>% mean()
+```
+
+
+## What do pipes do?
+
+Multiple function arguments are fine.
+
+- `f(x, y)` becomes `x %>% f(y)` 
+
+```{r}
+cor(boys, use = "pairwise.complete.obs")
+boys %>% cor(use = "pairwise.complete.obs")
+```
+
+
+## What do pipes do?
+
+Composing more than two functions is easy, too.
+
+- `h(g(f(x)))` becomes `x %>% f %>% g %>% h` 
+
+```{r}
+max(na.omit(subset(boys, select = wgt)))
+boys %>% 
+  subset(select = wgt) %>% 
+  na.omit() %>% 
+  max()
+```
+
+
+## Example: Outlier Filtering
+
+```{r}
+nrow(cats)
+
+cats2 <- 
+  cats %>% 
+  filter(Hwt < mean(Hwt) + 3 * sd(Hwt), 
+         Hwt > mean(Hwt) - 3 * sd(Hwt)
+         )
+
+nrow(cats2)
+
+cats %>% filter(Hwt > mean(Hwt) + 3 * sd(Hwt))
+```
+
+<!----------------------------------------------------------------------------->
+
+# More Pipe Stuff
+
+<!----------------------------------------------------------------------------->
+
+## The Role of `.` in a Pipeline
+
+In the expression `a %>% f(arg1, arg2, arg3)`, `a` will be "piped into" `f()` 
+as `arg1`. 
+
+```{r error = TRUE, fig.show = "hide"}
+cats %>% plot(Hwt ~ Bwt)
+```
+
+Clearly, we have a problem if we pipe our data into the wrong argument. 
+
+- We can change this behavior with the `.` symbol.
+- The `.` symbol acts as a placeholder for the data in a pipeline.
+
+
+## The Role of `.` in a Pipeline
+
+```{r}
+cats %>% plot(Hwt ~ Bwt, data = .)
+```
+
+
+## Different Flavors of Pipe
+
+The standard pipe (`%>%`)
+<center>
+<img src="../figures/flow_pipe.png" alt="HTML5 Icon" width = 50%>
+</center>
+<br>
+
+The exposition pipe (`%$%`)
+<center>
+<img src="../figures/flow_$_pipe.png" alt="HTML5 Icon" width = 50%>
+</center>
+
+
+## Using the Exposition Pipe: `%$%`
+
+The exposition pipe offers a more elegant way to solve our earlier problem.
+
+```{r}
+cats %$% plot(Hwt ~ Bwt)
+```
+ 
+
+## Performing a T-Test in a Pipeline
+
+```{r}
+cats %$% t.test(Hwt ~ Sex)
+```
+
+The above is equivalent to either of the following.
+
+```{r eval = FALSE}
+cats %>% t.test(Hwt ~ Sex, data = .)
+t.test(Hwt ~ Sex, data = cats)
+```
+
+
+## Storing the Results
+
+```{r}
+catsTest <- cats %$% t.test(Bwt ~ Sex)
+
+catsTest
+```
+
+<!----------------------------------------------------------------------------->
+
+# Squared Deviations
+
+<!----------------------------------------------------------------------------->
+
+## Applications of Deviations
+
+Correlations
+
+$$\rho_{X,Y} = \frac{\mathrm{cov}(X,Y)}{\sigma_X\sigma_Y} = \frac{\mathrm{E}[(X - \mu_X)(Y-\mu_Y)]}{\sigma_X\sigma_Y}$$
+
+T-Test
+
+$$t = \frac{\bar{X}-\mu}{\hat{\sigma}/\sqrt{n}}$$
+Variance
+
+$$\sigma^2_X = \mathrm{E}[(X - \mu)^2]$$
+
+
+## Deviations
+
+Deviations are simply the differences between each of a variable's values and 
+some comparison value. 
+
+- Deviations quantify the distance between a variable's values and the 
+comparison point.
+- The mean is frequently chosen as the comparison value.
+ 
+The mean itself can be viewed as a simple statistical model.
+
+- In some sense, the mean represents our best guess for the value of any 
+of a variable's observations.
+
+
+## Example Data
+
+Let's consider some bivariate normal data.
+
+```{r, echo = FALSE}
+n <- 200
+
+dat1           <- as.data.frame(rmvnorm(n, c(160, 180), 10 * diag(2)))
+colnames(dat1) <- c("X", "Y")
+
+p0 <- ggplot(data = dat1, mapping = aes(X, Y)) + 
+  geom_point(color = "blue") +
+  theme_minimal()
+p0
+```
+
+
+## The Mean as Center of Mass
+
+```{r echo = FALSE}
+mX <- mean(dat1$X)
+mY <- mean(dat1$Y)
+
+pX <- p0 + geom_vline(xintercept = mX, color = "orange")
+
+pX + geom_point(aes(mean(X), mean(Y)), color = "orange", size = 5) + 
+  geom_hline(yintercept = mY, color = "orange")
+```
+
+
+## Deviations from the Mean of X
+
+```{r echo = FALSE}
+pX + geom_segment(aes(xend = mX, yend = Y), 
+                  color = "orange", 
+                  lty = 2, 
+                  alpha = 0.5) 
+```
+
+
+## Distribution of Deviations
+
+```{r echo = FALSE}
+dat1 %>%
+  mutate(d = X - mean(X)) %>%
+  ggplot(aes(d)) + 
+  geom_density(color = "blue") + 
+  geom_vline(xintercept = 0, color = "orange") + 
+  ylab("Density") +
+  xlab("Deviation from the Mean X") + 
+  theme_minimal()
+```
+
+
+## Using Deviations
+
+The sum of the deviations summarizes the fit of the comparison point to the 
+individual data points.
+
+- If the comparison point is a "good" single-value representation of the data, 
+the sum of the deviations should be zero.
+
+The mean satisfies this desiderata.
+
+- Using the mean as the comparison point will minimize the sum of the deviations.
+
+```{r}
+## Deviations about the mean:
+with(dat1, sum(X - mean(X)))
+
+## Deviations about the mean + 3:
+with(dat1, sum(X - (mean(X) + 3)))
+```
+
+
+## Visualize the Difference
+
+```{r echo=FALSE}
+mD2 <- with(dat1, mean(X - (mean(X) + 3)))
+
+dat1 %>%
+  mutate(d1 = X - mean(X), 
+         d2 = X - (mean(X) + 3)) %>%
+  ggplot() + 
+  geom_density(aes(d1), color = "blue") + 
+  geom_density(aes(d2), color = "orange") + 
+  geom_vline(xintercept = mD2, color = "orange") +  
+  geom_vline(xintercept = 0, color = "blue") +
+  ylab("Density") +
+  xlab("Deviation") +
+  theme_minimal()
+```
+
+
+## Distribution of Standardized Deviations
+
+```{r echo = FALSE}
+dat1 %>%
+  mutate(z = (X - mean(X)) / sd(X)) %>%
+  ggplot(aes(z)) + 
+  geom_density(color = "blue") + 
+  geom_vline(xintercept = 0, color = "orange") +
+  ylab("Density") +
+  xlab("Standardized Deviation") +
+  theme_minimal()
+```
+
+
+
+## Distribution of Squared Deviations
+
+```{r echo = FALSE}
+dat1 %>%
+  mutate(sqD = (X - mean(X))^2) %>%
+  ggplot(aes(sqD)) + 
+  geom_density(color = "blue") + 
+  geom_vline(xintercept = 0, color = "orange") +
+  ylab("Density") +
+  xlab("Squared Deviation") +
+  theme_minimal()
+```
+
+## The Effects of Squaring
+
+Statisticians make extensive use of squaring. What are the consequences?
+
+- The sum of squared values is always positive.
+   - Helps with floating-point underflow problems
+- Squaring linear functions converts them to quadratic functions.
+   - Better for optimization
+- Squaring has a disproportionate effect on larger values.
+   - Outliers are a problem.
+
+   
+## Deviations from the Mean of Y
+
+```{r echo = FALSE}
+p0 + geom_segment(aes(xend = X, yend = mY), 
+                  color = "orange", 
+                  lty = 2, 
+                  alpha = 0.5) + 
+  geom_hline(yintercept = mY, color = "orange")
+```
+
+
+## Deviations from the Bivariate Mean
+
+```{r echo = FALSE}
+p0 + 
+  geom_point(aes(mean(X), mean(Y)), color = "orange", size = 5) + 
+  geom_segment(aes(x = X, y = Y, xend = mean(X), yend = mean(Y)), 
+               color = "orange", 
+               lty = 2, 
+               alpha = 0.5) +
+  theme_minimal()
+```
+
+
+## Least Squares Solution
+
+```{r echo = FALSE}
+fit  <- lm(Y ~ X, data = dat1)
+dat1 <-  mutate(dat1, pred = predict(fit), res = residuals(fit))
+ 
+p0 +
+  geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  geom_segment(data = dat1, 
+               mapping = aes(xend = X, yend = pred), 
+               color = "orange", 
+               alpha = 0.5) +
+  theme_minimal()
+```
+
+
+## Data with a Stronger Effect
+
+```{r echo = FALSE}
+s2       <- matrix(-5, 2, 2)
+diag(s2) <- 10
+
+dat2           <- as.data.frame(rmvnorm(n, c(160, 180), s2))
+colnames(dat2) <- c("X", "Y") 
+
+p0 <- ggplot(data = dat2, mapping = aes(X, Y)) +
+  geom_point(color = "blue") +
+  theme_minimal()
+p0
+```
+
+
+## Least Squares Solution
+
+```{r echo = FALSE}
+fit <- lm(Y ~ X, data = dat2)
+
+dat2 <- mutate(dat2, pred = predict(fit), res = residuals(fit))
+
+p0 + geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  geom_segment(data = dat2, 
+               mapping = aes(xend = X, yend = pred), 
+               color = "orange", 
+               alpha = 0.5) +
+  theme_minimal()
+```

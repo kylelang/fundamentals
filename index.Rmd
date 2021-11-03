@@ -332,7 +332,7 @@ Today's lecture is about the elemental building blocks of `R`. We will discuss
 what `R` actually is, why we use `RStudio`, how to 'speak' `R`, and how to work 
 with `R` objects. 
 
-You can find the slides [here](wk1/lecture1.html)
+You can find the lecture slides [here](wk1/lecture/lecture1.html)
 
 ### Workgroup (Thursday)
 
@@ -419,7 +419,7 @@ to more efficiently organize your `R` code.
 1. Squared Deviations: We'll discuss *squared deviations* and explore how they 
 are used in statistics.
 
-You can find the lecture slides [here](wk2/lecture2.html)
+You can find the lecture slides [here](wk2/lecture/lecture2.html)
 
 ### Workgroup (Thursday)
 
@@ -470,20 +470,30 @@ Today's lecture comes in two parts:
 workhorse of statistics and data science. In this lecture, we'll go over the 
 basics of linear modeling. Next time, we'll dive deeper into the linear model 
 and its assumptions.
+   - You can find the slides on linear modeling [here]()
+   
 1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
 most popular (and rightly so) data visualization tools. In this lecture, you'll 
 get an introduction to the process of making visual sense of your data using the 
 routines provided by **ggplot2**.
+   - There is already a glut of excellent introductions to ggplot available 
+   online. So, rather than re-inventing the wheel, we will refer you to the 
+   following tutorial video for the ggplot introduction portion of this lecture. 
 
-You can find the slides on linear modeling [here]()
-
-Rather than re-inventing the wheel, we will refer you to some existing resources for the ggplot introduction. 
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/N5gYo43oLE8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-<!--
-![ggplot tutorial](https://www.youtube.com/watch?v=N5gYo43oLE8&list=PLYiJ7zIgJfiMoR_EY9xsZ0IFd7LqFSHuM&index=1)
--->
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/N5gYo43oLE8" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
+        autoplay; 
+        clipboard-write; 
+        encrypted-media; 
+        gyroscope; 
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
 
 ### Workgroup (Thursday)
 
@@ -511,9 +521,12 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 
 ### Required Reading
 
-- From [Introduction to Statistical Learning](https://statlearning.com) read [Chapter 3 on Linear Regression](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf) up to and including 3.1.1
+- [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
+   - Chapter 3: Linear Regression (All of Section 3.1)
 
 ***These readings are exam materials.***
+
+<!----------------------------------------------------------------------------->
 
 # Week 4
 
@@ -549,7 +562,9 @@ Video discussion of the exercises in two parts:
 ### Useful Information and links
 
 - [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of the coming two weeks. 
-- From [Introduction to Statistical Learning](https://statlearning.com) read [Chapter 3 on Linear Regression](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf) up to and including 3.4
+
+- [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
+   - Chapter 3: Linear Regression (Up to and including Section 3.4)
 
 These readings are exam materials.
 
