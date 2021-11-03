@@ -116,7 +116,7 @@ To pass the course:
 |-|---|----|----|
 | 1 | The elemental building blocks of `R` | Assigning values to objects; Creating vectors, matrices, data frames, and lists | Receive instructions and form groups |
 | 2 | Data manipulation; Least squares | Data manipulation; Using pipes to simplify workflows | Locate a data set for predictive modeling and formulate a research hypothesis (Make sure the data can support both linear and logistic regression) |
-| 3 | Linear modeling 1 | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model |
+| 3 | Linear modeling 1; Data visualization | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model |
 | 4 | Linear modeling 2; Assumptions, diagnostics | Investigating the assumptions of the linear model | Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in `rmarkdown` |
 | 5 | Model building; Prediction; Cross-validation | Tying the analytic pieces together into a full regression analysis | Evaluate and, if possible, improve your model; **Prepare Assignment 1; Evaluate the final linear model on your own data** |
 | 6 | Generalized linear model; Logistic regression 1 | The `glm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if the assumptions are met |
@@ -354,6 +354,7 @@ useful toolset for current and aspiring data scientists.
 ## Column 2
 
 ### `R` Exercise
+
 This week's `R` exercise comes in three parts. We need to cover a lot of ground 
 this week to get you ready for the rest of the course.
 
@@ -367,11 +368,28 @@ meeting. Laura will be available to help you during that time.
 lecture. For this week, you only need to present the `R` code for the relevant 
 exercises.
 
-A video discussion of the exercises is available below.  
-
 Submit an `R` script containing your answers to Exercise 3 to the 
-[SurfDrive][sd] drop folder. Name the file `Yourname.R`, where `Yourname` is 
-your name. Do this ***before the next lecture***. 
+[SurfDrive][sd] drop folder. Name the file `your_name.R`. Where `your_name` is 
+your full name in *lower snake-case*.
+
+- E.g., My name is Kyle Lang, so my submission would be called `kyle_lang.R`.
+- Submit these files ***before the next lecture***. 
+
+### Exercise Solutions
+
+You can find suggested solutions to the exercises below. We provide these 
+solutions files for two reasons:
+
+1. So you won't ever get intractably stuck on a question
+1. So you can check your answers after you attempt a problem.
+
+Even though you have the solutions available, we strongly encourage you to 
+seriously attempt answering each question in the exercises before checking the 
+solutions. 
+
+1. [Exercise 1](wk1/exercise/exercise1_solutions.html)
+1. [Exercise 2](wk1/exercise/exercise2_solutions.html)
+1. [Exercise 3](wk1/exercise/exercise3_solutions.html)
 
 <!--
 ### Exercise Discussion
@@ -389,69 +407,113 @@ The video discussions for the practical exercises:
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture has two parts:
 
-1. Let's explore pipes: a more efficient way of organizing our `R` code that forces you to think about the analytical process while being more memory efficient.
-2. We look at squared deviations and see how useful these calculations can be. From there we leap to least-squares estimation and start with simple linear regression.
+Today's lecture has three parts:
 
-You can find the [slides here](Wk2/Lecture_2_FTID.html)
+1. Data Manipulation: We'll explore various ways of subsetting and manipulating 
+your data using base-R functions and routines from the **dplyr** package.
+
+1. Pipes: We'll cover the *pipe* operator and show how you can use *pipelines* 
+to more efficiently organize your `R` code.
+
+1. Squared Deviations: We'll discuss *squared deviations* and explore how they 
+are used in statistics.
+
+You can find the lecture slides [here](wk2/lecture2.html)
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
 
+In today's workgroup, you will locate a data set for predictive modeling and 
+formulate a research hypothesis
+
+- Make sure the data you choose can support both linear and logistic regression.
 
 ## Column 2
 
-### `R` exercise
-This week's `R` exercise is about getting familiar with pipes and exploring the simple linear model.
+### `R` Exercise
 
-- Make [Exercise 4](Wk2/Exercise/Exercise_4_walkthrough.html) before Thursday's workgroup.
+This week's `R` exercise is about getting familiar with pipes and basic data 
+manipulations.
 
-Hand in a markdown compiled `html` + `Rmd` file for Exercise 4: Question 11 to the [SurfDrive][sd] drop folder. Name the file `Yourname.Rmd/html`, where `Yourname` is your name. Do this ***before the next lecture on Monday***.  
+- Complete [Exercise 4](wk2/exercise/exercise4.html) before Thursday's workgroup.
+
+Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
+respectively. Where `your_name` is your full name in *lower snake-case*. 
+
+- Submit these files ***before the next lecture***.  
+
+### Exercise Solutions
+
+You can find the suggested solutions for Exercise 4 [here](wk2/exercise/exercise4_solutions.html)
 
 ### Useful References
 
+The following links point to  useful references that connect with this week's 
+material.
+
 - [`magrittr`](https://magrittr.tidyverse.org)
-- [`R` for Data Science](http://r4ds.had.co.nz) - [Chapter 18 on pipes](http://r4ds.had.co.nz/pipes.html)
+- [`R` for Data Science](http://r4ds.had.co.nz) 
+   - [Chapter 18: Pipes](http://r4ds.had.co.nz/pipes.html)
 
-The above links are useful references that connect to this week's materials.
-
-### Exercise answers
-The answers to the fourth practical exercises:
-
-- [Exercise 4 answers](Wk2/Exercise/Exercise_4_answers.html)
+<!----------------------------------------------------------------------------->
 
 # Week 3
 
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture is about linear modeling and its assumptions. Linear modeling is the ubiquitous work horse that is used for estimation throughout contemporary data science. However, its application has limits. We explore the application and the limits in this lecture.
 
-You can find the [slides here](Wk3/Lecture_3_FTID.html)
+Today's lecture comes in two parts:
+
+1. Introduction to the *Linear Model*: Linear modeling is the ubiquitous 
+workhorse of statistics and data science. In this lecture, we'll go over the 
+basics of linear modeling. Next time, we'll dive deeper into the linear model 
+and its assumptions.
+1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
+most popular (and rightly so) data visualization tools. In this lecture, you'll 
+get an introduction to the process of making visual sense of your data using the 
+routines provided by **ggplot2**.
+
+You can find the slides on linear modeling [here]()
+
+Rather than re-inventing the wheel, we will refer you to some existing resources for the ggplot introduction. 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/N5gYo43oLE8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+<!--
+![ggplot tutorial](https://www.youtube.com/watch?v=N5gYo43oLE8&list=PLYiJ7zIgJfiMoR_EY9xsZ0IFd7LqFSHuM&index=1)
+-->
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
+
+In today's workgroup, you will work on specifying a linear model and estimating 
+your defined model.
 
 ## Column 2
 
 ### `R` exercise
-This week's `R` exercise is about getting familiar with the linear model.
 
-- Make [Exercise 5](Wk3/Exercise/Exercise-5.html) before Thursday's workgroup.
+This week's `R` exercise is about simple linear modeling a visualizing bivariate 
+relations.
 
-Hand in a markdown compiled `html` file for Exercise 5 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
+- Complete [Exercise 5](wk3/exercise/exercise5.html) before Thursday's workgroup.
 
-<!-- ### Solution to the exercise -->
-<!-- You can find the answers to this week's exercise in [the exercise for next week](Wk4/Exercise/Exercise_6.html). -->
+Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
+respectively. Where `your_name` is your full name in *lower snake-case*. 
 
-<!-- - The video discussion can also be found in [next week's dashboard](https://www.gerkovink.com/fundamentals/#week-4) -->
+- Submit these files ***before the next lecture***.
 
-### Required reading
+### Exercise Solution
+
+You can find suggested solutions for this week's exercise [here](wk3/exercise/exercise5_solutions.html).
+
+### Required Reading
 
 - From [Introduction to Statistical Learning](https://statlearning.com) read [Chapter 3 on Linear Regression](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf) up to and including 3.1.1
 
-These readings are exam materials.
+***These readings are exam materials.***
 
 # Week 4
 
