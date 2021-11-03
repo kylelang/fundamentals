@@ -1,0 +1,620 @@
+---
+title: "Assumptions and inference"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    logo: logo.png
+    smaller: yes
+    widescreen: no
+---
+
+## Last week
+
+Last week we started with linear modeling. Today we revisit parts of last-week's lecture. 
+
+## Today
+- Assumptions
+- Generating data
+- Statistical inference
+
+## Packages and functions that we use
+```{r message=FALSE, warning=FALSE}
+library(mvtnorm)  # Multivariate Normal tools
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(mice)
+```
+- `set.seed()`: Fixing the Random Number Generator seed
+
+# Assumptions
+
+## The key assumptions
+There are four key assumptions about the use of linear regression models. 
+
+In short, we assume 
+
+- The outcome to have a **linear relation** with the predictors and the predictor relations to be **additive**. 
+  - the expected value for the outcome is a straight-line function of each predictor, given that the others are fixed. 
+  - the slope of each line does not depend on the values of the other predictors
+  - the effects of the predictors on the expected value are additive
+  
+  $$ y = \alpha + \beta_1X_1 + \beta_2X_2 + \beta_3X_3 + \epsilon$$
+
+- The residuals are statistically **independent**
+- The residual **variance is constant**
+  - accross the expected values
+  - across any of the predictors
+- The residuals are **normally distributed** with mean $\mu_\epsilon = 0$
+
+## A simple example
+$$y = \alpha + \beta X + \epsilon$$ and $$\hat{y} = \alpha + \beta X$$
+As a result, the following components in  linear modeling
+
+- outcome $y$
+- predicted outcome $\hat{y}$
+- predictor $X$
+- residual $\epsilon$
+
+can also be seen as columns in a data set. 
+
+## As a data set
+As a data set, this would be the result for `lm(y1 ~ x1, data = anscombe)`
+```{r echo=FALSE}
+library(DT)
+fit <- anscombe %$%
+  lm(y1 ~ x1)
+data.frame(y1 = anscombe$y1, 
+           y1.hat = fit$fitted.values,
+           residuals = fit$residuals,
+           x1 = anscombe$x1) %>% datatable
+```
+
+## An example
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+set.seed(123)
+plotdata2 <- data.frame(X = rnorm(100, 167.5, 10)) %>%
+  mutate(Y = rnorm(100, 0, 10) - X + 335)
+
+fit <- plotdata2 %$%
+  lm(Y~X)
+
+ plotdata2 %>%
+   mutate(predicted = predict(fit),
+          residuals = residuals(fit)) %>%
+  ggplot(aes(X, Y)) +
+  geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  #geom_hline(yintercept = 167.5, color = "purple") + 
+  #geom_abline(intercept = 310, slope = -1.045, color = "purple") + 
+  geom_segment(aes(xend = X, yend = predicted), color = "orange", alpha = .5) +
+  geom_point(aes(color = abs(residuals))) + 
+  scale_color_continuous(low = "blue", high = "red") +  
+  guides(color = FALSE) +  
+  geom_point(aes(y = predicted), shape = 1, color = "orange") +
+  theme_minimal()
+```
+
+## Residual variance
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+fit$residuals %>% as.data.frame %>% ggplot(aes(x = .)) + geom_histogram(aes(y=..density..)) + geom_density() + xlab("Residuals")
+```
+
+## Violated assumptions #1
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+set.seed(123)
+plotdata2 <- data.frame(X = rnorm(100, 167.5, 10)) %>%
+  mutate(Y = rnorm(100, 0, 10) - X + 335)
+
+fit <- plotdata2 %$%
+  lm(Y~X)
+
+ plotdata2 %>%
+   mutate(predicted = predict(fit),
+          residuals = residuals(fit)) %>%
+  ggplot(aes(X, Y)) +
+  #geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  geom_hline(yintercept = 167.5, color = "orange", lwd = 2) + 
+  #geom_abline(intercept = 310, slope = -1.045, color = "purple") + 
+  geom_segment(aes(xend = X, yend = 167.5), color = "orange", alpha = .5) +
+  geom_point(aes(color = abs(residuals))) + 
+  scale_color_continuous(low = "blue", high = "red") +  
+  guides(color = FALSE) +  
+  ggtitle("Not a linear model at all, but still") + 
+  #geom_point(aes(y = predicted), shape = 1, color = "orange") +
+  theme_minimal()
+```
+
+Here the residuals are not independent, and the residual variance is not constant! 
+
+## Residual variance
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+(167.5 - plotdata2$Y) %>% as.data.frame %>% ggplot(aes(x = .)) + geom_histogram(aes(y=..density..)) + geom_density() + xlab("Residuals")
+```
+
+## Violated assumptions #2
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+set.seed(123)
+plotdata2 <- data.frame(X = rnorm(100, 167.5, 10)) %>%
+  mutate(Y = rnorm(100, 0, 10) - X + 335)
+
+fit <- plotdata2 %$%
+  lm(Y~X)
+
+ plotdata2 %>%
+   mutate(predicted = predict(fit),
+          residuals = residuals(fit)) %>%
+  ggplot(aes(X, Y)) +
+  #geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  #geom_hline(yintercept = 167.5, shape = 1, color = "orange") + 
+  geom_abline(intercept = 310, slope = -1.045, color = "orange", lwd = 2) + 
+  geom_segment(aes(xend = X, yend = I(310 - 1.045*X)), color = "orange", alpha = .5) +
+  geom_point(aes(color = abs(residuals))) + 
+  scale_color_continuous(low = "blue", high = "red") +  
+  guides(color = FALSE) +  
+   ggtitle("The same model with a different intercept") + 
+  #geom_point(aes(y = predicted), shape = 1, color = "orange") +
+  theme_minimal()
+```
+
+Here the residuals do not have mean zero. 
+
+## Residual variance
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+((310 - 1.045 * plotdata2$X) - plotdata2$Y) %>% as.data.frame %>% ggplot(aes(x = .)) + geom_histogram(aes(y=..density..)) + geom_density() + xlab("Residuals")
+```
+
+## Violated assumptions #3
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+set.seed(123)
+plotdata2 <- data.frame(X = rnorm(100, 0, 1)) %>%
+  mutate(Y = X^2)
+
+fit <- plotdata2 %$%
+  lm(Y~X)
+
+ plotdata2 %>%
+   mutate(predicted = predict(fit),
+          residuals = residuals(fit)) %>%
+  ggplot(aes(X, Y)) +
+  geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  #geom_hline(yintercept = 167.5, color = "orange", lwd = 2) + 
+  #geom_abline(intercept = 310, slope = -1.045, color = "purple") + 
+  geom_segment(aes(xend = X, yend = predicted), color = "orange", alpha = .5) +
+  geom_point(aes(color = abs(residuals))) + 
+  scale_color_continuous(low = "blue", high = "red") +  
+  guides(color = FALSE) +  
+   ggtitle("A quadratic data set") + 
+  geom_point(aes(y = predicted), shape = 1, color = "orange") +
+  theme_minimal()
+```
+
+Here the residual variance is not constant, the residuals are not normally distributed and the relation between $Y$ and $X$ is not linear!
+
+## Residual variance
+```{r echo=FALSE, warning = FALSE, message=FALSE}
+fit$residuals %>% as.data.frame %>% ggplot(aes(x = .)) + geom_histogram(aes(y=..density..)) + geom_density() + xlab("Residuals")
+```
+
+
+# Leverage and influence revisited
+
+## Outliers and influential cases {.smaller}
+
+Leverage: see the fit line as a lever. 
+  
+  - some points pull/push harder; they have more leverage
+  
+Standardized residuals:
+
+  - The values that have more leverage tend to be closer to the line
+  - The line is fit so as to be closer to them
+  - The residual standard deviation can differ at different points on $X$ - even if the error standard deviation is constant. 
+  - Therefore we standardize the residuals so that they have constant variance (assuming homoscedasticity). 
+
+Cook's distance: how far the predicted values would move if your model were fit without the data point in question. 
+
+  - it is a function of the leverage and standardized residual  associated with each data point
+
+```{r echo = FALSE}
+set.seed(20)
+
+pred1 = rnorm(20, mean=20, sd=3)
+outcome1 = 5 + .5*pred1 + rnorm(20)
+
+pred2 = c(pred1, 30);        outcome2 = c(outcome1, 20.8)
+pred3 = c(pred1, 19.44);     outcome3 = c(outcome1, 20.8)
+pred4 = c(pred1, 30);        outcome4 = c(outcome1, 10)
+```
+
+## Fine
+```{r echo=FALSE}
+par(mfrow = c(1,2))
+plot(outcome1 ~ pred1, ylim = c(9, 25), xlim = c(10, 30))
+abline(lm(outcome1 ~ pred1))
+plot(lm(outcome1 ~ pred1), which = 5)
+```
+
+## High leverage, low residual
+```{r echo=FALSE}
+par(mfrow = c(1,2))
+plot(outcome2 ~ pred2, ylim = c(9, 25), xlim = c(10, 30))
+points(30, 20.8, col = "red")
+abline(lm(outcome2 ~ pred2))
+plot(lm(outcome2 ~ pred2), which = 5)
+```
+
+## Low leverage, high residual
+```{r echo=FALSE}
+par(mfrow = c(1,2))
+plot(outcome3 ~ pred3, ylim = c(9, 25), xlim = c(10, 30))
+abline(lm(outcome3 ~ pred3))
+points(19.44, 20.8, col = "red")
+plot(lm(outcome3 ~ pred3), which = 5)
+```
+
+## High leverage, high residual
+```{r echo=FALSE}
+par(mfrow = c(1,2))
+plot(outcome4 ~ pred4, ylim = c(9, 25), xlim = c(10, 30))
+points(30, 10, col = "red")
+abline(lm(outcome4 ~ pred4))
+plot(lm(outcome4 ~ pred4), which = 5)
+```
+
+## Outliers and influential cases
+Outliers are cases with large $\epsilon_z$  (standardized residuals).
+
+If the model is ***correct***  we expect:
+  
+  -  5\% of standardized residuals $|\epsilon_z|>1.96$ 
+  -  1\% of standardized residuals $|\epsilon_z|>2.58$
+  -  0\% of standardized residuals $|\epsilon_z|>3.3$ 
+
+Influential cases are cases with large influence on parameter estimates
+  
+  -  cases with Cook's Distance $> 1$, or 
+  -  cases with Cook's Distance much larger than the rest
+
+## Outliers and influential cases
+```{r, fig.height= 3, dev.args = list(bg = 'transparent')}
+par(mfrow = c(1, 2), cex = .6)
+fit %>% plot(which = c(4, 5))
+```
+
+These are the plots for the `Violated Assumptions #3` scenario. There are many cases with unrealistically large $|e_z|$, so these could be labeled as outliers. There are no cases with Cook's Distance $>1$, but case 72 stands out. Of course this model should have never been fit. 
+
+# Generating data
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(dev.args=list(bg="transparent"))
+```
+
+## Creating our own data
+We saw that we could create vectors
+```{r}
+c(1, 2, 3, 4, 3, 2, 1)
+c(1:4, 3:1)
+```
+
+We could create matrices 
+```{r}
+matrix(1:15, nrow = 3, ncol = 5, byrow = TRUE)
+```
+
+## Creating our own data
+
+Vectors from matrices
+```{r}
+mat <- matrix(1:18, 3, 6)
+mat
+c(mat)
+```
+
+## But we can also draw a sample
+Of the same size,
+```{r}
+sample(mat)
+```
+smaller size,
+```{r}
+sample(mat, size = 5)
+```
+or larger size
+```{r}
+sample(mat, size = 50, replace = TRUE)
+```
+
+## We can do random sampling
+```{r}
+hist(sample(mat, size = 50000, replace=TRUE), breaks = 0:18)
+```
+
+## Or nonrandom sampling
+```{r fig.height=3}
+probs <- c(rep(.01, 15), .1, .25, .50)
+probs
+hist(sample(mat, size = 50000, prob = probs, replace=TRUE), breaks = 0:18)
+
+```
+
+## We can replicate individual samples
+```{r}
+set.seed(123)
+sample(mat, size = 50, replace = TRUE)
+set.seed(123)
+sample(mat, size = 50, replace = TRUE)
+```
+
+## We can replicate a chain of samples
+```{r}
+set.seed(123)
+sample(mat, size = 5, replace = TRUE)
+sample(mat, size = 7, replace = TRUE)
+set.seed(123)
+sample(mat, size = 5, replace = TRUE)
+sample(mat, size = 7, replace = TRUE)
+```
+
+## The random seed
+The random seed is a number used to initialize the pseudo-random number generator
+
+If replication is needed, pseudorandom number generators must be used
+
+- Pseudorandom number generators generate a sequence of numbers
+- The properties of generated number sequences approximates the properties of random number sequences
+- Pseudorandom number generators are not truly random, because the process is determined by an initial value. 
+
+The initial value (the seed) itself does not need to be random.
+
+  - The resulting process is random because the seed value is not used to generate randomness
+  - It merely forms the starting point of the algorithm for which the results are random. 
+
+## Why fix the random seed
+When an `R` instance is started, there is initially no seed. In that case, `R` will create one from the current time and process ID. 
+
+- Hence, different sessions will give different results when random numbers are involved. 
+- When you store a workspace and reopen it, you will continue from the seed specified within the workspace. 
+
+***If we fix the random seed we can exactly replicate the random process***
+
+`If the method has not changed:` the results of the process will be identical when using the same seed. 
+
+  - Replications allows for verification
+  - But beware: the process depends on the seed
+    - The results obtained could theoretically be extremely rare and would not have occured with every other potential seed
+    - Run another seed before publishing your results
+
+
+## Random seeds
+<center>
+<img src="fig/random_seed.png" alt="HTML5 Icon" width = 60%>
+</center>
+
+## Random processes
+<center>
+<img src="fig/random_process.png" alt="HTML5 Icon" width = 80%>
+</center>
+
+## Drawing data
+
+We can draw data from a standard normal distribution
+```{r}
+hist(rnorm(1000, mean = 0, sd = 1))
+```
+
+## Drawing data
+
+We can draw data from a specific normal distribution
+```{r}
+hist(rnorm(1000, mean = 50, sd = 15))
+```
+
+## Drawing data: many values
+```{r}
+hist(rnorm(100000, mean = 50, sd = 15))
+```
+
+# A review of inference concepts
+
+# Basic concepts
+
+## Parameters and statistics
+Random sample 
+
+- set of values drawn independently from a population
+
+Population parameter 
+
+- Property of the population (e.g. $\mu,\sigma,\rho$) 
+
+Sample statistic 
+
+- Property of the sample (e.g. $\bar{x},s,r$) 
+
+## Sampling distributions
+The sampling distribution is the distribution of a sample statistic
+
+### Central Limit Theorem
+
+- ***Given a distribution with mean $\mu$ and standard deviation $\sigma$, the sampling 
+distribution of the mean approaches a normal distribution with mean $\mu$ and standard deviation $\frac{\sigma}{\sqrt{n}}$ as $n\to\infty$ ***
+
+Conditions for the CLT to hold
+
+- $\mu$ and $\sigma$ known
+- the sample size $n$ is sufficiently large
+
+# Hypothesis tests and confidence intervals
+
+## Hypothesis tests
+Statistical tests work with a null hypothesis, e.g.:
+\[
+H_0:\mu=\mu_0
+\]
+
+- If population parameters $\mu$ and $\sigma$ are unknown, we need to use sample mean $\bar{x}$ and sample standard deviation $s$ as estimators 
+- as a consequence, the sample mean has a $t$-distribution
+
+
+\[
+t_{(df)}=\frac{\bar{x}-\mu_0}{SEM}
+\]
+
+## $t$-distribution
+The $t$-distribution has larger variance than the normal distribution (more uncertainty). 
+   
+- degrees of freedom: $df=n-$ number of estimated means
+- the higher the degrees of freedom (the larger the sample)
+  the more it resembles a normal distribution
+    
+## $t$-distribution {.smaller}
+```{r dev.args = list(bg = 'transparent'), fig.height=4}
+curve(dt(x, 100), -3, 3, ylab = "density")
+curve(dt(x,   2), -3, 3, ylab = "", add = T, col = "red")
+curve(dt(x,   1), -3, 3, ylab = "", add = T, col = "blue")
+legend(1.8, .4, c("t(df=100)", "t(df=2)", "t(df=1)"), 
+       col = c("black", "red", "blue"), lty=1)
+```
+
+## $t$ versus normal  {.smaller}
+```{r dev.args = list(bg = 'transparent'), fig.height=4}
+curve(dnorm(x), -3, 3, ylab = "density")
+curve(dt(x, 2), -3, 3, ylab = "", add = T, col = "red")
+curve(dt(x, 1), -3, 3, ylab = "", add = T, col = "blue")
+legend(1.8, .4, c("normal", "t(df=2)", "t(df=1)"), 
+       col = c("black", "red", "blue"), lty=1)
+```
+
+## $p$-values
+The $p$-value in this situation is the probability that $\bar{x}$ is at least that much different from $\mu_0$:
+
+- P($\bar{X}$ $\geq$ $\bar{x}$ |$\mu$=0)
+
+We would reject $H_0$ if $p$ is smaller than the experimenters' (that would be you) predetermined significance level $\alpha$: 
+
+- two-sided test if $H_A:\mu\neq\mu_0$ (upper and lower ($\alpha$/2) * 100\%)
+- one-sided test if $H_A:\mu>\mu_0$ or $H_A:\mu<\mu_0$ (upper or lower $\alpha$ * 100\%)
+
+## $p$-values
+Example of two-sided test for $t_{(df=10)}$ given that $P(t<-1.559)=7.5\%$ ($\alpha$ = 0.15)
+
+```{r echo = FALSE, dev.args = list(bg = 'transparent')}
+t0      <- qt(.075, 10)
+
+cord.x1 <- c(-3, seq(-3, t0, 0.01), t0)
+cord.y1 <- c(0, dt(seq(-3, t0, 0.01), 10), 0)
+cord.x2 <- c(-t0, seq(-t0, 3, 0.01), 3)
+cord.y2 <- c(0, dt(seq(-t0, 3, 0.01), 10), 0) 
+
+curve(dt(x,10),xlim=c(-3,3),ylab="density",main='',xlab="t-value") 
+polygon(cord.x1,cord.y1,col='red')
+polygon(cord.x2,cord.y2,col='red')
+```
+
+## $p$-values: code for the figure
+```{r eval = FALSE, dev.args = list(bg = 'transparent')}
+t0      <- qt(.075, 10)
+
+cord.x1 <- c(-3, seq(-3, t0, 0.01), t0)
+cord.y1 <- c(0, dt(seq(-3, t0, 0.01), 10), 0)
+cord.x2 <- c(-t0, seq(-t0, 3, 0.01), 3)
+cord.y2 <- c(0, dt(seq(-t0, 3, 0.01), 10), 0) 
+
+curve(dt(x,10),xlim=c(-3,3),ylab="density",main='',xlab="t-value") 
+polygon(cord.x1,cord.y1,col='red')
+polygon(cord.x2,cord.y2,col='red')
+```
+
+## Misconceptions {.smaller}
+1. The p-value is not the probability that the null hypothesis is true or the probability that the alternative hypothesis is false. It is not connected to either. 
+    
+2. The p-value is not the probability that a finding is "merely a fluke." In fact, the calculation of the p-value is based on the assumption that every finding is the product of chance alone. 
+    
+3. The p-value is not the probability of falsely rejecting the null hypothesis. 
+
+4. The p-value is not the probability that replicating the experiment would yield the same conclusion. 
+
+5. The significance level, $\alpha$, is not determined by the p-value. The significance level is decided by the experimenter a-priori and compared to the p-value that is obtained a-posteriori. 
+
+6. The p-value does not indicate the size or importance of the observed effect - they are related together with sample size. 
+
+## 95\% confidence interval {.smaller}
+*If an infinite number of samples were drawn and CI's computed, then the true population mean $\mu$ would be in* ***at least*** *95\% of these intervals*
+
+\[
+95\%~CI=\bar{x}\pm{t}_{(1-\alpha/2)}\cdot SEM
+\]
+
+Example
+```{r}
+x.bar <- 7.6 # sample mean
+SEM   <- 2.1 # standard error of the mean
+n     <- 11 # sample size
+df    <- n-1 # degrees of freedom
+alpha <- .15 # significance level
+t.crit <- qt(1 - alpha / 2, df) # t(1 - alpha / 2) for df = 10
+c(x.bar - t.crit * SEM, x.bar + t.crit * SEM) 
+```
+
+## {.smaller}
+<center>
+<img src="Neyman1934.png" alt="HTML5 Icon" width = 99%>
+</center>
+
+        Neyman, J. (1934). On the Two Different Aspects of the Representative Method: 
+        The Method of Stratified Sampling and the Method of Purposive Selection. 
+        Journal of the Royal Statistical Society, Vol. 97, No. 4 (1934), pp. 558-625
+
+## Misconceptions {.smaller}
+Confidence intervals are frequently misunderstood, even well-established researchers sometimes misinterpret them. .
+
+1. A realised 95% CI does not mean:
+
+- that there is a 95% probability the population parameter lies within the interval
+- that there is a 95% probability that the interval covers the population parameter
+
+    Once an experiment is done and an interval is calculated, the interval either covers, or does       not cover the parameter value. Probability is no longer involved. 
+
+    The 95% probability only has to do with the estimation procedure. 
+
+2. A 95% confidence interval does not mean that 95% of the sample data lie within the interval.
+3. A confidence interval is not a range of plausible values for the sample mean, though it may be understood as an estimate of plausible values for the population parameter.
+4. A particular confidence interval of 95% calculated from an experiment does not mean that there is a 95% probability of a sample mean from a repeat of the experiment falling within this interval.
+
+## Confidence intervals
+```{r fig.height = 4, echo=FALSE, message=FALSE, message=FALSE, warning = FALSE}
+set.seed(1234)
+library(plyr)
+samples <- rlply(100, rnorm(5000, mean = 0, sd = 1))
+info <- function(x){ 
+  M <- mean(x)
+  DF <- length(x) - 1
+  SE <- 1 / sqrt(length(x))
+  INT <- qt(.975, DF) * SE
+  return(c(M, M - 0, SE, M - INT, M + INT))
+}
+format <- c("Mean" = 0, "Bias" = 0, "Std.Err" = 0, "Lower" = 0, "Upper" = 0)
+require("magrittr")
+results <- samples %>%
+  vapply(., info, format) %>%
+  t()
+results <- results %>%
+  as.data.frame() %>%
+  mutate(Covered = Lower < 0 & 0 < Upper)
+require(ggplot2)
+limits <- aes(ymax = results$Upper, ymin = results$Lower)
+ggplot(results, aes(y=Mean, x=1:100, colour = Covered)) + 
+  geom_hline(aes(yintercept = 0), color = "dark grey", size = 2) + 
+  geom_pointrange(limits) + 
+  xlab("Simulations 1-100") +
+  ylab("Means and 95% Confidence Intervals")
+```
+
+100 simulated samples from a population with $\mu = 0$ and $\sigma^2=1$. Out of 100 samples, only 5 samples have confidence intervals that do not cover the population mean.
+
+## To conclude
+<center> 
+<img src="going_out_for_a_byte.png" alt="HTML5 Icon" width = 50%>
+</center>
+[source](https://www.reddit.com/r/ProgrammerHumor/comments/8za9b6/hello_i_am_your_server_for_today/)

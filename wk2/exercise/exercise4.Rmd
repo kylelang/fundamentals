@@ -1,0 +1,548 @@
+---
+title: "Exercise 4"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: true
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r setup, echo = FALSE}
+library(knitr)
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+The following packages are required for this practical.
+
+```{r, include = TRUE, echo = TRUE}
+library(dplyr)
+library(magrittr)
+library(mice)
+```
+
+If you'd like to replicate my results, you can set the random seed via:
+
+```{r, include = TRUE, echo = TRUE}
+set.seed(235711)
+```
+
+---
+
+# Working with Pipes
+
+---
+
+When answering the questions in this section, use either the standard pipe, 
+`%>%`,  or the exposition pipe, `%$%`, to structure your solutions into 
+pipelines, whenever possible.
+
+##
+
+**Complete the following steps in a single pipeline**
+
+1. Use the `rnorm()` funciton to draw 1000 random values from a normal 
+distribution with `mean = 5` and `sd = 1` 
+1. Place these random draws in a 500 $\times$ 2 matrix wherein the first 500 
+values populate the first column, and the second 500 values populate the second 
+column.
+1. Make a scatterplot of these two columns.
+
+```{r}
+rnorm(1000, 5) %>%
+  matrix(ncol = 2) %>%
+  plot()
+```
+
+---
+
+##
+
+**Calculate the correlation matrix of the `anscombe` data set**
+
+```{r}
+anscombe %>% cor()
+```
+
+---
+
+##
+
+**Calculate the correlation for the variables `x4` and `y4` from the `anscombe` 
+data set**
+
+```{asis}
+Using the standard pipe:
+```
+
+```{r}
+anscombe %>%
+  subset(select = c(x4, y4)) %>%
+  cor()
+```
+
+```{asis}
+Using the exposition pipe:
+```
+
+```{r}
+anscombe %$% cor(x4, y4)
+```
+
+---
+
+##
+
+**Calculate the correlation between `hgt` and `wgt` in the `boys` dataset from 
+the *mice* package**
+
+```{asis}
+The `boys` dataset has missings values on almost all variables, so we must do 
+something to address the missing data (e.g., excluding incomplete cases) before 
+calculating the correlation.
+
+Using the standard pipe:
+```
+
+```{r}
+boys %>%
+  subset(select = c("wgt", "hgt")) %>%
+  cor(use = "pairwise.complete.obs")
+```
+
+```{asis}
+The `use = "pairwise.complete.obs"` argument tells the `cor()` function to use
+only cases that are non-missing for both `wgt` and `hgt` when calculating the 
+correlation.
+
+The above is equivalent to:
+```
+
+```{r}
+boys %>%
+  subset(select = c("wgt", "hgt")) %>%
+  na.omit() %>%
+  cor()
+```
+
+```{asis}
+Notice that we selected the columns with which we would be working before 
+running `na.omit()`. The `na.omit()` function excludes all incomplete cases, so 
+we would throw out many more cases than necessary if we ran `na.omit()` on the 
+entire dataset. 
+
+Alternatively, we can use the exposition pipe for a more elegant solution.
+```
+
+```{r}
+boys %$% cor(hgt, wgt, use = "pairwise.complete.obs")
+```
+
+```{asis}
+The exposition pipe *exposes* the variable names of the `boys` dataset, so we 
+can refer to them directly.
+```
+
+---
+
+##
+
+**Transform `hgt`**
+
+In the `boys` dataset, `hgt` is recorded in centimeters. 
+
+1. Transform the scale of `hgt` to meters
+1. Assign the transformed variable to a new column in the `boys` dataset 
+named `hgt_meters`
+1. Verify the transformation.
+
+```{r}
+boys <- boys %>% transform(hgt_meters = hgt / 100)
+
+boys %$% hist(hgt)
+boys %$% hist(hgt_meters)
+```
+
+
+##
+
+**Create two scatterplots of *height* against *weight***
+
+1. In the first figure, plot height in meters.
+   - Make the points for the meters plot blue.
+1. In the second figure, plot height in centimeters.
+   - Make the points for the centimiters plot red.
+   
+```{r}
+boys %>%
+  subset(select = c(hgt, wgt)) %>%
+  plot(col = "red", main = "Height in Centimeters") 
+
+boys %>%
+  subset(select = c(hgt_meters, wgt)) %>%
+  plot(col = "blue", main = "Height in Meters")
+```
+
+---
+
+# Working with Squared Deviations
+
+---
+
+```{r echo = FALSE}
+x <- rnorm(100, mean = 3, sd = 7)
+y <- c(rnorm(50, mean = 2, sd = 3), rnorm(50, mean = 9, sd = 2))
+save(x, y, file = "data/exercise4_data.RData")
+```
+
+
+In the following questions, you will investigate least-squares estimation of the 
+mean. You can find the necessary data the workspace 
+[*exercise4_data.RData*](data/exercise4_data.RData). 
+
+You can load this workspace in two ways:
+
+1. Download the workspace via the link above and load it into your environment 
+manually with the `load()` function.
+1. Create a connection to download the file from the course website, and load 
+via that connection. The code for this approach is shown below.
+
+```{r eval = FALSE, echo = TRUE, include = TRUE}
+con <- url("https://www.kylemlang.com/fundamentals/wk2/exercise/data/exercise4_data.RData")
+load(con)
+```
+
+The *exercise4_data.RData* workspace contains two vectors: `x` and `y`. Use 
+these vectors to answer the following questions.
+
+---
+
+## {#meanQ}
+
+**Calculate the sample mean of the values in `x`**
+
+```{r}
+mean(x)
+```
+
+---
+
+##
+
+**Calculate the sum of squared deviations**
+
+The values in `x` have been drawn from a population with mean $\mu = 3$ and 
+standard deviation $\sigma = 7$. Calculate the sum of squared deviations from 
+$\mu$. 
+
+- The sum of squared deviations from mu is defined as:
+$$ \text{ssd} = \sum_{i = 1}^{N} (x_i - \mu)^2$$
+
+```{r}
+mu  <- 3
+ssd <- sum((x - mu)^2)
+```
+
+---
+
+# User-Defined Functions
+
+---
+
+We have already seen many examples or R functions (e.g., `mean()`, `sum()`, 
+`cor()`). As you progress in your programming/data analytic career, however, you 
+will frequently encounter situations wherein it will be useful to define your 
+own functions. 
+
+In R, we use the `function()` function to define a new function. The following 
+pseudo code illustrates the usage of `function()`.
+
+```{r, include = TRUE, echo = TRUE, eval = FALSE}
+myFunction <- function(arg1, arg2, ..., argN) {
+  Code to do something using {arg1, arg2, ..., argN}
+}
+```
+
+For example, the following function computes the absolute value of the 
+difference between its inputs, {`x`, `y`}, and standardizes the result.
+
+```{r, include = TRUE, echo = TRUE}
+stdAbsDiff <- function(x, y) {
+  d <- x - y
+  (d - mean(d)) / sd(d)
+}
+```
+
+Notice how the code inside our function only uses data that we pass into the 
+function as arguments (`x` and `y`, in this case).
+
+- In nearly all circumstances, your function should only use its arguments to 
+derive its return value (i.e., the value produced when you run the function).
+- R uses something called *lexical scoping* to find the data used for a 
+calculation.
+   - Thanks to lexical scoping, it is technically possible to do calculations 
+   inside a function using objects defined only in the global environment.
+   - Using global objects inside a function is generally considered bad practice,
+   though, and should be avoided unless you have a very good reason not to.
+
+Another thing to notice about our function definition is the lack of an explicit 
+`return()` statement.
+
+- Although R does have a `return()` function that you can use to explicitly 
+"return" the result from a function, doing so is not necessary.
+   - An R function will return whatever value is produce by the last line of 
+   code inside the function (`(d - mean(d)) / sd(d)`, in our case).
+   - You should only use the `return()` function when you need to return early 
+   from a complicated function.
+
+The code above only defines the `stdAbsDiff()` function. To actually use this 
+function, we need to call `stdAbsDiff()` with some arguments.
+
+```{r, echo = TRUE, include = TRUE}
+stdAbsDiff(x = 1:10, y = -1:-10)
+```
+
+OR
+
+```{r, echo = TRUE, include = TRUE}
+stdAbsDiff(1:10, -1:-10)
+```
+
+The R programming philosophy is highly functional (with a healthy dose of 
+object-orientation sprinkled throughout).
+
+- When you write an R script, you should break down the problem into a series of 
+functions.
+- You should strive to compartmentalize your calculations into functions 
+whenever doing so makes sense.
+   - If you find yourself doing some operation repeatedly, you should probably 
+   write a function to do that operation.
+
+---
+
+## {#lsFunQ}
+
+**Create a function that calculates the sum of squares for any given $\mu$ and 
+vector of data**
+
+Your function should take two arguments.
+
+1. The first argument should be the value of $\mu$.
+1. The second argument should be the vector of data.
+
+Be sure to define the arguments in the order requested above. The order of the 
+arguments will be important in answering the next question.
+
+```{asis}
+Here are three potential solutions.
+
+We can define our function as a simple "one-liner":
+```
+
+```{r}
+lsFun <- function(mu, data) sum((data - mu)^2)
+```
+
+```{asis}
+If our function contained more than one line of code, we would need to wrap the 
+contents in braces. We can also do so here, without any ill-effects:
+```
+
+```{r}
+lsFun <- function(mu, data) {
+  sum((data - mu)^2)
+}
+```
+
+```{asis}
+We could also do the calculations with a pipe:
+```
+
+```{r}
+lsFun <- function(mu, data) (data - mu)^2 %>% sum()
+```
+
+---
+
+##
+
+**Plot the curve of your least square solutions**
+
+Use the `plotCurve()` function defined below to plot the least squares solutions 
+returned by your function for a range of $\mu$ values.
+
+- Choose the range of $\mu$ such that you can identify the minimum of the curve 
+(i.e. the value of $\mu$ where the sum of the squared deviations is smallest)
+
+```{r, include = TRUE, echo = TRUE}
+plotCurve <- function(fun, data, from, to) {
+  x <- seq(from, to, length.out = 100)
+  y <- rep(NA, length(x))
+  
+  for(i in 1 : length(x)) y[i] <- fun(x[i], data)
+  
+  plot(y = y, x = x, type = "l")
+}
+```
+
+To use the above `plotCurve()` function, you must specify each of the following 
+arguments:
+
+- `fun`: The function to use in generating the y-values of the plot (the 
+function you defined in Question \@ref(lsFunQ), in this case)
+- `data`: The data vector to use in calculating the devations from $\mu$ (`x` 
+from the *exercise4_data.RData* workspace, in this case)
+- `from`: The minimum value of $\mu$ to plot on the x-axis
+- `to`: The maximum value of $\mu$ to plot on the x-axis
+
+```{r}
+plotCurve(lsFun, x, 1, 8)
+```
+
+```{asis}
+We can see that the minimum lies somewhere between $\mu = 1$  and $\mu = 8$, 
+pretty close to $\mu = 4$. From Question \@ref(meanQ), we know that the mean of `x` is 
+equal to `r round(mean(x), 2)`. 
+
+- To verify that the mean of `x` minimizes the sum of squared deviations, change 
+the range of the x-axis in the plot to zoom in on `r round(mean(x), 2)`.
+```
+
+```{r}
+plotCurve(lsFun, x, mean(x) - 0.1, mean(x) + 0.1)
+```
+
+
+---
+
+# More Least Squares Fun
+
+---
+
+In this section, you will analyze the `y` variable that you loaded via the 
+`exercise4_data.RData` workspace.
+
+##
+
+**Plot a histogram of `y`**
+
+```{r}
+hist(y)
+```
+
+##
+
+**Calculate the sample mean of `y`** 
+
+```{r}
+mean(y)
+```
+##
+
+**Calculate the median of `y`**
+
+```{r}
+median(y)
+```
+##
+
+**What do the relative values of the mean and the median tell you about the 
+shape of the data?**
+  
+```{asis}
+The median is larger than the mean. This difference suggest that the 
+distribution of `y` is negatively skewed. The histogram clearly shows this skew. 
+
+- If we plot the density, the skew is even more apparent.
+```
+
+```{r}
+y %>% density() %>% plot()
+```
+
+
+##
+
+**Plot the least squares solutions**
+
+Use the `plotCurve()` function from above to plot the curve of least squares 
+solutions for the range $\mu = 2$ to $\mu = 10$.
+
+```{r}
+plotCurve(lsFun, y, 2, 10)
+```
+
+##
+
+**Plot a curve that zooms in on the minimum of the above figure**
+
+```{r}
+plotCurve(lsFun, y, mean(y) - 0.1, mean(y) + 0.1)
+```
+
+##
+
+**What value of $\mu$ would minimize the sum of squared deviations?**
+
+```{asis}
+Naturally, the sample mean of `y`, `r round( mean(y), 3)`, minimizes the sum of 
+squared deviations.
+```
+
+---
+
+End of Exercise 4 
+
+---
+
+# Useful Links
+
+---
+
+Here are some useful links related to the topics covered in this exercise.
+
+- [**magrittr**](https://magrittr.tidyverse.org)
+- [R for Data Science](http://r4ds.had.co.nz)
+   - [Chapter 18 on pipes](http://r4ds.had.co.nz/pipes.html)

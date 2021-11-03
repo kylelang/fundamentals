@@ -1,0 +1,326 @@
+---
+title: "Capita Selecta"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    smaller: yes
+    widescreen: no
+    logo: logo.png
+---
+
+## Packages and functions used
+```{r message=FALSE}
+library(magrittr) # pipes
+library(dplyr)    # data manipulation
+library(ggplot2)  # plotting
+library(mice)     # for boys data
+library(GGally)   # correlation and distribution matrixplot
+library(mctest)   # multicollinearity test
+library(DAAG)     # now for vif() function
+```
+
+```{r}
+titanic <- read.csv(file = "titanic.csv", header = TRUE) %>%
+  mutate(Pclass = factor(Pclass, 
+                         levels = c(3, 2, 1), 
+                         ordered = FALSE))
+```
+
+# Recap
+
+# Linear modeling
+
+## Assumptions
+Linear regression
+
+- requires a linear relation between between the dependent and independent variables.  
+- requires the error terms (residuals) to be normally distributed.  
+- requires homoscedasticity 
+
+  - i.e. the standard deviations of the residuals are constant and do not depend on the independent variables
+  
+- requires the dependent variable to be measured on an interval or ratio scale
+- assumes that there is little or no multicollinearity in the data. 
+
+
+## Modeling
+A simple model:
+```{r}
+anscombe %$% lm(y1 ~ x1) %>% summary
+```
+
+## Modeling
+A more complex model:
+```{r}
+anscombe %$% lm(y1 ~ x1 + x2) %>% summary
+```
+## Modeling
+The system on the previous slide is highly multicollinear.
+```{r}
+anscombe %$% identical(x1, x2)
+```
+`x1` and `x2` are identical and there is no unique way to distribute the regression parameters over `x1` and `x2`. 
+
+As a result, the model paramaters cannot be estimated unbiasedly, so `R`'s `lm()` function will give you the lower rank approximation with only one parameter. The resulting model outcome is still valid! 
+
+## Modeling
+A more complex model:
+```{r}
+anscombe2 <- anscombe %>%
+  mutate(y5 = factor(ifelse(y3 > 7.5, "yes", "no")))
+fit <- anscombe2 %$% lm(x1 ~ y1 + y2 * y5)
+```
+
+## Parameters
+```{r}
+fit %>% summary
+```
+
+## Prediction
+```{r}
+coef(fit)
+new <- data.frame(y1 = c(5, 5), y2 = c(8, 8), y5 = as.factor(c("yes", "no")))
+predict(fit, newdata = new)
+```
+```{r}
+0.42964653 + 0.06465026 * 5 + 0.91014154 * 8 + 32.21191128  + -3.26437210 * 8 # y5 = "yes"
+0.42964653 + 0.06465026 * 5 + 0.91014154 * 8 #y5 = "no"
+```
+
+# Logistic modeling
+
+## Assumptions
+Logistic regression
+
+- does **not** require a linear relation between between the dependent and independent variables.  
+- does **not** require the error terms (residuals) to be normally distributed.  
+- does **not** require homoscedasticity:   
+
+  - So the standard deviations of the residuals may depend on the independent variables!
+  
+- does **not** require the dependent variable to be measured on an interval or ratio scale
+
+## Assumptions continued
+However, logistic regression 
+
+- requires the outcome to be binary
+- requires the observations to be independent of each other
+- requires there to be little or no multicollinearity among the independent variables.  
+
+  - i.e. the independent variables should not be too highly correlated with each other.
+
+- assumes linearity of independent variables and log odds.
+- typically requires a large sample size:
+
+  - a rule of thumb: at least 10 cases with the least frequent outcome for each independent variable:
+  - If $P(\text{least frequent}) = .2$, then for 4 predictors you need ` (10*4) / .2 = ``r (10*4) / .2` cases
+
+## Modeling
+A simple logistic model:
+```{r}
+titanic %$% glm(Survived ~ Age)
+```
+
+## Modeling 2
+A more complex model:
+```{r}
+titanic %$% glm(Survived ~ Age * Pclass)
+```
+
+## Parameters
+```{r}
+fit <- titanic %$% glm(Survived ~ Age, 
+                       family = binomial(link="logit"))
+summary(fit)
+```
+
+## Prediction 
+```{r}
+new <- data.frame(Age = 40)
+predict(fit, newdata = new, type = "response")
+coef(fit)
+logodds <- -0.209188757 + (40 * -0.008774355)
+odds <- exp(logodds)
+prob <- odds / (1 + odds)
+data.frame(logodds = logodds, odds = odds, prob = prob, plogis = plogis(logodds))
+```
+
+## Example 2
+```{r}
+fit <- titanic %$% glm(Survived ~ Age * Pclass, 
+                       family = binomial(link="logit"))
+summary(fit)
+```
+## Confidence intervals
+```{r}
+confint(fit)
+```
+
+## Predict a 40 year old in 2nd class
+```{r}
+coef(fit)[c(1:3, 5)]
+new <- data.frame(Age = 40, 
+                  Pclass = as.factor(2))
+predict(fit, newdata = new, type = "response")
+
+logodds <- -0.222282007 + (40 * -0.038061512) + 1.306741345 + (40 * -0.002199355)
+odds <- exp(logodds)
+prob <- odds / (1 + odds)
+data.frame(logodds = logodds, odds = odds, prob = prob, plogis = plogis(logodds))
+```
+
+## Predict 23/65yr in 3rd
+```{r, warning = FALSE, message = FALSE}
+coef(fit)[1:2]
+new <- data.frame(Age = c(23, 65), 
+                  Pclass = as.factor(3))
+predict(fit, newdata = new, type = "response")
+
+logodds <- -0.22228201 + (c(23, 65) * -0.03806151)
+odds <- exp(logodds)
+prob <- odds / (1 + odds)
+data.frame(logodds = logodds, odds = odds, prob = prob, plogis = plogis(logodds))
+```
+
+
+## Plot logodds
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+library(plotly)
+new <- data.frame(Pclass = factor(rep(c(1, 2, 3), c(80, 80, 80))), 
+                  Age = rep(1:80, times = 3),
+                  Sex = rep("male", times = 240))
+new <- cbind(new, 
+             predict(fit, newdata = new, 
+                     type = "link", se = TRUE)) 
+new %<>% 
+  mutate(prob = plogis(fit), 
+         lower = plogis(fit - 1.96 * se.fit),
+         upper = plogis(fit + 1.96 * se.fit))
+gg <- new %>%
+  ggplot(aes(x = Age, y = fit)) + 
+  geom_line(aes(colour = Pclass), lwd = 1)
+
+ggplotly(gg)
+```
+
+## Plot probabilities
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+gg <- new %>%
+  ggplot(aes(x = Age, y = prob)) +
+  geom_line(aes(colour = Pclass), lwd = 1) + ylab("Probability of Survival")
+ggplotly(gg)
+```
+
+# Multicollinearity
+
+## Visualizing
+```{r}
+ggpairs(anscombe, progress = FALSE)
+```
+
+## How to inspect
+A variance inflation factor (VIF) detects multicollinearity in regression analyses. 
+
+Multicollinearity happens when two or more predictors explain the same variance in the model. 
+
+Due to multicollinearity it is challenging to pinpoint a predictor's contribution to explaining the variance in the outcome. 
+
+A VIF estimates how much the variance of a regression estimate is inflated because of multicollinearity in your model. 
+
+## VIF example
+```{r}
+fit <- anscombe %$% lm(y1 ~ x1 + x2)
+vif(fit)
+```
+
+## VIF calculation
+In a regression modeling effort where 
+$$\hat{y} = \beta X,$$
+the variance inflation factor can be calculated as 
+$$\text{VIF}_i = \frac{1}{1-R_i^2},$$
+
+where $R_i^2$ would be the coefficient of determination (proportion explained variance) for a regression model of all other predictors $X$ on predictor $X_i$.
+
+A rule of thumb is that if $\text{VIF}_i > 10$ then multicollinearity is high.
+
+## In `R`
+```{r}
+fit <- boys %$% lm(age ~ wgt + hgt)
+vif(fit)
+r.sq <- boys %$% lm(wgt ~ hgt) %>% summary %>% .$r.squared
+r.sq
+1 / (1 - r.sq)
+```
+So we can see that the rule of thumb $\text{VIF}_i > 10$ corresponds to an $R^2 \geq .9$. 
+
+## More sophisticated 
+The `omcdiag()` function from the `mctest` package calculates a suite of overall statistics.  
+```{r warning = FALSE}
+fit <- boys %$% lm(age ~ bmi + wgt + hgt) 
+fit %>% omcdiag
+```
+
+## individual diagnostics 
+The `imcdiag()` function calculates a suite of individual statistics. 
+```{r warning = FALSE}
+fit %>% imcdiag
+```
+
+## Which regressors with VIF
+```{r warning = FALSE}
+fit %>% imcdiag(method = "VIF")
+```
+
+## Example without VIF based MC
+```{r warning = FALSE}
+boys %$% lm(age ~ wgt + hgt) %>% omcdiag()
+```
+
+## Example without VIF based MC
+```{r}
+boys %$% lm(age ~ wgt + hgt) %>% imcdiag(method = "VIF")
+```
+
+## The actual correlation
+```{r}
+boys %>% 
+  select(wgt, hgt, age) %>%
+  cor(use = "pairwise.complete.obs")
+```
+
+# Model fit
+
+## Model fit summary
+See the previous lectures for detailed inspections of model fit
+
+In short:
+
+$$\text{A model with the same fit but fewer parameters, is the better model}$$
+
+Techniques:
+- Use the `anova()` function to compare nested models: 
+- Use the `AIC()` function to campare any model on the same outcome:
+
+  - The AIC yields the log-likelihood of the model given the data
+
+## Example
+```{r}
+fit1 <- boys %>% select(age, hgt, wgt) %>% na.omit() %$% lm(age ~ hgt)
+fit2 <- boys %>% select(age, hgt, wgt) %>% na.omit() %$% lm(age ~ hgt + wgt)
+anova(fit1, fit2)
+AIC(fit1, fit2)
+```
+
+## Why the fuzz?
+```{r}
+fit1 %>% summary() %>% .$coefficients
+fit2 %>% summary() %>% .$coefficients
+```
+
+In this scenario, the overall interpretation of the parameter `hgt` did not change. However, multicollinearity may:
+
+- make choosing the efficient set of predictors challenging
+- make it harder to determine the precise effect of predictors
+
+The overall fit of the model and the predictions are not affected by multicollinearity

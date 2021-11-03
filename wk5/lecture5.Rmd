@@ -1,0 +1,364 @@
+---
+title: "How wrong may a useful model be?"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    logo: logo.png
+    smaller: yes
+    widescreen: no
+---
+
+# Today 
+
+## This lecture
+- model fit
+
+- model complexity
+
+- cross validation
+
+##  We use the following packages
+```{r message=FALSE}
+library(MASS)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(mice)
+library(DAAG)
+library(car)
+
+set.seed(123)
+```
+
+# Model fit
+
+## A simple model
+```{r cache = FALSE}
+boys.fit <- 
+  na.omit(boys) %$% # Extremely wasteful
+  lm(age ~ reg)
+boys.fit
+
+boys %>% na.omit(boys) %$% aggregate(age, list(reg), mean)
+```
+
+## Plotting the model
+```{r fig.height=3.5}
+means <- boys %>% na.omit(boys) %>% group_by(reg) %>% summarise(age = mean(age))
+ggplot(na.omit(boys), aes(x = reg, y = age)) + 
+  geom_point(color = "grey") + 
+  geom_point(data = means, stat = "identity", size = 3)
+```
+
+
+## Model parameters
+```{r cache = FALSE}
+boys.fit %>%
+  summary()
+```
+
+## Is it a good model? {.smaller}
+```{r cache = FALSE}
+boys.fit %>%
+  anova()
+```
+
+It is not a very informative model. The `anova` is not significant, indicating that the contribution of the residuals is larger than the contribution of the model. 
+
+The outcome `age` does not change significantly when `reg` is varied. 
+
+## Model factors
+```{r cache = FALSE}
+boys.fit %>%
+  model.matrix() %>%
+  head(n = 10)
+```
+
+`R` expands the categorical variable for us
+
+  - it dummy-codes the `5` categories into `4` dummies (and an intercept). 
+
+## Post hoc comparisons
+```{r cache = FALSE}
+coef <- boys.fit %>% aov() %>% summary.lm()
+coef
+```
+
+## Post hoc comparisons
+Without adjustments for the p-value
+```{r cache = FALSE}
+na.omit(boys) %$% pairwise.t.test(age, reg, p.adj = "none")
+```
+
+## Post hoc comparisons
+With adjusted p-values cf. Bonferoni correction
+```{r cache = FALSE}
+na.omit(boys) %$% pairwise.t.test(age, reg, p.adj = "bonf")
+```
+
+## Post hoc comparisons
+Manually calculated
+```{r}
+p.val <- coef$coefficients
+p.adjust(p.val[, "Pr(>|t|)"], method = "bonferroni")
+```
+
+If you have trouble reading scientific notation, `5.077098e-68` means the following
+
+$$5.077098\text{e-68} = 5.077098 \times 10^{-68} = 5.077098 \times (\frac{1}{10})^{-68}$$
+
+This indicates that the comma should be moved 68 places to the left:
+
+$$5.077098\text{e-68} = .000000000000000000000000000000000000$$
+$$000000000000000000000000000000005077098$$
+
+## AIC
+Akaike's *An Information Criterion* 
+```{r cache = FALSE}
+boys.fit %>% 
+  AIC()
+```
+
+### What is AIC
+AIC comes from information theory and can be used for model selection. The AIC quantifies the information that is lost by the statistical model, through the assumption that the data come from the same model. In other words: AIC measures the fit of the model to the data. 
+
+- The better the fit, the less the loss in information
+- AIC works on the log scale:
+  - $\text{log}(0) = -\infty$, $\text{log}(1) = 0$, etc. 
+- the closer the AIC is to $-\infty$, the better
+
+
+# Model comparison
+
+## A new model
+Let's add predictor `hgt` to the model:
+```{r cache = FALSE}
+boys.fit2 <- 
+  na.omit(boys) %$%
+  lm(age ~ reg + hgt)
+
+boys.fit %>% AIC()
+boys.fit2 %>% AIC()
+```
+
+## Another model
+Let's add `wgt` to the model
+```{r cache = FALSE}
+boys.fit3 <- 
+  na.omit(boys) %$%
+  lm(age ~ reg + hgt + wgt)
+```
+
+## And another model
+Let's add `wgt` and the interaction between `wgt` and `hgt` to the model
+```{r cache = FALSE}
+boys.fit4 <- 
+  na.omit(boys) %$%
+  lm(age ~ reg + hgt * wgt)
+```
+is equivalent to 
+```{r eval=FALSE}
+boys.fit4 <- 
+  na.omit(boys) %$%
+  lm(age ~ reg + hgt + wgt + hgt:wgt)
+```
+
+## Model comparison
+```{r cache = FALSE}
+boys.fit %>% AIC()
+boys.fit2 %>% AIC()
+boys.fit3 %>% AIC()
+boys.fit4 %>% AIC()
+```
+
+## Another form of model comparison
+```{r cache = FALSE}
+anova(boys.fit, boys.fit2, boys.fit3, boys.fit4)
+```
+
+## Inspect `boys.fit3`
+```{r cache = FALSE}
+boys.fit3 %>% anova()
+```
+
+## Inspect `boys.fit4`
+```{r cache = FALSE}
+boys.fit4 %>% anova()
+```
+It seems that `reg` and the interaction `hgt:wgt` are redundant
+
+## Remove `reg`
+```{r}
+boys.fit5 <- 
+  na.omit(boys) %$%
+  lm(age ~ hgt + wgt)
+```
+Let's revisit the comparison
+```{r}
+anova(boys.fit, boys.fit2, boys.fit3, boys.fit5)
+```
+But the `boys.fit5` model is better than the previous model with fewer parameters
+
+## Stepwise regression
+We start with the full model, which contains all parameters for all columns. 
+
+The most straightforward way to go about this is by specifying the following model:
+```{r}
+full.model <- lm(age ~ ., data = na.omit(boys))
+full.model
+```
+
+## Stepwise regression - continued
+We can then start with specifying the stepwise model. In this case we choose direction `both`. 
+```{r}
+step.model <- step(full.model, direction = "both", 
+                      trace = FALSE)
+step.model
+```
+
+Other options are 
+
+- `forward`: fit all univariate models, add the best predictor and continue.
+- `backward`: fit the full model, eliminate the worst predictor and continue. 
+
+## Summary
+```{r}
+step.model %>% summary
+```
+
+## Stepwise regression - AIC
+```{r}
+full.model <- lm(age ~ ., data = na.omit(boys))
+step.model <- MASS::stepAIC(full.model, direction = "both", 
+                      trace = FALSE)
+step.model
+```
+
+## Influence of cases
+DfBeta calculates the change in coefficients depicted as deviation in SE's.
+```{r cache = FALSE}
+step.model %>%
+  dfbeta() %>%
+  head(n = 7)
+```
+
+# Prediction
+
+## Fitted values
+Let's use the simpler `anscombe` data example
+```{r cache = FALSE}
+fit <- anscombe %$% lm(y1 ~ x1)
+
+y_hat <- 
+  fit %>%
+  fitted.values()
+```
+The residual is then calculated as
+```{r cache = FALSE}
+y_hat - anscombe$y1
+```
+
+## Predict new values
+If we introduce new values for the predictor `x1`, we can generate predicted values from the model
+```{r cache = FALSE, warning=FALSE}
+new.x1 <- data.frame(x1 = 1:20)
+fit %>% predict(newdata = new.x1)
+```
+
+## Predictions are draws from the regression line
+```{r}
+pred <- fit %>% predict(newdata = new.x1)
+lm(pred ~ new.x1$x1)$coefficients
+fit$coefficients
+```
+
+## Prediction intervals
+```{r warning=FALSE}
+fit %>% predict(interval = "prediction")
+```
+
+A prediction interval reflects the uncertainty around a single value. The confidence interval 
+reflects the uncertainty around the mean prediction values. 
+
+# Assessing predictive accuracy
+
+## K-fold cross-validation
+
+- Divide sample in $k$ mutually exclusive training sets
+- Do for all $j\in\{1,\dots,k\}$ training sets
+  
+    1. fit model to training set $j$
+    2. obtain predictions for test set $j$  (remaining cases)
+    3. compute residual variance (MSE) for test set $j$
+  
+- Compare MSE in cross-validation with MSE in sample
+- Small difference suggests good predictive accuracy
+
+## The original model
+```{r}
+fit %>% summary()
+```
+
+## K-fold cross-validation `anscombe` data {.smaller}
+```{r echo=T, fig.height=3.5, dev.args = list(bg = 'transparent')}
+DAAG::CVlm(anscombe, fit, plotit=F, printit=T)
+```
+
+## K-fold cross-validation `anscombe` data {.smaller}
+
+  -  residual variance sample is $1.24^2 \approx 1.53$
+  -  residual variance cross-validation is 2.04 
+  -  regression lines in the 3 folds are not the same, but similar
+
+```{r echo=F, fig.height=4, dev.args = list(bg = 'transparent')}
+par(mar=c(5,4,4,2)+.1,cex=.8,cex.lab=1.5,cex.axis=1.2,cex.main=1.5)
+```
+```{r echo=T, fig.height=3.5, dev.args = list(bg = 'transparent')}
+DAAG::CVlm(anscombe, fit, plotit="Observed", printit=F)
+```
+
+
+## Plotting the residuals
+```{r echo=T, fig.height=3.5, dev.args = list(bg = 'transparent')}
+DAAG::CVlm(anscombe, fit, plotit="Residual", printit=F)
+```
+
+
+## K-fold cross-validation `boys` data {.smaller}
+
+  -  residual variance sample is 1.37
+  -  residual variance cross-validation is 1.46
+  -  regression lines in the 3 folds almost identical
+
+```{r echo=F, fig.height=4, dev.args = list(bg = 'transparent')}
+par(mar=c(5,4,4,2)+.1,cex=.8,cex.lab=1.5,cex.axis=1.2,cex.main=1.5)
+```
+```{r echo=T, fig.height=3.5, dev.args = list(bg = 'transparent'), warning=FALSE}
+DAAG::CVlm(na.omit(boys), step.model, plotit="Observed", printit=F)
+```
+
+## Plotting the residuals
+```{r echo=T, fig.height=3.5, dev.args = list(bg = 'transparent'), warning=FALSE}
+DAAG::CVlm(na.omit(boys), step.model, plotit="Residual", printit=F)
+```
+
+## How many cases are used?
+```{r}
+na.omit(boys) %$%
+  lm(age ~ reg + hgt * wgt) %>%
+  nobs()
+```
+
+If we would not have used `na.omit()`
+```{r}
+boys %$%
+  lm(age ~ reg + hgt * wgt) %>%
+  nobs()
+```
+
+## Next week:
+
+- Logistic regression
+
+

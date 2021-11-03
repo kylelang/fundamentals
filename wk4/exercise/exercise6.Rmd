@@ -1,0 +1,216 @@
+---
+title: "Exercise 6"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: false
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: true
+---
+  
+<style type="text/css">
+  
+body{ /* Normal  */
+  font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+  font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+  font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+  font-size: 14px;
+}
+</style>
+
+---
+
+```{r setup, echo = FALSE}
+library(knitr)
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+We will use the following packages in this practical:
+
+```{r, echo = TRUE, include = TRUE}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+```
+
+This practical begins with the same question as the previous practical. After 
+you fit the same four models as last time, however, you will move on to checking 
+the assumptions of the fitted models.
+
+---
+
+# Fitting Linear Models
+
+---
+
+## {#modelEstQ}
+
+**Fit the following linear models using the `anscombe` data:**
+
+- Predict `y1` from `x1` 
+   - Stored the results in an object called `fit1`
+- Predict `y2` from `x2` 
+   - Stored the results in an object called `fit2`
+- Predict `y3` from `x3` 
+   - Stored the results in an object called `fit3`
+- Predict `y4` from `x4` 
+   - Stored the results in an object called `fit4`
+
+```{r}
+fit1 <- lm(y1 ~ x1, data = anscombe)
+fit2 <- lm(y2 ~ x2, data = anscombe)
+fit3 <- lm(y3 ~ x3, data = anscombe)
+fit4 <- lm(y4 ~ x4, data = anscombe)
+```
+
+---
+
+# Checking Assumptions
+
+---
+
+## Model 1
+
+**Inspect the assumptions of the first model** 
+
+Use the `plot()` function to generate diagnostic plots for `fit1`.
+
+- What are your conclusions with respect to the tenability of the model 
+assumptions?
+
+```{r}
+plot(fit1)
+```
+
+```{asis}
+The assumptions of the linear model seem to be satisfied.
+
+- The data follow a linear trend. The loess curve shows some deviations from 
+perfect linearity, but there are only `r length(anscombe$x1)` points. So, this 
+slight deviation is not a problem. 
+- Taking the small sample size into account, I would argue that the residuals 
+seem normally distributed based on the *Normal Q-Q* plot. 
+- The residual variance seems constant over the level of the fitted values (i.e. 
+homoscedastic residual variance) as seen in the *Residuals vs. Fitted* plot and 
+the *Scale-Location* plot. The dip in the *Scale-Location* plot can easily be 
+explained by the small sample size, so the deviation shouldn't be taken too 
+seriously. 
+- No cases seem particularly influentially according to leverage or Cook's 
+distance. Although, Case 3 should probably be investigated a bit more closely. 
+```
+
+---
+
+## Model 2
+
+**Inspect the assumptions of the second model** 
+
+Use the `plot()` function to generate diagnostic plots for `fit2`.
+
+- What are your conclusions with respect to the tenability of the model 
+assumptions?
+
+```{r}
+plot(fit2)
+```
+
+```{asis}
+The assumption of linearity is clearly violated here.
+
+- The data do not follow a linear trend. There is a clear curvilinear trend in 
+the residual plot.
+- According to the *Normal Q-Q* plot, the residuals seem not to be normally 
+distributed, especially in the tails. 
+- Cases 6 and 8 seem potentially influential, the have relatively large Cook's 
+distances (i.e., greater than 0.5). 
+```
+
+---
+
+## Model 3
+
+**Inspect the assumptions of the third model** 
+
+Use the `plot()` function to generate diagnostic plots for `fit3`.
+
+- What are your conclusions with respect to the tenability of the model 
+assumptions?
+
+```{r}
+plot(fit3)
+```
+
+```{asis}
+These data clearly suffer from one severe outlier.
+
+- The data follow a perfect linear trend, except for Case 3. 
+- The residuals are perfectly normal, except for Case 3.
+- Case 3 seems quite influential. Case 3 has a very large residual, so its 
+Cook's distance is also quite large (i.e., greater than 1).
+
+tl;dr: Case 3 is why we can't have nice things.
+```
+
+---
+
+## Model 4
+
+**Inspect the assumptions of the fourth model** 
+
+Use the `plot()` function to generate diagnostic plots for `fit4`.
+
+- What are your conclusions with respect to the tenability of the model 
+assumptions?
+
+```{r}
+plot(fit4)
+```
+
+```{asis}
+`x4` is (nearly) constant, and the data also suffer from a high-leverage point.
+
+- The first plot clearly shows a single point (Case 8) with very high leverage.
+- Other than Case 8, `x4` is a constant (i.e., `x4` takes the same value for all 
+values of `y4`). 
+- Case 8 has a leverage of 1 (i.e., the maximum possible value), so this case is 
+dropped from all but the first plot.
+   - The remaining plots are not accurate representations of the data.
+   - We can only use these plots to infer how the data would behave if Case 8
+     were excluded.
+```
+
+---
+
+End of Exercise 6

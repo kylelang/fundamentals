@@ -1,0 +1,76 @@
+---
+title: "Workgroup"
+author: "Justin Kraaijenbrink"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    smaller: yes
+    widescreen: no
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Workgroups
+
+The workgroups are aimed at
+
+- working on your assignments:
+  
+  1. One assignment on linear regression
+  2. One assignment on logistic regression
+
+- asking for help and feedback on your assignments
+- support with coding and interpretation
+
+## What to do
+**1. Find a data set that allows for linear and logistic regression. It should at minimum contain**
+ 
+  - a continuous outcome
+  - at least two continuous predictors
+  - a categorical variable
+  - a dichotomous variable **or** a dichotomization of a continuous variable
+    - e.g. `bmi` into underweight or overweight, `age` into adolescents and young adults, and so on.
+    
+**2. fit a simple initial model and interpret that model**
+
+**3. check the assumptions for the model**
+
+**4. inspect model fit and see if the model can be improved**
+
+  - repeat steps 2-4 till you are satisfied.
+  
+**5. investigate the usefulness of the final model fit with crossvalidation**
+
+For logistic regression, repeat steps 2-5. 
+
+## Deadlines:
+
+- Assignment A: **December 19 @ 5pm**
+- Assignment B: **January 20 @ 5pm**
+
+Assignments should be handed in `rmarkdown` format (both `.Rmd` and `html` files), where all code and text are visible. 
+
+## Groups
+
+- Groups of 2-6 persons. 
+- All names on the assignment receive the same grade
+- If names are omitted from any of the assignments, we expect all group members to be aware of this situation.
+
+$$\quad \\ \text{Let's form groups now}$$
+
+e-mail your group to [G.Vink@uu.nl](mailto:G.Vink@uu.nl) and include the following
+
+- all group member names
+- add all member e-mailadresses to the cc
+
+## What's next
+
+### Today
+- Work on exercise 2 (and 3 if time permits)
+- Ask Justin for help if needed
+
+### Next week
+- bring a data set to the workgroup
+  - so search for an applicable data set

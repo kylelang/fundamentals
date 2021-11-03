@@ -1,0 +1,554 @@
+---
+title: "Practical 3"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: true
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r setup, echo = FALSE}
+library(knitr)
+
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+opts_chunk$set(include = params$answers, 
+               echo = params$answer, 
+               message = FALSE,
+               warning = FALSE)
+```
+
+---
+
+Begin this practical by setting the maximum line length in R-Studio to 80 
+characters. 
+
+1. Go to *Preferences* (or *Global Options* under *Tools*) --> *Code* --> 
+*Display*.
+1. Tick the *Show margin* box. 
+1. Set the *Margin column* to *80*.
+
+---
+
+# Data I/O
+
+---
+
+##
+
+**Install the *mice* package**
+
+Use the `install.packages()` function to install the  the **mice** package.
+
+```{r, eval = FALSE}
+install.packages("mice")
+```
+
+```{asis}
+If all went well, you will receive a message in the console telling you that the 
+package has been installed. 
+```
+
+---
+
+##
+
+**Load the *mice* package**
+
+Use the `library()` function to load the **mice** package.
+
+```{r}
+library(mice)
+```
+
+```{asis}
+- Installing the package only makes the package available on your machine.
+- You have to load the package every time you want to use it in a new R session.
+```
+
+---
+
+##
+
+**View the `mammalsleep` data**
+
+Most packages have datasets included. Open the `mammalsleep` dataset from the 
+**mice** package in two ways:
+
+1. By evaluating its name, `mammalsleep`, directly
+1. By using the `View()` function
+
+```{r, eval = FALSE}
+## I'm not actually running these lines because the results would clutter 
+## this document too much.
+mammalSleep
+View(mammalSleep)
+```
+
+```{asis}
+Using `View()` is preferred for inspecting large datasets because `View()` opens 
+the dataset in a spreadsheet-like window. 
+```
+
+---
+
+##
+
+**Write the `mammalsleep` dataset to disk**
+
+Save the `mammalsleep` dataset that you viewed above to your working directory. 
+
+- Save the data as a tab-delimited text file.
+- Use the `.` character as the decimal separator. 
+- Name the file `mammalsleep.txt`
+
+```{r}
+write.table(mammalsleep, 
+            file = "mammalsleep.txt", 
+            sep = "\t", 
+            dec = ".", 
+            row.names = FALSE)
+```
+
+```{asis}
+- The command `sep = "\t"` creates a tab-delimited file
+- The command `dec = "."` specifies the `.` character as the decimal seperator 
+(instead of a comma). 
+- The command `row.names = FALSE` tells R not to include row names in the 
+exported file. 
+```
+
+---
+
+##
+
+**Read the `mammalsleep.txt` file from disk**
+
+Read in the data that you just saved to disk and save it as a new R object 
+called `sleepdata`.
+
+```{r}
+sleepdata <- read.table("mammalsleep.txt", 
+                        sep = "\t", 
+                        dec = ".", 
+                        header = TRUE, 
+                        stringsAsFactors = TRUE)
+```
+
+```{asis}
+- The command `sep = "\t"` indicates that the file is tab-delimited
+- The command `dec = "."` indicates that a `.` is used as the decimal seperator
+- The command `header = TRUE` tells R that the first row of data contains the 
+variable names
+- The `stringsAsFactors = TRUE` command will automatically convert any character 
+variables to factors
+
+You can read files that live in the working directory by specifying only the 
+file name (with the file extension). To read files that live in any other 
+location, you need to specify the full file path (either relative to the working 
+directory or an absolute path). To find the current working directory, you can 
+run `getwd()`. To change the working directory, you can use `setwd()`. One 
+benefit of using RStudio projects is that the working directory is automatically 
+set to the main project directory. 
+
+There are many packages that facilitate data I/O from other statistical software 
+packages such as:
+
+- SPSS (e.g. `read_spss()` from the **haven** package)
+- Mplus (routines in the **MplusAutomation** package)
+- Stata (`read.dta()` in the **foreign** package)
+- SAS (`sasxport.get()` from the **Hmisc** package) 
+
+There are also packages to read data from spreadsheet software such as MS Excel 
+(`read.xlsx()` from the `xlsx` package). 
+
+For a short guide on importing multiple file formats into R, see 
+[this page](http://www.statmethods.net/input/importingdata.html).
+```
+
+---
+
+# Working with Data
+
+---
+
+##
+
+**Explore the data**
+
+The dataset you've just imported contains the sleep data from Allison and 
+Cicchetti (1976). 
+
+- Explore these data, and familiarize yourself with the characteristics of the 
+dataset.
+
+```{asis}
+There is no completely right or wrong way to go about exploring a dataset, but 
+the following commands represent some potential options. 
+```
+
+```{r, eval = FALSE}
+## Call up the documentation for the original dataset in the mice package:
+?mammalsleep
+```
+
+```{r}
+## Show the data structure:
+str(sleepdata)
+
+## Show summaries of the univariate distributions:
+summary(sleepdata)
+
+## Show (rounded) bivariate correlations (excluding the ID column):
+round(cor(sleepdata[, -1], use = "pairwise.complete.obs"), 2) 
+
+## Show the first six rows:
+head(sleepdata)
+
+## Show the last six rows:
+tail(sleepdata)
+```
+
+```{asis}
+Since `mammalsleep` is an R dataset, it should have a help file. The 
+documentation for the `mammalsleep` dataset may yield valuable insight about the 
+origin of the data and the variables included therein. 
+
+The functions `head()` and `tail()` are very useful. If something went from with 
+reading the data, you can often tell very quickly by looking at the first or 
+last rows (do they look like you expected)? 
+
+The `str` function is a good way to get a quick overview of the measurement 
+levels in a dataset.
+
+- Notice how the information returned by the `str()` function looks very similar 
+to the information you see in RStudio's Environment tab. 
+- The Environment tab is simply reporting the results of the `str()` function in
+a pretty format.
+
+Notice that `sleepdata` is a data frame. The `read.table()` function will return 
+the data it reads as a data frame. 
+
+One thing that may have caught your attention is the relation between `ts`, `ps` 
+and `sws`. This relation is deterministic: total sleep (`ts`) is the sum of 
+paradoxical sleep (`ps`) and short-wave sleep (`sws`). If you were to model 
+these data, you would need to account for such relations in your analysis. 
+```
+
+---
+
+##
+
+**Subset the data**
+
+Some animals were not used by Allison and Cicchetti (1976). 
+
+1. Exclude the following animals from `sleepdata`: 
+   - Echidna
+   - Lesser short-tailed shrew
+   - Musk shrew
+
+1. Save the dataset as `sleepdata2` 
+
+```{asis}
+There are at least three ways to exclude these animals from the dataset. 
+
+The first two approaches both require us to use the `species` variable to create 
+a logical vector flagging the rows to drop.
+```
+
+```{r}
+exclusions <- sleepdata$species %in% 
+  c("Echidna", "Lesser short-tailed shrew", "Musk shrew")
+```
+
+```{asis}
+a. The first approach uses standard, base R subsetting procedures:
+```
+
+```{r}
+## Invert the logical vector to select all rows other than the exclusions:
+sleepdata2 <- sleepdata[!exclusions, ]
+```
+
+```{asis}
+b. The second approach uses the `filter()` function from the `dplyr` package:
+```
+
+```{r}
+library(dplyr)
+sleepdata2 <- filter(sleepdata, !sleepdata$species %in% exclusions)
+```
+
+```{asis}
+c. The third approach uses the row numbers directly
+   - You will need to manually figure out which row numbers you want to exclude
+```
+
+```{r}
+sleepdata2 <- sleepdata[-c(16, 32, 38), ]
+```
+
+```{asis}
+Note that the row number option requires less code, but the first two options 
+have much lower probabilities for error. 
+
+- If the dataset changes or the rows are sorted differently, the row number 
+option may not work correctly (i.e., you'd exclude the wrong cases). 
+- Since you find the rows programatically in the first two options, they are 
+much more robust to changes in the data.
+```
+
+---
+
+## {#plotQ}
+
+**Plot brain weight as a function of species**
+
+Use the `sleepdata2` dataset and base R graphics routines to create a plot of 
+*brain weight* against *species*.
+
+```{r}
+plot(brw ~ species, data = sleepdata2)
+```
+
+---
+
+## {#flagQ}
+
+**Conditional case selection**
+
+Some animals have much heavier brains than other animals. Find the names of all 
+animals that have a brain weight larger than 1 standard deviation above the mean 
+brain weight. 
+
+```{r}
+## Create a logical vector flagging the rows with extreme brain weights:
+bigBrains <- sleepdata2$brw > (mean(sleepdata2$brw) + sd(sleepdata2$brw))
+
+## Extract the names from any row flagged by the above vector:
+as.character(sleepdata2$species[bigBrains])
+```
+
+##
+
+**Plot of big-brained animals**
+
+Replicate the plot from Question \@ref(plotQ) with only the animals you flagged 
+in Question \@ref(flagQ).
+
+   - Do not plot any information about the other animals.
+
+
+```{asis}
+A naive attempt may simply try to run the same plotting code with a subset of 
+the data.
+```
+
+```{r}
+plot(brw ~ species, data = sleepdata2[bigBrains, ])
+```
+
+```{asis}
+The downside to this approach is that it still includes all animals on the 
+x-axis. The original factor labels for `species` remain unchanged in the subset 
+of the original data. 
+```
+
+```{r}
+levels(sleepdata2$species[bigBrains])
+```
+```{r, echo = FALSE}
+levs <- nlevels(sleepdata2$species[bigBrains])
+```
+```{asis}
+The `plot()` function uses all  `r levs` factor levels to generate the x-axis 
+even though `r levs - 3` levels are empty. 
+
+To get rid of the unused factor levels, we can use the `factor()` function.
+```
+
+```{r}
+sleepdata3 <- sleepdata2[bigBrains, ]
+sleepdata3$species <- factor(sleepdata3$species)
+levels(sleepdata3$species)
+```
+
+```{asis}
+Now we can create the plot that we wanted:
+```
+
+```{r}
+plot(brw ~ species, data = sleepdata3)
+```
+
+---
+
+# Workspace I/O
+
+---
+
+## {#saveQ}
+
+**Save the current workspace**
+
+Now that we have imported some data and done some analyses and data 
+manipulations, we may want to save the current workspace (i.e. the current state 
+of our R session). Saving the workspace will save everything in the R session 
+exactly as it exists at the moment of saving. So, we can easily continue from 
+this exact state at a later time. All we need to do is re-load the saved 
+workspace file.
+
+Use the `save.image()` function to save the entirety of the current workspace.
+
+- Name the workspace image `practical3.RData`. 
+
+Also, use the `save()` function to save the `sleepdata` dataset as a separate 
+workspace.
+
+- Name this workspace `sleepdata.RData`. 
+
+```{r}
+save.image("practical3.RData")
+save(sleepdata, file = "sleepdata.RData")
+```
+
+---
+
+##
+
+**Clear the workspace**
+
+Run the following command to clear the workspace.
+
+```{r, include = TRUE, echo = TRUE}
+rm(list = ls(all = TRUE))
+```
+
+This is a very handy line of code to memorize. It will clear nearly everything 
+from your current workspace. If you're curious about how it does so, check the 
+help files for the `rm()` and `ls()` functions.
+
+##
+
+**Load a saved workspace**
+
+Use the `load()` function to load the *practical3.RData* workspace that you 
+saved in Question \@ref(saveQ).
+
+```{r}
+load("practical3.RData")
+```
+
+---
+
+##
+
+**Load a saved dataset**
+
+1. Use the `rm()` function to remove the `sleepdata` dataset from the 
+environment.
+1. Use the `load()` function to reload the `sleepdata` dataset from the 
+*sleepdata.RData* workspace you saved in Question \@ref(saveQ).
+
+```{r}
+rm(sleepdata)
+load("sleepdata.RData")
+```
+
+---
+
+##
+
+**A better way to read/write R data objects**
+
+You may have noticed that when you load a dataset with `read.table()`, you 
+assign the result to a new R object. However, when you load a dataset saved as a 
+workspace using the `load()` function, you cannot rename the resulting R object.
+
+When saving an R object with the `save()` function and loading it with the 
+`load()` function, the object keeps the name it had when saved. When saving 
+and loading individual data objects, this behavior is rarely desirable.
+
+The `saveRDS()` and `readRDS()` functions allow us to save and load R objects in 
+R Data Set (RDS) format.
+
+- Objects stored in RDS format do not keep their original names.
+- We have to give the saved object to a new name when we load it with the 
+`readRDS()` function.
+- This workflow is more transparent than the behavior of `save()` and `load()` 
+and better follows the R philosophy of assigning values to objects.
+
+If you need to save individual R objects (i.e., not an entire workspace image), 
+you should probably save them as RDS files and not RData workspaces.
+
+1. Use the `saveRDS()` function to save the `sleepdata` object as 
+*sleepdata.rds*.
+1. Use the `readRDS()` function to load the *sleepdata.rds* file and assign it 
+to the `sleepdata4` object.
+
+```{r}
+saveRDS(sleepdata, "sleepdata.rds")
+sleepdat4 <- readRDS("sleepdata.rds")
+```
+
+---
+
+# A Useful Package for Data I/O 
+
+---
+
+If R is not (yet) your preferred data-analysis software, you are probably 
+accustomed to processing your data in some other software and storing data in 
+formats other than RData or RDS. In R, there are many facilities for importing 
+and exporting data with diverse formats. 
+
+Here, I want to specifically highlight the 
+[**haven**](https://haven.tidyverse.org/index.html) package written by 
+[Hadley Wickham](http://hadley.nz). The **haven** package provides many useful 
+functions to import and export data from software such as Stata, SAS, and SPSS.
+
+---
+
+End of Exercise 3
+
+
+

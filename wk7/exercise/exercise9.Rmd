@@ -1,0 +1,84 @@
+---
+title: "Exercise 9"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: false
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+  
+<style type="text/css">
+  
+body{ /* Normal  */
+  font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+  font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+  font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+  font-size: 14px;
+}
+</style>
+  
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(knitr)
+library(ggplot2)
+
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+
+data <- data.frame(conc = c(0.1, 0.5, 1, 10, 20, 30, 50, 70, 80, 100, 150),
+                   no = c(7, 1, 10, 9, 2, 9, 13, 1, 1, 4, 3),
+                   yes = c(0, 0, 3, 4, 0, 6, 7, 0, 0, 1 ,7)
+                   ) 
+```
+
+---
+
+In this practical, you will recreate aspects of the analysis of the `titanic` 
+data from the lecture slides.
+
+---
+
+[The titanic.csv data](data/titanic.csv)
+
+This week's exercise is to:
+1. Recreate the plots from slides 28 and 29, but now for females
+2. For the model with the interactions:
+  
+  - Create a confusion matrix for the model with the interactions
+  - Perform crossvalidation on the `titanic` model with the interactions
+
+3. See if a model with all variables included is a better fit than the model with the interactions presented in the slides. 
+  - The model with all variables (excluding `Name`!) can be simply fit with `glm(Survived ~ . * ., data = titanic[, -3])`
+  - The `.` here implies all remaining columns in the data. `. * .` yields the full factorial model between all these columns. 
+

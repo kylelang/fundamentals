@@ -1,0 +1,432 @@
+---
+title: "Logistic regression"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    smaller: yes
+    widescreen: no
+    logo: logo.png
+---
+
+## Packages and functions used
+```{r message=FALSE}
+library(magrittr) # pipes
+library(dplyr)    # data manipulation
+library(mice)     # data
+library(ggplot2)  # plotting
+library(DAAG)     # data sets and functions
+```
+
+- `glm()` Generalized linear models
+- `predict()` Obtain predictions based on a model
+- `confint()` Obtain confidence intervals for model parameters
+- `coef()` Obtain a model's coefficients
+- `DAAG::CVbinary()` Cross-validation for regression with a binary response
+
+## So far
+
+At this point we have covered the following models:
+
+- Simple linear regression (SLR)
+
+\[y=\alpha+\beta x+\epsilon\]
+
+*The relationship between a numerical outcome and a numerical or categorical predictor*
+
+- Multiple linear regression (MLR)
+
+\[y=\alpha+\beta_1 x_1 + \beta_2 x_2 + \dots \beta_p x_p + \epsilon\]
+
+*The relationship between a numerical outcome and **multiple** numerical or categorical predictors*
+
+### What remains
+We have not yet covered how to handle outcomes that are not categorical or how to deal with predictors that are nonlinear or have a strict dependency structure. 
+
+## What should you know
+At this point you should know how to 
+
+- fit SLR and MLR models
+- select MLR models
+- interpret model parameters
+- perform hypothesis test on slope and intercept parameters
+- perform hypothesis test for the whole regression model
+- calculate confidence intervals for regression parameters
+- obtain prediction intervals for fitted values
+- study the influence of single cases
+- study the validity of linear regression assumptions:
+  - linearity, constant residual variance
+- study the residuals, leverage and Cook's distance
+
+## Rewriting what we know
+Instead of modeling
+
+\[y=\alpha+\beta x+\epsilon\]
+
+we can also consider 
+\[\mathbb{E}[y] = \alpha + \beta x\]
+
+They're the same. Different notation, different framework.
+
+The upside is that we can now use a function for the expectation $\mathbb{E}$ to allow for transformations. This would enable us to change $\mathbb{E}[y]$ such that $f(\mathbb{E}[y])$ has a linear relation with $x$.
+
+This is what we will be doing today
+
+# Illustration of the problem
+
+## Example: boys' `bmi`
+```{r warning = FALSE, fig.height=3.6}
+boys %>%
+  filter(age > 10) %>%
+  ggplot(aes(y = bmi, x = age)) + geom_point() + geom_smooth(method = "lm")
+```
+
+## Adding a column to the data
+We have information on `bmi`. We know that a `bmi > 25` would indicate being overweight. We could add this information to the data
+```{r warning = FALSE, fig.height=3.6}
+boys.ovwgt <- boys %>%
+  filter(age > 10, !is.na(bmi)) %>%
+  mutate(ovwgt = cut(bmi, 
+                     breaks = c(0, 25, Inf), 
+                     labels = c("Not overweight", "Overweight")))
+
+boys.ovwgt %>% filter(bmi > 24) %>% head
+```
+
+## Example: boys' `bmi`
+```{r warning = FALSE, fig.height=3.6}
+boys.ovwgt %>%
+  ggplot(aes(y = bmi, x = age)) + geom_point(aes(color = ovwgt)) + 
+  geom_smooth(method = "lm")
+```
+
+## Example: boys' `overweight`
+```{r warning = FALSE, fig.height=3.6}
+boys.ovwgt %>% 
+  mutate(ovwgt.num = as.numeric(ovwgt)) %>% 
+  ggplot(aes(y = ovwgt.num, x = age)) + geom_point(aes(color = ovwgt)) + 
+  geom_smooth(method = "lm") 
+```
+
+## Modeling `ovwgt ~ age` #1
+```{r fig.height=3}
+fit <- boys.ovwgt %>%
+  mutate(ovwgt.num = as.numeric(ovwgt) - 1) %$% 
+  lm(ovwgt.num ~ age)
+fit$fitted.values %>% histogram
+```
+
+The predicted values for the outcome are all very low. the large number of `Not overweight` boys heavily influences the estimation. No boy is predicted to be `Overweight`. 
+
+## Modeling `ovwgt ~ age` #2
+```{r fig.height= 3}
+fit$residuals %>% histogram
+```
+
+Naturally, these residuals are not normally distributed. 
+
+## Modeling `ovwgt ~ age` #3
+```{r warning = FALSE, fig.height=3}
+plotdata <- data.frame(obs = fit$model$ovwgt.num,
+                       pred = fit %>% predict)
+plotdata %>% ggplot(aes(x = pred, y = obs)) + 
+  geom_point() + geom_abline(slope = 1, intercept = 0, color = "orange", lwd = 2) + 
+  xlim(-.1, .25) + geom_vline(xintercept = 0, color = "purple")
+```
+
+The relation between the observed outcome (black) and the predicted outcome (orange) is by no means equivalent. The assumption of linearity is heavily violated.
+
+## Example: `simulated` data
+To further illustrate why the linear model is not an appropriate model for discrete data I propose the following simple simulated data set:
+```{r fig.height=3}
+set.seed(123)
+simulated <- data.frame(discrete = c(rep(0, 50), rep(1, 50)),
+                        continuous = c(rnorm(50, 10, 3), rnorm(50, 15, 3)))
+
+simulated %>% summary
+```
+This data allows us to illustrate modeling the relation between the `discrete` outcome and the `continuous` predictor with logistic regression. 
+
+Remember that fixing the random seed allows for a replicable random number generator sequence. 
+
+## Visualizing `simulated` data
+```{r fig.height=3}
+simulated %>% ggplot(aes(x = continuous, y = discrete)) +
+  geom_point()
+```
+
+## Modeling `simulated` with `lm`
+```{r fig.height=3}
+simulated %>% ggplot(aes(x = continuous, y = discrete)) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE, color = "orange") 
+```
+
+The orange line represents the `lm` linear regression line. It is not a good representation for our data, as it assumes the data are continuous and projects values outside of the range of the observed data. 
+
+## Modeling `simulated` with `glm`
+```{r fig.height=3}
+simulated %>% ggplot(aes(x = continuous, y = discrete)) +
+  geom_point() + geom_smooth(method = "lm", se = FALSE, color = "orange") +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) 
+```
+
+The blue `glm` logistic regression line represents this data infinitely better than the orange `lm` line. It assumes the data to be `0` or `1` and does not project values outside of the range of the observed data. 
+
+# How does this work?
+
+## Generalized linear modeling
+There is a very general way of addressing this type of problem in regression. The models that use this *general way* are called generalized linear models (GLMs). 
+ 
+Every generalized linear model has the following three characteristics:
+
+1. A probability distribution that describes the outcome
+2. A linear predictor model
+3. A link function that relates the linear predictor to the the parameter of the outcome's probability distribution. 
+
+The linear predictor model in (2) is 
+$$\eta = \bf{X}\beta$$
+where $\eta$ denotes a linear predictor and the link function in (3) is 
+$$\bf{X}\beta = g(\mu)$$
+The technique to model a binary outcome based on a set of continuous or discrete predictors is called *logistic regression*. **Logistic regression is an example of a generalized linear model.** 
+ 
+## The link function
+The link function for logistic regression is the `logit link`
+
+$$\bf{X}\beta = ln(\frac{\mu}{1 - \mu})$$ 
+
+where $$\mu = \frac{\text{exp}(\bf{X}\beta)}{1 + \text{exp}(\bf{X}\beta)} = \frac{1}{1 + \text{exp}(-\bf{X}\beta)}$$
+
+Before we continue with discussing the link function, we are first going to dive into the concept of odds. 
+
+Properly understanding odds is necessary to perform and interpret logistic regression, as the `logit` link is connected to the odds
+
+## Modeling the odds
+Odds are a way of quantifying the probability of an event $E$
+
+The odds for an event $E$ are 
+$$\text{odds}(E) = \frac{P(E)}{P(E^c)} = \frac{P(E)}{1 - P(E)}$$
+The odds of getting heads in a coin toss is
+
+$$\text{odds}(\text{heads}) = \frac{P(\text{heads})}{P(\text{tails})} = \frac{P(\text{heads})}{1 - P(\text{heads})}$$
+For a fair coin, this would result in 
+
+$$\text{odds}(\text{heads}) = \frac{.5}{1 - .5} = 1$$
+
+## Another odds example
+
+The game [Lingo](lingo link) has 44 balls: 36 blue, 6 red and 2 green balls
+
+- The odds of a player choosing a blue ball are $$\text{odds}(\text{blue}) = \frac{36}{8} =  \frac{36/44}{8/44} = \frac{.8182}{.1818} = 4.5$$
+- The odds of a player choosing a red ball are $$\text{odds}(\text{blue}) = \frac{6}{38} = \frac{6/44}{36/44} = \frac{.1364}{.8636}\approx .16$$
+- The odds of a player choosing a blue ball are $$\text{odds}(\text{blue}) = \frac{2}{42} = \frac{2/44}{42/44} = \frac{.0455}{.9545}\approx .05$$
+
+Odds of 1 indicate an equal likelihood of the event occuring or not occuring. Odds `< 1` indicate a lower likelihood of the event occuring vs. not occuring. Odds `> 1` indicate a higher likelihood of the event occuring. 
+
+## GLM's continued
+
+Remember that
+\[y=\alpha+\beta x+\epsilon,\]
+
+and that 
+\[\mathbb{E}[y] = \alpha + \beta x.\]
+
+As a result
+\[y = \mathbb{E}[y] + \epsilon.\]
+
+and residuals do not need to be normal (heck, $y$ probably isn't, so why should $\epsilon$ be?)
+
+## Logistic regression
+Logistic regression is a GLM used to model a **binary categorical variable** using **numerical** and **categorical** predictors.
+
+In logistic regression we assume that the true data generating model for the outcome variable follows a binomial distribution. 
+
+  - it is therefore intuitive to think of logistic regression as modeling the probability of succes $p$ for any given set of predictors. 
+  
+### How
+We specify a reasonable link that connects $\eta$ to $p$. Most common in logistic regression is the *logit* link
+
+$$logit(p)=\text{log}(\frac{p}{1−p}) , \text{ for } 0 \leq p \leq 1$$
+We might recognize $\frac{p}{1−p}$ as the odds.
+
+## Logit
+\[\text{logit}(p) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p)\]
+```{r echo=FALSE,  dev.args = list(bg = 'transparent')}
+p <- (1:999)/1000 
+gitp <- log(p/(1 - p)) 
+par(pty="s")
+plot(gitp, p, xlab = "logit(p)", ylab = "p", type = "l", pch = 1)
+```
+
+## Logit continued
+Logit models work on the $\log(\text{odds})$ scale
+
+\[\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)\]
+
+The logit of the probability is the log of the odds. 
+
+Logistic regression allows us to model the $\log(\text{odds})$ as a function of other, linear predictors. 
+
+## Interpreting the logit
+The logit function takes a value between $0$ and $1$ and maps it to a value between $- \infty$ and $\infty$.
+
+
+### Inverse logit (logistic) function
+$$g^{-1}(x) = \frac{\text{exp}(x)}{1+\text{exp}(x)} = \frac{1}{1+\text{exp}(-x)}$$
+
+The inverse logit function takes a value between $- \infty$ and $\infty$ and projects it to a value between 0 and 1.
+
+Again, this formulation is quite useful as we can interpret the `logit` as the log odds of a success. 
+
+## $\log(\text{odds})$ explained
+Remember our data example?
+```{r}
+fit <- simulated %$%
+  glm(discrete ~ continuous, family = binomial())
+```
+
+We can use this model to obtain predictions in the scale of the linear predictor (i.e. the logodds):
+```{r}
+linpred <- predict(fit, type = "link")
+```
+or in the scale of the response (i.e. the probability)
+```{r}
+response <- predict(fit, type = "response")
+```
+
+## $\log(\text{odds})$ explained
+Now if we visualize the relation between our predictor and the logodds
+```{r  dev.args = list(bg = 'transparent')}
+plot(simulated$continuous, linpred, xlab = "predictor", ylab = "log(odds)")
+```
+
+## $\log(\text{odds})$ explained
+And the relation between our predictor and the probability
+```{r  dev.args = list(bg = 'transparent')}
+plot(simulated$continuous, response, xlab = "predictor", ylab = "probability")
+```
+
+## logit$^{-1}$ explained
+The inverse of the logit brings us back to the probability
+```{r cache=TRUE,  dev.args = list(bg = 'transparent')}
+invlogit <- exp(linpred) / (1 + exp(linpred))
+invlogit %>% sort() %>% head()
+invlogit %>% sort() %>% tail()
+```
+
+## logit$^{-1}$ explained
+```{r,  dev.args = list(bg = 'transparent')}
+plot(linpred, invlogit, xlab = "log(odds)", ylab = "Inverse of log(odds)")
+```
+
+## logit$^{-1}$ explained
+```{r,  dev.args = list(bg = 'transparent')}
+plot(response, invlogit, xlab = "response", ylab = "Inverse of log(odds)")
+```
+
+# Logistic regression
+
+## Logistic regression
+With linear regression we had the `Sum of Squares (SS)`. Its logistic counterpart is the `Deviance (D)`. 
+
+ -  Deviance is the fit of the observed values to the expected values. 
+ 
+With logistic regression we aim to maximize the `likelihood`, which is equivalent to minimizing the deviance. 
+
+The likelihood is the (joint) probability of the observed values, given the current model parameters.
+
+In normally distributed data: $\text{SS}=\text{D}$.
+
+## The logistic regression model
+Remember the three characteristics for every generalized linear model:
+
+1. A probability distribution that describes the outcome
+2. A linear predictor model
+3. A link function that relates the linear predictor to the the parameter of the outcome's probability distribution. 
+
+For the logistic model this gives us:
+
+1. $y_i \sim \text{Binom}(p_i)$
+2. $\eta = \beta_0 + \beta_1x_1 + \dots + \beta_nx_n$
+3. $\text{logit}(p) = \eta$
+
+Simple substitution brings us at
+
+$$p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}$$
+
+# Fitting a logistic regression
+
+## The `anesthetic` data
+```{r, message = FALSE}
+anesthetic %>% head(n = 10)
+```
+
+Thirty patients were given an anesthetic agent maintained at a predetermined level (`conc`) for 15 minutes before making an incision. It was then noted whether the patient moved, i.e. jerked or twisted.
+
+## Fitting a logistic regression model
+
+Fitting a `glm` in `R` is not much different from fitting a `lm`. We do, however, need to specify what type of `glm` to use by specifying both the `family` and the type of `link` function we need. 
+
+For logistic regression we need the **binomial** family as the binomial distribution is the probability distribution that describes our outcome. We also use the `logit` link, which is the default for the binomial `glm` family. 
+
+
+```{r,  dev.args = list(bg = 'transparent')}
+fit <- anesthetic %$% 
+  glm(nomove ~ conc, family = binomial(link="logit"))
+fit
+```
+
+## The model parameters
+```{r}
+fit %>% summary
+```
+
+## The regression parameters
+```{r}
+fit %>% summary %>% .$coefficients
+```
+
+With every unit increase in concentration `conc`, the log odds of **not moving** increases with `r coef(fit)[2]`. This increase can be considered different from zero as the p-value is `r summary(fit)$coefficients[2, 4]`. 
+
+In other words; an increase in `conc` will lower the probability of moving. We can verify this by modeling `move` instead of `nomove`:
+
+```{r,  dev.args = list(bg = 'transparent')}
+anesthetic %$% 
+  glm(move ~ conc, family = binomial(link="logit")) %>%
+  summary %>% .$coefficients
+```
+
+## A different approach
+```{r,  dev.args = list(bg = 'transparent')}
+anestot <- aggregate(anesthetic[, c("move","nomove")],  
+                     by = list(conc = anesthetic$conc), FUN = sum) 
+anestot
+```
+
+## A different approach
+We can summarize the same information in a frequency table
+```{r,  dev.args = list(bg = 'transparent')}
+anestot$total <- apply(anestot[, c("move","nomove")], 1 , sum) 
+anestot
+```
+
+## Calculating the proportion
+We can add the proportion to this table
+```{r}
+anestot$prop <- anestot$nomove / anestot$total 
+anestot
+```
+
+## A different approach
+We can then calculate the same model on the frequency table, by specifying the number of times each scenario (row) is observed (`total`) as the `weights` argument in `glm`:
+```{r,  dev.args = list(bg = 'transparent')}
+anestot %$% glm(prop ~ conc, family = binomial(link="logit"), weights = total) %>% 
+  summary() %>% 
+  .$coefficients
+```
+We now model the proportion. Naturally, the proportion multiplied with the total equals the observation. So in this case, the `glm` function performs these calculations and its expansion to cases internally. 
+
+## Next week 
+
+In the next lecture we'll dive more into the ins and outs of interpreting the logistic regression output. 
+  

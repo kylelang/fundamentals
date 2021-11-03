@@ -1,0 +1,464 @@
+---
+title: "Exercise 8"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+params:
+  answers: false
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+  
+<style type="text/css">
+  
+body{ /* Normal  */
+  font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+  font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+  font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+  font-size: 14px;
+}
+</style>
+  
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(knitr)
+library(ggplot2)
+
+## Define an asis engine that will evaluate inline code within an asis block:
+knit_engines$set(asis = function(options) {
+  if(options$echo && options$eval) knit_child(text = options$code)
+}
+)
+
+knitr::opts_chunk$set(include = params$answers, 
+                      echo = params$answers, 
+                      message = FALSE, 
+                      warning = FALSE)
+
+data <- data.frame(conc = c(0.1, 0.5, 1, 10, 20, 30, 50, 70, 80, 100, 150),
+                   no = c(7, 1, 10, 9, 2, 9, 13, 1, 1, 4, 3),
+                   yes = c(0, 0, 3, 4, 0, 6, 7, 0, 0, 1 ,7)
+                   ) 
+```
+
+---
+
+Much like last week, in this practical you will work through a relatively 
+extensive analysis. This week, however, we will be working with logistic 
+regression to analyze a binary outcome variable.
+
+---
+
+We will use the following packages:
+
+```{r echo = TRUE, include = TRUE}
+library(mice)
+library(dplyr)
+library(magrittr)
+library(DAAG)
+```
+
+---
+
+The following table shows the number of trials wherein different concentrations 
+(`conc`) of the peptide-C protein inhibited the flow of current across a 
+membrane. The `yes` column contains counts of trials wherein inhibition 
+occurred.
+
+```{r, echo = FALSE, eval = TRUE, include = TRUE}
+kable(data)
+```
+
+---
+
+# Working with Odds
+
+---
+
+## {#dataGenQ}
+
+**Create the above dataset as a data frame**
+
+```{r, eval = FALSE}
+data <- data.frame(conc = c(0.1, 0.5, 1, 10, 20, 30, 50, 70, 80, 100, 150),
+                   no = c(7, 1, 10, 9, 2, 9, 13, 1, 1, 4, 3),
+                   yes = c(0, 0, 3, 4, 0, 6, 7, 0, 0, 1 ,7)
+                   ) 
+data
+```
+
+
+---
+
+##
+
+**Add the following new variables to the dataset you created in \@ref(dataGenQ)**
+
+- The total number of trials for each observation (i.e., the sum of the `no` and 
+`yes` trials for each row)
+- The proportion of `yes` trials in each row
+- The log-odds of inhibition for each row (i.e., the log-odds of `yes` versus 
+`no`)
+
+```{r}
+data <- 
+  data %>% 
+  mutate(total = no + yes,
+         prop = yes / total,
+         logit = qlogis(prop)
+         )
+```
+
+```{asis}
+The `qlogis()` function is equivalant to the log-odds (i.e, logit) function. See 
+`?Logistic` for more information. 
+```
+
+---
+
+##
+
+**Inspect the new columns**
+
+Do you notice anything unusual?
+
+```{r}
+data
+```
+```{asis}
+There are many zero proportions which produce logit values of $-\infty$. 
+
+- We can work around this issue by adding a constant (usually 0.5) to all cells 
+before calculating the log-odds.
+- We add the same value to the numerator and denominator of our odds formula, so 
+we don't change the relative interpretations of the odds.
+
+We could also add a 1 to each cell. This option is conceptually interesting 
+because the log of 1 equals 0.
+
+- It's almost like we're adding zero to the odds and still correcting the issue. 
+```
+
+---
+
+##
+
+**Add a new column to your dataset containing the corrected log-odds**
+
+Compute the value of this column using the following formulation of the log-odds:
+
+$$\log(\text{odds}) = \log\left(\frac{\text{yes} + 0.5}{\text{no} + 0.5}\right)$$
+```{r}
+robustLogit <- function(x, y) log((x + 0.5) / (y + 0.5))
+
+data <- data %>% 
+  mutate(logit2 = robustLogit(yes, no))
+
+data
+```
+
+```{asis}
+After calculating the logit using our robust formula, we don't have any infinite
+logits.
+```
+
+---
+
+# Logistic Regression Modeling
+
+---
+
+## {#logisticModQ}
+
+**Fit a logistic regression model**
+
+Use the `glm()` function to estimate a logistic regression model wherein:
+
+- `prop` is the outcome
+- `conc` is the only predictor
+- The number of total trials per row are used as weights
+   - We need to provide weights because a different number of trials can go into 
+   defining each observation of `prop`.
+
+```{r}
+fit <- glm(prop ~ conc, family = binomial, weights = total, data = data)
+```
+
+---
+
+##
+
+**Check the summary of the fitted model**
+
+Interpret the slope estimate.
+
+```{r}
+summary(fit)
+```
+
+```{asis}
+A unit increase in `conc` increases the log-odds of inhibition by 
+`r round(coef(fit)[2], 4)` units, and this increase is statistically significant. 
+
+If we exponentiate the slope estimate, we can get an interpretation in odds 
+units, but the effect becomes multiplicative instead of additive.
+
+- For every unit increase in `conc`, the odds of inhibition are 
+`r round(exp(coef(fit)[2]), 4)` times higher.
+```
+
+---
+
+# Model Diagnostics
+
+---
+
+As with the linear model, we can obtain a series of plots to help us inspect the 
+assumptions of the logistic model. 
+
+##
+
+**Generate diagnostic plots**
+
+Use the `plot()` function to generate diagnostic plots for the model you 
+estimated in \@ref(logisticModQ).
+
+- Inspect Plots 1 and 5
+- What conclusions can you draw about your model?
+
+```{r}
+plot(fit, which = c(1, 5))
+```
+
+```{asis}
+The data set is very small, so there's a lot of noise, and we need to be careful 
+about placing too much faith in the estimates from this model. That being said, 
+Case 11 stands out in the `Residuals vs. Leverage` plot; this case has quite a 
+high leverage. Although Case 11's residual is not extreme, its high leverage is 
+sufficient to yield a Cook's distance over 1.
+```
+
+---
+
+# Data Transformations
+
+---
+
+```{asis}
+The model we estimated in \@ref(logisticModQ) has only one predictor, so we 
+know that the high leverage of Case 11 is due to a large value of `conc`.
+```
+
+```{r}
+data.frame(conc = data$conc) %>% tail()
+```
+
+If skewed variables or variables with a few extreme values are producing 
+influential cases and adversely affecting our analysis, we can use data 
+transformations to "pull-in" the extreme values.
+
+- In particular, we want to transform the problematic variables with functions 
+that have little effect on small values but substantially shrink large values.
+   - The natural logarithm is a classic example.
+   
+```{r, echo = FALSE, eval = TRUE, include = TRUE}
+x <- seq(0, 100, length.out = 1000)
+y <- log(x)
+
+ggplot(data = data.frame(x, y), aes(x = x, y = y)) + 
+  geom_line() + 
+  theme_classic() +
+  ylab("ln(x)")
+```
+
+Notice the differential effect of applying the natural log to small versus large 
+numbers:
+
+```{r, echo = FALSE, eval = TRUE, include = TRUE}
+x <- c(1, 2, 3, 5, 10, 50, 100)
+y <- log(x)
+
+kable(data.frame(x, y), col.names = c("X", "ln(X)"), digits = 3)
+```
+
+The larger the value of a variable, the more the natural log function will 
+shrink it.
+
+- This property of the natural log makes it a great transformation for dealing 
+with positively skewed variables.
+
+### Transformation Example
+
+We can see a really clear effect of log-transformation by applying the natural 
+log to the body weight variable (`bw`) from the `mice::mammalsleep` data set 
+that we analyzed in the last practical.
+
+```{r, echo = FALSE, eval = TRUE, include = TRUE}
+par(mfrow = c(1, 2))
+
+mammalsleep %$%
+  density(bw) %>%
+  plot(main = "", xlab = "body weight")
+
+mammalsleep %$% 
+  log(bw) %>%
+  density() %>%
+  plot(main = "", xlab = "ln(body weight)")
+```
+
+The extreme body weights of the two elephant species were severely skewing the 
+raw data distribution, but the log-transformed version of body weight looks much 
+better behaved. 
+
+---
+
+##
+
+**Visualize the effects of transforming `conc`**
+
+Plot the density of the `conc` variable twice:
+
+- Once with its original scaling
+- Once after applying a log-tranformation
+
+```{r}
+par(mfrow = c(1, 2)) # Renders the plots side-by-side in one row
+
+data$conc %>%
+  density() %>%
+  plot(main = "", xlab = "conc")
+
+data$conc %>% 
+  log() %>%
+  density() %>%
+  plot(main = "", xlab = "ln(conc)")
+```
+```{asis}
+Although the shape of the `conc` distribution didn't change much, the range is 
+much more limited.
+
+- This reduction in range will help reduce the leverage of influential cases 
+like Case 11. 
+```
+
+---
+
+# Analyzing Transformed Data
+
+---
+
+##
+
+**Estimate a logistic regression model with transformed data**
+
+Use the `glm()` function to estimate a logistic regression model with the 
+following characteristics:
+
+- `prop` is the outcome
+- The log-transformed version of `conc` is the only predictor
+- The total number of trials per row are used as weights
+
+```{asis}
+To include the log-transformed predictor, we have two options.
+
+1. We can create a new variable and use this transformed variable when
+estimating our model.
+1. We can tell R to do the transformation for us by including special notation 
+in the formula statement we supply to `glm()`.
+
+The second appraoch is generally preferred unless you need the log-transformed 
+variable for other visualizations/analyses.
+```
+
+```{r}
+logFit <- 
+  glm(prop ~ I(log(conc)), family = binomial, weights = total, data = data)
+```
+
+```{asis}
+Here, we've told R to do the transformation for us before estimating the model. 
+To do so, we need to use the `I()` function to wrap the part of our formula that 
+specifies the transformation. 
+
+- The `I()` function indicates that any interpretation and/or conversion of its 
+argument should be inhibited and the argument should be evaluated 'as is'. 
+  - We need to use `I()` here because `log(conc)` is valid, stand-alone R code. 
+So, R will try to run `log(conc)` and throw any error, if we don't use `I()`. 
+- Pretty much any time you are transforming a variable as part of a formula, you 
+should warp the transformation in `I()`.
+```
+
+---
+
+##
+
+**Print the summary of the fitted model**
+
+Interpret the slope estimate.
+
+```{r}
+summary(logFit)
+```
+
+```{asis}
+The for a unit increase in the natural log of `conc`, the log-odds of inhibition 
+increase by `r round(coef(logFit)[2], 3)` units, and this increase is 
+statistically significant.
+
+After exponentiating the slope estimate, we would have the following 
+interpretation. For every unit increase in the natural log of `conc`, the odds 
+of inhibition are `r round(exp(coef(logFit)[2]), 3)` time higher.
+```
+
+---
+
+##
+
+**Inspects the diagnostic plots**
+
+Use the `plot()` function to generate diagnostic plots for the model you just 
+estimated.
+
+- Inspect Plot 1 and 5
+- What conclusions can you draw from these plots?
+- Was the transformation helpful?
+
+```{r}
+plot(logFit, which = c(1, 5))
+```
+
+```{asis}
+There are no more extremely influential cases. Case 11 has been pulled in toward 
+the rest of the data and no longer exerts an undue influence on the model.
+
+The transformation was helpful in that it produced a more stable model that is 
+not affected by one overly influential observation. 
+
+- That being said, we don't get this additional stability for free. We must 
+interpret our slope estimate in units of `log(conc)` instead of raw `conc` units.
+```
+
+---
+
+End of Exercise 8
