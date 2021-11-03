@@ -17,6 +17,7 @@ Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten
 Lecture Instructor: [Kyle Lang](https://www.kylemlang.com) <br>
 WG Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
 WG Instructor: [Rianne Kraakman](https://www.uu.nl/staff/AMKraakman) <br>
+WG Instructor: [Anastasia Giachanou](http://www.giachanou.com/) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam <br>
 [Course SurfDrive folder][sd]
@@ -90,37 +91,37 @@ The final grade is computed as follows
 
 | Grade Component | Weight |
 |:-------|:------|
-| Linear Regression Assignment & Presentation | 25% |
+| Linear Regression Assignment | 25% |
 | Logistic Regression Assignment | 25% |
 | Written Exam | 50% |
 
-In addition to the grade components listed above, you will also do seven `R` 
-exercises. These exercises will develop the skills needed to successfully 
-complete the assignments and the presentations. The exercises will be graded on 
+In addition to the grade components listed above, you will also do R` exercises 
+for the first 7 weeks of the course. These exercises will develop the skills 
+needed to successfully complete the assignments. The exercises will be graded on 
 a completion basis. 
 
-- You must finish 6 out of the 7 exercises to pass the course.
+- You must finish the `R` exercises for 6 out of 7 weeks to pass the course.
 
 To pass the course:
 
 1. Your final grade must be 5.5 or higher
 1. You must pass both assignments
-1. You must submit at least 6 `R` exercises
+1. You must submit `R` exercises for at least 6 of the first 7 weeks
 
 ## Column 2 {data-width=400}
 
 ### Schedule
 
-| Week #  | Topic   | `R`-practical | Workgroup | 
-|---|---------|-----------|-----------|
-| 1 | The elemental building blocks of `R` | Assigning objects and elements; creating vectors, matrices, dataframes and lists | Receive instructions and form groups |
-| 2 | Finding the least squares solution; simple linear regression | Subsetting data; using pipes to simplify the workflow | Locate a data set for predictive modeling and formulate a research hypothesis; make sure the data can support both linear and logistic regression |
-| 3 | Linear modeling in `R`; testing assumptions; standardized residuals, leverage, and Cook's distance | The `lm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if assumptions are met |
-| 4 | Inferential modeling; Confidence intervals and hypothesis testing, non-constant error variance | Investigate the assumptions of linear modeling | Test and quantify the effect of the defined model; continue the project in `rmarkdown` |
-| 5 | Model evaluation; cross-validation; categorical variables, non-linear relations, interactions, and higher-order polynomials | Cross-validation and model fit in `R` | Evaluate if the model can be improved; **Prepare Assignment 1; evaluate the final linear model on your own data** |
-| 6 | Simple logistic regression | The `glm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if the assumptions are met |
-| 7 | Formulating a logistic regression model and interpreting the parameters; marginal effects | Parameter transformations; scale of the linear predictor/outcome; prediction and confidence intervals | Test and quantify the effect of the defined model |
-| 8 | Logistic regression model evaluation; cross-validation; multiple logistic regression; interactions | Multiple logistic regression and cross-validating the logistic regression model in `R` | Evaluate if the model can be improved; **Prepare Assignment 2; evaluate the final logistic model on your own data** |
+| Week # | Topic | `R`-Exercise | Workgroup | 
+|-|---|----|----|
+| 1 | The elemental building blocks of `R` | Assigning values to objects; Creating vectors, matrices, data frames, and lists | Receive instructions and form groups |
+| 2 | Data manipulation; Least squares | Data manipulation; Using pipes to simplify workflows | Locate a data set for predictive modeling and formulate a research hypothesis (Make sure the data can support both linear and logistic regression) |
+| 3 | Linear modeling 1 | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model |
+| 4 | Linear modeling 2; Assumptions, diagnostics | Investigating the assumptions of the linear model | Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in `rmarkdown` |
+| 5 | Model building; Prediction; Cross-validation | Tying the analytic pieces together into a full regression analysis | Evaluate and, if possible, improve your model; **Prepare Assignment 1; Evaluate the final linear model on your own data** |
+| 6 | Generalized linear model; Logistic regression 1 | The `glm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if the assumptions are met |
+| 7 | Logistic regression 2 | Finish exercise from last week | Test and quantify the effect of the defined model |
+| 8 | Summary, catch-up, and questions | None | Evaluate and, if possible, improve your model; **Prepare Assignment 2; Evaluate the final logistic model on your own data** |
 
 <!----------------------------------------------------------------------------->
 
