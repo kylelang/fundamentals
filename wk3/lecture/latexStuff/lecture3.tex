@@ -493,7 +493,7 @@ The estimated slope is: $\hat{\beta}_1 = 4.27$.
 \end{column}
 \end{columns}
 
-Some intuition: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
+\textsc{Some Intuition}: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
 
 \end{frame}
 
@@ -501,23 +501,29 @@ Some intuition: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
 
 \begin{frame}{Test Statistics}
  
-  If we want to ``test'' a slope coefficient, $\hat{\beta}$, we need
-  some point of comparison.
+  To ``test'' a slope coefficient, $\hat{\beta}$, we need a point of comparison.
+  \begin{itemize}
+  \item The \emph{null-hypothesized} value of the slope, 
+    $H_0: \beta = \tilde{\beta}$.
+  \end{itemize}
   
-  - The \emph{null-hypothesized} value of the slope, $H_0: \beta = \tilde{\beta}$.
-  - What value would the slope take if our hypothesis were false?
+  \vb
   
   Our hypothesis test is actually a test for the size of the difference:
-  $\hat{\beta} - \beta$
+  $\hat{\beta} - \tilde{\beta}$
+  \begin{itemize}
+  \item We define a \emph{test statistic}, $t$, to quantify the size of this 
+    difference accounting for the precision with which we've estimated 
+    $\hat{\beta}$.
+  \end{itemize}
   
-  - We define a \emph{test statistic}, $t$, to quantify the size of this effect
-  accounting for the precision with which we've estimated $\hat{\beta}$.
+  \vb
   
   We can construct the test statistic for $\hat{\beta}$ as follows:
   \begin{align*}
-    t &= \frac{\hat{\beta} - \tilde{\beta}}{SE\left(\hat{\beta}\right)} 
+    t = \frac{\hat{\beta} - \tilde{\beta}}{SE\left(\hat{\beta}\right)} 
     ~~\overset{\tilde{\beta} = 0}{\mathlarger{\Rightarrow}}~~
-    t &= \frac{\hat{\beta} - 0}{SE\left(\hat{\beta}\right)} = 
+    t = \frac{\hat{\beta} - 0}{SE\left(\hat{\beta}\right)} = 
     \frac{\hat{\beta}}{SE\left(\hat{\beta}\right)}
   \end{align*}
   
@@ -538,9 +544,16 @@ For the slope in our example, we get a test statistic of:
  \begin{columns}
    \begin{column}{0.5\textwidth}
      
-     The t-statistic also has a sampling distribution that quantifies the
-     possible t-values we could get if we repeatedly drew samples from the
-     variables' distributions and re-computed a t-statistic each time.
+     The t-statistic also has a sampling distribution.
+     \vc
+     \begin{itemize}
+     \item Quantifies the possible values we could get if we repeatedly drew
+       samples, of the \underline{same size}, from the \underline{same 
+         population} and re-computed a t-statistic each time.
+     \vb
+     \item The distribution under the null hypothesis assumes a population 
+       wherein $\hat{\beta}$ = $\tilde{\beta}$, and, consequently, $t = 0$.
+     \end{itemize}
      
    \end{column}
    \begin{column}{0.5\textwidth}
@@ -686,6 +699,7 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
 
 %------------------------------------------------------------------------------%
 
+\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Interpreting P-Values}
 
 \begin{columns}
@@ -722,9 +736,9 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
 \end{columns}
 
 \end{frame}
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \watermarkon %-----------------------------------------------------------------%
-
 
 \begin{frame}{Inferential Tools: Confidence Intervals}
 
@@ -818,6 +832,7 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
 
 %------------------------------------------------------------------------------%
 
+\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Inference with Confidence Intervals}
   
   In terms of sampling distributions, our inferential task is to say something 
@@ -893,6 +908,7 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
 \end{columns}
 
 \end{frame}
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %------------------------------------------------------------------------------%
 
@@ -2151,7 +2167,7 @@ Without BMI & 0.042 & -0.147 \\
 \begin{frame}{Example Dummy Code}
  Let's look at the simple example of coding biological sex:
 % latex table generated in R 4.1.1 by xtable 1.8-4 package
-% Thu Nov  4 10:49:43 2021
+% Thu Nov  4 18:00:24 2021
 \begin{table}[ht]
 \centering
 \begin{tabular}{rlr}
@@ -2180,7 +2196,7 @@ Without BMI & 0.042 & -0.147 \\
 \begin{frame}{Example Dummy Codes}
  Now, a slightly more complex  example:
 % latex table generated in R 4.1.1 by xtable 1.8-4 package
-% Thu Nov  4 10:49:43 2021
+% Thu Nov  4 18:00:24 2021
 \begin{table}[ht]
 \centering
 \begin{tabular}{rlrr}
