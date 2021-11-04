@@ -155,12 +155,13 @@ RStudio project for your practicals.
 **Close the *practical_1.R* script in the code pane**
 
 Even though you've closed the script, your code is still saved as a permanent 
-code file. Notice the entry for *practicals/practical_1.R* in the files pane.
+code file.
 
 ##
 
 **Open the *practical_1.R* script**
 
+1. Navigate to the *practicals* directory using the RStudio files pane.
 1. Click on the *practical_1.R* file in the files pane to re-open the script. 
 1. Run both lines of code again.
 1. Inspect the contents of the global environment by executing the `ls()` 

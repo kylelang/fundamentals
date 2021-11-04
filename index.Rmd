@@ -108,15 +108,15 @@ To pass the course:
 
 ### Schedule
 
-| Week # | Topic | `R`-Exercise | Workgroup | 
+| Week # | Topic | `R` Exercise | Workgroup | 
 |-|---|----|----|
-| 1 | The elemental building blocks of `R` | Assigning values to objects; Creating vectors, matrices, data frames, and lists | Receive instructions and form groups |
-| 2 | Data manipulation; Least squares | Data manipulation; Using pipes to simplify workflows | Locate a data set for predictive modeling and formulate a research hypothesis (Make sure the data can support both linear and logistic regression) |
-| 3 | Linear modeling 1; Data visualization | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model |
-| 4 | Linear modeling 2; Assumptions, diagnostics | Investigating the assumptions of the linear model | Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in `rmarkdown` |
+| 1 | The elemental building blocks of `R` | Assigning values to objects; Creating vectors, matrices, data frames, and lists | Receive instructions and form groups; Locate a data set for predictive modeling |
+| 2 | Data manipulation; Least squares | Data manipulation; Using pipes to simplify workflows | Get approval for data; Beginning data processing, cleaning, and exploration; Formulate a research hypothesis |
+| 3 | Linear model 1; Data visualization | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model |
+| 4 | Linear model 2; Assumptions; Diagnostics | Investigating the assumptions of the linear model | Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in `rmarkdown` |
 | 5 | Model building; Prediction; Cross-validation | Tying the analytic pieces together into a full regression analysis | Evaluate and, if possible, improve your model; **Prepare Assignment 1; Evaluate the final linear model on your own data** |
-| 6 | Generalized linear model; Logistic regression 1 | The `glm()` function in `R`; modeling, prediction, and visualization | Fit your defined model; evaluate if the assumptions are met |
-| 7 | Logistic regression 2 | Finish exercise from last week | Test and quantify the effect of the defined model |
+| 6 | Generalized linear model; Logistic regression 1 | The `glm()` function in `R`; Logistic regression modeling; Classification | Formulate a research hypothesis and define a logistic model; Fit your defined model |
+| 7 | Logistic regression 2 | Finish exercise from last week | Check the assumptions of your model; Use your model to test your hypotheses |
 | 8 | Summary, catch-up, and questions | None | Evaluate and, if possible, improve your model; **Prepare Assignment 2; Evaluate the final logistic model on your own data** |
 
 <!----------------------------------------------------------------------------->
@@ -181,9 +181,9 @@ underlying predictive and/or inferential research.
    statistical theory.
    a. Perform the different steps of solving basic regression analysis problems 
    and report on these steps.
-
-<br>
-
+   
+   <br>
+   
 2. Apply and interpret important techniques in linear and logistic regression 
 analysis.
 
@@ -334,7 +334,11 @@ You can find the lecture slides [here](wk1/lecture/lecture1.html)
 
 You should attend all workgroup meetings; however, **today's meeting is vital**! 
 We will form groups, and we will discuss the assignments and expectations for 
-your work in this course. 
+your work in this course. You will also locate a dataset to use in your 
+assignments.
+
+- Make sure the data you choose can support both linear and logistic regression.
+
 
 **Please do not forget to complete 
 [`R` Exercise 1](wk1/exercise/exercise1.html) before the workgroup meeting!**
@@ -358,7 +362,7 @@ this week to get you ready for the rest of the course.
 meeting. This exercise will get you started with `R` and `RStudio`.
 
 - Complete [Exercise 2](wk1/exercise/exercise2.html) during Thursday's workgroup 
-meeting. Laura will be available to help you during that time. 
+meeting. 
 
 - Complete and submit [Exercise 3](wk1/exercise/exercise3.html) before the next 
 lecture. For this week, you only need to present the `R` code for the relevant 
@@ -408,10 +412,8 @@ Today's lecture has three parts:
 
 1. Data Manipulation: We'll explore various ways of subsetting and manipulating 
 your data using base-R functions and routines from the **dplyr** package.
-
 1. Pipes: We'll cover the *pipe* operator and show how you can use *pipelines* 
 to more efficiently organize your `R` code.
-
 1. Squared Deviations: We'll discuss *squared deviations* and explore how they 
 are used in statistics.
 
@@ -419,10 +421,9 @@ You can find the lecture slides [here](wk2/lecture/lecture2.html)
 
 ### Workgroup (Thursday)
 
-In today's workgroup, you will locate a data set for predictive modeling and 
-formulate a research hypothesis
-
-- Make sure the data you choose can support both linear and logistic regression.
+In today's workgroup, you will get approval for the dataset that you located 
+last week and begin processing, cleaning, and exploring the data. You will also 
+formulate a research hypothesis for Assignment 1.
 
 ## Column 2
 

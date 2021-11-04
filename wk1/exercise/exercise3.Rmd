@@ -1,5 +1,5 @@
 ---
-title: "Practical 3"
+title: "Exercise 3"
 author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 params:

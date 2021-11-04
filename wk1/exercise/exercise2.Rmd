@@ -332,14 +332,16 @@ dat3
 
 **Load the workspace `boys.RData`** 
 
+You can download the *boys.RData* workspace [here](../../data/boys.RData).
+
 ```{asis, echo = params$answers}
 There are a few ways to go about load workspaces that are available on the 
 internet. We'll use the *boys.RData* workspace to demonstrate.
 
-1. You can download the *boys.RData* file from the course page and use the 
+1. You can download the *boys.RData* file via the link above and use the 
 `load()` function to load it into your environment. 
    - Note that the following code assumes you have saved *boys.RData* in a 
-   subdirectory of your project folder called "data".  
+   subdirectory of your project folder callyed "data".  
 ```
 
 ```{r}
