@@ -274,6 +274,23 @@ can be very helpful.
 - If you google R-related issues, include "R" somewhere in your search string
 
 
+## Survey
+
+We (the instructors) have prepared a survey to help us arrange the workgroups 
+more effectively.
+
+- You can access the survey [here](https://survey.uu.nl/jfe/form/SV_8jJ7r9p7Zkyx130).
+- You can also access the survey by scanning the following QR code.
+
+```{r echo = FALSE, fig.align = "center", out.width = "30%"}
+  knitr::include_graphics("../figures/survey_qr.png")
+```
+
+<div align = "center"> 
+***Please fill in this survey sometime today.***
+</div>
+
+
 # Types of R Objects
 
 
