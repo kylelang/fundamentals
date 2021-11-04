@@ -95,7 +95,7 @@ The final grade is computed as follows
 | Logistic Regression Assignment | 25% |
 | Written Exam | 50% |
 
-In addition to the grade components listed above, you will also do R` exercises 
+In addition to the grade components listed above, you will also do `R` exercises 
 for the first 7 weeks of the course. These exercises will develop the skills 
 needed to successfully complete the assignments. 
 

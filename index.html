@@ -2940,15 +2940,11 @@ window.FlexDashboardComponents.push({
 </tr>
 </tbody>
 </table>
-<p>In addition to the grade components listed above, you will also do R` exercises for the first 7 weeks of the course. These exercises will develop the skills needed to successfully complete the assignments. The exercises will be graded on a completion basis.</p>
-<ul>
-<li>You must finish the <code>R</code> exercises for 6 out of 7 weeks to pass the course.</li>
-</ul>
+<p>In addition to the grade components listed above, you will also do <code>R</code> exercises for the first 7 weeks of the course. These exercises will develop the skills needed to successfully complete the assignments.</p>
 <p>To pass the course:</p>
 <ol style="list-style-type: decimal">
 <li>Your final grade must be 5.5 or higher</li>
 <li>You must pass both assignments</li>
-<li>You must submit <code>R</code> exercises for at least 6 of the first 7 weeks</li>
 </ol>
 </div>
 </div>
@@ -3178,7 +3174,7 @@ Instructor Team</p>
 <div id="lecture-monday" class="section level3">
 <h3>Lecture (Monday)</h3>
 <p>Today’s lecture is about the elemental building blocks of <code>R</code>. We will discuss what <code>R</code> actually is, why we use <code>RStudio</code>, how to ‘speak’ <code>R</code>, and how to work with <code>R</code> objects.</p>
-<p>You can find the slides <a href="wk1/lecture1.html">here</a></p>
+<p>You can find the lecture slides <a href="wk1/lecture/lecture1.html">here</a></p>
 </div>
 <div id="workgroup-thursday" class="section level3">
 <h3>Workgroup (Thursday)</h3>
@@ -3247,7 +3243,7 @@ The video discussions for the practical exercises:
 <li><p>Pipes: We’ll cover the <em>pipe</em> operator and show how you can use <em>pipelines</em> to more efficiently organize your <code>R</code> code.</p></li>
 <li><p>Squared Deviations: We’ll discuss <em>squared deviations</em> and explore how they are used in statistics.</p></li>
 </ol>
-<p>You can find the lecture slides <a href="wk2/lecture2.html">here</a></p>
+<p>You can find the lecture slides <a href="wk2/lecture/lecture2.html">here</a></p>
 </div>
 <div id="workgroup-thursday-1" class="section level3">
 <h3>Workgroup (Thursday)</h3>
@@ -3284,312 +3280,296 @@ The video discussions for the practical exercises:
 <li><a href="http://r4ds.had.co.nz/pipes.html">Chapter 18: Pipes</a></li>
 </ul></li>
 </ul>
-<!----------------------------------------------------------------------------->
-</div>
-</div>
-</div>
-<div id="week-3" class="section level1">
-<h1>Week 3</h1>
-<div id="column-1-5" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-2" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today’s lecture comes in two parts:</p>
-<ol style="list-style-type: decimal">
-<li>Introduction to the <em>Linear Model</em>: Linear modeling is the ubiquitous workhorse of statistics and data science. In this lecture, we’ll go over the basics of linear modeling. Next time, we’ll dive deeper into the linear model and its assumptions.
-<ul>
-<li>You can find the slides on linear modeling <a href>here</a></li>
-</ul></li>
-<li>Data Visualization with <strong>ggplot2</strong>: The <strong>ggplot2</strong> package is one of the most popular (and rightly so) data visualization tools. In this lecture, you’ll get an introduction to the process of making visual sense of your data using the routines provided by <strong>ggplot2</strong>.
-<ul>
-<li>There is already a glut of excellent introductions to ggplot available online. So, rather than re-inventing the wheel, we will refer you to the following tutorial video for the ggplot introduction portion of this lecture.</li>
-</ul></li>
-</ol>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/N5gYo43oLE8" title="YouTube video player" frameborder="0" allow="accelerometer; 
+<!-----------------------------------------------------------------------------
+
+# Week 3
+
+## Column 1
+
+### Lecture (Monday)
+
+Today's lecture comes in two parts:
+
+1. Introduction to the *Linear Model*: Linear modeling is the ubiquitous 
+workhorse of statistics and data science. In this lecture, we'll go over the 
+basics of linear modeling. Next time, we'll dive deeper into the linear model 
+and its assumptions.
+   - You can find the slides on linear modeling [here]()
+   
+1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
+most popular (and rightly so) data visualization tools. In this lecture, you'll 
+get an introduction to the process of making visual sense of your data using the 
+routines provided by **ggplot2**.
+   - There is already a glut of excellent introductions to ggplot available 
+   online. So, rather than re-inventing the wheel, we will refer you to the 
+   following tutorial video for the ggplot introduction portion of this lecture. 
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/N5gYo43oLE8" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
         autoplay; 
         clipboard-write; 
         encrypted-media; 
         gyroscope; 
-        picture-in-picture" allowfullscreen data-external="1">
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1">
 </iframe>
-<!--
-![ggplot tutorial](https://www.youtube.com/watch?v=N5gYo43oLE8&list=PLYiJ7zIgJfiMoR_EY9xsZ0IFd7LqFSHuM&index=1)
+
+### Workgroup (Thursday)
+
+In today's workgroup, you will work on specifying a linear model and estimating 
+your defined model.
+
+## Column 2
+
+### `R` exercise
+
+This week's `R` exercise is about simple linear modeling a visualizing bivariate 
+relations.
+
+- Complete [Exercise 5](wk3/exercise/exercise5.html) before Thursday's workgroup.
+
+Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
+respectively. Where `your_name` is your full name in *lower snake-case*. 
+
+- Submit these files ***before the next lecture***.
+
+### Exercise Solution
+
+You can find suggested solutions for this week's exercise [here](wk3/exercise/exercise5_solutions.html).
+
+### Required Reading
+
+- [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
+   - Chapter 3: Linear Regression (All of Section 3.1)
+
+***These readings are exam materials.***
+
+
+# Week 4
+
+## Column 1
+
+### Lecture (Monday)
+Today's lecture is about statistical inference. Inference is the process of drawing conclusions about true data generating models (TDGM). The most widely know TDGM is the population, the body we aim to infer about in social science and in classical statistics.
+
+Even though statistical inference has been around for a long time, it's associated components, quantities and estimands are not always straightforward. Let's dive a bit deeper into that today, but in order to do so, we need some knowledge about statistical sampling and some widely used distributions. That is why we start today's lecture with random numbers and data generation in `R`.
+
+You can find the [slides here](Wk4/Lecture-4_FTID.html)
+
+### Workgroup (Thursday)
+**Today's workgroup is online. See the Teams channel.**
+
+## Column 2
+
+### `R` exercise
+This week's `R` exercise is about getting familiar with the linear model.
+
+- Make [Exercise 6](Wk4/Exercise/Exercise_6.html) before Thursday's workgroup.
+
+Hand in a markdown compiled `html` file for Exercise 6 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
+
+### Solution to the exercise
+You can find the answers to this week's exercise and to the previous week's exercise [here](Wk4/Exercise/Exercise_6_answers.html). Use these answers only when you are stuck. 
+
+Video discussion of the exercises in two parts:
+
+ - [Part 1](https://www.dropbox.com/s/i47g1pinm0dpt2r/Exercise45_discussion.mp4?dl=0)
+ - [Part 2](https://www.dropbox.com/s/l1actd5o6si2tx1/Exercise45_discussion_part2.mp4?dl=0)
+
+### Useful Information and links
+
+- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of the coming two weeks. 
+
+- [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
+   - Chapter 3: Linear Regression (Up to and including Section 3.4)
+
+These readings are exam materials.
+
+# Week 5
+
+## Column 1
+
+### Lecture (Monday)
+Today's lecture is about being a skilled modeler. There is a famous quote that is generally attributed to [George Box](https://en.wikipedia.org/wiki/George_E._P._Box):
+
+\[\text{All models are wrong, but some are useful}\]
+
+Today we dive deeper into why and how this statement applies. We also explore techniques to infer the usefulness of a model, given that it is wrong anyway.
+
+You can find the [slides here](Wk5/Lecture_5_FTID.html)
+
+### Workgroup (Thursday)
+**Today's workgroup is online. See the Teams channel.**
+
+## Column 2
+
+### `R` exercise
+This week's `R` exercise is about getting more familiar with the linear model and its usefulness.
+
+- Make [Exercise 7](Wk5/Exercise/Exercise_7.html). 
+
+**No need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
+
+
+### Useful Information and links
+
+- I have prepared [a document about interpreting cross validation results](Wk5/Exercise/Example_CVlm.pdf)
+- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) details the relation between correlation and prediction
+- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) gives a nice detail about $R^2$ and how it is useless on a wrongly specified model
+- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) details the usefulness of adjusted $R^2$
+
+These readings are exam materials. Also useful, but not exam material is:
+
+- Chapter XIV on regression in [this online book](http://onlinestatbook.com/2/regression/regression.html)
+
+# Week 6
+
+## Column 1
+
+### Lecture (Monday)
+Today's lecture is about logistic regression. We explore the basics of this method today and continue with a more in-depth exploration in the next weeks. 
+
+You can find the [slides here](Wk6/Lecture_6_FTID.html)
+
+### Workgroup (Thursday)
+**Today's workgroup is online. See the Teams channel.**
+
+## Column 2
+
+### `R` exercise
+This week's `R` exercise is about getting familiar with fitting the logistic regression model. 
+
+- Make [Exercise 8](Wk6/Exercise/Exercise_8.html). 
+
+**To allow you to enjoy the holidays, there is no need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
+
+### Useful Information and links
+
+- [Read this page on interpreting logistic regression](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/)
+- From [Introduction to Statistical Learning](https://statlearning.com) read [Chapter 4 on Logistic Regression](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf) up to and including 4.3.4
+
+These readings are exam materials.
+
+# Week 7
+
+## Column 1
+
+### Lecture (Monday)
+Today we continue with logistic regression. We'll use the titanic data to demonstrate the technique and we will explore some ways to evaluate the usefulness of the fitted models. 
+
+You can find the [slides here](Wk7/Lecture_7_FTID.html)
+
+### Workgroup (Thursday)
+**Today's workgroup is online. See the Teams channel.**
+
+
+## Column 2
+
+### `R` exercise
+
+[The titanic.csv data](data/titanic.csv)
+
+This week's exercise is to:
+1. Recreate the plots from slides 28 and 29, but now for females
+2. For the model with the interactions:
+  
+  - Create a confusion matrix for the model with the interactions
+  - Perform crossvalidation on the `titanic` model with the interactions
+
+3. See if a model with all variables included is a better fit than the model with the interactions presented in the slides. 
+  - The model with all variables (excluding `Name`!) can be simply fit with `glm(Survived ~ . * ., data = titanic[, -3])`
+  - The `.` here implies all remaining columns in the data. `. * .` yields the full factorial model between all these columns. 
+
+Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
+
+### Useful Information and links
+- [Study this page on inspecting logistic regression](https://stats.idre.ucla.edu/r/dae/logit-regression/)
+
+These readings are exam materials.
+
+# Week 8
+
+## Column 1
+
+### Lecture (Monday)
+Today we will wrap up this course. I'll give you an overview of the highlights and introduce only a few new concepts. 
+
+You can find the [slides here](Wk8/Lecture_8_FTID.html)
+
+### Workgroup (Thursday)
+**Today's workgroup is online. See the Teams channel.**
+
+## Column 2
+
+### `R` exercise
+No exercise for this week. I believe that you have been given the proper skillset to solve the assignments in this course. Use your time to improve your skills. 
+
+Do not forget to include the newly introduced concepts for this week in your Assignment 2. 
+
+# Exam material
+
+## Column 1
+
+### **Practice exam**
+You can find the [practice exam here](https://gerkovink.shinyapps.io/Practice_Exam_FTiD)
+
+### **What can be tested**
+
+[This page as a pdf](Archive/Exam_materials_pdf.pdf)
+
+The information in the lecture slides:
+
+- The lectures:
+
+  - [Lecture 1](Wk1/Lecture-1_FTID.html)
+  - [Lecture 2](Wk2/Lecture_2_FTID.html)
+  - [Lecture 3](Wk3/Lecture_3_FTID.html)
+  - [Lecture 4](Wk4/Lecture-4_FTID.html)
+  - [Lecture 5](Wk5/Lecture_5_FTID.html)
+  - [Lecture 6](Wk6/Lecture_6_FTID.html)
+  - [Lecture 7](Wk7/Lecture_7_FTID.html)
+  - [Lecture 8](Wk8/Lecture_8_FTID.html)
+
+and the information in the following sources these lecture slides are based on:
+
+- [Introduction to Statistical Learning](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf)
+  - Chapter 2: up to and including 2.2.2
+  - Chapter 3: up to and including 3.4
+  - Chapter 4: up to and including 4.3.4
+  - Chapter 5: up to and including 5.1
+  
+- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf).
+- [This document](Wk5/Exercise/Example_CVlm.pdf) I prepared about interpreting cross validation results
+- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) that details the relation between correlation and prediction
+- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) that details $R^2$ and explains how it is useless on a wrongly specified model
+- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) about adjusted $R^2$
+- [This page](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) on interpreting logistic regression
+- [This page](https://stats.idre.ucla.edu/r/dae/logit-regression/) on inspecting logistic regression
+
+### **What about equations and formulae?**
+
+Your knowledge of matrix algebra will not be tested. So, there is no need to memorize that the regression estimates $\beta$ can be estimated as $\hat{\beta} = ({\bf X}^T{\bf X})^{-1}{\bf X}^Ty$. However, you will need to know, understand and apply equations such as: 
+
+- $y = \beta_0 + \beta_1X+\epsilon$ and any more complicated version of this. 
+- $\epsilon = y - \hat{y}$
+- $\mathbb{E}[y] = \alpha + \beta x.$
+- $\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)$
+- $p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}$
+- etcetera
+
+### **What if you are in doubt?**
+
+If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl?subject=Question About Exam Materials) and I'd be more than happy to explain. 
+
+**The second half of the last lecture is dedicated to a Q&A**
+
 -->
-</div>
-<div id="workgroup-thursday-2" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p>In today’s workgroup, you will work on specifying a linear model and estimating your defined model.</p>
-</div>
-</div>
-<div id="column-2-4" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-2" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p>This week’s <code>R</code> exercise is about simple linear modeling a visualizing bivariate relations.</p>
-<ul>
-<li>Complete <a href="wk3/exercise/exercise5.html">Exercise 5</a> before Thursday’s workgroup.</li>
-</ul>
-<p>Submit your <em>RMD</em> script and the compiled <em>HTML</em> file it produces to the <a href="https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk">SurfDrive</a> folder. Name the files <code>your_name.Rmd</code> and <code>your_name.html</code>, respectively. Where <code>your_name</code> is your full name in <em>lower snake-case</em>.</p>
-<ul>
-<li>Submit these files <strong><em>before the next lecture</em></strong>.</li>
-</ul>
-</div>
-<div id="exercise-solution" class="section level3">
-<h3>Exercise Solution</h3>
-<p>You can find suggested solutions for this week’s exercise <a href="wk3/exercise/exercise5_solutions.html">here</a>.</p>
-</div>
-<div id="required-reading" class="section level3">
-<h3>Required Reading</h3>
-<ul>
-<li>From <a href="https://statlearning.com">Introduction to Statistical Learning</a> read <a href="https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf">Chapter 3 on Linear Regression</a> up to and including 3.1.1</li>
-</ul>
-<p><strong><em>These readings are exam materials.</em></strong></p>
-</div>
-</div>
-</div>
-<div id="week-4" class="section level1">
-<h1>Week 4</h1>
-<div id="column-1-6" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-3" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today’s lecture is about statistical inference. Inference is the process of drawing conclusions about true data generating models (TDGM). The most widely know TDGM is the population, the body we aim to infer about in social science and in classical statistics.</p>
-<p>Even though statistical inference has been around for a long time, it’s associated components, quantities and estimands are not always straightforward. Let’s dive a bit deeper into that today, but in order to do so, we need some knowledge about statistical sampling and some widely used distributions. That is why we start today’s lecture with random numbers and data generation in <code>R</code>.</p>
-<p>You can find the <a href="Wk4/Lecture-4_FTID.html">slides here</a></p>
-</div>
-<div id="workgroup-thursday-3" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p><strong>Today’s workgroup is online. See the Teams channel.</strong></p>
-</div>
-</div>
-<div id="column-2-5" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-3" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p>This week’s <code>R</code> exercise is about getting familiar with the linear model.</p>
-<ul>
-<li>Make <a href="Wk4/Exercise/Exercise_6.html">Exercise 6</a> before Thursday’s workgroup.</li>
-</ul>
-<p>Hand in a markdown compiled <code>html</code> file for Exercise 6 to the <a href="https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk">SurfDrive</a> drop folder. Do this <strong><em>before the next lecture on Monday</em></strong>.</p>
-</div>
-<div id="solution-to-the-exercise" class="section level3">
-<h3>Solution to the exercise</h3>
-<p>You can find the answers to this week’s exercise and to the previous week’s exercise <a href="Wk4/Exercise/Exercise_6_answers.html">here</a>. Use these answers only when you are stuck.</p>
-<p>Video discussion of the exercises in two parts:</p>
-<ul>
-<li><a href="https://www.dropbox.com/s/i47g1pinm0dpt2r/Exercise45_discussion.mp4?dl=0">Part 1</a></li>
-<li><a href="https://www.dropbox.com/s/l1actd5o6si2tx1/Exercise45_discussion_part2.mp4?dl=0">Part 2</a></li>
-</ul>
-</div>
-<div id="useful-information-and-links-1" class="section level3">
-<h3>Useful Information and links</h3>
-<ul>
-<li><a href="http://www.mit.edu/~6.s085/notes/lecture3.pdf">These lecture notes</a> cover the essence of the coming two weeks.</li>
-<li>From <a href="https://statlearning.com">Introduction to Statistical Learning</a> read <a href="https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf">Chapter 3 on Linear Regression</a> up to and including 3.4</li>
-</ul>
-<p>These readings are exam materials.</p>
-</div>
-</div>
-</div>
-<div id="week-5" class="section level1">
-<h1>Week 5</h1>
-<div id="column-1-7" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-4" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today’s lecture is about being a skilled modeler. There is a famous quote that is generally attributed to <a href="https://en.wikipedia.org/wiki/George_E._P._Box">George Box</a>:</p>
-<p><span class="math display">\[\text{All models are wrong, but some are useful}\]</span></p>
-<p>Today we dive deeper into why and how this statement applies. We also explore techniques to infer the usefulness of a model, given that it is wrong anyway.</p>
-<p>You can find the <a href="Wk5/Lecture_5_FTID.html">slides here</a></p>
-</div>
-<div id="workgroup-thursday-4" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p><strong>Today’s workgroup is online. See the Teams channel.</strong></p>
-</div>
-</div>
-<div id="column-2-6" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-4" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p>This week’s <code>R</code> exercise is about getting more familiar with the linear model and its usefulness.</p>
-<ul>
-<li>Make <a href="Wk5/Exercise/Exercise_7.html">Exercise 7</a>.</li>
-</ul>
-<p><strong>No need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.</strong></p>
-</div>
-<div id="useful-information-and-links-2" class="section level3">
-<h3>Useful Information and links</h3>
-<ul>
-<li>I have prepared <a href="Wk5/Exercise/Example_CVlm.pdf">a document about interpreting cross validation results</a></li>
-<li><a href="https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/">This online page</a> details the relation between correlation and prediction</li>
-<li><a href="https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/">This blog post by Jonathan Barlett</a> gives a nice detail about <span class="math inline">\(R^2\)</span> and how it is useless on a wrongly specified model</li>
-<li><a href="https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/">This other blog post by Jonathan</a> details the usefulness of adjusted <span class="math inline">\(R^2\)</span></li>
-</ul>
-<p>These readings are exam materials. Also useful, but not exam material is:</p>
-<ul>
-<li>Chapter XIV on regression in <a href="http://onlinestatbook.com/2/regression/regression.html">this online book</a></li>
-</ul>
-</div>
-</div>
-</div>
-<div id="week-6" class="section level1">
-<h1>Week 6</h1>
-<div id="column-1-8" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-5" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today’s lecture is about logistic regression. We explore the basics of this method today and continue with a more in-depth exploration in the next weeks.</p>
-<p>You can find the <a href="Wk6/Lecture_6_FTID.html">slides here</a></p>
-</div>
-<div id="workgroup-thursday-5" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p><strong>Today’s workgroup is online. See the Teams channel.</strong></p>
-</div>
-</div>
-<div id="column-2-7" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-5" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p>This week’s <code>R</code> exercise is about getting familiar with fitting the logistic regression model.</p>
-<ul>
-<li>Make <a href="Wk6/Exercise/Exercise_8.html">Exercise 8</a>.</li>
-</ul>
-<p><strong>To allow you to enjoy the holidays, there is no need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.</strong></p>
-</div>
-<div id="useful-information-and-links-3" class="section level3">
-<h3>Useful Information and links</h3>
-<ul>
-<li><a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/">Read this page on interpreting logistic regression</a></li>
-<li>From <a href="https://statlearning.com">Introduction to Statistical Learning</a> read <a href="https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf">Chapter 4 on Logistic Regression</a> up to and including 4.3.4</li>
-</ul>
-<p>These readings are exam materials.</p>
-</div>
-</div>
-</div>
-<div id="week-7" class="section level1">
-<h1>Week 7</h1>
-<div id="column-1-9" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-6" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today we continue with logistic regression. We’ll use the titanic data to demonstrate the technique and we will explore some ways to evaluate the usefulness of the fitted models.</p>
-<p>You can find the <a href="Wk7/Lecture_7_FTID.html">slides here</a></p>
-</div>
-<div id="workgroup-thursday-6" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p><strong>Today’s workgroup is online. See the Teams channel.</strong></p>
-</div>
-</div>
-<div id="column-2-8" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-6" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p><a href="data/titanic.csv">The titanic.csv data</a></p>
-<p>This week’s exercise is to: 1. Recreate the plots from slides 28 and 29, but now for females 2. For the model with the interactions:</p>
-<ul>
-<li>Create a confusion matrix for the model with the interactions</li>
-<li>Perform crossvalidation on the <code>titanic</code> model with the interactions</li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>See if a model with all variables included is a better fit than the model with the interactions presented in the slides.</li>
-</ol>
-<ul>
-<li>The model with all variables (excluding <code>Name</code>!) can be simply fit with <code>glm(Survived ~ . * ., data = titanic[, -3])</code></li>
-<li>The <code>.</code> here implies all remaining columns in the data. <code>. * .</code> yields the full factorial model between all these columns.</li>
-</ul>
-<p>Hand in a markdown compiled <code>html</code> file for Exercise 9 to the <a href="https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk">SurfDrive</a> drop folder. Do this <strong><em>before the next lecture on Monday</em></strong>.</p>
-</div>
-<div id="useful-information-and-links-4" class="section level3">
-<h3>Useful Information and links</h3>
-<ul>
-<li><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/">Study this page on inspecting logistic regression</a></li>
-</ul>
-<p>These readings are exam materials.</p>
-</div>
-</div>
-</div>
-<div id="week-8" class="section level1">
-<h1>Week 8</h1>
-<div id="column-1-10" class="section level2">
-<h2>Column 1</h2>
-<div id="lecture-monday-7" class="section level3">
-<h3>Lecture (Monday)</h3>
-<p>Today we will wrap up this course. I’ll give you an overview of the highlights and introduce only a few new concepts.</p>
-<p>You can find the <a href="Wk8/Lecture_8_FTID.html">slides here</a></p>
-</div>
-<div id="workgroup-thursday-7" class="section level3">
-<h3>Workgroup (Thursday)</h3>
-<p><strong>Today’s workgroup is online. See the Teams channel.</strong></p>
-</div>
-</div>
-<div id="column-2-9" class="section level2">
-<h2>Column 2</h2>
-<div id="r-exercise-7" class="section level3">
-<h3><code>R</code> exercise</h3>
-<p>No exercise for this week. I believe that you have been given the proper skillset to solve the assignments in this course. Use your time to improve your skills.</p>
-<p>Do not forget to include the newly introduced concepts for this week in your Assignment 2.</p>
-</div>
-</div>
-</div>
-<div id="exam-material" class="section level1">
-<h1>Exam material</h1>
-<div id="column-1-11" class="section level2">
-<h2>Column 1</h2>
-<div id="practice-exam" class="section level3">
-<h3><strong>Practice exam</strong></h3>
-<p>You can find the <a href="https://gerkovink.shinyapps.io/Practice_Exam_FTiD">practice exam here</a></p>
-</div>
-<div id="what-can-be-tested" class="section level3">
-<h3><strong>What can be tested</strong></h3>
-<p><a href="Archive/Exam_materials_pdf.pdf">This page as a pdf</a></p>
-<p>The information in the lecture slides:</p>
-<ul>
-<li><p>The lectures:</p>
-<ul>
-<li><a href="Wk1/Lecture-1_FTID.html">Lecture 1</a></li>
-<li><a href="Wk2/Lecture_2_FTID.html">Lecture 2</a></li>
-<li><a href="Wk3/Lecture_3_FTID.html">Lecture 3</a></li>
-<li><a href="Wk4/Lecture-4_FTID.html">Lecture 4</a></li>
-<li><a href="Wk5/Lecture_5_FTID.html">Lecture 5</a></li>
-<li><a href="Wk6/Lecture_6_FTID.html">Lecture 6</a></li>
-<li><a href="Wk7/Lecture_7_FTID.html">Lecture 7</a></li>
-<li><a href="Wk8/Lecture_8_FTID.html">Lecture 8</a></li>
-</ul></li>
-</ul>
-<p>and the information in the following sources these lecture slides are based on:</p>
-<ul>
-<li><a href="https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf">Introduction to Statistical Learning</a>
-<ul>
-<li>Chapter 2: up to and including 2.2.2</li>
-<li>Chapter 3: up to and including 3.4</li>
-<li>Chapter 4: up to and including 4.3.4</li>
-<li>Chapter 5: up to and including 5.1</li>
-</ul></li>
-<li><a href="http://www.mit.edu/~6.s085/notes/lecture3.pdf">These lecture notes</a>.</li>
-<li><a href="Wk5/Exercise/Example_CVlm.pdf">This document</a> I prepared about interpreting cross validation results</li>
-<li><a href="https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/">This online page</a> that details the relation between correlation and prediction</li>
-<li><a href="https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/">This blog post by Jonathan Barlett</a> that details <span class="math inline">\(R^2\)</span> and explains how it is useless on a wrongly specified model</li>
-<li><a href="https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/">This other blog post by Jonathan</a> about adjusted <span class="math inline">\(R^2\)</span></li>
-<li><a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/">This page</a> on interpreting logistic regression</li>
-<li><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/">This page</a> on inspecting logistic regression</li>
-</ul>
-</div>
-<div id="what-about-equations-and-formulae" class="section level3">
-<h3><strong>What about equations and formulae?</strong></h3>
-<p>Your knowledge of matrix algebra will not be tested. So, there is no need to memorize that the regression estimates <span class="math inline">\(\beta\)</span> can be estimated as <span class="math inline">\(\hat{\beta} = ({\bf X}^T{\bf X})^{-1}{\bf X}^Ty\)</span>. However, you will need to know, understand and apply equations such as:</p>
-<ul>
-<li><span class="math inline">\(y = \beta_0 + \beta_1X+\epsilon\)</span> and any more complicated version of this.</li>
-<li><span class="math inline">\(\epsilon = y - \hat{y}\)</span></li>
-<li><span class="math inline">\(\mathbb{E}[y] = \alpha + \beta x.\)</span></li>
-<li><span class="math inline">\(\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)\)</span></li>
-<li><span class="math inline">\(p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}\)</span></li>
-<li>etcetera</li>
-</ul>
-</div>
-<div id="what-if-you-are-in-doubt" class="section level3">
-<h3><strong>What if you are in doubt?</strong></h3>
-<p>If any of the course materials confuse you, <a href="mailto:G.Vink@uu.nl?subject=Question%20About%20Exam%20Materials">drop me a line</a> and I’d be more than happy to explain.</p>
-<p><strong>The second half of the last lecture is dedicated to a Q&amp;A</strong></p>
 </div>
 </div>
 </div>
