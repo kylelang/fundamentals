@@ -97,16 +97,12 @@ The final grade is computed as follows
 
 In addition to the grade components listed above, you will also do R` exercises 
 for the first 7 weeks of the course. These exercises will develop the skills 
-needed to successfully complete the assignments. The exercises will be graded on 
-a completion basis. 
-
-- You must finish the `R` exercises for 6 out of 7 weeks to pass the course.
+needed to successfully complete the assignments. 
 
 To pass the course:
 
 1. Your final grade must be 5.5 or higher
 1. You must pass both assignments
-1. You must submit `R` exercises for at least 6 of the first 7 weeks
 
 ## Column 2 {data-width=400}
 
@@ -456,7 +452,7 @@ material.
 - [`R` for Data Science](http://r4ds.had.co.nz) 
    - [Chapter 18: Pipes](http://r4ds.had.co.nz/pipes.html)
 
-<!----------------------------------------------------------------------------->
+<!-----------------------------------------------------------------------------
 
 # Week 3
 
@@ -526,7 +522,6 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 
 ***These readings are exam materials.***
 
-<!----------------------------------------------------------------------------->
 
 # Week 4
 
@@ -746,6 +741,7 @@ If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl
 
 **The second half of the last lecture is dedicated to a Q&A**
 
+-->
 
 [ftds]: https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2021&taal=en
 [sd]: https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk
