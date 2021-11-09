@@ -1067,8 +1067,8 @@ p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2)
   We may also want to know how well our model explains the outcome.
   \begin{itemize}
   \item Our model explains some proportion of the outcome's variability.
-  \item The residual variance $\hat{\sigma}^2 = \text{Var}(\hat{\varepsilon})$
-    will be less than $\text{Var}(Y)$.
+  \item The residual variance $\hat{\sigma}^2 = \textrm{Var}(\hat{\varepsilon})$
+    will be less than $\textrm{Var}(Y)$.
   \end{itemize}
 
   \begin{columns}
@@ -1142,7 +1142,7 @@ p7
   where
   \begin{align*}
     TSS = \sum_{n = 1}^N \left(Y_n - \bar{Y}\right)^2 =
-    \text{Var}(Y)\times (N - 1)
+    \textrm{Var}(Y)\times (N - 1)
   \end{align*}
 
 <<echo = FALSE, cache = TRUE>>=
@@ -1225,37 +1225,40 @@ rmse <- round(sqrt(ssr/nrow(Cars93)), 2)
   models while accounting for model complexity.\\
 
   \vb
-
-  Akaike's Information Criterion (AIC)
-  \only<1>{
-    \begin{align*}
-      AIC = 2K - 2\hat{\ell}(\theta|X)
-    \end{align*}
-  }
-  \only<2>{
-    \begin{align*}
-      AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
-    \end{align*}
-  }
-
-  Bayesian Information Criterion (BIC)
-  \only<1>{
-    \begin{align*}
-      BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
-    \end{align*}
-  }
-  \only<2>{
-    \begin{align*}
-      BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
-    \end{align*}
-  }
+  \begin{itemize}
+  \item Akaike's Information Criterion (AIC)
+    \only<1>{
+      \begin{align*}
+        AIC = 2K - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \item Bayesian Information Criterion (BIC)
+    \only<1>{
+      \begin{align*}
+        BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \end{itemize}
   \onslide<2>{
+    Information criteria balance two competing forces.
+    \vc
     \begin{itemize}
     \item \blue{The optimized loglikelihood quantifies fit to the data.}
+      \vc
     \item \red{The penalty term corrects for model complexity}.
     \end{itemize}
   }
-
+  
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
@@ -1294,7 +1297,7 @@ BIC(out1)
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Graphical Representations of Regression Models}
+\begin{frame}{Graphical Representations}
 
   A regression of two variables can be represented on a 2D scatterplot.
   \begin{itemize}
@@ -1334,7 +1337,7 @@ p + geom_smooth(method = "lm", se = FALSE, col = "black")
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Graphical Representations of Regression Models}
+\begin{frame}{Graphical Representations}
 
   Adding an additional predictor leads to a 3D point cloud.
   \vb
