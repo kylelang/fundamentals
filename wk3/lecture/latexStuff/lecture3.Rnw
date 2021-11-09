@@ -1,7 +1,7 @@
 %%% Title:    Overview of Linear Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2021-11-03
+%%% Modified: 2021-11-09
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -13,7 +13,7 @@
 \usepackage{booktabs}
 \usepackage{relsize}
 
-\title{Review of Linear Regression}
+\title{Introduction to Linear Modeling}
 \subtitle{Fundamental Techniques in Data Science with R}
 \author{Kyle M. Lang}
 \institute{Department of Methodology \& Statistics\\Utrecht University}
@@ -34,7 +34,10 @@ library(MLmetrics)
 source("../../../code/supportFunctions.R")
 
 options(width = 60)
-opts_chunk$set(size = 'footnotesize', fig.align = 'center', message = FALSE)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               message = FALSE,
+               comment = "")
 knit_theme$set('edit-kwrite')
 @
 
@@ -162,7 +165,7 @@ p + geom_line() +
 
 
 <<echo = FALSE, cache = TRUE>>=
-x    <- seq(0, 13, 0.001)
+x   <- seq(0, 13, 0.001)
 dat <- data.frame(x  = x,
                   yA = dnorm(x, 7, 1.5),
                   yB = dnorm(x, 5, 1.0)
@@ -417,10 +420,10 @@ The estimated slope is: $\hat{\beta}_1 = \Sexpr{b1}$.
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[shrink = 5]{Sampling Distribution}
+\begin{frame}{Sampling Distribution}
 
-  A sampling distribution is simply the probability distribution of a parameter.
-
+  Sampling distribution = Probability distribution of a parameter.
+  \vb
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
@@ -447,51 +450,52 @@ se <- sqrt(diag(vcov(out1)))[2]
 x    <- seq((b - 4 * se), (b + 4 * se), length.out = 1000)
 dat1 <- data.frame(B = x, density = dnorm(x = x, b, se))
 
-p1 <- ggplot(dat1, aes(x = B, y = density)) + theme_classic()
-p1 + geom_line() +
-    labs(title = "Sampling Distribution of Slope") +
+p0 <- ggplot(dat1, aes(x = B, y = density)) +
+    geom_line() +
+    theme_classic() +
     theme(text = element_text(size = 16, family = "Courier"),
           plot.title = element_text(size = 20, face = "bold", hjust = 0.5)
           )
+p0 + labs(title = "Sampling Distribution of Slope")
 @
 
 \end{column}
 \end{columns}
-
-\textsc{Some Intuition}: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
+\vb
+\textbf{\emph{Intuition}}: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
 
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Test Statistics}
- 
+
   To ``test'' a slope coefficient, $\hat{\beta}$, we need a point of comparison.
   \begin{itemize}
-  \item The \emph{null-hypothesized} value of the slope, 
+  \item The \emph{null-hypothesized} value of the slope,
     $H_0: \beta = \tilde{\beta}$.
   \end{itemize}
-  
+
   \vb
-  
+
   Our hypothesis test is actually a test for the size of the difference:
   $\hat{\beta} - \tilde{\beta}$
   \begin{itemize}
-  \item We define a \emph{test statistic}, $t$, to quantify the size of this 
-    difference accounting for the precision with which we've estimated 
+  \item We define a \emph{test statistic}, $t$, to quantify the size of this
+    difference accounting for the precision with which we've estimated
     $\hat{\beta}$.
   \end{itemize}
-  
+
   \vb
-  
+
   We can construct the test statistic for $\hat{\beta}$ as follows:
   \begin{align*}
-    t = \frac{\hat{\beta} - \tilde{\beta}}{SE\left(\hat{\beta}\right)} 
+    t = \frac{\hat{\beta} - \tilde{\beta}}{SE\left(\hat{\beta}\right)}
     ~~\overset{\tilde{\beta} = 0}{\mathlarger{\Rightarrow}}~~
-    t = \frac{\hat{\beta} - 0}{SE\left(\hat{\beta}\right)} = 
+    t = \frac{\hat{\beta} - 0}{SE\left(\hat{\beta}\right)} =
     \frac{\hat{\beta}}{SE\left(\hat{\beta}\right)}
   \end{align*}
-  
+
 <<echo = FALSE, cache = TRUE>>=
 se1 <- round(se, 2)
 df  <- out1$df.residual
@@ -500,7 +504,7 @@ moe <- round(qt(0.975, df = df) * se1, 2)
 
 For the slope in our example, we get a test statistic of:
 \begin{align*}
-  t = \frac{\hat{\beta}_1}{SE\left(\hat{\beta}_1\right)} = 
+  t = \frac{\hat{\beta}_1}{SE\left(\hat{\beta}_1\right)} =
     \frac{\Sexpr{b1}}{\Sexpr{se1}} = \Sexpr{b1 / se1}
 \end{align*}
 
@@ -508,30 +512,30 @@ For the slope in our example, we get a test statistic of:
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[shrink = 5]{Sampling Distribution of Test Statistic}
+\begin{frame}{Sampling Distribution of Test Statistic}
 
  \begin{columns}
    \begin{column}{0.5\textwidth}
-     
+
      The t-statistic also has a sampling distribution.
      \vc
      \begin{itemize}
      \item Quantifies the possible values we could get if we repeatedly drew
-       samples, of the \underline{same size}, from the \underline{same 
+       samples, of the \underline{same size}, from the \underline{same
          population} and re-computed a t-statistic each time.
      \vb
-     \item The distribution under the null hypothesis assumes a population 
+     \item The distribution under the null hypothesis assumes a population
        wherein $\hat{\beta}$ = $\tilde{\beta}$, and, consequently, $t = 0$.
      \end{itemize}
-     
+
    \end{column}
    \begin{column}{0.5\textwidth}
-     
+
 <<echo = FALSE, cache = TRUE>>=
 x    <- seq(-4, 4, length.out = 1000)
 dat1 <- data.frame(t = x, density = dt(x = x, df = df))
-                                 
-p1 <- ggplot(dat1, aes(x = t, y = density)) + 
+
+p1 <- ggplot(dat1, aes(x = t, y = density)) +
     geom_line() +
     theme_classic() +
     theme(text = element_text(size = 16, family = "Courier"),
@@ -543,7 +547,7 @@ p1 + labs(title = "Sampling Distribution\nCentral t-Statistic")
 
    \end{column}
  \end{columns}
- 
+
 \end{frame}
 \watermarkon %-----------------------------------------------------------------%
 
@@ -556,7 +560,7 @@ p1 + labs(title = "Sampling Distribution\nCentral t-Statistic")
     \item By calculating the area in the null distribution that exceeds our
       estimated test statistic, we can compute the probability of observing the
       given test statistic, or one more extreme, if the null hypothesis were
-      true.  
+      true.
       \vb
       \begin{itemize}
       \item In other words, we can compute the probability of having sampled the
@@ -566,7 +570,7 @@ p1 + labs(title = "Sampling Distribution\nCentral t-Statistic")
       \vb
     \item This value is the infamous \emph{p-value}.
   \end{itemize}
-  
+
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
@@ -579,16 +583,16 @@ p1 + labs(title = "Sampling Distribution\nCentral t-Statistic")
 <<echo = FALSE, cache = TRUE>>=
 tHat <- 2.15
 
-p1 <- p1 + 
+p1 <- p1 +
     geom_ribbon(data = dat1[dat1$t >= tHat, ],
                 mapping = aes(x = t, ymin = 0, ymax = density),
-                fill = "gray")    
+                fill = "gray")
 p1 + labs(title = "One-Tailed Test")
 @
 
     \end{column}
     \begin{column}{0.5\textwidth}
-     
+
 <<echo = FALSE, cache = TRUE>>=
 p1 + geom_ribbon(data = dat1[dat1$t <= -tHat, ],
                        mapping = aes(x = t, ymin = 0, ymax = density),
@@ -636,15 +640,15 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
 \watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}{Interpreting P-Values}
-  
+
   \begin{columns}
     \begin{column}{0.5\textwidth}
-      
+
       The p-value tells us $P(t \geq \hat{t}|H_0)$
       \begin{itemize}
       \item What we really want to know is $P(H_0|t \geq \hat{t})$.
       \end{itemize}
-      \vb 
+      \vb
       All that we \emph{\underline{can}} say is that there is a
       $\Sexpr{round(pv, 3)}$ probability of observing a test statistic
       at least as large as $\hat{t}$, if the null hypothesis is true.
@@ -652,7 +656,7 @@ Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
       \begin{itemize}
       \item Our test uses the same logic as \emph{proof by contradiction}.
       \end{itemize}
-      
+
     \end{column}
     \begin{column}{0.5\textwidth}
 
@@ -700,15 +704,80 @@ p1
 \end{frame}
 }%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Confidence Intervals}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      A sampling distribution quantifies the possible values of the statistic.
+      \vc
+      \begin{itemize}
+      \item We can use this distribution to estimate a \emph{plausible range}
+        for the population parameter.
+        \vc
+        \begin{enumerate}
+        \item<2-> Exclude the tails of the distribution.
+          \vc
+        \item<3-> The remaining values represent a good guess for plausible
+          population values of the parameter.
+        \end{enumerate}
+        \vc
+      \item<3-> This range is known as the \emph{confidence interval}.
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+\only<1>{
+<<echo = FALSE, cache = TRUE>>=
+p0 + labs(title = "Sampling Distribution of the Slope")
+@
+}
+
+\only<2>{
+<<echo = FALSE, cache = TRUE>>=
+b  <- coef(out1)[2]
+se <- sqrt(diag(vcov(out1)))[2]
+
+x    <- seq((b - 4 * se), (b + 4 * se), length.out = 1000)
+dat1 <- data.frame(B = x, density = dnorm(x = x, b, se))
+
+ci <- confint(out1)[2, ]
+
+dat2 <- data.frame(x = ci, y = dnorm(ci, b, se))
+
+p0 <- p0 +
+    geom_segment(data = dat2, mapping = aes(x = x, y = 0, xend = x, yend = y),
+                 linetype = 2,
+                 size = 1) +
+    labs(title = "Confidence Bounds for Slope")
+p0
+@
+}
+
+\only<3>{
+<<echo = FALSE, cache = TRUE>>=
+p0 + geom_ribbon(data = dat1[dat1$B > ci[1] & dat1$B < ci[2], ],
+                       mapping = aes(x = B, ymin = 0, ymax = density),
+                       fill = "gray") +
+    labs(title = "Confidence Interval for Slope")
+@
+}
+\end{column}
+\end{columns}
+
+\end{frame}
+
 \watermarkon %-----------------------------------------------------------------%
 
-\begin{frame}{Inferential Tools: Confidence Intervals}
+\begin{frame}{Confidence Intervals}
 
-  We can also construct confidence intervals by:
+  We can construct confidence intervals by:
   \begin{align*}
     CI = \hat{\beta} \pm t_{crit} \times SE\left(\hat{\beta}\right)
   \end{align*}
-  
+
   For our example slope, we get a 95\% CI of:
   \begin{align*}
     CI_{95} = \Sexpr{b1} \pm \Sexpr{round(qt(0.975, df = df), 2)} \times
@@ -718,65 +787,65 @@ p1
   somewhere between $\Sexpr{b1 - moe}$ and $\Sexpr{b1 + moe}$.
   \vc
   \begin{itemize}
-  \item We are \emph{95\% certain} in the sense that if we repeat this analysis 
+  \item We are \emph{95\% certain} in the sense that if we repeat this analysis
     an infinite number of times, 95\% of the CIs that we calculate will surround
     the true value of $\beta_1$.
   \end{itemize}
-  
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Interpreting Confidence Intervals}
-  
+
   Say we estimate a regression slope of $\hat{\beta}_1 = 0.5$ with an associated
   95\% confidence interval of $CI = [0.25; 0.75]$.
   \pause
   \vc
   \begin{itemize}
-  \item We \emph{\underline{cannot}} say that there is 95\% chance that the true 
+  \item We \emph{\underline{cannot}} say that there is 95\% chance that the true
     value of $\beta_1$ is between 0.25 and 0.75.
     \vc
-  \item We \emph{\underline{cannot}} say that the true value of $\beta_1$ is 
+  \item We \emph{\underline{cannot}} say that the true value of $\beta_1$ is
     between 0.25 and 0.75, with probability 0.95.
   \end{itemize}
-  \vb  
+  \vb
   \pause
   The true value of $\beta_1$ is fixed; it's a single quantity.
   \begin{itemize}
-  \item $\beta_1$ is either in our estimated interval or it is not; there is no 
+  \item $\beta_1$ is either in our estimated interval or it is not; there is no
     uncertainty.
     \vc
-  \item The probability that $\beta_1$ is within our estimated interval is either 
+  \item The probability that $\beta_1$ is within our estimated interval is either
     exactly 1 or exactly 0.
   \end{itemize}
-  
+
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}{Interpreting Confidence Intervals}
-  
-  We don't talk about 95\% probabilities when interpreting CIs; instead, we 
+
+  We don't talk about 95\% probabilities when interpreting CIs; instead, we
   talk about 95\% confidence.
   \vc
   \begin{columns}
     \begin{column}{0.5\textwidth}
-      
+
       \begin{itemize}
-      \item If we collected a new sample---of the same size---re-estimated our 
-        model, and re-computed the 95\% CI for $\hat{\beta_1}$, we would get a 
+      \item If we collected a new sample---of the same size---re-estimated our
+        model, and re-computed the 95\% CI for $\hat{\beta_1}$, we would get a
         different interval.
         \vc
-      \item Repeating this process an infinite number of times would give us a 
+      \item Repeating this process an infinite number of times would give us a
         distribution of CIs.
         \vc
       \item 95\% of those CIs would surround the true value of $\beta_1$.
       \end{itemize}
-      
+
     \end{column}
     \begin{column}{0.5\textwidth}
-      
+
 <<echo = FALSE>>=
 reps <- 100
 n    <- 500
@@ -785,7 +854,7 @@ ci <- beta <- list()
 for(rp in 1 : reps) {
     x <- rnorm(n)
     y <- 0.5 * x + rnorm(n)
-    
+
     fit <- lm(y ~ x)
 
     beta[[rp]] <- coef(fit)[2]
@@ -804,8 +873,8 @@ dat1 <- data.frame(ind = 1 : reps, beta = beta, lb = ci[ , 1], ub = ci[ , 2])
 
 ggplot(dat1, mapping = aes(x = ind, y = beta, group = 1)) +
     geom_point(colour = cols) +
-    geom_errorbar(width   = 0.1, 
-                  mapping = aes(ymin = lb, ymax = ub), 
+    geom_errorbar(width   = 0.1,
+                  mapping = aes(ymin = lb, ymax = ub),
                   colour  = cols) +
     geom_abline(slope = 0.0, intercept = 0.5) +
     theme_classic() +
@@ -825,10 +894,10 @@ ggplot(dat1, mapping = aes(x = ind, y = beta, group = 1)) +
 
 \comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Inference with Confidence Intervals}
-  
-  In terms of sampling distributions, our inferential task is to say something 
+
+  In terms of sampling distributions, our inferential task is to say something
   about how distinct the null and alternative distributions are.
- 
+
 <<echo = FALSE>>=
 x0 <- seq(-4, 4, length.out = 1000)
 x1 <- seq(-1.5, 6.5, length.out = 1000)
@@ -860,11 +929,11 @@ p0 <- ggplot(dat2, aes(x = x0, y = h0)) +
     theme(text = element_text(size = 16, family = "Courier")) +
     xlab("Beta") +
     ylab("Density")
-@ 
+@
 
 \begin{columns}
   \begin{column}{0.5\textwidth}
-   
+
 <<echo = FALSE>>=
 p1.1 <- p0 +
     geom_line(mapping = aes(x = x1, y = h1), colour = "blue") +
@@ -872,11 +941,11 @@ p1.1 <- p0 +
                  colour   = "blue",
                  linetype = 2)
 p1.1
-@ 
+@
 
 \end{column}
 \begin{column}{0.5\textwidth}
-  
+
 <<echo = FALSE>>=
 p1.2 <- p0 +
     geom_line(mapping = aes(x = x2, y = h2), colour = "blue") +
@@ -884,7 +953,7 @@ p1.2 <- p0 +
                  colour   = "blue",
                  linetype = 2)
 p1.2
-@ 
+@
 
 \end{column}
 \end{columns}
@@ -894,13 +963,13 @@ p1.2
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Inference with Confidence Intervals}
-  
-  CIs give us a plausible range for the population value of $\beta$, so we can 
+
+  CIs give us a plausible range for the population value of $\beta$, so we can
   use CIs to support inference.
-  
+
 \begin{columns}
   \begin{column}{0.5\textwidth}
-    
+
 <<echo = FALSE>>=
 p1.1 + geom_segment(mapping  = aes(x = ci1[1], y = 0, xend = ci1[1], yend = yl1),
                     colour   = "red",
@@ -910,11 +979,11 @@ p1.1 + geom_segment(mapping  = aes(x = ci1[1], y = 0, xend = ci1[1], yend = yl1)
                  colour   = "red",
                  linetype = 1,
                  size     = 0.75)
-@ 
+@
 
 \end{column}
 \begin{column}{0.5\textwidth}
-  
+
 <<echo = FALSE>>=
 p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2),
                     colour   = "red",
@@ -924,7 +993,7 @@ p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2)
                  colour   = "red",
                  linetype = 1,
                  size     = 0.75)
-@ 
+@
 
 \end{column}
 \end{columns}
@@ -932,7 +1001,7 @@ p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2)
 \end{frame}
 }%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Model-Based Prediction}
 
@@ -982,7 +1051,7 @@ p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2)
   \item Will it rain tomorrow?
   \item How much will a company earn from investing in a certain research
     profile?
-  \item What is a patients risk of heart disease based on their medical history
+  \item What is a patient's risk of heart disease based on their medical history
     and test results?
   \end{itemize}
 
@@ -1150,11 +1219,76 @@ rmse <- round(sqrt(ssr/nrow(Cars93)), 2)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{AIC}
+\begin{frame}{Information Criteria}
+
+  We can use \emph{information criteria} to quickly compare \emph{non-nested}
+  models while accounting for model complexity.\\
+
+  \vb
+
+  Akaike's Information Criterion (AIC)
+  \only<1>{
+    \begin{align*}
+      AIC = 2K - 2\hat{\ell}(\theta|X)
+    \end{align*}
+  }
+  \only<2>{
+    \begin{align*}
+      AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+    \end{align*}
+  }
+
+  Bayesian Information Criterion (BIC)
+  \only<1>{
+    \begin{align*}
+      BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
+    \end{align*}
+  }
+  \only<2>{
+    \begin{align*}
+      BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+    \end{align*}
+  }
+  \onslide<2>{
+    \begin{itemize}
+    \item \blue{The optimized loglikelihood quantifies fit to the data.}
+    \item \red{The penalty term corrects for model complexity}.
+    \end{itemize}
+  }
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Information Criteria}
+
+<<include = FALSE>>=
+ll1 <- logLik(out1)
+
+6 - 2 * ll1
+AIC(out1)
+
+k <- 3
+n <- nrow(Cars93)
+@
+
+  For our example, we get the following estimates of AIC and BIC:
+  \begin{align*}
+    AIC &= 2(\Sexpr{k}) - 2(\Sexpr{round(ll1, 2)})\\
+    &= \Sexpr{round(AIC(out1), 2)}\\[8pt]
+    BIC &= \Sexpr{k}\ln(\Sexpr{n}) - 2(\Sexpr{round(ll1, 2)})\\
+    &= \Sexpr{round(BIC(out1), 2)}
+  \end{align*}
+
+  To compute the AIC/BIC from a fitted \texttt{lm()} object in R:
+<<>>=
+AIC(out1)
+BIC(out1)
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Multiple Linear Regression}
 
@@ -1337,6 +1471,10 @@ partSummary(out2, -1)
 
 %------------------------------------------------------------------------------%
 
+\section{Model Comparison}
+  
+%------------------------------------------------------------------------------%
+  
 \begin{frame}[fragile]{Multiple $R^2$}
 
   How much variation in blood pressure is explained by the two models?
@@ -1416,7 +1554,7 @@ anova(out1, out2)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Model Comparison}
+\begin{frame}[fragile]{Comparing Models}
 
   We can also compare models based on their prediction errors.
   \begin{itemize}
@@ -1432,6 +1570,25 @@ mse2
 @
 
 In this case, the MSE for the model with $BMI$ included is smaller.
+\begin{itemize}
+\item We should prefer the the larger model.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Comparing Models}
+
+  Finally, we can compare models based on information criteria.
+
+<<>>=
+AIC(out1, out2)
+BIC(out1, out2)
+@
+
+In this case, both the AIC and the BIC for the model with $BMI$ included are
+smaller.
 \begin{itemize}
 \item We should prefer the the larger model.
 \end{itemize}

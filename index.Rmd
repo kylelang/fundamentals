@@ -453,7 +453,7 @@ material.
 - [`R` for Data Science](http://r4ds.had.co.nz) 
    - [Chapter 18: Pipes](http://r4ds.had.co.nz/pipes.html)
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 3
 
@@ -467,7 +467,7 @@ Today's lecture comes in two parts:
 workhorse of statistics and data science. In this lecture, we'll go over the 
 basics of linear modeling. Next time, we'll dive deeper into the linear model 
 and its assumptions.
-   - You can find the slides on linear modeling [here]()
+   - You can find the slides on linear modeling [here](wk3/lecture/lecture3.pdf)
    
 1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
 most popular (and rightly so) data visualization tools. In this lecture, you'll 
@@ -523,6 +523,7 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 
 ***These readings are exam materials.***
 
+<!-----------------------------------------------------------------------------
 
 # Week 4
 
