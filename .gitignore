@@ -27,10 +27,12 @@ vignettes/*.pdf
 .httr-oauth
 
 # cache and figure directories
-/*_cache/
-/cache/
-*/cache/
-*/figure/
+#/*_cache/
+#/cache/
+#*/cache/
+#*/figure/
+cache
+figure/
 
 # Temporary files created by R markdown
 *.utf8.md
