@@ -328,3 +328,6 @@ TSWLatexianTemp*
 
 # Emacs autosave files
 *~
+
+# Windows lock files
+*.#*
