@@ -467,7 +467,7 @@ Today's lecture comes in two parts:
 workhorse of statistics and data science. In this lecture, we'll go over the 
 basics of linear modeling. Next time, we'll dive deeper into the linear model 
 and its assumptions.
-   - You can find the slides on linear modeling [here](wk3/lecture/lecture3.pdf)
+   - You can find the slides on linear modeling [here](wk3/lecture/linearModel.pdf)
    
 1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
 most popular (and rightly so) data visualization tools. In this lecture, you'll 
@@ -520,50 +520,69 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 
 - [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
    - Chapter 3: Linear Regression (All of Section 3.1)
+- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of Weeks 3, 4, and 5.
 
 ***These readings are exam materials.***
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 4
 
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture is about statistical inference. Inference is the process of drawing conclusions about true data generating models (TDGM). The most widely know TDGM is the population, the body we aim to infer about in social science and in classical statistics.
+Today's lecture also comes in two parts:
 
-Even though statistical inference has been around for a long time, it's associated components, quantities and estimands are not always straightforward. Let's dive a bit deeper into that today, but in order to do so, we need some knowledge about statistical sampling and some widely used distributions. That is why we start today's lecture with random numbers and data generation in `R`.
-
-You can find the [slides here](Wk4/Lecture-4_FTID.html)
-
+1. Extensions to the linear model: This week, we will complicate the right hand 
+side of the regression equation by including categorical predictor variables and 
+interaction terms.
+   - You can find the slides on complicating the RHS [here](wk4/lecture/rhs.pdf)
+   - This part of the lecture will be pre-recorded. 
+   
+   
+   <div align="center">
+   ***I will embed the video here.***
+   </div>
+   
+1. Assumptions, diagnostics, and influential cases: The estimates we get from a 
+linear model are only valid when the assumptions underlying that model hold. In 
+this lecture, we'll go over the assumptions of linear regression and some 
+diagnostic tools you can use to check the assumptions. We will also discuss 
+influential cases and how to detect and treat them.
+   - You can find the slides on assumptions and diagnostics [here](wk4/lecture/assumptions.pdf)
+   - We will do this part of the lecture live on Monday.
+   
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
+
+In today's workgroup, you will check the assumptions of your model and use your
+estimated model to test your research hypotheses.
 
 ## Column 2
 
 ### `R` exercise
-This week's `R` exercise is about getting familiar with the linear model.
 
-- Make [Exercise 6](Wk4/Exercise/Exercise_6.html) before Thursday's workgroup.
+This week's `R` exercise is about checking the assumptions of the linear model.
 
-Hand in a markdown compiled `html` file for Exercise 6 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
+- Complete [Exercise 6](wk4/exercise/exercise6.html) before Thursday's workgroup.
 
-### Solution to the exercise
-You can find the answers to this week's exercise and to the previous week's exercise [here](Wk4/Exercise/Exercise_6_answers.html). Use these answers only when you are stuck. 
+Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
+respectively. Where `your_name` is your full name in *lower snake-case*. 
 
-Video discussion of the exercises in two parts:
+- Submit these files ***before the next lecture***.
 
- - [Part 1](https://www.dropbox.com/s/i47g1pinm0dpt2r/Exercise45_discussion.mp4?dl=0)
- - [Part 2](https://www.dropbox.com/s/l1actd5o6si2tx1/Exercise45_discussion_part2.mp4?dl=0)
+### Exercise Solution
 
-### Useful Information and links
+You can find suggested solutions for this week's exercise [here](wk4/exercise/exercise6_solutions.html).
 
-- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of the coming two weeks. 
+### Required Reading
 
 - [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
-   - Chapter 3: Linear Regression (Up to and including Section 3.4)
+   - Chapter 3: Linear Regression (Up to, and including, Section 3.4)
 
-These readings are exam materials.
+***These readings are exam materials.***
+
+<!-----------------------------------------------------------------------------
 
 # Week 5
 

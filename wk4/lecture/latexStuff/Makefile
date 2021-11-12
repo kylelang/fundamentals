@@ -1,7 +1,8 @@
 # -*- Makefile -*-
 
 ### Assumptions:
-### 1. You want to compile every RNW file in the current directory
+### 1. If you run `make all`, you want to compile every RNW file in the current
+###    directory
 ### 2. After compilation, you want to move every PDF file to the parent
 ###    directory
 
@@ -14,14 +15,11 @@ NAMES := $(RNWS:%.Rnw=%)
 all: ${NAMES}
 
 %: %.tex
-	pdflatex $@.tex
-	bibtex $@.aux
-	pdflatex $@.tex
-	pdflatex $@.tex
+	latexmk -pdf $@.tex
 
 %.tex: %.Rnw
 	Rscript -e "library(knitr); knit('$^')"
 
 clean:
 	mv *.pdf ../
-	rm -f *.tex *.aux *.log *.out *.nav *.snm *.toc *.vrb
+	rm -f *.tex *.aux *.log *.out *.nav *.snm *.toc *.vrb *.bbl *.blg *.fdb_latexmk *.fls
