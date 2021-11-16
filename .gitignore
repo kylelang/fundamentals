@@ -331,3 +331,6 @@ TSWLatexianTemp*
 
 # Windows lock files
 *.#*
+
+# Mysterious video stuff
+VideoDecodeStats/
