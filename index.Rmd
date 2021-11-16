@@ -330,15 +330,49 @@ with `R` objects.
 
 You can find the lecture slides [here](wk1/lecture/lecture1.html)
 
-### Workgroup (Thursday)
+#### Videos
 
+Below, you can find recordings of the residual lecture content that we were not 
+able to cover in the live lecture.
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/xhPNgtj8eBY" 
+        title="Lecture 1 Extra (Part 1)" 
+        frameborder="0" 
+        allow="accelerometer; 
+        autoplay; 
+        clipboard-write; 
+        encrypted-media; 
+        gyroscope; 
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+        
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/XjoTxUp6YxE" 
+        title="Lecture 1 Extra (Part 1)" 
+        frameborder="0" 
+        allow="accelerometer; 
+        autoplay; 
+        clipboard-write; 
+        encrypted-media; 
+        gyroscope; 
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+
+### Workgroup (Thursday)
+        
 You should attend all workgroup meetings; however, **today's meeting is vital**! 
 We will form groups, and we will discuss the assignments and expectations for 
 your work in this course. You will also locate a dataset to use in your 
 assignments.
 
 - Make sure the data you choose can support both linear and logistic regression.
-
 
 **Please do not forget to complete 
 [`R` Exercise 1](wk1/exercise/exercise1.html) before the workgroup meeting!**
@@ -369,10 +403,10 @@ lecture. For this week, you only need to present the `R` code for the relevant
 exercises.
 
 Submit an `R` script containing your answers to Exercise 3 to the 
-[SurfDrive][sd] drop folder. Name the file `your_name.R`. Where `your_name` is 
-your full name in *lower snake-case*.
+[SurfDrive][sd] drop folder. Name the file `your_name_3.R`. Where `your_name` is 
+your full name in *lower snake case*, and the `3` indicates Exercise 3.
 
-- E.g., My name is Kyle Lang, so my submission would be called `kyle_lang.R`.
+- E.g., My name is Kyle Lang, so my submission would be called `kyle_lang_3.R`.
 - Submit these files ***before the next lecture***. 
 
 ### Exercise Solutions
@@ -435,8 +469,9 @@ manipulations.
 - Complete [Exercise 4](wk2/exercise/exercise4.html) before Thursday's workgroup.
 
 Submit your *RMD* script and the compiled *HTML* file it produces to the 
-[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
-respectively. Where `your_name` is your full name in *lower snake-case*. 
+[SurfDrive][sd] folder. Name the files `your_name_4.Rmd` and `your_name_4.html`, 
+respectively. Where `your_name` is your full name in *lower snake case*, and the
+`4` indicates Exercise 4. 
 
 - Submit these files ***before the next lecture***.  
 
@@ -480,7 +515,7 @@ routines provided by **ggplot2**.
 <iframe width="560" 
         height="315" 
         src="https://www.youtube.com/embed/N5gYo43oLE8" 
-        title="YouTube video player" 
+        title="GGPlot Tutorial" 
         frameborder="0" 
         allow="accelerometer; 
         autoplay; 
@@ -507,8 +542,9 @@ relations.
 - Complete [Exercise 5](wk3/exercise/exercise5.html) before Thursday's workgroup.
 
 Submit your *RMD* script and the compiled *HTML* file it produces to the 
-[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
-respectively. Where `your_name` is your full name in *lower snake-case*. 
+[SurfDrive][sd] folder. Name the files `your_name_5.Rmd` and `your_name_5.html`, 
+respectively. Where `your_name` is your full name in *lower snake case*, and the
+`5` indicates Exercise 5. 
 
 - Submit these files ***before the next lecture***.
 
@@ -566,8 +602,9 @@ This week's `R` exercise is about checking the assumptions of the linear model.
 - Complete [Exercise 6](wk4/exercise/exercise6.html) before Thursday's workgroup.
 
 Submit your *RMD* script and the compiled *HTML* file it produces to the 
-[SurfDrive][sd] folder. Name the files `your_name.Rmd` and `your_name.html`, 
-respectively. Where `your_name` is your full name in *lower snake-case*. 
+[SurfDrive][sd] folder. Name the files `your_name_6.Rmd` and `your_name_6.html`, 
+respectively. Where `your_name` is your full name in *lower snake case*, and the
+`6` indicates Exercise 6. 
 
 - Submit these files ***before the next lecture***.
 
