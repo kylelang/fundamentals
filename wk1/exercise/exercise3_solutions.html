@@ -518,13 +518,13 @@ a logical vector flagging the rows to drop.</p>
 <ol style="list-style-type: lower-alpha">
 <li>The first approach uses standard, base R subsetting procedures:</li>
 </ol>
-<pre class="r"><code>## Invert the logical vector to select all rows other than the exclusions:
+<pre class="r"><code>## Negate the logical vector to select all rows other than the exclusions:
 sleepdata2 &lt;- sleepdata[!exclusions, ]</code></pre>
 <ol start="2" style="list-style-type: lower-alpha">
 <li>The second approach uses the <code>filter()</code> function from the <code>dplyr</code> package:</li>
 </ol>
 <pre class="r"><code>library(dplyr)
-sleepdata2 &lt;- filter(sleepdata, !sleepdata$species %in% exclusions)</code></pre>
+sleepdata2 &lt;- filter(sleepdata, !exclusions)</code></pre>
 <ol start="3" style="list-style-type: lower-alpha">
 <li>The third approach uses the row numbers directly
 <ul>

@@ -305,7 +305,7 @@ a. The first approach uses standard, base R subsetting procedures:
 ```
 
 ```{r}
-## Invert the logical vector to select all rows other than the exclusions:
+## Negate the logical vector to select all rows other than the exclusions:
 sleepdata2 <- sleepdata[!exclusions, ]
 ```
 
@@ -315,7 +315,7 @@ b. The second approach uses the `filter()` function from the `dplyr` package:
 
 ```{r}
 library(dplyr)
-sleepdata2 <- filter(sleepdata, !sleepdata$species %in% exclusions)
+sleepdata2 <- filter(sleepdata, !exclusions)
 ```
 
 ```{asis}
