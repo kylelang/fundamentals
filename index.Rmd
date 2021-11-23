@@ -453,6 +453,25 @@ are used in statistics.
 
 You can find the lecture slides [here](wk2/lecture/lecture2.html)
 
+#### Videos
+
+Below, you can find a recording of the residual lecture content that we were not 
+able to cover in the live lecture.
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/f-viabUVPnY" 
+        title="Squared Deviations" 
+        frameborder="0" 
+        allow="accelerometer; 
+        autoplay; 
+        clipboard-write; 
+        encrypted-media; 
+        gyroscope; 
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1"></iframe>
+
 ### Workgroup (Thursday)
 
 In today's workgroup, you will get approval for the dataset that you located 
