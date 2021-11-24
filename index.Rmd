@@ -112,9 +112,9 @@ To pass the course:
 |-|---|----|----|--|
 | 1 | The elemental building blocks of `R` | Assigning values to objects; Creating vectors, matrices, data frames, and lists | Receive instructions and form groups; Locate a data set for predictive modeling | |
 | 2 | Data manipulation; Least squares | Data manipulation; Using pipes to simplify workflows | Get approval for data; Beginning data processing, cleaning, and exploration; Formulate a research hypothesis | |
-| 3 | Linear model 1; Data visualization | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model | [ISL][isl] 3.1 & 6.1, [Lecture Notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) |
+| 3 | Linear model 1; Data visualization | The `lm()` function in `R`; Visualizing bivariate relations | Specify a linear model; Fit your defined model | [ISL][isl] 3.1 & 6.1, [Blog Post 1](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/), [Blog Post 2](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/), [Lecture Notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) |
 | 4 | Linear model 2; Assumptions; Diagnostics | Investigating the assumptions of the linear model | Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in `rmarkdown` | [ISL][isl] 3.2 -- 3.4 |
-| 5 | Model building; Prediction; Cross-validation | Tying the analytic pieces together into a full regression analysis | Evaluate and, if possible, improve your model; **Prepare Assignment 1; Evaluate the final linear model on your own data** | [ISL][isl] 5.1, [Document](wk5/literature/Example_CVlm.pdf), [Blog Post 1](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/), [Blog Post 2](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) |
+| 5 | Model building; Prediction; Cross-validation | Tying the analytic pieces together into a full regression analysis | Evaluate and, if possible, improve your model; **Prepare Assignment 1; Evaluate the final linear model on your own data** | [ISL][isl] 5.1, [Document](wk5/literature/Example_CVlm.pdf) |
 | 6 | Generalized linear model; Logistic regression 1 | The `glm()` function in `R`; Logistic regression modeling; Classification | Formulate a research hypothesis and define a logistic model; Fit your defined model | [ISL][isl] 4.1 -- 4.3 (except 4.3.5), [Webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
 | 7 | Logistic regression 2 | Finish exercise from last week | Check the assumptions of your model; Use your model to test your hypotheses | [Webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/)
 | 8 | Summary, catch-up, and questions | None | Evaluate and, if possible, improve your model; **Prepare Assignment 2; Evaluate the final logistic model on your own data** |
@@ -576,7 +576,11 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 - [Introduction to Statistical Learning][isl] 
    - Chapter 3: Linear Regression (Section 3.1)
    - Chapter 6: Linear Model Selection and Regularization (Section 6.1)
-   
+- [This blog post](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) 
+by Jonathan Barlett discussing the $R^2$ and how it cannot tell us if our model 
+is misspecified
+- [This blog post](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) 
+ by Jonathan discussing the differences between the $R^2$ and the adjusted $R^2$
 - [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of Weeks 3, 4, and 5.
 
 ***These readings are exam materials.***
@@ -674,11 +678,6 @@ This week's `R` exercise is about getting more familiar with the linear model an
    - Chapter 5: Resampling Methods (Section 5.1)
 - [This annotated document](wk5/literature/Example_CVlm.pdf) prepared by Gerko 
 Vink explaining some example output from the `CVlm()` function.
-- [This blog post](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) 
-by Jonathan Barlett discussing the $R^2$ and how it cannot tell us if our model 
-is misspecified
-- [This blog post](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) 
- by Jonathan discussing the differences between the $R^2$ and the adjusted $R^2$
 
 ***These readings are exam materials.***
 
