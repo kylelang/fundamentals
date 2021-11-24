@@ -2954,10 +2954,11 @@ window.FlexDashboardComponents.push({
 <h3>Schedule</h3>
 <table>
 <colgroup>
-<col width="8%" />
-<col width="25%" />
-<col width="33%" />
-<col width="33%" />
+<col width="7%" />
+<col width="21%" />
+<col width="28%" />
+<col width="28%" />
+<col width="14%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -2965,6 +2966,7 @@ window.FlexDashboardComponents.push({
 <th>Topic</th>
 <th><code>R</code> Exercise</th>
 <th>Workgroup</th>
+<th>Reading</th>
 </tr>
 </thead>
 <tbody>
@@ -2973,48 +2975,56 @@ window.FlexDashboardComponents.push({
 <td>The elemental building blocks of <code>R</code></td>
 <td>Assigning values to objects; Creating vectors, matrices, data frames, and lists</td>
 <td>Receive instructions and form groups; Locate a data set for predictive modeling</td>
+<td></td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td>Data manipulation; Least squares</td>
 <td>Data manipulation; Using pipes to simplify workflows</td>
 <td>Get approval for data; Beginning data processing, cleaning, and exploration; Formulate a research hypothesis</td>
+<td></td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>Linear model 1; Data visualization</td>
 <td>The <code>lm()</code> function in <code>R</code>; Visualizing bivariate relations</td>
 <td>Specify a linear model; Fit your defined model</td>
+<td><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">ISL</a> 3.1 &amp; 6.1, <a href="http://www.mit.edu/~6.s085/notes/lecture3.pdf">Lecture Notes</a></td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td>Linear model 2; Assumptions; Diagnostics</td>
 <td>Investigating the assumptions of the linear model</td>
 <td>Check the assumptions of your model; Use your model to test your hypotheses; Continue the project in <code>rmarkdown</code></td>
+<td><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">ISL</a> 3.2 – 3.4</td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td>Model building; Prediction; Cross-validation</td>
 <td>Tying the analytic pieces together into a full regression analysis</td>
 <td>Evaluate and, if possible, improve your model; <strong>Prepare Assignment 1; Evaluate the final linear model on your own data</strong></td>
+<td><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">ISL</a> 5.1, <a href="wk5/literature/Example_CVlm.pdf">Document</a>, <a href="https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/">Blog Post 1</a>, <a href="https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/">Blog Post 2</a></td>
 </tr>
 <tr class="even">
 <td>6</td>
 <td>Generalized linear model; Logistic regression 1</td>
 <td>The <code>glm()</code> function in <code>R</code>; Logistic regression modeling; Classification</td>
 <td>Formulate a research hypothesis and define a logistic model; Fit your defined model</td>
+<td><a href="https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf">ISL</a> 4.1 – 4.3 (except 4.3.5), <a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/">Webpage</a></td>
 </tr>
 <tr class="odd">
 <td>7</td>
 <td>Logistic regression 2</td>
 <td>Finish exercise from last week</td>
 <td>Check the assumptions of your model; Use your model to test your hypotheses</td>
+<td><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/">Webpage</a></td>
 </tr>
 <tr class="even">
 <td>8</td>
 <td>Summary, catch-up, and questions</td>
 <td>None</td>
 <td>Evaluate and, if possible, improve your model; <strong>Prepare Assignment 2; Evaluate the final logistic model on your own data</strong></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -3455,16 +3465,21 @@ This week's `R` exercise is about getting more familiar with the linear model an
 **No need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
 
 
-### Useful Information and links
+### Required Reading
 
-- I have prepared [a document about interpreting cross validation results](Wk5/Exercise/Example_CVlm.pdf)
-- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) details the relation between correlation and prediction
-- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) gives a nice detail about $R^2$ and how it is useless on a wrongly specified model
-- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) details the usefulness of adjusted $R^2$
+- [Introduction to Statistical Learning][isl] 
+   - Chapter 5: Resampling Methods (Section 5.1)
+- [This annotated document](wk5/literature/Example_CVlm.pdf) prepared by Gerko 
+Vink explaining some example output from the `CVlm()` function.
+- [This blog post](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) 
+by Jonathan Barlett discussing the $R^2$ and how it cannot tell us if our model 
+is misspecified
+- [This blog post](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) 
+ by Jonathan discussing the differences between the $R^2$ and the adjusted $R^2$
 
-These readings are exam materials. Also useful, but not exam material is:
+***These readings are exam materials.***
 
-- Chapter XIV on regression in [this online book](http://onlinestatbook.com/2/regression/regression.html)
+<!-----------------------------------------------------------------------------
 
 # Week 6
 
@@ -3487,12 +3502,17 @@ This week's `R` exercise is about getting familiar with fitting the logistic reg
 
 **To allow you to enjoy the holidays, there is no need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
 
-### Useful Information and links
+### Required Reading
 
-- [Read this page on interpreting logistic regression](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/)
-- From [Introduction to Statistical Learning](https://statlearning.com) read [Chapter 4 on Logistic Regression](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf) up to and including 4.3.4
+- [Introduction to Statistical Learning][isl] 
+   - Chapter 4: Classification (Up to, and including, Section 4.3.4)
 
-These readings are exam materials.
+- [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/)
+discussing how to interpret the estimates from a logistic regression
+
+***These readings are exam materials.***
+
+<!-----------------------------------------------------------------------------
 
 # Week 7
 
@@ -3526,10 +3546,14 @@ This week's exercise is to:
 
 Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
 
-### Useful Information and links
-- [Study this page on inspecting logistic regression](https://stats.idre.ucla.edu/r/dae/logit-regression/)
+### Required Reading
 
-These readings are exam materials.
+- [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
+through an exam analysis using logistic regression
+
+***These readings are exam materials.***
+
+<!-----------------------------------------------------------------------------
 
 # Week 8
 
@@ -3576,7 +3600,7 @@ The information in the lecture slides:
 
 and the information in the following sources these lecture slides are based on:
 
-- [Introduction to Statistical Learning](https://static1.squarespace.com/static/5ff2adbe3fe4fe33db902812/t/6009dd9fa7bc363aa822d2c7/1611259312432/ISLR+Seventh+Printing.pdf)
+- [Introduction to Statistical Learning][isl]
   - Chapter 2: up to and including 2.2.2
   - Chapter 3: up to and including 3.4
   - Chapter 4: up to and including 4.3.4
