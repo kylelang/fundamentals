@@ -600,7 +600,6 @@ interaction terms.
    - You can find the slides on complicating the RHS [here](wk4/lecture/rhs.pdf)
    - This part of the lecture will be pre-recorded. 
    
-   
    <div align="center">
    ***I will embed the video here.***
    </div>
@@ -644,33 +643,53 @@ You can find suggested solutions for this week's exercise [here](wk4/exercise/ex
 
 ***These readings are exam materials.***
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 5
 
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture is about being a skilled modeler. There is a famous quote that is generally attributed to [George Box](https://en.wikipedia.org/wiki/George_E._P._Box):
 
-\[\text{All models are wrong, but some are useful}\]
+In this week's lecture, we'll wrap up our discussion of linear modeling by 
+diving deeper into the three interrelated topics of model-building, prediction, 
+and cross-validation.
+   
+- You can find the lecture slides [here](wk5/lecture/prediction.pdf)
 
-Today we dive deeper into why and how this statement applies. We also explore techniques to infer the usefulness of a model, given that it is wrong anyway.
+<!--
+1. Statistical Modeling: In the second part of our lecture, we'll take a more 
+nuanced look at the idea of *statistical modeling* and discuss the two modeling 
+traditions described by [Breiman (2001)](https://doi.org/10.1214/ss/1009213726).
+   - You can find the lecture slides for Part 2 [here](wk5/lecture/modeling.pdf)
+   - Part 2 of this week's lecture will be pre-recorded.
 
-You can find the [slides here](Wk5/Lecture_5_FTID.html)
+<div align = "center">
+***I will embed the video here***
+</div>
+-->
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
+
+In this week's workgroup, you will work on finalizing the analysis for 
+Assignment 1.
 
 ## Column 2
 
 ### `R` exercise
-This week's `R` exercise is about getting more familiar with the linear model and its usefulness.
 
-- Make [Exercise 7](Wk5/Exercise/Exercise_7.html). 
+This week's `R` exercise will guide you through a complete analysis using linear 
+regression.
 
-**No need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
+- [Exercise 7](wk5/exercise/exercise7.html). 
 
+**We want you to focus on finishing Assignment 1, this week. So, you do not need 
+to submit Exercise 7.**
+
+- Make sure you understand the exercise and can implement all of the techniques 
+covered therein.
+- The exercises are exam material, so the content of Exercise 7 may come up in 
+the exam.
 
 ### Required Reading
 
