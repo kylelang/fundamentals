@@ -574,7 +574,9 @@ You can find suggested solutions for this week's exercise [here](wk3/exercise/ex
 ### Required Reading
 
 - [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
-   - Chapter 3: Linear Regression (All of Section 3.1)
+   - Chapter 3: Linear Regression (Section 3.1)
+   - Chapter 6: Linear Model Selection and Regularization (Section 6.1)
+   
 - [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf) cover the essence of Weeks 3, 4, and 5.
 
 ***These readings are exam materials.***
@@ -634,7 +636,7 @@ You can find suggested solutions for this week's exercise [here](wk4/exercise/ex
 ### Required Reading
 
 - [Introduction to Statistical Learning](https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf) 
-   - Chapter 3: Linear Regression (Up to, and including, Section 3.4)
+   - Chapter 3: Linear Regression (Sections 3.2 -- 3.4)
 
 ***These readings are exam materials.***
 
