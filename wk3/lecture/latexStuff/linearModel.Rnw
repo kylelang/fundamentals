@@ -1362,7 +1362,7 @@ p + geom_smooth(method = "lm", se = FALSE, col = "black")
 
     \begin{column}{0.45\textwidth}
 
-      \includegraphics[width = 1.2\textwidth]{figures/response_surface_plot}
+      \includegraphics[width = 1.2\textwidth]{figures/response_surface_plot0}
 
     \end{column}
   \end{columns}

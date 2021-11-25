@@ -30,6 +30,7 @@ library(MASS)
 library(DAAG)
 library(xtable)
 library(MLmetrics)
+library(dplyr)
 
 dataDir <- "../data/"
 codeDir <- "../../../code/"
@@ -363,7 +364,7 @@ partSummary(out3, -c(1, 2))
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Moderation}
 
@@ -815,7 +816,231 @@ p4 + geom_abline(slope     = coef(out66)["tangiblesat"],
 
 \end{frame}
 
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Polynomial Regression}
+
 %------------------------------------------------------------------------------%
+
+\begin{frame}{Polynomial Regression}
+
+  Polynomial regression simply incorporates powered transformations of the
+  predictors into the model.
+  \vb
+  \begin{itemize}
+  \item Polynomial terms (i.e., power terms) model curvature in the
+    relationships.
+  \end{itemize}
+  \va
+  We can think about polynomial terms as interactions between a predictor and
+  itself.
+  \vb
+  \begin{itemize}
+  \item Many of the rules that apply to interactions transfer directly to
+    polynomials.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Polynomial Visualization}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      We may hypothesize a curvilinear relationship between $X$ and $Y$.
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+p5 <- ggplot(data = Cars93, mapping = aes(x = Horsepower, y = MPG.city)) +
+    theme_classic()
+p6 <- p5 + geom_point() +
+    theme(text = element_text(family = "Courier", size = 16))
+p6 + xlab("Horsepower") + ylab("MPG") + ylim(c(10, 50))
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Polynomial Visualization}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      Polynomials are one way to model curvilinear relationships.
+      \vb
+      \begin{itemize}
+      \item {\color{blue}$\hat{Y}_{mpg} = \hat{\beta}_0 + \hat{\beta}_1 X_{hp}$}
+        \vb
+      \item {\color{red}$\hat{Y}_{mpg} = \hat{\beta}_0 + \hat{\beta}_1 X_{hp} +
+        \hat{\beta}_2 X_{hp}^2$}
+        \vb
+      \item {\color{violet}$\hat{Y}_{mpg} = \hat{\beta}_0 + \hat{\beta}_1 X_{hp} +
+        \hat{\beta}_2 X_{hp}^2 + \hat{\beta}_3 X_{hp}^3$}
+      \end{itemize}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+p6 + geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +
+    geom_smooth(method  = "lm",
+                formula = y ~ x + I(x^2),
+                se      = FALSE,
+                colour  = "red") +
+    geom_smooth(method  = "lm",
+                formula = y ~ x + I(x^2) + I(x^3),
+                se      = FALSE,
+                colour  = "purple") +
+    xlab("Horsepower") +
+    ylab("MPG") +
+    ylim(c(10, 50))
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+<<>>=
+## Attach the data:
+data(Cars93)
+
+## Fit the linear model:
+out6 <- lm(MPG.city ~ Horsepower, data = Cars93)
+
+## Fit the quadratic model:
+out7 <- lm(MPG.city ~ Horsepower + I(Horsepower^2),
+           data = Cars93)
+@
+
+\pagebreak
+
+<<>>=
+partSummary(out6, -c(1, 2))
+@
+
+\begin{itemize}
+\item For each unit increase in horsepower, the expected change in fuel economy
+  is $\hat{\beta}_1 = \Sexpr{round(coef(out6)["Horsepower"], 4)}$ units.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+<<>>=
+partSummary(out7, -c(1, 2))
+@
+\vx{-6}
+\begin{itemize}
+\item Extrapolating from powerless cars, each unit increase in
+  horsepower, is expected to change fuel economy by $\hat{\beta}_1 =
+  \Sexpr{round(coef(out7)["Horsepower"], 4)}$ units.
+  \vc
+\item For a unit increase in horsepower, the effect of horsepower on fuel
+  economy is expected to increase by $\hat{\beta}_2 =
+  \Sexpr{round(coef(out7)["I(Horsepower^2)"], 6)}$ units.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Effects of Centering}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+cenPlot8(center = 0, xLab = "Horsepower")
+@
+
+\end{column}
+
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+cenPlot8(center = mean(Cars93$Horsepower), xLab = "Centered Horsepower")
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Effects of Centering}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+cenPlot8(center = 0, xLab = "Horsepower", linSlope = TRUE)
+@
+
+\end{column}
+
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+cenPlot8(center   = mean(Cars93$Horsepower),
+         xLab     = "Centered Horsepower",
+         linSlope = TRUE)
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+<<>>=
+## Mean center horsepower:
+Cars93 <- mutate(Cars93, HorsepowerMC = Horsepower - mean(Horsepower))
+
+## Fit the quadratic model:
+out8 <- lm(MPG.city ~ HorsepowerMC + I(HorsepowerMC^2), data = Cars93)
+@
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+<<>>=
+partSummary(out8, -c(1, 2))
+@
+\vx{-6}
+\begin{itemize}
+\item Averaging over cars, each unit increase in horsepower, is expected to
+  change fuel economy by $\hat{\beta}_1 =
+  \Sexpr{round(coef(out8)["HorsepowerMC"], 4)}$ units.
+  \vc
+\item For a unit increase in horsepower, the effect of horsepower on fuel
+  economy is expected to increase by $\hat{\beta}_2 =
+  \Sexpr{round(coef(out8)["I(HorsepowerMC^2)"], 6)}$ units.
+\end{itemize}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks]{References}
 

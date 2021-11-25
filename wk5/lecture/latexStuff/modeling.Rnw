@@ -55,11 +55,6 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\section{Statistical Modeling}
-
-%------------------------------------------------------------------------------%
-
-
 \begin{frame}[allowframebreaks]{Statistical Reasoning}
 
   Statistics and data science are used to answer questions about hypothetical
@@ -93,8 +88,11 @@ knit_theme$set('edit-kwrite')
   The purpose of statistics is to systematize the way that we account for
   uncertainty when making data-based decisions.
 
-
 \end{frame}
+
+%------------------------------------------------------------------------------%
+
+\section{Statistical Modeling}
 
 %------------------------------------------------------------------------------%
 
@@ -488,7 +486,7 @@ partSummary(fit, -c(1, 2))
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks]{References}
 
