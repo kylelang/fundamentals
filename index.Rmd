@@ -470,7 +470,8 @@ able to cover in the live lecture.
         gyroscope; 
         picture-in-picture" 
         allowfullscreen
-        data-external="1"></iframe>
+        data-external="1">
+</iframe>
 
 ### Workgroup (Thursday)
 
@@ -522,8 +523,25 @@ workhorse of statistics and data science. In this lecture, we'll go over the
 basics of linear modeling. Next time, we'll dive deeper into the linear model 
 and its assumptions.
    - You can find the slides on linear modeling [here](wk3/lecture/linearModel.pdf)
-   
-1. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
+   - Below, I have embedded the recording of the residual lecture content that 
+   we were not able to cover during the in-person lecture.
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/5QP4tuUmrgA" 
+        title="Multiple Linear Regression" 
+        frameborder="0" 
+        allow="accelerometer; 
+        autoplay; 
+        clipboard-write; 
+        encrypted-media; 
+        gyroscope; 
+        picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+
+2. Data Visualization with **ggplot2**: The **ggplot2** package is one of the 
 most popular (and rightly so) data visualization tools. In this lecture, you'll 
 get an introduction to the process of making visual sense of your data using the 
 routines provided by **ggplot2**.

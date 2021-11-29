@@ -333,4 +333,4 @@ TSWLatexianTemp*
 *.#*
 
 # Mysterious video stuff
-VideoDecodeStats/
+VideoDecodeStats
