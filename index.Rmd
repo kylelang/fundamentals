@@ -341,11 +341,11 @@ able to cover in the live lecture.
         title="Lecture 1 Extra (Part 1)" 
         frameborder="0" 
         allow="accelerometer; 
-        autoplay; 
-        clipboard-write; 
-        encrypted-media; 
-        gyroscope; 
-        picture-in-picture" 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
         allowfullscreen
         data-external="1">
 </iframe>
@@ -356,11 +356,11 @@ able to cover in the live lecture.
         title="Lecture 1 Extra (Part 1)" 
         frameborder="0" 
         allow="accelerometer; 
-        autoplay; 
-        clipboard-write; 
-        encrypted-media; 
-        gyroscope; 
-        picture-in-picture" 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
         allowfullscreen
         data-external="1">
 </iframe>
@@ -464,11 +464,11 @@ able to cover in the live lecture.
         title="Squared Deviations" 
         frameborder="0" 
         allow="accelerometer; 
-        autoplay; 
-        clipboard-write; 
-        encrypted-media; 
-        gyroscope; 
-        picture-in-picture" 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
         allowfullscreen
         data-external="1">
 </iframe>
@@ -532,11 +532,11 @@ and its assumptions.
         title="Multiple Linear Regression" 
         frameborder="0" 
         allow="accelerometer; 
-        autoplay; 
-        clipboard-write; 
-        encrypted-media; 
-        gyroscope; 
-        picture-in-picture" 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
         allowfullscreen
         data-external="1">
 </iframe>
@@ -555,11 +555,11 @@ routines provided by **ggplot2**.
         title="GGPlot Tutorial" 
         frameborder="0" 
         allow="accelerometer; 
-        autoplay; 
-        clipboard-write; 
-        encrypted-media; 
-        gyroscope; 
-        picture-in-picture" 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
         allowfullscreen
         data-external="1">
 </iframe>
@@ -616,12 +616,54 @@ Today's lecture also comes in two parts:
 side of the regression equation by including categorical predictor variables and 
 interaction terms.
    - You can find the slides on complicating the RHS [here](wk4/lecture/rhs.pdf)
-   - This part of the lecture will be pre-recorded. 
+   - This part of the lecture has been pre-recorded. You can find the recordings
+   below.
    
-   <div align="center">
-   ***I will embed the video here.***
-   </div>
-   
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/D40futJ7lkA" 
+        title="Categorical Predictors" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/WeYrA3pQhAU" 
+        title="Moderation" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/u2KxhHKNqR8" 
+        title="Polynomial Regression" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
+
 1. Assumptions, diagnostics, and influential cases: The estimates we get from a 
 linear model are only valid when the assumptions underlying that model hold. In 
 this lecture, we'll go over the assumptions of linear regression and some 
