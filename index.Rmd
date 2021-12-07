@@ -664,13 +664,30 @@ interaction terms.
         data-external="1">
 </iframe>
 
-1. Assumptions, diagnostics, and influential cases: The estimates we get from a 
+2. Assumptions, diagnostics, and influential cases: The estimates we get from a 
 linear model are only valid when the assumptions underlying that model hold. In 
 this lecture, we'll go over the assumptions of linear regression and some 
 diagnostic tools you can use to check the assumptions. We will also discuss 
 influential cases and how to detect and treat them.
    - You can find the slides on assumptions and diagnostics [here](wk4/lecture/assumptions.pdf)
    - We will do this part of the lecture live on Monday.
+   - You can access the recording of the residual lecture content (on 
+   influential observations) below.
+ 
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/509LwIgzzUo" 
+        title="Influential Observations" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
    
 ### Workgroup (Thursday)
 
