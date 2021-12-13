@@ -585,7 +585,7 @@ respectively. Where `your_name` is your full name in *lower snake case*, and the
 
 - Submit these files ***before the next lecture***.
 
-### Exercise Solution
+### Exercise Solutions
 
 You can find suggested solutions for this week's exercise [here](wk3/exercise/exercise5_solutions.html).
 
@@ -709,7 +709,7 @@ respectively. Where `your_name` is your full name in *lower snake case*, and the
 
 - Submit these files ***before the next lecture***.
 
-### Exercise Solution
+### Exercise Solutions
 
 You can find suggested solutions for this week's exercise [here](wk4/exercise/exercise6_solutions.html).
 
@@ -767,6 +767,10 @@ to submit Exercise 7.**
 covered therein.
 - The exercises are exam material, so the content of Exercise 7 may come up in 
 the exam.
+
+### Exercise Solutions
+
+You can find suggested solutions for this week's exercise [here](wk5/exercise/exercise7_solutions.html).
 
 ### Required Reading
 
