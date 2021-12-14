@@ -892,64 +892,74 @@ No exercise for this week. I believe that you have been given the proper skillse
 
 Do not forget to include the newly introduced concepts for this week in your Assignment 2. 
 
-# Exam material
+-->
+
+# Exam Material
 
 ## Column 1
 
-### **Practice exam**
+### **Practice Exam**
+
 You can find the [practice exam here](https://gerkovink.shinyapps.io/Practice_Exam_FTiD)
 
-### **What can be tested**
+### **What can be tested?**
 
-[This page as a pdf](Archive/Exam_materials_pdf.pdf)
+Anything mentioned in the lectures may appear on the exam. This includes both 
+information printed in the lecture slides and information delivered verbally 
+during a lecture itself.
 
-The information in the lecture slides:
+- Although the readings should be helpful for learning/reinforcing the concepts 
+covered in the lectures, we will not test you on any concept that appears in 
+a reading but was not addressed in the lectures.
 
-- The lectures:
+### **What about equations?**
 
-  - [Lecture 1](Wk1/Lecture-1_FTID.html)
-  - [Lecture 2](Wk2/Lecture_2_FTID.html)
-  - [Lecture 3](Wk3/Lecture_3_FTID.html)
-  - [Lecture 4](Wk4/Lecture-4_FTID.html)
-  - [Lecture 5](Wk5/Lecture_5_FTID.html)
-  - [Lecture 6](Wk6/Lecture_6_FTID.html)
-  - [Lecture 7](Wk7/Lecture_7_FTID.html)
-  - [Lecture 8](Wk8/Lecture_8_FTID.html)
+This is not a math class; we are not trying to test your ability to do 
+calculations or manipulate equations. That being said, a certain degree of 
+mathematical literacy is crucial to statistics and data science, so you will 
+have to do some simple calculations on the exam. For example, you should be 
+comfortable with the following.
 
-and the information in the following sources these lecture slides are based on:
+- Working with the linear regression equation, $Y_i = \beta_0 + \beta_1 X_i +\varepsilon_i$, to:
+   - Calculate predicted values give certain inputs
+   - Interpret parameter estimates
+   - Evaluate hypotheses/research questions
 
-- [Introduction to Statistical Learning][isl]
-  - Chapter 2: up to and including 2.2.2
-  - Chapter 3: up to and including 3.4
-  - Chapter 4: up to and including 4.3.4
-  - Chapter 5: up to and including 5.1
-  
-- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf).
-- [This document](Wk5/Exercise/Example_CVlm.pdf) I prepared about interpreting cross validation results
-- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) that details the relation between correlation and prediction
-- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) that details $R^2$ and explains how it is useless on a wrongly specified model
-- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) about adjusted $R^2$
-- [This page](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) on interpreting logistic regression
-- [This page](https://stats.idre.ucla.edu/r/dae/logit-regression/) on inspecting logistic regression
+- The differences between:
+   - The full regression model: $Y_i = \hat{\beta}_0 + \hat{\beta}_1 X_i +\hat{\varepsilon}_i$
+   - The equation for the best-fit line: $\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$
 
-### **What about equations and formulae?**
+- The definition of a residual: 
+   - $\hat{\varepsilon}_i = Y_i - \hat{Y}_i$
 
-Your knowledge of matrix algebra will not be tested. So, there is no need to memorize that the regression estimates $\beta$ can be estimated as $\hat{\beta} = ({\bf X}^T{\bf X})^{-1}{\bf X}^Ty$. However, you will need to know, understand and apply equations such as: 
+- The relationship between probabilities ($p$) and odds (for binary outcomes):
+   - $\text{odds} = \frac{p}{1-p}$
 
-- $y = \beta_0 + \beta_1X+\epsilon$ and any more complicated version of this. 
-- $\epsilon = y - \hat{y}$
-- $\mathbb{E}[y] = \alpha + \beta x.$
-- $\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)$
-- $p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}$
-- etcetera
+- The definition of the logit function:
+   - $\log(\text{odds}) = \log\left(\frac{p}{1-p}\right) = \text{logit}(p)$
 
-### **What if you are in doubt?**
+- The definition of the logistic function, its relation to the logit function, 
+and its role in logistic regression:
+   - $\text{logistic}(\eta_i) = \text{logit}^{-1}(p_i) = \frac{\exp(\eta_i)}{1+\exp(\eta_i)} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)} = \hat{p}_i$
 
-If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl?subject=Question About Exam Materials) and I'd be more than happy to explain. 
+Of course, you should also be able to do basic arithmetic operations that are 
+too trivial to detail here (e.g., calculating the difference between the $R^2$ 
+statistics from two models that you are trying to compare).
 
-**The second half of the last lecture is dedicated to a Q&A**
+**Note**: Although all examples above are shown in terms of simple linear 
+regression models, you should also be able to do these calculations/interpretations 
+using multiple linear regression models and models that include dummy codes, 
+interactions, or polynomial terms.
 
--->
+### **What if you're still unsure?**
+
+If any of the course materials confuse you, feel free to ask about it during the 
+lecture or one of the weekly Q&A sessions (even if your concerns relate to 
+content from earlier weeks). 
+
+**We will devote part (most?) of the final lecture to a dedicated Q&A session**
+
+<!----------------------------------------------------------------------------->
 
 [ftds]: https://osiris.uu.nl/osiris_student_uuprd/OnderwijsCatalogusSelect.do?selectie=cursus&cursus=201900026&collegejaar=2021&taal=en
 [sd]: https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk
