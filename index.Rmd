@@ -733,6 +733,22 @@ diving deeper into the three interrelated topics of model-building, prediction,
 and cross-validation.
    
 - You can find the lecture slides [here](wk5/lecture/prediction.pdf)
+- You can access the recorded residual lecture content (on cross-validation) below:
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/ot3TtPccnq4" 
+        title="Cross-Validation" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
 
 <!--
 1. Statistical Modeling: In the second part of our lecture, we'll take a more 
