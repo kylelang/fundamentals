@@ -900,7 +900,7 @@ Do not forget to include the newly introduced concepts for this week in your Ass
 
 ### **Practice Exam**
 
-You can find the [practice exam here](https://gerkovink.shinyapps.io/Practice_Exam_FTiD)
+You can find the practice exam [here](https://kylelang.shinyapps.io/practice_exam)
 
 ### **What can be tested?**
 
