@@ -3639,64 +3639,65 @@ No exercise for this week. I believe that you have been given the proper skillse
 
 Do not forget to include the newly introduced concepts for this week in your Assignment 2. 
 
-# Exam material
-
-## Column 1
-
-### **Practice exam**
-You can find the [practice exam here](https://gerkovink.shinyapps.io/Practice_Exam_FTiD)
-
-### **What can be tested**
-
-[This page as a pdf](Archive/Exam_materials_pdf.pdf)
-
-The information in the lecture slides:
-
-- The lectures:
-
-  - [Lecture 1](Wk1/Lecture-1_FTID.html)
-  - [Lecture 2](Wk2/Lecture_2_FTID.html)
-  - [Lecture 3](Wk3/Lecture_3_FTID.html)
-  - [Lecture 4](Wk4/Lecture-4_FTID.html)
-  - [Lecture 5](Wk5/Lecture_5_FTID.html)
-  - [Lecture 6](Wk6/Lecture_6_FTID.html)
-  - [Lecture 7](Wk7/Lecture_7_FTID.html)
-  - [Lecture 8](Wk8/Lecture_8_FTID.html)
-
-and the information in the following sources these lecture slides are based on:
-
-- [Introduction to Statistical Learning][isl]
-  - Chapter 2: up to and including 2.2.2
-  - Chapter 3: up to and including 3.4
-  - Chapter 4: up to and including 4.3.4
-  - Chapter 5: up to and including 5.1
-  
-- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf).
-- [This document](Wk5/Exercise/Example_CVlm.pdf) I prepared about interpreting cross validation results
-- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) that details the relation between correlation and prediction
-- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) that details $R^2$ and explains how it is useless on a wrongly specified model
-- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) about adjusted $R^2$
-- [This page](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) on interpreting logistic regression
-- [This page](https://stats.idre.ucla.edu/r/dae/logit-regression/) on inspecting logistic regression
-
-### **What about equations and formulae?**
-
-Your knowledge of matrix algebra will not be tested. So, there is no need to memorize that the regression estimates $\beta$ can be estimated as $\hat{\beta} = ({\bf X}^T{\bf X})^{-1}{\bf X}^Ty$. However, you will need to know, understand and apply equations such as: 
-
-- $y = \beta_0 + \beta_1X+\epsilon$ and any more complicated version of this. 
-- $\epsilon = y - \hat{y}$
-- $\mathbb{E}[y] = \alpha + \beta x.$
-- $\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)$
-- $p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}$
-- etcetera
-
-### **What if you are in doubt?**
-
-If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl?subject=Question About Exam Materials) and I'd be more than happy to explain. 
-
-**The second half of the last lecture is dedicated to a Q&A**
-
 -->
+</div>
+</div>
+</div>
+<div id="exam-material" class="section level1">
+<h1>Exam Material</h1>
+<div id="column-1-8" class="section level2">
+<h2>Column 1</h2>
+<div id="practice-exam" class="section level3">
+<h3><strong>Practice Exam</strong></h3>
+<p>You can find the practice exam <a href="https://kylelang.shinyapps.io/practice_exam">here</a></p>
+</div>
+<div id="what-can-be-tested" class="section level3">
+<h3><strong>What can be tested?</strong></h3>
+<p>Anything mentioned in the lectures may appear on the exam. This includes both information printed in the lecture slides and information delivered verbally during a lecture itself.</p>
+<ul>
+<li>Although the readings should be helpful for learning/reinforcing the concepts covered in the lectures, we will not test you on any concept that appears in a reading but was not addressed in the lectures.</li>
+</ul>
+</div>
+<div id="what-about-equations" class="section level3">
+<h3><strong>What about equations?</strong></h3>
+<p>This is not a math class; we are not trying to test your ability to do calculations or manipulate equations. That being said, a certain degree of mathematical literacy is crucial to statistics and data science, so you will have to do some simple calculations on the exam. For example, you should be comfortable with the following.</p>
+<ul>
+<li>Working with the linear regression equation, <span class="math inline">\(Y_i = \beta_0 + \beta_1 X_i +\varepsilon_i\)</span>, to:
+<ul>
+<li>Calculate predicted values give certain inputs</li>
+<li>Interpret parameter estimates</li>
+<li>Evaluate hypotheses/research questions</li>
+</ul></li>
+<li>The differences between:
+<ul>
+<li>The full regression model: <span class="math inline">\(Y_i = \hat{\beta}_0 + \hat{\beta}_1 X_i +\hat{\varepsilon}_i\)</span></li>
+<li>The equation for the best-fit line: <span class="math inline">\(\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i\)</span></li>
+</ul></li>
+<li>The definition of a residual:
+<ul>
+<li><span class="math inline">\(\hat{\varepsilon}_i = Y_i - \hat{Y}_i\)</span></li>
+</ul></li>
+<li>The relationship between probabilities (<span class="math inline">\(p\)</span>) and odds (for binary outcomes):
+<ul>
+<li><span class="math inline">\(\text{odds} = \frac{p}{1-p}\)</span></li>
+</ul></li>
+<li>The definition of the logit function:
+<ul>
+<li><span class="math inline">\(\log(\text{odds}) = \log\left(\frac{p}{1-p}\right) = \text{logit}(p)\)</span></li>
+</ul></li>
+<li>The definition of the logistic function, its relation to the logit function, and its role in logistic regression:
+<ul>
+<li><span class="math inline">\(\text{logistic}(\eta_i) = \text{logit}^{-1}(p_i) = \frac{\exp(\eta_i)}{1+\exp(\eta_i)} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)} = \hat{p}_i\)</span></li>
+</ul></li>
+</ul>
+<p>Of course, you should also be able to do basic arithmetic operations that are too trivial to detail here (e.g., calculating the difference between the <span class="math inline">\(R^2\)</span> statistics from two models that you are trying to compare).</p>
+<p><strong>Note</strong>: Although all examples above are shown in terms of simple linear regression models, you should also be able to do these calculations/interpretations using multiple linear regression models and models that include dummy codes, interactions, or polynomial terms.</p>
+</div>
+<div id="what-if-youre-still-unsure" class="section level3">
+<h3><strong>What if you’re still unsure?</strong></h3>
+<p>If any of the course materials confuse you, feel free to ask about it during the lecture or one of the weekly Q&amp;A sessions (even if your concerns relate to content from earlier weeks).</p>
+<p><strong>We will devote part (most?) of the final lecture to a dedicated Q&amp;A session</strong></p>
+<!----------------------------------------------------------------------------->
 </div>
 </div>
 </div>
