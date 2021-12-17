@@ -700,28 +700,42 @@ Vink explaining some example output from the `CVlm()` function.
 
 ***These readings are exam materials.***
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 6
 
 ## Column 1
 
 ### Lecture (Monday)
-Today's lecture is about logistic regression. We explore the basics of this method today and continue with a more in-depth exploration in the next weeks. 
 
-You can find the [slides here](Wk6/Lecture_6_FTID.html)
+In this week's lecture, we will discuss the generalized linear model and begin 
+our coverage of logistic regression. 
+
+- You can find the lecture slides [here](wk6/lecture/glm.pdf)
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
+
+In this week's workgroup, you will start working on Assignment 2. 
+
+- Although the winter break is right around the corner, we strongly encourage 
+you to attend the workgroup this week. If you miss the information presented in 
+this week's workgroup, you're likely to fall behind on your second assignment 
+during the break.
 
 ## Column 2
 
 ### `R` exercise
-This week's `R` exercise is about getting familiar with fitting the logistic regression model. 
 
-- Make [Exercise 8](Wk6/Exercise/Exercise_8.html). 
+This week's `R` exercise is about fitting logistic regression models. 
 
-**To allow you to enjoy the holidays, there is no need to hand in any work; but make sure that you understand the contents, code and train ot thought of the document. If not, ask Gerko or Laura.**
+- You can find Exercise 8 [here](wk6/exercise/exercise8.html). 
+
+**To help you relax over the break, we won't ask you to submit anything for 
+Exercise 8. Make sure you understand what's happening in the exercise, though.**
+
+### Exercise Solutions
+
+You can find suggested solutions for this week's exercise [here](wk6/exercise/exercise8_solutions.html).
 
 ### Required Reading
 

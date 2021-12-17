@@ -1,7 +1,7 @@
 %%% Title:    GLM and Logistic Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2017-09-12
-%%% Modified: 2021-11-25
+%%% Modified: 2021-12-17
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -28,28 +28,17 @@
 <<setup, include=FALSE>>=
 set.seed(235711)
 
-                                        #install.packages("mvtnorm", repos = "http://cloud.r-project.org", depends = TRUE)
-
 library(knitr)
 library(ggplot2)
-library(MASS)
-library(mvtnorm)
 library(xtable)
 library(MLmetrics)
 library(caret)
 library(pROC)
 
 source("../../../code/supportFunctions.R")
-source("../../../code/xtable.confusionMatrix.R")
 
 opts_chunk$set(size = 'footnotesize', fig.align = 'center', message = FALSE)
 knit_theme$set('edit-kwrite')
-
-lightBlue <- rgb(0, 137, 191, max = 255)
-midBlue   <- rgb(0, 131, 183, max = 255)
-darkBlue  <- rgb(0, 128, 179, max = 255)
-deepGold  <- rgb(184, 138, 45, max = 255)
-lightGold <- rgb(195, 146, 48, max = 255)
 @
 
 %------------------------------------------------------------------------------%
@@ -399,6 +388,45 @@ p1 + geom_line(aes(x = x, y = y), data = dat2, colour = "blue", size = 1)
 
 \watermarkon %-----------------------------------------------------------------%
 
+\begin{frame}{Probabilities, Odds, \& Odds-Ratios}
+
+<<echo = FALSE>>=
+utmb <- readRDS("../data/utmb_finish_2017.rds")
+@
+
+In 2017, \Sexpr{nrow(utmb)} people participated in the \emph{Ultra-Trail du
+  Mont-Blanc}, but only \Sexpr{round(100 * mean(utmb$Finish == "Yes"), 2)}\%
+  finished the race.
+\vc
+\begin{itemize}
+\item Below, you can find a cross-tabulation of finishing status and sex.
+\end{itemize}
+
+<<echo = FALSE, results = "asis">>=
+tab <- xtabs(~ Sex + Finish, data = utmb)
+
+xTab <- xtable(tab, digits = 0)
+
+adds <- list(pos = list(0, 0),
+             command = c("& \\multicolumn{2}{c}{Finish} \\\\\n",
+                         "Sex & No & Yes \\\\\n")
+             )
+
+print(xTab, add.to.row = adds, include.colnames = FALSE)
+@
+\vb
+\begin{itemize}
+\item What is the \emph{probability} of finishing for each sex?
+\vc
+\item What are the \emph{odds} of finishing for each sex?
+\vc
+\item What is the \emph{odds ratio} of finishing for males vs. females?
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
 \begin{frame}{Defining the Logistic Regression Model}
 
   In logistic regression problems, we are modeling binary data:
@@ -423,6 +451,42 @@ p1 + geom_line(aes(x = x, y = y), data = dat2, colour = "blue", size = 1)
 
 \end{frame}
 
+%------------------------------------------------------------------------------%
+\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pause
+\begin{alignat*}{2}
+P(Finish | Male) &=
+\frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "Yes"]} + \Sexpr{xTab["Male", "No"]}} &&=
+\Sexpr{round(xTab["Male", "Yes"] / sum(xTab["Male", ]), 3)}\\[8pt]
+P(Finish | Female) &=
+\frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "Yes"]} + \Sexpr{xTab["Female", "No"]}} &&=
+\Sexpr{round(xTab["Female", "Yes"] / sum(xTab["Female", ]), 3)}
+\end{alignat*}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Odds}
+
+<<echo = FALSE, results = "asis">>=
+print(xTab, add.to.row = adds, include.colnames = FALSE)
+@
+\vb
+What are the odds of finishing for each sex?
+\pause
+\begin{alignat*}{2}
+O(Finish | Male) &=
+\frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "No"]}} &&=
+\Sexpr{round(xTab["Male", "Yes"] / xTab["Male", "No"], 3)}\\[8pt]
+O(Finish | Female) &=
+\frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "No"]}} &&=
+\Sexpr{round(xTab["Female", "Yes"] / xTab["Female", "No"], 3)}
+\end{alignat*}
+
+\end{frame}
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Link Function for Logistic Regression}
@@ -849,7 +913,7 @@ We can summarize the confusion matrix in many ways.
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-      We can visualize a classifier's performance via a \emph{Receiver
+      We can visualize a classifier's potential performance via a \emph{Receiver
         Operating Characteristic} Curve.
       \vb
       \begin{itemize}
@@ -894,37 +958,52 @@ roc0 <- roc(response = diabetes$highGlu,
             )
 @
 
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
- \begin{alignat*}{2}
-  Sensitivity &= \frac{\Sexpr{tab[2, 2]}}{\Sexpr{tab[2, 2]} + \Sexpr{tab[2, 1]}} &&=
-  \Sexpr{round(tab[2, 2] / sum(tab[2, ]), 3)}\\[8pt]
-   Specificity &= \frac{\Sexpr{tab[1, 1]}}{\Sexpr{tab[1, 1]} + \Sexpr{tab[1, 2]}} &&=
-  \Sexpr{round(tab[1, 1] / sum(tab[1, ]), 3)}\\[8pt]
-   Accuracy &= \frac{\Sexpr{tab[2, 2]} + \Sexpr{tab[1, 1]}}{\Sexpr{tab[2, 2]} +
-   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
-  \Sexpr{round((tab[2, 2] + tab[1, 1])/ sum(tab), 3)}\\[8pt]
-   Error~Rate &= \frac{\Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}}{\Sexpr{tab[2, 2]} +
-   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
-  \Sexpr{round((tab[2, 1] + tab[1, 2])/ sum(tab), 3)}\\[8pt]
-  AUC &&&= \Sexpr{round(auc(roc0), 3)}
-\end{alignat*}
-
+\begin{columns}
+  \begin{column}{0.5\textwidth}
+    
+    \begin{minipage}{\textwidth}
+      
+      \begin{alignat*}{2}
+        Sensitivity &= \frac{\Sexpr{tab[2, 2]}}{\Sexpr{tab[2, 2]} + \Sexpr{tab[2, 1]}} &&=
+        \Sexpr{round(tab[2, 2] / sum(tab[2, ]), 3)}\\[8pt]
+        Specificity &= \frac{\Sexpr{tab[1, 1]}}{\Sexpr{tab[1, 1]} + \Sexpr{tab[1, 2]}} &&=
+        \Sexpr{round(tab[1, 1] / sum(tab[1, ]), 3)}\\[8pt]
+        AUC &&&= \Sexpr{round(auc(roc0), 3)}
+      \end{alignat*}
+      
+    \end{minipage}
+    
   \end{column}
   \begin{column}{0.5\textwidth}
+    
+    \begin{minipage}{\textwidth}
 
 <<echo = FALSE>>=
 plot(roc0, legacy.axes = TRUE, main = "ROC of Blood Glucose Classifier")
 @
 
-    \end{column}
-  \end{columns}
+\end{minipage}
+
+\end{column}
+\end{columns}
+
+\vb
+\pause
+What is the accuracy? What is the error rate?
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 \comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  Accuracy &= \frac{\Sexpr{tab[2, 2]} + \Sexpr{tab[1, 1]}}{\Sexpr{tab[2, 2]} +
+   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
+  \Sexpr{round((tab[2, 2] + tab[1, 1])/ sum(tab), 3)}\\[8pt]
+   Error~Rate &= \frac{\Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}}{\Sexpr{tab[2, 2]} +
+   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
+  \Sexpr{round((tab[2, 1] + tab[1, 2])/ sum(tab), 3)}\\[8pt]
+
+
 \begin{frame}{Classification Error}
 
   The MSE is not an appropriate error measure for classification.
