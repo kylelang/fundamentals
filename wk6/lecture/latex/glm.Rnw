@@ -34,12 +34,10 @@ library(knitr)
 library(ggplot2)
 library(MASS)
 library(mvtnorm)
-                                        #library(glmnet)
 library(xtable)
-                                        #library(nnet)
 library(MLmetrics)
 library(caret)
-library(ROCR)
+library(pROC)
 
 source("../../../code/supportFunctions.R")
 source("../../../code/xtable.confusionMatrix.R")
@@ -586,7 +584,7 @@ Log odds do not lend themselves to interpretation.
 <<echo = FALSE>>=
 diabetes <- readRDS("../data/diabetes.rds")
 
-diabetes$highGlu <- as.numeric(diabetes$glu > 100)
+diabetes$highGlu <- as.numeric(diabetes$glu > 90)
 
 diabetes$age40 <- diabetes$age - 40
 diabetes$bmi25 <- diabetes$bmi - 25
@@ -777,12 +775,12 @@ the decision boundary.
 
 \begin{frame}[fragile]{Confusion Matrix}
 
-  One of the most direct ways to evaluate classification performance is to 
+  One of the most direct ways to evaluate classification performance is to
   tabulate the true and predicted classes.
   \begin{itemize}
   \item Such a cross-tabulation is called a \emph{confusion matrix}.
   \end{itemize}
-  
+
 <<echo = FALSE, results = "asis">>=
 yTrue <- factor(diabetes$highGlu, labels = c("Low", "High"))
 yPred <- factor(predict(out1, type = "response") > 0.5, labels = c("Low", "High"))
@@ -802,7 +800,7 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 We can summarize the confusion matrix in many ways.
 \begin{itemize}
-\item Different summaries highlight different aspects of the classifier's 
+\item Different summaries highlight different aspects of the classifier's
   performance.
 \end{itemize}
 
@@ -814,60 +812,119 @@ We can summarize the confusion matrix in many ways.
 
   Sensitivity (Recall, Hit Rate, True-Positive Rate):
   \begin{align*}
-    Sensitivity &= \frac{True~Postives}{True~Positives + False~Negatives} = \frac{True~Postives}{Total~Positives}
+    Sensitivity = \frac{True~Postives}{True~Positives + False~Negatives} = \frac{True~Postives}{Total~Positives}
   \end{align*}\\
-  
+
   \va
-  \pause
-  
+
   Specificity (Selectivity, True-Negative Rate):
   \begin{align*}
-    Specificity &= \frac{True~Negatives}{True~Negatives + False~Positives} = \frac{True~Negatives}{Total~Negatives}
-  \end{align*}\\
-  
-  \va
-  \pause
-  
-  Accuracy:
-  \begin{align*}
-    Accuracy &= \frac{True~Positives + True~Negatives}{TP + TN + FP + FN} = \frac{Correct~Classifications}{Total~Cases}
+    Specificity = \frac{True~Negatives}{True~Negatives + False~Positives} = \frac{True~Negatives}{Total~Negatives}
   \end{align*}
-  
-  
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{ROC Curve}
+\begin{frame}{Summarizing the Confusion Matrix}
+
+  Accuracy:
+  \begin{align*}
+    Accuracy = \frac{True~Positives + True~Negatives}{TP + TN + FP + FN} = \frac{Correct~Classifications}{Total~Cases}
+  \end{align*}\\
+
+\va
+
+  Error Rate:
+  \begin{align*}
+    Error~Rate = \frac{False~Positives + False~Negatives}{TP + TN + FP + FN} = \frac{Incorrect~Classifications}{Total~Cases}
+  \end{align*}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{ROC Curve}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
-      
-      We can visualize the classification performance via a \emph{Reciever-Operator 
-        Characteristic} (ROC) Curve.
-    \begin{itemize}
-    \item Y-Axis: Sensitivity
-    \item X-Axis: 1-Specificity
-    \end{itemize}
-    
+
+      We can visualize a classifier's performance via a \emph{Receiver
+        Operating Characteristic} Curve.
+      \vb
+      \begin{itemize}
+      \item Y-Axis: True-Positive Rate
+        \begin{itemize}
+        \item Sensitivity
+        \end{itemize}
+        \vb
+      \item X-Axis: False-Positive Rate
+        \begin{itemize}
+        \item 1 - Specificity
+        \end{itemize}
+        \vb
+      \item Area Under the ROC Curve (AUC) summarizes the classifier's
+        discrimination
+      \end{itemize}
+
     \end{column}
     \begin{column}{0.5\textwidth}
-      
+
 <<echo = FALSE>>=
-data(ROCR.simple) 
+true <- rbinom(100, 1, 0.5)
+pred <- true + rnorm(100, 0, 0.5)
 
-pred <- prediction(ROCR.simple$predictions, ROCR.simple$labels) 
-perf <- performance(pred, "tpr", "fpr")
+roc0 <- roc(response = true, predictor = pred)
 
-plot(perf, main = "ROC Curve")
-@ 
-    \end{column}
-  \end{columns}
-  
+plot(roc0, legacy.axes = TRUE, main = "ROC Curve")
+@
+
+\end{column}
+\end{columns}
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
+\begin{frame}{Example}
+
+<<echo = FALSE>>=
+roc0 <- roc(response = diabetes$highGlu,
+            predictor = predict(out1, type = "response")
+            )
+@
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+ \begin{alignat*}{2}
+  Sensitivity &= \frac{\Sexpr{tab[2, 2]}}{\Sexpr{tab[2, 2]} + \Sexpr{tab[2, 1]}} &&=
+  \Sexpr{round(tab[2, 2] / sum(tab[2, ]), 3)}\\[8pt]
+   Specificity &= \frac{\Sexpr{tab[1, 1]}}{\Sexpr{tab[1, 1]} + \Sexpr{tab[1, 2]}} &&=
+  \Sexpr{round(tab[1, 1] / sum(tab[1, ]), 3)}\\[8pt]
+   Accuracy &= \frac{\Sexpr{tab[2, 2]} + \Sexpr{tab[1, 1]}}{\Sexpr{tab[2, 2]} +
+   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
+  \Sexpr{round((tab[2, 2] + tab[1, 1])/ sum(tab), 3)}\\[8pt]
+   Error~Rate &= \frac{\Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}}{\Sexpr{tab[2, 2]} +
+   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
+  \Sexpr{round((tab[2, 1] + tab[1, 2])/ sum(tab), 3)}\\[8pt]
+  AUC &&&= \Sexpr{round(auc(roc0), 3)}
+\end{alignat*}
+
+  \end{column}
+  \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+plot(roc0, legacy.axes = TRUE, main = "ROC of Blood Glucose Classifier")
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Classification Error}
 
   The MSE is not an appropriate error measure for classification.
@@ -956,7 +1013,7 @@ cee2 <- LogLoss(y_pred = pi2, y_true = yTrue)
   \end{itemize}
 
 \end{frame}
-
+}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------------------------------------------------------%
 
 \end{document}
