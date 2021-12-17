@@ -11,8 +11,11 @@
 \usepackage[libertine]{newtxmath}
 \usepackage{booktabs}
 \usepackage{fancybox}
+\usepackage{caption}
 
 \newcommand{\kfold}[0]{\emph{K}-fold cross-validation}
+
+\captionsetup[table]{labelformat = empty}
 
 \title{Generalized Linear Model \& Logistic Regression}
 \subtitle{Fundamental Techniques in Data Science}
@@ -25,18 +28,21 @@
 <<setup, include=FALSE>>=
 set.seed(235711)
 
-                                        #install.packages("glmnet", repos = "http://cloud.r-project.org")
+                                        #install.packages("mvtnorm", repos = "http://cloud.r-project.org", depends = TRUE)
 
 library(knitr)
 library(ggplot2)
 library(MASS)
 library(mvtnorm)
-library(glmnet)
+                                        #library(glmnet)
 library(xtable)
-library(nnet)
+                                        #library(nnet)
 library(MLmetrics)
+library(caret)
+library(ROCR)
 
 source("../../../code/supportFunctions.R")
+source("../../../code/xtable.confusionMatrix.R")
 
 opts_chunk$set(size = 'footnotesize', fig.align = 'center', message = FALSE)
 knit_theme$set('edit-kwrite')
@@ -771,35 +777,93 @@ the decision boundary.
 
 \begin{frame}[fragile]{Confusion Matrix}
 
-  One of the most direct ways to evaluate classification performance
-  is to tabulate the true and predicted classes.
-
+  One of the most direct ways to evaluate classification performance is to 
+  tabulate the true and predicted classes.
+  \begin{itemize}
+  \item Such a cross-tabulation is called a \emph{confusion matrix}.
+  \end{itemize}
+  
 <<echo = FALSE, results = "asis">>=
-tab <- table(True = diabetes$highGlu,
-             Predicted = as.numeric(predict(out1, type = "response") > 0.5)
-             )
+yTrue <- factor(diabetes$highGlu, labels = c("Low", "High"))
+yPred <- factor(predict(out1, type = "response") > 0.5, labels = c("Low", "High"))
 
-tab <- rbind(tab, colSums(tab))
-tab <- cbind(tab, rowSums(tab))
-
-rownames(tab) <- colnames(tab) <- c("Low", "High", "Total")
-
+tab  <- table(True = yTrue, Predicted = yPred)
 xTab <- xtable(tab, caption = "Confusion Matrix of Blood Glucose Level", digits = 0)
 
 adds <- list(pos = list(0, 0),
-             command = c("& \\multicolumn{3}{c}{Predicted} \\\\\n",
-                         "True & Low & High & Total \\\\\n")
+             command = c("& \\multicolumn{2}{c}{Predicted} \\\\\n",
+                         "True & Low & High \\\\\n")
              )
 
 print(xTab, add.to.row = adds, include.colnames = FALSE)
 @
 
+\pause
+
+We can summarize the confusion matrix in many ways.
+\begin{itemize}
+\item Different summaries highlight different aspects of the classifier's 
+  performance.
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Summarizing the Confusion Matrix}
+
+  Sensitivity (Recall, Hit Rate, True-Positive Rate):
+  \begin{align*}
+    Sensitivity &= \frac{True~Postives}{True~Positives + False~Negatives} = \frac{True~Postives}{Total~Positives}
+  \end{align*}\\
+  
+  \va
+  \pause
+  
+  Specificity (Selectivity, True-Negative Rate):
+  \begin{align*}
+    Specificity &= \frac{True~Negatives}{True~Negatives + False~Positives} = \frac{True~Negatives}{Total~Negatives}
+  \end{align*}\\
+  
+  \va
+  \pause
+  
+  Accuracy:
+  \begin{align*}
+    Accuracy &= \frac{True~Positives + True~Negatives}{TP + TN + FP + FN} = \frac{Correct~Classifications}{Total~Cases}
+  \end{align*}
+  
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}{ROC Curve}
 
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      We can visualize the classification performance via a \emph{Reciever-Operator 
+        Characteristic} (ROC) Curve.
+    \begin{itemize}
+    \item Y-Axis: Sensitivity
+    \item X-Axis: 1-Specificity
+    \end{itemize}
+    
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+<<echo = FALSE>>=
+data(ROCR.simple) 
+
+pred <- prediction(ROCR.simple$predictions, ROCR.simple$labels) 
+perf <- performance(pred, "tpr", "fpr")
+
+plot(perf, main = "ROC Curve")
+@ 
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
