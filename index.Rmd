@@ -809,6 +809,22 @@ In this week's lecture, we will discuss the generalized linear model and begin
 our coverage of logistic regression. 
 
 - You can find the lecture slides [here](wk6/lecture/glm.pdf)
+- You can find the recording of the residual lecture content below.
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/A6naNS9YIrs" 
+        title="Classification Performance" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen
+        data-external="1">
+</iframe>
 
 ### Workgroup (Thursday)
 
