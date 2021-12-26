@@ -20,6 +20,16 @@ library(lattice)  # plotting - used for conditional plotting
 library(ggplot2)  # plotting
 library(DAAG)     # data sets and functions
 library(caret)    # confusion matrices
+
+source("../../code/supportFunctions.R")
+
+## Make ggplot backgrounds transparent:
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"), 
+                      dev = "svg",
+                      warning = FALSE,
+                      message = FALSE)
 ```
 
 
@@ -52,7 +62,7 @@ We will begin this lecture with a data set that records the survival of the
 passengers on the maiden voyage of the Titanic.
 
 ```{r}
-titanic <- read.csv(file = "titanic.csv", header = TRUE, stringsAsFactors = TRUE)
+titanic <- readRDS("data/titanic.rds")
 titanic %>% head()
 ```
 
@@ -68,311 +78,464 @@ str(titanic)
 
 The outcome/dependent variable:
 
-- *Survived*: yes or no
+- *survived*: Did the passenger survive?
 
 Some potential predictors:
 
-- *Sex*: The passenger's sex coded as {male, female}
-- *Pclass*: The class of the passenger's ticket
-- *Age*: The passenger's age in years
-- *Siblings.Spouses.Aboard*: Were the passenger's sibling(s) or spouse aboard?
-- *Parents.Children.Aboard*: Were the passenger's parents or children aboard?
+- *sex*: The passenger's sex 
+- *class*: The class of the passenger's ticket
+- *age*: The passenger's age in years
+- *siblings_spouses*: Number of siblings + spouses traveling with the passenger
+- *parents_children*: Number of parents + children traveling with the passenger
 
 
-## Hypothetically
+## Potential Hypotheses
 
-We can start investigating if there are patterns in this data that are related to the survival probability. 
+We can investigating patterns in these data that relate to the survival 
+probability. 
 
-For example, we could hypothesize based on the crede "women and children first" that 
+Based on the creed "women and children first", we could hypothesize that 
 
-- `Age` relates to the probability of survival in that younger passengers have a higher probability of survival
-- `Sex` relates to survival in that females have a higher probability of survival
+- `age` relates to the probability of survival $\rightarrow$ younger passengers 
+have a higher probability of survival
+- `sex` relates to the probability of survival $\rightarrow$ females have a 
+higher probability of survival
 
-Based on socio-economic status, we could hypothesize that 
+Based on socioeconomic status, we could hypothesize that
 
-- `Pclass` relates to the probability of survival in that higher travel class leads to a higher probability of survival
+- `class` relates to the probability of survival $\rightarrow$ passengers 
+traveling with higher classes have a higher probability of survival
 
-And so on. 
 
 # A quick investigation
 
-## Is `Age` related?
-```{r fig.height = 3, warning=FALSE, message=FALSE}
-titanic %>% ggplot(aes(x = Age, y = Survived)) + geom_point() +
+
+## Process the Data
+
+Add a numeric version of the outcome:
+```{r}
+titanic <- mutate(titanic, survived_dummy = as.numeric(survived) - 1)
+```
+
+Split the data
+```{r}
+set.seed(235711)
+filter <- c(rep(TRUE, 800), rep(FALSE, nrow(titanic) - 800)) %>% sample()
+train  <- titanic[filter, ]
+test   <- titanic[!filter, ]
+```
+
+
+## Is `age` related to `survival`?
+
+```{r fig.height = 3}
+
+ggplot(train, aes(x = age, y = survived_dummy)) + 
+  geom_point() +
   geom_smooth(method = "glm", 
-    method.args = list(family = "binomial"), 
-    se = FALSE) + xlim(-1, 100)
+              method.args = list(family = "binomial"), 
+              se = FALSE)
 ```
 
-## Inspecting the data
+
+## Check surival rates by class
+
 ```{r}
-titanic %$% table(Pclass, Survived)
+train %$% table(class, survived)
 ```
 
-It seems that the higher the class (i.e. `1 > 2 > 3`), the higher the probability of survival.
+Higher classes seem to have higher probabilities of survival.
 
-We can verify this
+- Converting the counts to marginal proportions will clarify the story.
+
 ```{r}
-titanic %$% table(Pclass, Survived) %>% prop.table(margin = 1) %>% round(digits = 2)
+train %$% 
+  table(class, survived) %>% 
+  prop.table(margin = 1) %>% 
+  round(2)
 ```
 
-# A more thorough inspection
 
-## Fitting the titanic models
-Let's fit these models and gradually build them up in the number of predictors. 
+# Modeling Surival Probability
+
+
+## Conditional Distributions of Age
+
+```{r fig.height = 3}
+train %$% histogram(~ age | survived)
+```
+
+The distribution of `age` for survivors is different from the distribution of 
+`age` for non-survivors. 
+
+- There is a point-mass for young survivors $\Rightarrow$ children have higher 
+chances of survival. 
+
+## Model Estimates
+
 ```{r}
-fit1 <- titanic %$% 
-  glm(Survived ~ Age, family = binomial(link="logit"))
-
-fit2 <- titanic %$% 
-  glm(Survived ~ Sex, family = binomial(link="logit"))
-
-fit3 <- titanic %$% 
-  glm(Survived ~ Pclass, family = binomial(link="logit"))
+glm(survived ~ age, data = train, family = "binomial") %>% summary()
 ```
 
-## `Survived ~ Age`
+
+## Conditional Distributions of Sex
+
+```{r fig.height = 3}
+train %$% histogram(~ sex | survived)
+```
+
+These distributions are very different! 
+
+- Females seem to have a much higher probability of survival. 
+
+
+## Model Estimates
+
+```{r fig.height = 3}
+glm(survived ~ sex, data = train, family = "binomial") %>% summary()
+```
+
+
+## Conditional Distributions of Class
+
 ```{r fig.height=3}
-titanic %$% histogram(~ Age | Survived == 1)
+train %$% histogram(~ class | survived)
 ```
 
-The distribution of `Age` for the survivors (`TRUE`) is different from the distribution of `Age` for the non-survivors (`FALSE`). Especially at the younger end there is a point mass for the survivors, which indicates that children have a higher probability of survival. However, it is not dramatically different. 
+There is an obvious difference between the distributions of survivors and 
+non-survivors over the classes. 
 
-## `Survived ~ Age`
-```{r fig.height=3}
-fit1 %>% summary %>% .$coefficients
-```
-We can see that there is a trend.  The log odds of `Survived` decreases with increasing `Age`. For every year increase in age, the log-odds of `Survived` decreases with `r fit1 %>% summary %>% .$coefficients %>% .[2, 1]`. However, this decrease is not too convincing given the effect, the standard error and the size of the data. Hence, the p-value is a little on the larger side. 
+- In 1st and 2nd class, there are more survivors than non-survivors
+- In 3rd class the relation reversed 
 
-When we inspect the deviance
-```{r}
-c(fit1$null.deviance, fit1$deviance)
-```
-We see that there is almost no decrease in deviance between the empty model (i.e. the model with only an intercept) and the model with `Age` included. The difference in df is only 1 parameter.
 
-## `Survived ~ Sex`
-```{r fig.height=3}
-titanic %$% histogram(~ Sex | Survived == 1)
-```
-
-Wow! These distributions are very different! Females seem to have a much higher probability of survival. 
-
-## `Survived ~ Sex`
-```{r fig.height=3}
-fit2 %>% summary %>% coef
-```
-The coefficients confirm this. The log odds of `Survived` decreases for males, when compared to females. The decrease is quite pronounced, too: `r coef(fit2)[2]`. 
-
-When we inspect the deviance
-```{r}
-c(fit2$null.deviance, fit2$deviance)
-```
-We see that there is a massive gain in the deviance between the empty model (i.e. the model with only an intercept - represented by `null.deviance`) and the model with `Sex` included. The difference in df is only 1 parameter.
-
-## `Survived ~ Pclass`
-```{r fig.height=3}
-titanic %$% histogram(~ Pclass | Survived == 1)
-```
-
-There is a very apparent difference between the distributions of the survivors and non-survivors over the classes. For example, we see that in 1st and 2nd class there are more survivors than non-survivors, while in the third class this relation is opposite. 
-
-## `Survived ~ Pclass`
-```{r fig.height=3}
-fit3 %>% summary %>% coef
-```
-Here, there is something wrong! Class is an ordered categorical variable, not a continuous variable. In other words, we cannot simply increase the log odds of `Survived` with `r fit3 %>% summary %>% .$coefficients %>% .[2, 1]` for every unit increase in `Pclass`.
-
-### Why not?
-If we would interpret these coefficients 'as is', we would assume that class two is twice the value for class 1, that class three is 1.5 times the value for class 2, and so on. 
-
-## Edit the data
-```{r}
-titanic %<>% 
-  mutate(Pclass = factor(Pclass, levels = c(3, 2, 1), ordered = FALSE))
-str(titanic)
-```
-
-The `Pclass` column is now correctly coded as a factor. We ignore the ordering as this goes beyond the scope of the course.
-
-## Titanic with main effects
-```{r echo=FALSE}
-titanic %$% glm(Survived ~ Age + Sex + Pclass, family = binomial(link="logit")) %>% 
-  summary
-```
-
-## Titanic with interactions
-```{r}
-fit.interaction <- titanic %$% glm(Survived ~ Age * Sex * Pclass, 
-                                   family = binomial(link="logit"))
-fit.interaction %>% summary %>% .$coefficients
-```
-
-Now none of the main effects are significant. The variance (differences) have flowed into the interaction effects. 
-
-## Interactions
-An interaction occurs when the (causal) effect of one predictor on the outcome depends on the level of the (causal) effect of another predictor.
-
-![](interaction.png)
-
-[Image Source](https://en.wikipedia.org/wiki/File:Interaction_plot_body_temp.svg)
-
-E.g. the relation between body temperature and air temperature depends on the species. 
-
-## Visualizing the effects
-To illustrate, I will limit this investigation to `Age` and `Pclass` for males only.
-
-- We can use the `predict` function to illustrate the conditional probabilities within each class
-
-To do so, we need to create a `new` data frame that has all the combinations of predictors we need. 
-```{r}
-new <- data.frame(Pclass = factor(rep(c(1, 2, 3), c(80, 80, 80))), 
-                  Age = rep(1:80, times = 3),
-                  Sex = rep("male", times = 240))
-new <- cbind(new, 
-             predict(fit.interaction, newdata = new, 
-                     type = "link", se = TRUE))
-head(new)
-```
-
-## Adding the predicted probabilities
-There are two simple approaches to obtain the predicted probabilities. First, we could simply ask for the predicted response:
-```{r}
-new$prob <- predict(fit.interaction, newdata = new, type = "response")
-```
-Or we could use the distribution function `plogis()`:
-```{r}
-new$prob2 <- plogis(new$fit)
-head(new)
-```
-
-## Adding confidence intervals
-```{r}
-new %<>% 
-  mutate(lower = plogis(fit - 1.96 * se.fit),
-         upper = plogis(fit + 1.96 * se.fit))
-
-head(new)
-```
-
-## What do we have?
-A data frame with simulated `Pclass` and `Age` for males.
+## Model Estimates
 
 ```{r}
-new %>% summary()
+glm(survived ~ class, data = train, family = "binomial") %>% summary()
 ```
 
-## Visualizing the effects: link
-```{r fig.height=3.5}
-new %>%
-  ggplot(aes(x = Age, y = fit)) + 
-  geom_line(aes(colour = Pclass), lwd = 1)
-```
 
-## Visualizing the effects: probabilities
-```{r fig.height=3.5}
-new %>%
-  ggplot(aes(x = Age, y = prob)) + 
-  geom_ribbon(aes(ymin = lower, ymax = upper, fill = Pclass), alpha = .2) +
-  geom_line(aes(colour = Pclass), lwd = 1) + ylab("Probability of Survival")
-```
-
-## No interaction assumed
-To repeat the previous scenario for the model where only main effects are included:
-```{r}
-fit <- titanic %$% glm(Survived ~ Age + Sex + Pclass, family = binomial(link="logit")) 
-new2 <- new %>% select(Age, Pclass, Sex)
-new2 <- cbind(new2, predict(fit, newdata = new2, type = "link", se = TRUE))
-new2 %<>% 
-  mutate(prob = plogis(fit),
-         lower = plogis(fit - 1.96 * se.fit),
-         upper = plogis(fit + 1.96 * se.fit))
-```
-
-## No interaction: the link
-```{r}
-new2 %>%
-  ggplot(aes(x = Age, y = fit)) + 
-  geom_line(aes(colour = Pclass), lwd = 1)
-```
-
-## No interaction: probabilities
-```{r fig.height=3.5}
-new2 %>%
-  ggplot(aes(x = Age, y = prob)) + 
-  geom_ribbon(aes(ymin = lower, ymax = upper, fill = Pclass), alpha = .2) +
-  geom_line(aes(colour = Pclass), lwd = 1) + ylab("Probability of Survival")
-```
-
-## Model comparison
-```{r}
-anova(fit, fit.interaction, test = "Chisq") 
-```
-The interaction model fits much better to the data. 
-```{r}
-AIC(fit, fit.interaction)
-```
-
-## Prediction
-```{r}
-pred <- predict(fit, type = "response")
-head(pred)
-pred <- ifelse(pred > 0.5, yes = 1, no = 0)
-head(pred)
-```
-
-## Confusion matrix
-```{r}
-CM <- table(pred, titanic$Survived)
-CM
-```
-
-The accuracy can then be calculated as the percentage of correct predictions, i.e. the sum over the diagonal elements divided by the total number of cases:
+## Multiple Logistic Regression Model
 
 ```{r}
-correct <- CM %>% diag %>% sum
-correct / sum(CM)
+fit1 <- glm(survived ~ age + sex + class, data = train, family = "binomial")
+partSummary(fit1, -1)
 ```
 
-## In a function {.smaller}
+
+## Add Interactions
+
 ```{r}
-confusionMatrix(as.factor(pred), reference = as.factor(titanic$Survived))
+fit2 <- glm(survived ~ age * sex + age * class + sex * class, 
+            data = train,
+            family = "binomial")
+summary(fit2)$coefficients
 ```
 
-## Sensitivity / Specificity
+
+## Model Comparison
+
+Test the change in deviance.
+```{r}
+anova(fit1, fit2, test = "Chisq") 
+```
+
+
+## Model Comparison
+
+Compare information criteria 
+```{r}
+AIC(fit1, fit2)
+BIC(fit1, fit2)
+```
+
+
+## Cross Validation
+
+```{r}
+set.seed(235711)
+cv1 <- CVbinary(fit1, nfolds = 10)
+
+set.seed(235711)
+cv2 <- CVbinary(fit2, nfolds = 10)
+
+c(fit1 = cv1$acc.cv, fit2 = cv2$acc.cv)
+```
+
+
+# Assumptions
+
+
+## Assumptions of Logistic Regression
+
+We can state the assumptions of linear regression as follows:
+
+1. The outcome follows a binomial distribution.
+1. The predictor matrix is full-rank.
+1. The predictors are linearly related to $logit(\pi)$.
+1. The observations are independent after accounting for the predictors.
+
+Unlike linear regression, we don't need to assume
+
+- Constant, finite error variance
+- Normally distributed errors
+
+For computational reasons, we also need the following:
+
+- Large sample
+- Relatively well-balance outcome
+- No highly influential cases
+
+
+## Non-Constant Variance
+
+The mean of the binomial distribution is the success probability: $\pi$.
+
+The variance is a function of the mean: $\textrm{var}(Y) = \pi (1 - \pi)$.
 
 ```{r, echo = FALSE}
-out <- data.frame(Survived = c("A", "C"), 
-                 "not Survived" = c("B", "D"))
-rownames(out) <- c("Predicted Survived", "Predicted not.Survived")
-out
+eta <- predict(fit2, type = "link")
+var <- plogis(eta) * (1 - plogis(eta))
+dat <- data.frame(eta, var)
+
+ggplot(dat, aes(x = eta, y = var)) + 
+  geom_point() +
+  ylab("Variance") +
+  xlab("Linear Predictor")
 ```
 
-- Sensitivity is calculated as $\text{Sensitivity} = A/(A+C) = \frac{463}{463+82} =$ `r 463/(463+82)`
-  - Sensitivity is the proportion of actual `Survived` that have been correctly predicted as `Survived`. 
-  - Sensitivity is the *True Positive Rate*
-  
-- Specificity is calculated as $\text{Specificity} = D/(B+D) = \frac{242}{100+242} =$ `r 242/(242+100)`
-  - Specificity is the proportion of actual `not Survived` that have been correctly predicted as `not Survived`. 
-  - Specificity is the *True Negative Rate*
 
-## Cross validating predictive power
-```{r,  dev.args = list(bg = 'transparent')}
-fit <- glm(Survived ~ Age + Sex + Pclass, family = binomial(link="logit"), 
-           data = titanic)
-set.seed(123)
-cv <- CVbinary(fit)
+## Residuals in Logistic Regression
+
+There are many ways to define a residual in logistic regression.
+
+- Response residuals
+   - $\hat{\varepsilon}_{r,i} = Y_i - \hat{\pi}_i$
+   - Direct analogue of residuals in linear regression
+   - Not very useful for logistic regression
+   
+- Pearson residuals
+   - $\hat{\varepsilon}_{p,i} = \frac{\hat{\varepsilon}_{r,i}}{\sqrt{\hat{\pi}_i(1 - \hat{\pi}_i)}}$
+   - Addresses heterogeneity by dividing out the variance of the $i$th observation
+   
+- Deviance residuals
+   - $\hat{\varepsilon}_{d,i} = \textrm{sign}(\hat{\varepsilon}_{r,i}) \sqrt{d_i}$
+   - Most natural type of residual for logistic regression
+   - Based on the objective function being optimized to estimate the model
+   
+
+## Visualizing Different Residuals
+
+```{r, eval = FALSE}
+rr <- resid(fit2, type = "response")
+rp <- resid(fit2, type = "pearson")
+rd <- resid(fit2, type = "deviance")
+
+eta <- predict(fit2, type = "link")
+
+rDat <- data.frame(Residual = c(rr, rp, rd),
+                   Eta      = rep(eta, 3),
+                   Type     = rep(c("Response", "Pearson", "Deviance"), 
+                                  each = length(eta)
+                                  )
+                   )
+
+ggplot(rDat, aes(x = Eta, y = Residual, color = Type)) + 
+  geom_point(alpha = 0.35) +
+  geom_smooth(se = FALSE)
 ```
 
-The accuracy after crossvalidation is more or less the same as the accuracy in the data as a whole. This indicates that the fitted model may be useful to new data that comes from the same population; i.e. the model may be generalized to new data. 
 
-The `CVbinary() function relies on K-fold crossvalidation. This type of crossvalidation relies on randomly splitting the data into folds (parts). To allow you to replicate these results I fix the random seed. 
+## Visualizing Different Residuals
 
-- In real life there is no need for fixing the random seed if reproducibility is not required. 
+```{r, echo = FALSE}
+rr <- resid(fit2, type = "response")
+rp <- resid(fit2, type = "pearson")
+rd <- resid(fit2, type = "deviance")
 
-## Cross validating predictive power
-```{r,  dev.args = list(bg = 'transparent')}
-set.seed(123)
-CVbinary(fit, nfolds = 5)
-CVbinary(fit, nfolds = 2)
+eta <- predict(fit2, type = "link")
+
+rDat <- data.frame(Residual = c(rr, rp, rd),
+                   Eta      = rep(eta, 3),
+                   Type     = rep(c("Response", "Pearson", "Deviance"), 
+                                  each = length(eta)
+                                  )
+                   )
+
+ggplot(rDat, aes(x = Eta, y = Residual, color = Type)) + 
+  geom_point(alpha = 0.35) +
+  geom_smooth(se = FALSE)
 ```
 
+
+## Diagnostics: Linearity
+
+```{r}
+plot(fit2, 1) # Pearson residuals
+```
+
+
+## Diagnostics: Influential Cases
+
+```{r}
+plot(fit2, 4)
+```
+
+
+## Diagnostics: Influencial Cases
+
+```{r}
+plot(fit2, 5)
+```
+
+
+# Classification
+
+
+## Generate Predictions on the Logit Scale
+
+```{r}
+etaHat <- predict(fit2, newdata = test, type = "link", se.fit = TRUE)
+sapply(etaHat, head)
+```
+
+
+## Generate Predicted Probabilities
+
+Calculate $\hat{\pi}$ directly using the `predict()` function:
+```{r}
+piHat <- predict(fit2, newdata = test, type = "response", )
+```
+
+Apply the logistic function, `plogis()`, to the $\hat{\eta}$ values we computed 
+earlier:
+```{r}
+piHat2 <- plogis(etaHat$fit)
+head(cbind(piHat, piHat2))
+```
+
+
+## Generate Classifications
+
+```{r}
+yHat <- ifelse(piHat > 0.5, "yes", "no") %>% factor()
+table(yHat)
+```
+
+Calculate the confusion matrix
+
+```{r}
+cm <- table(pred = yHat, true = test$survived)
+cm
+```
+
+
+## Sensitivity, Specificity, & Accuracy
+```{r}
+(sensitivity <- cm["yes", "yes"] / sum(cm[ , "yes"]))
+(specificity <- cm["no", "no"] / sum(cm[ , "no"]))
+(acc <- diag(cm) %>% sum() / sum(cm))
+```
+
+We can also use the *caret::confusionMatrix()* function:
+```{r eval = FALSE}
+confusionMatrix(yHat, reference = test$survived)
+```
+
+
+## Output from confusionMatrix() {.smaller}
+
+```{r, echo = FALSE}
+confusionMatrix(yHat, reference = test$survived)
+```
+
+
+# Visualization
+
+
+## Augment the Data
+
+First, we'll add the predicted quantities to the testing data.
+
+- We'll need these for plotting.
+
+```{r}
+test$eta <- etaHat$fit
+test$se  <- etaHat$se.fit
+test$pi  <- piHat
+```
+
+Next, we add confidence intervals for the predictions.
+
+```{r}
+test %<>% 
+  mutate(etaLower = eta - 1.96 * se, 
+         etaUpper = eta + 1.96 * se,
+         piLower = plogis(etaLower),
+         piUpper = plogis(etaUpper)
+         )
+```
+
+
+## Visualizing the Predictions (Logit)
+
+```{r fig.height = 3.5}
+ggplot(test, aes(x = age, y = eta)) + 
+  geom_line(aes(color = class), lwd = 1) +
+  geom_ribbon(aes(ymin = etaLower, ymax = etaUpper, fill = class), alpha = 0.2) +
+  ylab("Logit of Survival") +
+  facet_wrap(vars(sex))
+```
+
+
+## Visualizing the Predictions (Probability)
+
+```{r fig.height = 3.5}
+ggplot(test, aes(x = age, y = pi)) + 
+  geom_ribbon(aes(ymin = piLower, ymax = piUpper, fill = class), alpha = 0.2) +
+  geom_line(aes(color = class), lwd = 1) + 
+  ylab("Probability of Survival") +
+  facet_wrap(vars(sex))
+```
+
+
+## Additive Model
+
+Augment the data with predictions from the additive model:
+
+```{r}
+tmp <- predict(fit1, newdata = test, type = "link", se = TRUE)
+test$eta4 <- tmp$fit
+test$se4  <- tmp$se.fit
+test$pi4  <- plogis(tmp$fit)
+
+test %<>% 
+  mutate(etaLower4 = eta4 - 1.96 * se4, 
+         etaUpper4 = eta4 + 1.96 * se4,
+         piLower4 = plogis(etaLower4),
+         piUpper4 = plogis(etaUpper4)
+         )
+```
+
+
+## Additive Model (Logit)
+
+```{r fig.height = 3.5}
+ggplot(test, aes(x = age, y = eta4)) + 
+  geom_line(aes(color = class), lwd = 1) +
+  geom_ribbon(aes(ymin = etaLower4, ymax = etaUpper4, fill = class), alpha = 0.2) +
+  ylab("Logit of Survival") +
+  facet_wrap(vars(sex))
+```
+
+
+## Additive Model (Probability)
+
+```{r fig.height=3.5}
+ggplot(test, aes(x = age, y = pi4)) + 
+  geom_ribbon(aes(ymin = piLower4, ymax = piUpper4, fill = class), alpha = 0.2) +
+  geom_line(aes(color = class), lwd = 1) + 
+  ylab("Probability of Survival") +
+  facet_wrap(vars(sex))
+```
