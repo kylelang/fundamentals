@@ -860,44 +860,62 @@ discussing how to interpret the estimates from a logistic regression
 
 ***These readings are exam materials.***
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 7
 
 ## Column 1
 
 ### Lecture (Monday)
-Today we continue with logistic regression. We'll use the titanic data to demonstrate the technique and we will explore some ways to evaluate the usefulness of the fitted models. 
 
-You can find the [slides here](Wk7/Lecture_7_FTID.html)
+In this week's lecture, we will continue with logistic regression. We'll use the 
+Titanic data to demonstrate a more complete analysis. We will also discuss 
+estimation, model evaluation, assumptions, and diagnostics for logistic 
+regression models.
+
+- You can find the lecture slides [here](wk7/lecture/lecture7.html)
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
 
+In this week's workgroup, you will continue to work on Assignment 2. You should 
+evaluate the model you defined in the last workgroup and use this model to test
+your hypotheses.
 
 ## Column 2
 
 ### `R` exercise
 
-[The titanic.csv data](data/titanic.csv)
+For this week's exercise, you will use the [titanic.rds data](data/titanic.rds)
+to complete the following tasks.
 
-This week's exercise is to:
-1. Recreate the plots from slides 28 and 29, but now for females
-2. For the model with the interactions:
-  
-  - Create a confusion matrix for the model with the interactions
-  - Perform crossvalidation on the `titanic` model with the interactions
+1. Randomly split the data into a training set of $N = 800$ observations and a 
+testing set of $N = 87$ observations.
+2. Recreate the plots from Slides 47 and 48 with two alterations:
+   a. Plot only the results for males.
+   a. Use the testing data to generate the plots.
+3. Use the additive model estimated on Slide 20 to do the following:
+   a. Create a confusion matrix from the training data.
+   a. Create a confusion matrix from the testing data.
+   a. Compute the Sensitivity, Specificity, and Accuracy from the training data.
+   a. Compute the True Positive Rate, The True Negative Rate, and the Error Rate 
+   from the testing data. 
+4. Estimate a model wherein survival probability is predicted by all other 
+variables in the dataset except for `name`. 
+   - Use the different methods of model evaulation discussed in the lecture 
+   (including cross-validation) to test if this model fits/predicts better than 
+   the moderated model estimated on Slide 21.
+   
+Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive][sd] folder. Name the files `your_name_9.Rmd` and `your_name_9.html`, 
+respectively. Where `your_name` is your full name in *lower snake case*, and the
+`9` indicates Exercise 9. 
 
-3. See if a model with all variables included is a better fit than the model with the interactions presented in the slides. 
-  - The model with all variables (excluding `Name`!) can be simply fit with `glm(Survived ~ . * ., data = titanic[, -3])`
-  - The `.` here implies all remaining columns in the data. `. * .` yields the full factorial model between all these columns. 
-
-Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
+- Submit these files ***before the next lecture***.
 
 ### Required Reading
 
 - [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
-through an exam analysis using logistic regression
+through an example analysis using logistic regression
 
 ***These readings are exam materials.***
 

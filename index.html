@@ -3599,47 +3599,61 @@ traditions described by [Breiman (2001)](https://doi.org/10.1214/ss/1009213726).
 <li><a href="https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/">This webpage</a> discussing how to interpret the estimates from a logistic regression</li>
 </ul>
 <p><strong><em>These readings are exam materials.</em></strong></p>
-<!-----------------------------------------------------------------------------
-
-# Week 7
-
-## Column 1
-
-### Lecture (Monday)
-Today we continue with logistic regression. We'll use the titanic data to demonstrate the technique and we will explore some ways to evaluate the usefulness of the fitted models. 
-
-You can find the [slides here](Wk7/Lecture_7_FTID.html)
-
-### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
-
-
-## Column 2
-
-### `R` exercise
-
-[The titanic.csv data](data/titanic.csv)
-
-This week's exercise is to:
-1. Recreate the plots from slides 28 and 29, but now for females
-2. For the model with the interactions:
-  
-  - Create a confusion matrix for the model with the interactions
-  - Perform crossvalidation on the `titanic` model with the interactions
-
-3. See if a model with all variables included is a better fit than the model with the interactions presented in the slides. 
-  - The model with all variables (excluding `Name`!) can be simply fit with `glm(Survived ~ . * ., data = titanic[, -3])`
-  - The `.` here implies all remaining columns in the data. `. * .` yields the full factorial model between all these columns. 
-
-Hand in a markdown compiled `html` file for Exercise 9 to the [SurfDrive][sd] drop folder. Do this ***before the next lecture on Monday***.
-
-### Required Reading
-
-- [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
-through an exam analysis using logistic regression
-
-***These readings are exam materials.***
-
+<!----------------------------------------------------------------------------->
+</div>
+</div>
+</div>
+<div id="week-7" class="section level1">
+<h1>Week 7</h1>
+<div id="column-1-9" class="section level2">
+<h2>Column 1</h2>
+<div id="lecture-monday-6" class="section level3">
+<h3>Lecture (Monday)</h3>
+<p>In this week’s lecture, we will continue with logistic regression. We’ll use the Titanic data to demonstrate a more complete analysis. We will also discuss estimation, model evaluation, assumptions, and diagnostics for logistic regression models.</p>
+<ul>
+<li>You can find the lecture slides <a href="wk7/lecture/lecture7.html">here</a></li>
+</ul>
+</div>
+<div id="workgroup-thursday-6" class="section level3">
+<h3>Workgroup (Thursday)</h3>
+<p>In this week’s workgroup, you will continue to work on Assignment 2. You should evaluate the model you defined in the last workgroup and use this model to test your hypotheses.</p>
+</div>
+</div>
+<div id="column-2-8" class="section level2">
+<h2>Column 2</h2>
+<div id="r-exercise-6" class="section level3">
+<h3><code>R</code> exercise</h3>
+<p>For this week’s exercise, you will use the <a href="data/titanic.rds">titanic.rds data</a> to complete the following tasks.</p>
+<ol style="list-style-type: decimal">
+<li>Randomly split the data into a training set of <span class="math inline">\(N = 800\)</span> observations and a testing set of <span class="math inline">\(N = 87\)</span> observations.</li>
+<li>Recreate the plots from Slides 47 and 48 with two alterations:
+<ol style="list-style-type: lower-alpha">
+<li>Plot only the results for males.</li>
+<li>Use the testing data to generate the plots.</li>
+</ol></li>
+<li>Use the additive model estimated on Slide 20 to do the following:
+<ol style="list-style-type: lower-alpha">
+<li>Create a confusion matrix from the training data.</li>
+<li>Create a confusion matrix from the testing data.</li>
+<li>Compute the Sensitivity, Specificity, and Accuracy from the training data.</li>
+<li>Compute the True Positive Rate, The True Negative Rate, and the Error Rate from the testing data.</li>
+</ol></li>
+<li>Estimate a model wherein survival probability is predicted by all other variables in the dataset except for <code>name</code>.
+<ul>
+<li>Use the different methods of model evaulation discussed in the lecture (including cross-validation) to test if this model fits/predicts better than the moderated model estimated on Slide 21.</li>
+</ul></li>
+</ol>
+<p>Submit your <em>RMD</em> script and the compiled <em>HTML</em> file it produces to the <a href="https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk">SurfDrive</a> folder. Name the files <code>your_name_9.Rmd</code> and <code>your_name_9.html</code>, respectively. Where <code>your_name</code> is your full name in <em>lower snake case</em>, and the <code>9</code> indicates Exercise 9.</p>
+<ul>
+<li>Submit these files <strong><em>before the next lecture</em></strong>.</li>
+</ul>
+</div>
+<div id="required-reading-4" class="section level3">
+<h3>Required Reading</h3>
+<ul>
+<li><a href="https://stats.idre.ucla.edu/r/dae/logit-regression/">This webpage</a> walking through an example analysis using logistic regression</li>
+</ul>
+<p><strong><em>These readings are exam materials.</em></strong></p>
 <!-----------------------------------------------------------------------------
 
 # Week 8
@@ -3667,7 +3681,7 @@ Do not forget to include the newly introduced concepts for this week in your Ass
 </div>
 <div id="exam-material" class="section level1">
 <h1>Exam Material</h1>
-<div id="column-1-9" class="section level2">
+<div id="column-1-10" class="section level2">
 <h2>Column 1</h2>
 <div id="practice-exam" class="section level3">
 <h3><strong>Practice Exam</strong></h3>

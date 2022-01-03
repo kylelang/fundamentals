@@ -36,7 +36,7 @@ knitr::opts_chunk$set(dev.args = list(bg = "transparent"),
 
 ## Recap
 
-With **logistic regression** we can model a binary outcome using a set of 
+With **logistic regression**, we can model a binary outcome using a set of 
 continuous and/or categorical predictors. 
 
 - If we use **linear regression** to model a binary outcome variable, we would 
@@ -139,7 +139,7 @@ ggplot(train, aes(x = age, y = survived_dummy)) +
 ```
 
 
-## Check surival rates by class
+## Check survival rates by class
 
 ```{r}
 train %$% table(class, survived)
@@ -344,7 +344,7 @@ ggplot(data = dat1, mapping = aes(y = y, x = x)) +
 
 ## Assumptions of Logistic Regression
 
-We can state the assumptions of linear regression as follows:
+We can state the assumptions of logistic regression as follows:
 
 1. The outcome follows a binomial distribution.
 1. The predictor matrix is full-rank.
@@ -422,7 +422,7 @@ There are many ways to define a residual in logistic regression.
    - Addresses heterogeneity by dividing out the variance of the $i$th observation
    
 - Deviance residuals
-   - $\hat{\varepsilon}_{d,i} = \textrm{sign}(\hat{\varepsilon}_{r,i}) \sqrt{d_i}$
+   - $\hat{\varepsilon}_{d,i} = \textrm{sign}(\hat{\varepsilon}_{r,i}) \sqrt{\hat{D}_i}$
    - Most natural type of residual for logistic regression
    - Based on the objective function being optimized to estimate the model
    
