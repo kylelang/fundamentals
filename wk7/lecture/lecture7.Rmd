@@ -1,5 +1,5 @@
 ---
-title: "More Logistic regression"
+title: "More Logistic Regression"
 author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 output:
@@ -15,12 +15,13 @@ output:
 ```{r message = FALSE, warning = FALSE}
 library(magrittr) # pipes
 library(dplyr)    # data manipulation
-library(mice)     # data
-library(lattice)  # plotting - used for conditional plotting
+library(lattice)  # conditional plotting
 library(ggplot2)  # plotting
-library(DAAG)     # data sets and functions
+library(DAAG)     # cross-validation
 library(caret)    # confusion matrices
+```
 
+```{r, echo = FALSE}
 source("../../code/supportFunctions.R")
 
 ## Make ggplot backgrounds transparent:
@@ -264,6 +265,80 @@ c(fit1 = cv1$acc.cv, fit2 = cv2$acc.cv)
 ```
 
 
+# Estimation
+
+
+## Maximum Likelihood Estimation
+
+To estimate a logistic regression model, we need to use *maximum likelihood* 
+(ML) estimation. 
+
+- Maximize the *likelihood* function, $L(Y|\beta)$.
+- Equivalent to minimizing the *deviance*, $D = -2L(Y|\beta)$.
+
+Conceptually, ML estimation amounts to the following:
+
+1. Assume a distribution for the outcome data.
+1. Pick some candidate values for the parameters of that distribution.
+1. Calculate the probability of observing our data if they were really generated 
+from a distribution as defined in Steps 1 & 2.
+1. Choose "better" parameter values and repeat Step 3.
+
+
+## ML Intuition
+
+Let's say we have the following $N = 10$ observations.
+
+- We assume these data come from a normal distribution with a known variance of 
+$\sigma^2 = 1$.
+- We want to estimate the mean of this distribution, $\mu$.
+
+```{r}
+(y <- rnorm(n = 10, mean = 5, sd = 1))
+```
+
+In ML estimation, we would define different normal distributions.
+
+- Every distribution would have $\sigma^2 = 1$
+- Each distribution would have a different value of $\mu$.
+
+We then compare the observed data to those distributions and see which 
+distribution best fits the data.
+
+
+## ML Intuition
+
+```{r, echo = FALSE}
+x1 <- seq(0, 10, length.out = 1000)
+y1 <- dnorm(x1, 3, 1)
+y2 <- dnorm(x1, 4, 1)
+y3 <- dnorm(x1, 5, 1)
+y4 <- dnorm(x1, 6, 1)
+
+dat1 <- data.frame(m = rep(c(3, 4, 5, 6), each = length(x1)),
+                   x = rep(x1, 4), 
+                   y = c(y1, y2, y3, y4)
+                   )
+
+dat2 <- data.frame(m = rep(c(3, 4, 5, 6), each = length(y)),
+                   x = rep(y, 4),
+                   y = c(dnorm(y, 3, 1),
+                         dnorm(y, 4, 1),
+                         dnorm(y, 5, 1),
+                         dnorm(y, 6, 1)
+                         )
+                   )
+
+ggplot(data = dat1, mapping = aes(y = y, x = x)) + 
+  geom_line() + 
+  geom_segment(data = dat2, mapping = aes(x = x, xend = x, y = 0, yend = y), color = "red") +
+  theme_classic() +
+  ylab("Density") +
+  xlab("Data Values") +
+  facet_wrap(vars(m))
+```
+
+
 # Assumptions
 
 
@@ -288,13 +363,40 @@ For computational reasons, we also need the following:
 - No highly influential cases
 
 
+## Linearity 
+
+Recall the two ways we can visualize our model's predictions.
+
+```{r, echo = FALSE, fig.height = 3}
+x   <- rnorm(1000)
+eta <- 3 * x
+p   <- plogis(eta)
+
+dat1 <- data.frame(type = rep(c("Logit", "Probability"), each = length(x)), 
+                   x = rep(x, 2), 
+                   y = c(eta, p)
+                   )
+
+ggplot(data = dat1, mapping = aes(y = y, x = x)) + 
+  geom_point() + 
+  xlab("Predictor") +
+  ylab("Outcome") +
+  facet_wrap(vars(type), scales = "free")
+```
+
+The $logit()$ function *linearizes* the success probability.
+
+- The relationship between the (possibly transformed) $X$ variables and 
+$logit(\pi)$ should be a straight line.
+
+
 ## Non-Constant Variance
 
-The mean of the binomial distribution is the success probability: $\pi$.
+The mean of the binomial distribution is the success probability: $\bar{Y} = \pi$.
 
 The variance is a function of the mean: $\textrm{var}(Y) = \pi (1 - \pi)$.
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.height = 4}
 eta <- predict(fit2, type = "link")
 var <- plogis(eta) * (1 - plogis(eta))
 dat <- data.frame(eta, var)
@@ -302,7 +404,7 @@ dat <- data.frame(eta, var)
 ggplot(dat, aes(x = eta, y = var)) + 
   geom_point() +
   ylab("Variance") +
-  xlab("Linear Predictor")
+  xlab("Fitted Logit Values")
 ```
 
 
@@ -328,12 +430,15 @@ There are many ways to define a residual in logistic regression.
 ## Visualizing Different Residuals
 
 ```{r, eval = FALSE}
+## Compute different flavors of residual:
 rr <- resid(fit2, type = "response")
 rp <- resid(fit2, type = "pearson")
 rd <- resid(fit2, type = "deviance")
 
+## Compute fitted logit values:
 eta <- predict(fit2, type = "link")
 
+## Aggregate and plot the data:
 rDat <- data.frame(Residual = c(rr, rp, rd),
                    Eta      = rep(eta, 3),
                    Type     = rep(c("Response", "Pearson", "Deviance"), 
@@ -350,12 +455,15 @@ ggplot(rDat, aes(x = Eta, y = Residual, color = Type)) +
 ## Visualizing Different Residuals
 
 ```{r, echo = FALSE}
+## Compute different flavors of residual:
 rr <- resid(fit2, type = "response")
 rp <- resid(fit2, type = "pearson")
 rd <- resid(fit2, type = "deviance")
 
+## Compute fitted logit values:
 eta <- predict(fit2, type = "link")
 
+## Aggregate and plot the data:
 rDat <- data.frame(Residual = c(rr, rp, rd),
                    Eta      = rep(eta, 3),
                    Type     = rep(c("Response", "Pearson", "Deviance"), 
@@ -405,7 +513,7 @@ sapply(etaHat, head)
 
 Calculate $\hat{\pi}$ directly using the `predict()` function:
 ```{r}
-piHat <- predict(fit2, newdata = test, type = "response", )
+piHat <- predict(fit2, newdata = test, type = "response")
 ```
 
 Apply the logistic function, `plogis()`, to the $\hat{\eta}$ values we computed 
@@ -456,20 +564,22 @@ confusionMatrix(yHat, reference = test$survived)
 
 ## Augment the Data
 
-First, we'll add the predicted quantities to the testing data.
+First, we'll add the predicted quantities to the training data.
 
 - We'll need these for plotting.
 
 ```{r}
-test$eta <- etaHat$fit
-test$se  <- etaHat$se.fit
-test$pi  <- piHat
+tmp <- predict(fit2, type = "link", se.fit = TRUE)
+
+train$eta <- tmp$fit
+train$se  <- tmp$se.fit
+train$pi  <- plogis(tmp$fit)
 ```
 
-Next, we add confidence intervals for the predictions.
+Next, we add confidence intervals for the fitted values.
 
 ```{r}
-test %<>% 
+train %<>% 
   mutate(etaLower = eta - 1.96 * se, 
          etaUpper = eta + 1.96 * se,
          piLower = plogis(etaLower),
@@ -478,10 +588,10 @@ test %<>%
 ```
 
 
-## Visualizing the Predictions (Logit)
+## Visualizing the Estimates (Logit)
 
 ```{r fig.height = 3.5}
-ggplot(test, aes(x = age, y = eta)) + 
+ggplot(train, aes(x = age, y = eta)) + 
   geom_line(aes(color = class), lwd = 1) +
   geom_ribbon(aes(ymin = etaLower, ymax = etaUpper, fill = class), alpha = 0.2) +
   ylab("Logit of Survival") +
@@ -489,10 +599,10 @@ ggplot(test, aes(x = age, y = eta)) +
 ```
 
 
-## Visualizing the Predictions (Probability)
+## Visualizing the Estimates (Probability)
 
 ```{r fig.height = 3.5}
-ggplot(test, aes(x = age, y = pi)) + 
+ggplot(train, aes(x = age, y = pi)) + 
   geom_ribbon(aes(ymin = piLower, ymax = piUpper, fill = class), alpha = 0.2) +
   geom_line(aes(color = class), lwd = 1) + 
   ylab("Probability of Survival") +
@@ -502,19 +612,19 @@ ggplot(test, aes(x = age, y = pi)) +
 
 ## Additive Model
 
-Augment the data with predictions from the additive model:
+Augment the data with fitted values from the additive model:
 
 ```{r}
-tmp <- predict(fit1, newdata = test, type = "link", se = TRUE)
-test$eta4 <- tmp$fit
-test$se4  <- tmp$se.fit
-test$pi4  <- plogis(tmp$fit)
+tmp <- predict(fit1, type = "link", se = TRUE)
+train$eta <- tmp$fit
+train$se  <- tmp$se.fit
+train$pi  <- plogis(tmp$fit)
 
-test %<>% 
-  mutate(etaLower4 = eta4 - 1.96 * se4, 
-         etaUpper4 = eta4 + 1.96 * se4,
-         piLower4 = plogis(etaLower4),
-         piUpper4 = plogis(etaUpper4)
+train %<>% 
+  mutate(etaLower = eta - 1.96 * se, 
+         etaUpper = eta + 1.96 * se,
+         piLower = plogis(etaLower),
+         piUpper = plogis(etaUpper)
          )
 ```
 
@@ -522,9 +632,9 @@ test %<>%
 ## Additive Model (Logit)
 
 ```{r fig.height = 3.5}
-ggplot(test, aes(x = age, y = eta4)) + 
+ggplot(train, aes(x = age, y = eta)) + 
   geom_line(aes(color = class), lwd = 1) +
-  geom_ribbon(aes(ymin = etaLower4, ymax = etaUpper4, fill = class), alpha = 0.2) +
+  geom_ribbon(aes(ymin = etaLower, ymax = etaUpper, fill = class), alpha = 0.2) +
   ylab("Logit of Survival") +
   facet_wrap(vars(sex))
 ```
@@ -533,8 +643,8 @@ ggplot(test, aes(x = age, y = eta4)) +
 ## Additive Model (Probability)
 
 ```{r fig.height=3.5}
-ggplot(test, aes(x = age, y = pi4)) + 
-  geom_ribbon(aes(ymin = piLower4, ymax = piUpper4, fill = class), alpha = 0.2) +
+ggplot(train, aes(x = age, y = pi)) + 
+  geom_ribbon(aes(ymin = piLower, ymax = piUpper, fill = class), alpha = 0.2) +
   geom_line(aes(color = class), lwd = 1) + 
   ylab("Probability of Survival") +
   facet_wrap(vars(sex))
