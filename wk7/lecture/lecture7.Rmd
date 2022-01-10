@@ -157,7 +157,7 @@ train %$%
 ```
 
 
-# Modeling Surival Probability
+# Modeling Survival Probability
 
 
 ## Conditional Distributions of Age
