@@ -101,8 +101,8 @@ needed to successfully complete the assignments.
 
 To pass the course:
 
-1. Your final grade must be 5.5 or higher
-1. You must pass both assignments
+1. Your final exam grade must be 5.5 or higher
+1. Both of your assignments grades must be 5.5 or higher
 
 ## Column 2 {data-width=400}
 
