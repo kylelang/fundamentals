@@ -950,28 +950,30 @@ through an example analysis using logistic regression
 
 ***These readings are exam materials.***
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 8
 
 ## Column 1
 
 ### Lecture (Monday)
-Today we will wrap up this course. I'll give you an overview of the highlights and introduce only a few new concepts. 
 
-You can find the [slides here](Wk8/Lecture_8_FTID.html)
+In this week's lecture, we will wrap up the course. I'll give an overview of the 
+main points we've covered. 
+
+- You can find the lecture slides [here](wk8/summary.pdf)
 
 ### Workgroup (Thursday)
-**Today's workgroup is online. See the Teams channel.**
+
+In these week's workgroup, you will finalize your second group project.
 
 ## Column 2
 
 ### `R` exercise
-No exercise for this week. I believe that you have been given the proper skillset to solve the assignments in this course. Use your time to improve your skills. 
+There is no R exercise this week. Use your time to finish the second assignment 
+and prepare for the exam. 
 
-Do not forget to include the newly introduced concepts for this week in your Assignment 2. 
-
--->
+<!----------------------------------------------------------------------------->
 
 # Exam Material
 
