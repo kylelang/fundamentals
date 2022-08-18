@@ -125,88 +125,65 @@ To pass the course:
 
 ## Column 1
 
-### Course Description
+### Course Content
 
 Regression techniques are widely used to quantify the relationship between two 
-or more variables, and investigating such relations is common in data science. 
-Linear and logistic regression are well-established and powerful 
-techniques for analyzing the relations between a set of (predictor) variables 
-and a single (outcome) variable. However, you must understand how and when it is 
-appropriate to apply these regression techniques before you can use them in any 
-beneficial way. In this course, you will learn exactly that: how and when to 
-apply linear and logistic regression with the statistical software package `R`. 
+or more variables. In data science, linear and logistic regression are common 
+and powerful techniques for evaluating such relations. These techniques are only 
+useful, however, once you understand when and how to apply them. In this course, 
+students will learn how to apply linear and logistic regression with the `R` 
+statistical software package.
  
-This course gives students a new set of tools that they can apply to real-world 
-data to explore interesting issues and problems. The course will introduce 
-students to the principles of analytic data science, linear and 
-logistic regression, and the basics of statistical learning. These techniques 
-will be presented in the context of estimation, testing, and prediction. 
-Students will learn to think carefully and critically about statistical 
-inference, quantifying uncertainty, and measuring the accuracy of statistical 
-estimates. Students will also develop fundamental `R` programming skills and 
-will gain experience with `tidyverse`: visualizing data with `ggplot2` and 
-performing basic data wrangling with `dplyr`. This course will prepare students 
-for basic research tasks (e.g. junior researcher or research assistant) or 
-further education in research, such as a (research) Master program. 
+This course will introduce students to the principles of analytical data science, 
+linear and logistic regression, and the basics of statistical learning. Students
+will develop fundamental `R` programming skills and will gain experience with 
+tidyverse: visualize data with ggplot2 and performing basic data wrangling with 
+dplyr. This course helps prepare students for an entry-level research career 
+(e.g. junior researcher or research assistant) or further education in research 
+(e.g., a [research] Master program or a PhD).
 
-### Assignments
 
-Students will form groups to work on two assignments. Students will need to 
-perform calculations and write `R` code for these assignments. All work must be 
-combined into an understandable and insightful `R` project and must be 
-submitted to the [Surfdrive file drop environment][sd]. 
+### Course goals
 
-Each assignment will be graded on the quality of the following components:
+At the end of this course, students are able to:
 
-1. The methodological application
-1. The model evaluation and assumption checking
-1. The code and scripts 
+1.  Identify key statistical concepts such as:
+    *	(Conditional) probability
+    *	Inference
+    * Estimation
+    *	Prediction
+    *	Classification
+    *	Sampling variability
+    *	Statistical modeling
+    *	Residuals
+    *	Fitted values
+2.  Choose an appropriate regression model for a given research scenario.
+3.	Explain the differences/similarities between statistical inference and model-based prediction/classification; give examples of each type of problem.
+4.	Identify the assumptions of linear and logistic regression; describe the consequences of violating these assumptions.
+5.	Describe the three components of a generalized linear model and how these components are specified in logistic regression.
+6.	Interpret the estimates from linear and logistic regression models, and use these estimates to answer research questions.
+7.	Use the `R` statistical software platform to perform basic statistical programming, data manipulation, data visualization, and basic data wrangling.
+8.	Use the `R` statistical software platform to perform, interpret, and evaluate linear and logistic regression analyses on real-world data.
+9.	Interpret `R` output and use the results to answer research questions.
+10.	Use `R` Markdown to document the results of a statistical analysis.
 
-### Grading
+### Relation between assessment and objective 
 
-Students will be evaluated on the following aspects:
- 
-1. Apply and interpret the basic methodological and statistical concepts 
-underlying predictive and/or inferential research.
+In this course, skills and knowledge are evaluated with two types of assignment.
 
-   a. Explain concepts from inferential statistics, such as probability, 
-   inference, and modeling; apply these concepts in practice. 
-   a. Make an informed choice of research designs that are suitable for 
-   regression analyses.
-   a. Apply and explain the choice of techniques for investigating data problems.
-   a. Apply and explain the concepts of linearity and non-linearity.
-   a. Interpret statistical software output, and report software output 
-   following APA reporting guidelines.
-   a. Explain and conceptualize statistical inference and its relation to 
-   statistical theory.
-   a. Perform the different steps of solving basic regression analysis problems 
-   and report on these steps.
-   
-   <br>
-   
-2. Apply and interpret important techniques in linear and logistic regression 
-analysis.
+1.    The exam evaluates knowledge and understanding of statistical concepts (learning goal 1), the ability to critically evaluate research problems and statistical methods (learning goals 2–5), and the ability to interpret statistical results and software output and apply these interpretations (learning goals 6 & 9).
+2.    The group assignments evaluate the student’s ability to work with data, solve basic data analytic problems, execute quantitative data analyses on real-world data sets, and document the results (learning goals 6–10).
 
-   a. Perform, interpret, and evaluate quantitative (causal) analyses on data 
-   with the statistical software platform `R`.
-   a. Perform analyses in statistical software.
- 
-### Relation between Assessment and Objective
+### Course structure 
 
-In this course, skills and knowledge are evaluated in three separate ways:
+In eight weeks, you will learn the basics of data handling and statistical programming with R and details about regression techniques in the context of statistical inference, prediction, and classification. Each week will comprise three class activities:
 
-- The exam evaluates the knowledge of methodological and statistical concepts 
-(learning goals 1a, 1d, 1f), as well as the application of these concepts to 
-research scenarios (learning goals 1b and 1c). During the exam students will 
-need to interpret statistical software output (learning goal 1e).
+1.    During the weekly lectures, we will cover the theoretical content.
+2.    Weekly practical exercises connect the statistical theory to practice by applying the lecture content in the R statistical programming language.
+3.    During the weekly workgroup meetings, you will work on real-world data analysis with a group of your peers.
 
-- The practical labs test if the student has sufficient skills to solve basic 
-analysis problems and execute quantitative analyses on real-life data sets 
-(learning goals 2a and 2b).
 
-- The workgroups focus on applying the newly gained knowledge and skills to 
-solving relevant data analysis problems and reporting on the steps taken to 
-obtain a solution (learning goal 1g).
+
 
 <!----------------------------------------------------------------------------->
 
@@ -296,8 +273,6 @@ compilation? (Yes/no/cancel)
 Type `Yes` in the console, and press the "Enter/Return" key (or click the 
 corresponding button if the question presents as a dialog box). 
 
-## Column 2
-
 ### **What if the steps to the left do not work for me?**
 
 If the suggested steps fail or you have insufficient rights on your machine, you 
@@ -315,6 +290,44 @@ can use the following web-based solutions.
    MyWorkPlace session, you may need to (re)install packages. 
 
 Naturally, you will need internet access to use these services. 
+
+## Column 2
+
+### Necessary background knowledge
+
+We expect you to be familiar with basic statistical concepts such as:
+
+*   Descriptive statistics
+*   Sampling
+*   Correlation
+*   T-test
+*   P-values 
+
+In order to refresh your memory you can have a look at the material below. Note 
+that we consider this background knowledge for this course and known by all of
+you. The course material for this course further builds on this knowledge, so
+therefore this is not exam material itself. 
+
+### Descriptive statistics 
+
+Play around with [this shiny app](https://utrecht-university.shinyapps.io/Descriptives/).
+
+### Sampling 
+
+Play around with [this shiny app](https://utrecht-university.shinyapps.io/sampling/).
+
+### Correlation
+
+Play around with these shiny apps ([on correlation](https://utrecht-university.shinyapps.io/correlation/) 
+and on [correlation and sampling](https://utrecht-university.shinyapps.io/samplingcorrelations/)).
+
+### T-test
+
+Play around with [this shiny app](https://utrecht-university.shinyapps.io/t_test/).
+
+### P-values
+
+Play around with [this shiny app](https://utrecht-university.shinyapps.io/Randomization_p-values/).
 
 <!----------------------------------------------------------------------------->
 
