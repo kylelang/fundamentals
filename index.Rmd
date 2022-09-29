@@ -409,7 +409,7 @@ and expectations for your work in this course. You will also work on your
 individual assignment and start with locating a dataset to use in your two group 
 assignments and think of possible research questions.
 
-The slides for this workgroup meeting can be found [here]().
+The slides for this workgroup meeting can be found [here](wk1/workgroup/FTiD_WG_1.html).
 
 
 ### `R` Practical
@@ -487,7 +487,7 @@ This meeting you continue to work on your found dataset for the two group
 assignments. You refine your research questions and perform manipulations on the 
 variables where needed.
 
-The slides for this workgroup meeting can be found [here]().
+The slides for this workgroup meeting can be found [here](wk2/workgroup/FTiD_WG_2.html).
 
 ***Hand in your individual assignment Wednesday November 30, 17:00. See the course manual page for details.***
 
@@ -556,7 +556,7 @@ and data clearning for the chosen datasets.
 **Email the names and research questions to your workgroup instructor before the 
 end of the meeting.**
 
-The slides for this workgroup meeting can be found [here]().
+The slides for this workgroup meeting can be found [here](wk3/workgroup/FTiD_WG_3.html).
 
 ### `R` practical
 
@@ -610,7 +610,7 @@ build the model up from there, including moderation, by comparing the models
 using the various model fit criteria discussed during the lecture. You interpret 
 the final model.
 
-The slides for this workgroup meeting can be found [here]().
+The slides for this workgroup meeting can be found [here](wk4/workgroup/FTiD_WG_4.html).
 
 ### `R` practical
 
@@ -664,6 +664,8 @@ In this week's workgroup, you will work on:
   * Draw your final conclusions.
   
 ***Hand in your assignment 1 Monday December 19, 17:00. See the course manual page for details.***
+
+The slides for this workgroup meeting can be found [here](wk5/workgroup/FTiD_WG_5.html).
 
 
 ### `R` practical
@@ -720,6 +722,8 @@ final data inspection and cleaning steps for the dataset that you chose for this
 assignment. Next, you formulate your research questions and using model fit 
 criteria, you find your best fitting model, which you interpret. 
 
+The slides for this workgroup meeting can be found [here](wk6/workgroup/FTiD_WG_6.html).
+
 
 ### `R` practical
 
@@ -767,6 +771,8 @@ In this week's workgroup, you will continue to work on Assignment 2. You work on
 checking the assumptions of your model and making adjustments if necessary. Also,
 you will interpret the confusion matrix of your model. 
 
+The slides for this workgroup meeting can be found [here](wk7/workgroup/FTiD_WG_7.html).
+
 
 ### `R` practical
 
@@ -809,6 +815,8 @@ can pay extra attention to correct interpretation of your model outputs as well
 as efficient presentation of figures and tables in your markdown document. 
 
 ***Hand in your assignment 2 Thursday January 19, 17:00. See the course manual page for details.***
+
+The slides for this workgroup meeting can be found [here](wk8/workgroup/FTiD_WG_8.html).
 
 ### `R` exercise
 There is no R exercise this week. Use your time to finish the second assignment 
