@@ -1,0 +1,90 @@
+---
+title: "Work Group Meeting 4"
+author: "Fundamental Techniques in Data Science with R"
+date: "December 8, 2022"
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+#centertext{
+color: black;
+text-align: center;
+font-size: 35px;
+line-height: 1.4;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<h3> Linear Regression </h3>
+
+- Continue group assignment: apply practical to own data set.
+- Build model step by step.
+- Moderation (categorical variable).
+- Model comparison.
+
+## Assignment 1 - Next part
+
+<h4>Continue with group assignment by adding a new part. Present output in nice figures and tables, and always explain your steps, decisions and consequences of your decisions.</h4>
+
+<br><br>
+<h4> Include: </h4><br>
+
+- Model building
+- Moderation
+- Model comparisons
+- Interpretation of the output
+- Say something about inference and prediction
+
+## Evaluation points
+
+<h4> In grading this part of the assignment, the following aspects will be considered: </h4><br>
+
+-	Data description and exploration
+-	Model building
+-	Interpretation of model output
+-	Illustration of prediction
+-	Can we follow and reproduce all the steps you take? 
+-	Dou you present output concisely 
+-	Does the output and figures you present serve the right purpose? 
+
+## For Next Meeting
+
+<br><br>
+<p id = "centertext"> Keep working on your assignment! Deadline (19th of December, 17:00) approaches faster than you think! </p>
+

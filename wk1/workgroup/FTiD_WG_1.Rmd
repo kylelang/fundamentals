@@ -1,0 +1,250 @@
+---
+title: "Work Group Meeting 1"
+author: "Fundamental Techniques in Data Science with R"
+date: "Noverber 17, 2022"
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+.horizontal {
+  display:inline-block;
+  width: 25%;
+}
+
+.horizontal2 {
+  display:inline-block;
+  width: 33%;
+}
+
+#nametext{
+font-size: 20;
+color: black;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<li> Introduction </li>
+<li> Course structure </li>
+<li> Work group structure </li>
+<li> Assignments of the course </li>
+
+<br>
+
+<h4>Break</h4> 
+
+<br>
+
+<li> More explanation on individual assignment </li>
+<li> Starting individual assignment </li>
+
+
+## Introduction - Teacher Team
+
+<center>
+<div class="horizontal">
+<center>
+<img src = "laura.jpg" width = 100%></img><br>
+<p id = "nametext"> Laura Boeschoten </p>
+</center>
+</div><div class="horizontal">
+<center>
+<img src = "kyle.jpg" width = 100% /img><br>
+<p id = "nametext"> Kyle Lang </p>
+</center>
+</div>
+</div><div class="horizontal">
+<center>
+<img src = "rianne.jpg" width = 100% /img><br>
+<p id = "nametext"> Rianne Kraakman </p>
+</center>
+</div>
+</center>
+
+<div>
+<center>
+<div class = "horizontal">
+<center>
+<img src = "anastasia.jpg" width = 100% /img><br>
+<p id = "nametext"> Anastasia Giachanou </p>
+</center>
+</div>
+<div class = "horizontal">
+<center>
+<img src = "thijs.jpg" width = 100% /img><br>
+<p id = "nametext"> Thijs Carrière </p>
+</center>
+</div>
+</center>
+</div>
+
+
+
+## Introduction
+
+<h3>Who are you?</h3>
+
+<h3>Introduce yourself briefly:</h3>
+
+<li> Why chose this course/minor? </li>
+<li> Experiences with R? </li>
+<li> 1 random fact about you </li>
+
+
+## Course Structure 
+
+<div style="float: left; width: 50%;">
+<h3>Monday 17:15:</h3>
+Lecture by Kyle Lang <br>
+On location <br><br><br>
+
+
+<h3>Thursday morning:</h3>
+Work group meeting <br><br>
+- Work on (group) assignments
+</div>
+
+<div style="float: right; width: 50%;">
+<h3>Thursday 17:15:</h3>
+Remainder of lectures, Q&A, <br>and discussion of practicals <br><br>
+Online meeting with Kyle Lang
+
+<h3>By yourself:</h3>
+- Do the required reading 
+- Work on practicals (deadline is next Monday 17:00, before the next lecture) 
+- Continue to work on group assignment 
+</div>
+
+## Workgroup Meetings
+
+<h3>Working on assignments<h3>
+Applying the lecture topics to own (real) data sets.
+
+
+## Assignments - Overview {.columns-2 .smaller}
+
+<h3> Individual Assignment </h3>
+- Preparation for the group assignments
+- Graded with a pass/fail
+- <b><u>Deadline: Wednesday 30th of November, 17:00 </u></b>
+
+<h3> Assignment 1 </h3>
+- Group assignment
+- Linear regression
+- <b><u>Deadline: Monday 19th of December, 17:00</u></b>
+
+<p class="forceBreak"></p>
+
+<h3> Assignment 2 </h3>
+- Group assignment
+- Same groups as Assignment 1
+- Logistic regression
+- <b><u>Deadline: Thursday 19th of January, 17:00 </u></b>
+
+## Assignments - General Comments
+
+<h3> Grading:</h3>
+- Both group assignments contribute 25% to your final grade (50% together).
+- All group members receive same grade for group assignments
+- If names are omitted from groups/assignments, we expect everyone to be aware of that.
+
+<h3> Hand-in:</h3>
+- Hand in assignments via SurfFileDrop
+- Hand in .zip folder with R project and all files (HTML, Rmarkdown, data sets)
+- Make sure all code and text are visible in the HTML files
+- HTML files are graded; supplementary files are needed when HTML seems incomplete
+
+## Individual Assignment
+
+In this assignment, you individually search for a data set that could potentially be used for assignments 1 and 2. You describe the research questions you will try to answer using this data set for the two assignment, and you apply processing steps if required.
+
+You make an R project and an R markdown file where you:
+
+- Load the data set
+- Explore the variables in this data set
+- Describe the research questions
+- Identify processing steps
+- Summarize processed variables
+
+<b><u><em>All assignment information can be found on the course website!</em></u></b>
+
+## Data set - Requirements
+
+The data set for the individual assignment (and subsequently for the group assignments) has a number of requirements. The data set should <b><u>at least</u></b> contain:
+
+- A continuous outcome variable
+- At least two continuous predictor variables
+- A categorical predictor variable
+- A dichotomous outcome variable
+
+## Data set - Tips
+
+There are a lot of online places that offer good data sets for these assignments. Below, some examples are listed:
+
+- Kaggle
+- Github
+- CBS / Eurostat
+- RIVM
+- Via scientific papers
+- Via large panel studies (e.g. PISA, LISS, EVS, ESS, TIMSS)
+- Previous courses?
+
+<br>
+<b><em><u>Datasets from lectures and practicals are not allowed for these assignments</u></em></b>
+
+## Remainder of the meeting
+
+<h4> 1\. Start looking for a data set:</h3>
+- Look for something you find interesting
+- Make sure the data set meets the requirements
+- Check if you can actually obtain the data! 
+
+<h4> 2\. Start formulating research questions:</h3>
+- Based on the variables in your data set/the topic of your data set, come up with questions that you want to investigate.
+- Research questions need to be about relations between the variables
+
+<h4> 3\. Start inspecting your data set:</h3>
+- Is recoding of variables needed?
+- Is any processing needed? (If you want to use factor analysis or PCA, you are free to do so)
+- Describe your variables, present relations between variables (plots!!).
+
+
+## For the next meetings
+
+<b><u><em> Keep working on your individual assignment (you can work together, the 'individual' part is on how it is handed in and graded).</em></u></b>
+

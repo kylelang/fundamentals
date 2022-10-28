@@ -1,0 +1,235 @@
+---
+title: "Exercise 1"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+output: 
+   bookdown::html_document2:
+    toc: true
+    toc_depth: 1
+    toc_float: true
+    number_sections: true
+---
+
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 12px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+
+---
+
+In this exercise you will get acquainted with R and RStudio. RStudio adds many 
+convenience features to the base R that you obtained from 
+[http://r-project.org](http://r-project.org). Most of these features go beyond 
+the scope of this course, but some of them will flatten the learning curve of R 
+programming. 
+
+If you have any questions, feel free to ask me or the workgroup instructor.
+
+OK. Let's begin!
+
+---
+
+# Working with R and RStudio
+
+---
+
+## 
+
+**Open RStudio**
+
+The following window will appear. 
+![alt text](figures/rstudio1.png)
+
+RStudio is divided into 3 panes: the console, the environment/history pane, and 
+a pane wherein you can access your files, plots, help files, etc. You can 
+rearrange the panes through RStudio's preferences.
+
+When we open an R script (i.e. a file that contains R code), a fourth pane will 
+open to show the script. 
+
+---
+
+## 
+
+**Open a new R script**
+
+In the top left you will find this button: 
+![new script](figures/fig2.png){width=5%}. Click it and select "R Script". 
+
+A new pane will open, and you can start writing code in this new script. Unless 
+you're just using R as a simple calculator, you should work with R scripts 
+instead of writing your code directly in the console. Doing so has at least the 
+following advantages. 
+
+a. You will not lose your work, since all of the commands you execute are 
+written in a script.  
+a. You log your workflow. Code does not disappear over time, so you can always 
+tell what analyses you did for a project. 
+a. With access to your R script(s) and data, others can exactly reproduce your 
+work.  
+a. Your coding will become more organized as you start trying to write more 
+readable code. In the long run, this increased organization will make you a more 
+efficient programmer. Remember: Efficient code runs faster! 
+
+---
+
+## 
+
+**Type the following into your new R script**
+
+```{r}
+# Hey, Buddy! Let's assign the value 100 to the object a.
+a <- 100
+```
+
+The comment character, `#`, tells the R interpreter to ignore everything that 
+follows in that specific line. Since nothing following a `#` will be interpreted 
+as R code, you can use `#` to comment your code. 
+
+The line `a <- 100` assigns the value `100` to the object `a`. When you run this 
+line, a new object called `a` will be saved to your environment and given the 
+value `100`. The value `100` and the name `a` are completely arbitrary. You 
+could just as well assign the value`"bar"` to the object `foo`, if you like. 
+
+---
+
+## 
+
+**Execute the commands in your script**
+
+Select both lines of code shown above, and execute them by pressing Ctrl-Enter 
+or Ctrl-R (Windows/Linux) or Cmd-Enter (Mac)
+
+After your code is executed the results appear in the console. If you type `a` 
+in the console, R will return the assigned value. Try it. 
+![alt text](figures/rstudio2.png)
+
+The shortcut Ctrl-Enter or Cmd-Enter is your friend: it runs the current 
+selection, or---if nothing is selected---the current line. If pressing 
+Ctrl-Enter or Cmd-Enter yields no result, you probably have the console pane 
+selected. You can switch to the code pane by using the mouse to click on the 
+desired line in the code pane or by pressing Ctrl-1 (Windows/Linux/Mac). You can 
+select the console by pressing Ctrl-2 (Windows/Linux/Mac). 
+
+---
+
+##
+
+**Save your code file as *preparation_practical.R* in a folder named *practicals***
+
+You can use the standard Ctrl-s (Windows/Linux) or Cmd-s (Mac) or click on the 
+![save button](figures/fig4.png){width=3%} icon in the code pane. Your document is
+now saved. Saving your script in a separate folder will allow you to create an 
+RStudio project for your practicals. 
+
+---
+
+##
+
+**Close the *preparation_practical.R* script in the code pane**
+
+Even though you've closed the script, your code is still saved as a permanent 
+code file.
+
+##
+
+**Open the *preparation_practical.R* script**
+
+1. Navigate to the *practicals* directory using the RStudio files pane.
+1. Click on the *preparation_practical.R* file in the files pane to re-open the script. 
+1. Run both lines of code again.
+1. Inspect the contents of the global environment by executing the `ls()` 
+function.
+
+You should see something like the following
+```{r}
+ls()
+```
+
+There is only one object in the environment, and it is called `a`. If you look 
+at the environment pane, you can quickly see which objects currently exist in 
+the environment (i.e., you don't need to manually run `ls()`). You can also see 
+some information about the objects.
+
+---
+
+# R packages 
+
+## 
+
+An `R` package is a collection of functions, data, and documentation that have been
+developed to cover a specific need or scientific method that is not implemented
+in base `R`. 
+
+You can install a package from CRAN (The Comprehensive `R` Archive Network) using 
+the function `install.packages()`. You only need to do this once on your computer.
+
+To then use the functions from that package, you need to load the package using 
+the `library()` function.
+
+Once loaded, you can use `?` or the `help()` function to see the documentation of 
+any package or function in that package. 
+
+We run through an example for the `tidyverse` package. `Tidyverse` is actually
+a group of packages that can be together considered as a `dialect of the `R` 
+language` that is very popular. We make use of its functions when possible. 
+
+
+```{r eval=FALSE}
+# Installing the tidyverse package 
+install.packages("tidyverse")
+```
+
+```{r message=FALSE, warning=FALSE}
+# Loading the tidyverse package
+library("tidyverse")
+
+# See the documentation of the tidyverse package
+?tidyverse
+# or 
+help(tidyverse)
+
+# Now you have loaded the tidyverse package, we can look up documentation
+# of specific functions within that package, an example is the mutate function.
+?mutate
+
+# when you open the mutate documentation, you see that this function is part of 
+# the dplyr package, which is a member of the tidyverse package family. This 
+# means that we can also use the mutate function by loading only the dplyr package
+# instead of the complete tidyverse family. 
+```
+
+Now try to install all packages that are listed on the preparations page on the 
+course website. 
+
+---
+
+
+
+End of the preparation practical

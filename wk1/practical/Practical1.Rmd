@@ -1,0 +1,392 @@
+---
+title: "Fundamental Techniques in Data Science with `R` Practical 1"
+params:
+  answers: false
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: paged
+    theme: paper
+    # pandoc_args: --output=supervised_1_answers.html
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+  
+---
+
+# Introduction
+
+---
+
+Welcome to the first practical of Fundamental Techniques of Data Science in `R`! The aim of this practical is to introduce you to RStudio and some of its functionalities. You will also practice using some basic functions and operations. We cover the following topics:
+
+* RStudio and RStudio Projects
+* R Markdown
+* Operations and functions in R
+* Manipulating data in R
+
+We will start by making you familiar with some best practices when doing research projects in `R`, which you can immediately apply in this practical, and all other practicals and assignments to come. 
+
+---
+
+## RStudio Projects
+
+RStudio Projects are a great way to keep all the files associated with your project together in one place. This includes data, scripts, and any output you produce. RStudio Projects are built-in to RStudio and are recommended for best practice in open science, reproducible workflows, and collaboration. One huge advantage of working with an RStudio Project is that R knows where to find the data you are working with, without the need to explicitly set your directory every time using `setwd()`. 
+
+The possibility of categorizing your work into projects is one of the benefits of using RStudio. Within a project, everything is related to the .Rproj file and the folder in which this .Rproj file is stored. So, if you share the project folder with someone else, they only have to open the .Rproj file to access and run any code from the project.
+
+---
+
+### Create a new RStudio project
+
+Creating a new project is simple. Navigate to the top of your screen and click File > New Project.
+
+![](./images/image01.png){width=50% height=50%ar}
+
+If you already made a folder which you would like to use as a directory for this project, you can click on "Existing Directory" and navigate to this folder. You will be asked to give your new project a name, once you have done this click "Create Project". It can be useful to create a new project for every practical. 
+
+Alternatively, you can click on "New Directory" and create a new folder for your project. 
+
+
+![](./images/image02.png){width=50% height=50%}
+
+You will see the file you just created appear in the RStudio files pane, as *nameofyourproject*.Rproj. 
+
+
+![](./images/image03.png){width=50% height=50%}
+
+---
+
+## Introduction to RMarkdown
+
+You can watch this video on Rmarkdown. 
+
+[![WhatisRMarkdown](./images/imagevimeo.png){width=50% height=50%}](https://vimeo.com/178485416 "WhatisRMarkdown - Click to Watch!")
+
+Also, see this [R Markdown cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+
+---
+
+### Code chunks
+
+R Markdown files use the `rmarkdown` package which comes installed with RStudio. R Markdown is a variant of Markdown that enables us to create dynamic documents with chunks of R code embedded with plain-text. R Markdown works with `knitr` to compile these documents in different formats and has extensions that allow you to also include LaTeX equations. 
+
+A code chunk is initiated by:
+
+````r
+```{r chunk-name}`r ''`
+```{r}
+```
+````
+
+Code chunks also end with three backticks:
+
+````r
+```
+````
+
+Therefore, an entire code chunk looks like:
+
+````r
+```{r hello}`r ''`
+
+# This is a comment inside a code chunk
+
+2 + 2
+```
+````
+
+Naming your code chunks is also good practice, as it makes it easier to find errors that occur within specific chunks. For example, the first chunck above has the name `chunk-name`. Code chunks can be run in more than one way: you can run a single chunk by clicking the play icon at the top right corner of the chunk; you can also run all code chunks consecutively by clicking Run > Run all, in the top right corner of the RStudio editor pane. You will see more options in the drop-down list too.
+
+When you compile an R Markdown document the code chunks are all evaluated and their output inserted, unless you provide alternate instructions via the chunk options. Chunk options follow the chunk name and are separated by commas.
+
+**Chunk options:**
+
+To omit the results from the final document (i.e. not run the code) add `eval = FALSE` to the brackets and after `r`, like below:
+
+````r
+```{r, eval = FALSE}`r ''`
+2 + 2
+```
+````
+
+To omit the code from the final report (while including the results) add the argument `echo = FALSE` to the brackets, like below:
+
+````r
+```{r, echo = FALSE}`r ''`
+2 + 2
+```
+````
+
+*`echo = FALSE` is also very useful for embedding plots into a report, because we usually only want to see the final plot and not the code that produced it.*
+
+To run the code chunk but not include it in the final document add the argument `include = FALSE` to the brackets, like below:
+
+````r
+```{r, include = FALSE}`r ''`
+2 + 2
+```
+````
+
+*Note that for all the examples above, the default value for echo is `TRUE`.*
+
+You can read more about chunk options [here](https://rpubs.com/Lingling912/870659). 
+
+---
+
+### Text formatting 
+
+Rmarkdown can handle different text formats:
+
+1. **headers** - place one or more hashtags at the start of a line that will be a header (or a sub-header). For example, `# Hello Rmarkdown`.
+    + A single hashtag, `#` creates a first level header.
+    + Two hashtags, `##` create a second level header, and so on.
+    
+2. **italicized and bold text** - surround italicized text with asterisks, for example `*italicize this text*`. Surround bold text with double asterisks, for example, `**bold face this text**`.
+
+3. **lists** - bullet-point lists can be created by starting a line with an asterisk `*`(you must leave an empty line before the first bullet point).
+
+* Item 1
+* Item 2
+    + Item 2a
+    + Item 2b
+
+LaTeX equations can also be added to an RMarkdown document, using single `$` to produce an inline equation, e.g. `$equation$`, or double `$` for a display equation, e.g. `$$ equation $$`. 
+
+You can read more about using LaTeX syntax in R Markdown [here](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#math-expressions).
+
+---
+
+### Create a R Markdown document
+
+To open a new R Markdown file, navigate to the top left of the RStudio editor and click on the icon for a new document (see below). Choose a title for your document and select the "HTML" format. You will primarily create HTML files in this course but it is also possible to create Microsoft Word and PDF documents. 
+
+![](./images/image04.png){width=50% height=50%} 
+
+---
+
+### Rendering R Markdown documents
+
+**Compile the RMD script into an HTML file:**
+
+Click the "knit" button button and select “Knit to HTML” to compile the file into an HTML document. If necessary, install the required packages.
+
+![](./images/image05.png){width=50% height=50%}
+
+In the rest of this course, you will need to complete and submit exercises and assignments. The R Markdown functionality in RStudio is a well-polished production device to mark-up high quality documents where text and code/output are woven together.
+
+Please use R Markdown to prepare your work for this course, and submit both the RMD and HTML files whenever you need to hand in exercises or assignments.
+
+---
+
+# Exercises
+
+---
+
+## Preparation
+
+In this practical, we will make use of the following packages
+
+```{r message=FALSE}
+library(dplyr)
+library(readr)
+library(knitr)
+library(kableExtra)
+
+#Note that `dplyr` and `readr` are included in the `tidyverse` distribution. If you have `tidyverse` installed you can simply load `library(tidyverse)`. You can also load packages within `tidyverse` independently (as above), which is a bit quicker. 
+```
+
+---
+
+## Assigning objects 
+
+1. __Create an object a with value 1__
+```{r, include = params$answer}
+a <- 1
+```
+
+2. __Verify that 1 is stored in a__
+```{r, include = params$answer}
+a 
+```
+
+3. __Square a__
+```{r, include = params$answer}
+a^2
+```
+
+4. __Assign a + a to the object b, and check if b is equal to a + a.__
+```{r, include = params$answer}
+b <- a + a
+b == a + a
+```
+
+5. __Square b__
+```{r, include = params$answer}
+b^2
+```
+
+6. __Multiply the answer by a over b__
+```{r, include = params$answer}
+b^2 * (a / b)
+```
+
+7. __Assign the result to c__
+```{r, include = params$answer}
+c <- b^2 * (a / b)
+```
+
+8. __Take the square root of c to the power b__
+```{r, include = params$answer}
+sqrt(c^b) 
+```
+
+9. __Multiply the answer by a over (b to the power 6)__
+```{r, include = params$answer}
+sqrt(c^b) * (a / b^6)
+```
+
+---
+
+10. __Round the answer from the previous question to 3 decimal places__
+```{r, include = params$answer}
+# Method 1
+round(sqrt(c^b) * (a / b^6), 3) 
+
+# OR
+
+# Method 2
+d <- sqrt(c^b) * (a / b^6)
+round(d, 3)
+
+# Do you notice that the first solution is shorter, but the second is much more insightful? If you share your code, or plan to use it later on, clarity is very important. A little effort now, saves you hours later.
+
+```
+
+Now you know how to use `R` as a calculator and R markdown for typesetting, we can move on to some more advanced operations. 
+
+---
+
+## Calling functions
+
+A function is a set of statements organized to perform a specific task. R has a large number of built-in functions and you can also create your own functions. For now, we will focus on the former. 
+
+A function is in object that handles a certain number of arguments that are necessary for the function to work. The function then returns the result of these arguments.  
+
+**Built-in functions:**
+
+Simple examples of built-in functions are `seq()`, `mean()`, `min()`, `max()`, and `sum()`. 
+
+**Perform the following operations:**
+
+11. __Create a sequence of numbers from 12 to 24.__
+```{r, include = params$answer}
+seq(12, 24)
+```
+
+12. __Sum the numbers from 28 to 63.__
+```{r, include = params$answer}
+sum(28:63)
+```
+
+13. __Find the mean of the numbers from 25 to 82.__
+```{r, include = params$answer}
+mean(25:82)
+```
+
+---
+
+## Getting data into R
+
+There are a number of ways to read data into R. One option is to use the `readr` package that comes with the `tidyverse` distribution. The function `read_csv()` reads comma delimited files. 
+
+Download the file "flightdata.csv" from the course page and store it in your project folder. This file contains a sample from the "flights" dataset from the `nycflights13` package. This contains airline data for all flight departing from NYC in 2013. 
+
+14. __Read the `flightdata.csv` file into R with the `readr` package` using the code below__
+
+```{r message=FALSE, warning=FALSE}
+flight_data <- read_csv("flightdata.csv") # Imports the data
+flight_data # View the data
+
+
+```
+
+To get other types of data into R the tidyverse packages listed below are recommended.
+
+* `haven` reads SPSS, Stata, and SAS files
+* `readxl` reads excel files (.xls and .xlsx)
+
+---
+
+## Summarising the data
+
+Again, there are different functions to summarise data, but the base R function `summary()` works well too.
+
+15. __Apply the `summary()` function to the data__
+
+```{r, include = params$answer}
+summary(flight_data)
+
+# `summary()` returns various summary statistics for every numeric variable including minimum and maximum, quartiles, mean and median. Notice that for categorical variables, this function returns the length of the variable.
+```
+
+---
+
+## Adjusting data 
+
+---
+
+### Creating new columns
+
+Sometimes we need to add new columns that are functions of existing columns, and `mutate()` does this. 
+
+16. __Add a column that calculates speed using the distance and air_time columns using `speed = distance / air_time * 60`. Store the adjusted `flight_data` dataset under a new name `flight_data2`.__
+
+```{r, include = params$answer}
+flight_data2 <- mutate(flight_data, 
+                       speed = distance / air_time * 60)
+
+summary(flight_data2$speed)
+```
+
+---
+
+### Selecting data 
+
+You might get a data set with more variables than you need. In this case, it is useful to narrow it down to just the variables you will be working with. `select()` can be used for this. 
+
+17. __Select the columns year, month, day  and speed using the `select()` function from flight_data2 and store it under flight_data3.__
+```{r, include = params$answer}
+flight_data3 <- select(flight_data2, 
+                       year, 
+                       month, 
+                       day, 
+                       speed)
+
+```
+
+---
+
+## Writing data to a file 
+
+The `write_csv()` function has two main arguments: the data frame to save, and the path to where you want the file to be located. Other options can also be specified, for example how to write missing values. Type `?write_csv` to learn more about this function. 
+
+18. __Write the data `flight_sample3` to a file using the `write_csv()` function.__
+```{r}
+write_csv(flight_data3, "flight_data3.csv")
+
+# As we work in an Rproject, the .csv file is automatically stored within the project folder
+```
+
+---
+
+# End of practical
+
+---

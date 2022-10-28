@@ -1,0 +1,135 @@
+---
+title: "Work Group Meeting 2"
+author: "Fundamental Techniques in Data Science with R"
+date: "Noverber 24, 2022"
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+.horizontal {
+  display:inline-block;
+  width: 20%;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<h3> 1\. Some examples on processing </h3>
+<h3> 2\. Continuing individual assignment </h3>
+
+<br><br>
+Make sure that you end today with a processed data set! If the original data set contained thousands of variables, then only include the relevant variables, and make sure that these variables are processed accordingly! 
+
+
+## Individual Assignment
+
+In this assignment, you individually search for a data set that could potentially be used for assignments 1 and 2. You describe the research questions you will try to answer using this data set for the two assignment, and you apply processing steps if required.
+
+You make an R project and an R markdown file where you:
+
+- Load the data set
+- Explore the variables in this data set
+- Describe the research questions
+- Identify processing steps
+- Summarize processed variables
+
+<b><u><em>All assignment information can be found on the course website!</em></u></b>
+
+## Processing Examples - 1
+
+<h3> Incorrect variable classes </h3>
+
+Character classes are not always automatically set correctly, see for example the picture below. These classes should be adjusted with functions as `as_factor()` or `as_numeric()`. <br><br>
+
+<center>
+<img src = "class_ex.jpg" width = 80% /img>
+</center>
+
+## Processing Examples - 2
+
+<h3> NA's as categories/Recoding of variables </h3>
+<br>
+
+<center>
+<img src = "wrong_na.jpg" width = 50% /img>
+</center>
+
+
+## Processing Examples - 3
+
+<h3> Total scores & Sum scores </h3>
+
+Some variables need to be computed into new variables, such as scale totals in the example below.<br><br>
+
+<center>
+<img src = "scale.jpg" width = 60% /img>
+</center>
+
+## Processing Examples - 4
+
+<h3> Linking data sets </h3>
+
+When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)` for new observations, or `cbind(df1, df2)` when the columns can be put together. 
+
+<br> If, however, only some observations are the same, you can join the two data frames (`full_join(df1, df2, by = "identification_variable")`). This could be used for the 2 data frames shown below.
+
+<div>
+<center>
+<img src = "liss_ds_comb.jpg" width = 75% /img>
+</center>
+</div>
+
+## Remainder of the meeting
+
+<h3> Work on your individual assignment!!</h3> 
+
+
+
+<h4>First 4 steps (previous slide) should ideally be finished at the end of this meeting (and a start should be made for summarize part).</h4>
+
+
+## For the next meeting
+
+<b><u><i> Hand in your individual assignment before next Wednesday, November 30th 17:00!</i></u></b>
+
+- Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week.
+- Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting!
+
+
+
+
