@@ -15,7 +15,7 @@
 
 \newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
 \newcommand{\pkg}[1]{\textbf{#1}}
-\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\src}[1]{\texttt{#1}}
 
 \title{R Basics}
 \subtitle{Fundamental Techniques in Data Science}
@@ -466,26 +466,32 @@ As noted above, we have many ways of interacting with R:
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Getting Help}
-
-Everything published on the Comprehensive R Archive Network (CRAN), and intended
-for R users, must be accompanied by a help file.
-
-\begin{itemize}
-\item If you know the name of the function (e.g., `anova()`), then execute
-  `?anova` or `help(anova)`.
-\item If you do not know the name of the function, type `??` followed by your
-  search criterion. For example, `??anova` returns a list of all help pages that
-  contain the word "anova".
-\end{itemize}
-
-Alternatively, the internet will tell you almost everything you'd like to know
-
-\begin{itemize}
-\item Sites such as http://www.stackoverflow.com and http://www.stackexchange.com
-can be very helpful.
-\item If you google R-related issues, include "R" somewhere in your search string.
-\end{itemize}
-
+  
+  Everything published on the Comprehensive R Archive Network (CRAN), and 
+  intended for R users, must be accompanied by a help file.
+  
+  \begin{itemize}
+  \item If you know the name of the function (e.g., \src{anova()}), then execute
+    \src{?anova} or \src{help(anova)}.
+  \item If you do not know the name of the function, type \src{??} followed by 
+    your search criterion. 
+    \begin{itemize}
+    \item For example, \src{??anova} returns a list of all help pages that
+      contain the word "anova".
+    \end{itemize}
+  \end{itemize}
+  
+  \vb
+  
+  Alternatively, the internet will tell you almost everything you'd like to know
+  
+  \begin{itemize}
+  \item Sites such as \url{http://www.stackoverflow.com} and 
+    \url{http://www.stackexchange.com} can be very helpful.
+  \item If you google R-related issues, include "R" somewhere in your search 
+    string.
+  \end{itemize}
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -513,6 +519,8 @@ timely.
 \end{itemize}
 
 A list of available packages can be found on \href{https://cran.r-project.org}{CRAN}.
+
+\end{frame}
 
 %------------------------------------------------------------------------------%
 
@@ -580,7 +588,6 @@ data(bfi, package = "psychTools")
 
 ## Access the documentation for the 'bfi' data
 ?psychTools::bfi
-@
 
 ################################################################################
 ## PRACTICE PROBLEM 3.1
@@ -593,7 +600,6 @@ data(bfi, package = "psychTools")
 ##
 ################################################################################
 
-<<>>=
 ## Define the directory holding our data
 dataDir <- "../../../data/"
 
@@ -620,7 +626,6 @@ utmb1 <- read.csv(paste0(dataDir, "utmb_2017.csv"))
 
 ## Load the 'titanic' data stored in R data set '../data/titanic.rds'
 titanic <- readRDS(paste0(dataDir, "titanic.rds"))
-@
 
 ################################################################################
 ## PRACTICE PROBLEM 3.2
@@ -632,6 +637,7 @@ titanic <- readRDS(paste0(dataDir, "titanic.rds"))
 ##       the differences?
 ##
 ################################################################################
+@ 
 
 \end{frame}
 
@@ -694,7 +700,6 @@ val_labels(mtcars4)
 val_labels(mtcars5)
 
 var_label(mtcars5)
-@
 
 ### NOTE: The 'labelled' package provides a bunch of utilities to manipulate the
 ###       variable and value labels for data coming from, or going to, SPSS.
@@ -710,6 +715,7 @@ var_label(mtcars5)
 ##     into a data frame without variable labels.
 ##
 ################################################################################
+@
 
 \end{frame}
 
@@ -734,7 +740,6 @@ str(titanic2)
 str(titanic3)
 
 all.equal(as.data.frame(titanic2), titanic3)
-@
 
 ################################################################################
 ## PRACTICE PROBLEM 3.4
@@ -748,6 +753,7 @@ all.equal(as.data.frame(titanic2), titanic3)
 ##     '../data/example_data.xlsx'
 ##
 ################################################################################
+@
 
 \end{frame}
 
