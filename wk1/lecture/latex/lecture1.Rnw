@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 1: R Basics
 %%% Author:   Kyle M. Lang
 %%% Created:  2016-01-28
-%%% Modified: 2022-11-09
+%%% Modified: 2022-11-10
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -11,11 +11,77 @@
 \usepackage[libertine]{newtxmath}
 \usepackage{booktabs}
 \usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{fancyvrb}
 \usepackage{hyperref}
 
+\hypersetup{
+  colorlinks = true,
+  linkcolor = blue,
+  filecolor = blue,
+  citecolor = black,      
+  urlcolor = blue
+}
+ 
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+    on line, 
+    colback = codebackground, 
+    colframe = codebackground, 
+    left = 0pt, 
+    right = 0pt, 
+    top = 0pt, 
+    bottom = 0pt%
+  ]{%
+    \lstinline[%
+      language = R, 
+      basicstyle = \ttfamily,
+      keywordstyle = \color{codekeyword},
+      commentstyle = \color{codecomment}\itshape,
+      stringstyle = \color{codestring},
+      deletekeywords = {_}
+      %frame = single,
+      %frameround = tttt,
+      %fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+%\DeclareTotalTCBox{\src}
+%                  { s v }
+%                  {verbatim, colupper = white, colback = black!75!white, colframe = black} 
+%                  {%
+%                    \IfBooleanT{#1}{\textcolor{red}{\ttfamily\bfseries >}}% 
+%                    \lstinline[language = command.com, keywordstyle = \color{blue!35!white}\bfseries]^#2^%
+%                  }
+
+%\newtcbinputlisting[]{\src}[1][]{
+%  listing only,
+%  nobeforeafter,
+%  after={\xspace},
+%  hbox,
+%  tcbox raise base,
+%  fontupper=\ttfamily,
+%  colback=lightgray,
+%  colframe=lightgray,
+%  size=fbox
+%  }{#1}
+
+%\newcommand{\src}[1]{%
+%  \begin{tcbwritetemp} \tcboxverb[beamer]{#1} \end{tcbwritetemp}%
+%  \tcbusetemp%
+%}
 \newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
 \newcommand{\pkg}[1]{\textbf{#1}}
-\newcommand{\src}[1]{\texttt{#1}}
+%\newcommand{\src}[1]{\texttt{#1}}
 
 \title{R Basics}
 \subtitle{Fundamental Techniques in Data Science}
@@ -57,15 +123,16 @@ knit_theme$set('edit-kwrite')
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Attribution}
-
+  
 This course was originally developed by Gerko Vink. You can access the original
 version of these materials on Dr. Vink's GitHub page:
 \url{https://github.com/gerkovink/fundamentals}.
-
-Some of the materials in this repository have been modified. Any errors or
+\va
+The course materials have been (extensively) modified. Any errors or 
 inaccuracies introduced via these modifications are fully my own responsibility
 and shall not be taken as representing the views and/or beliefs of Dr. Vink.
-
+\va
+You can see Gerko's version of the course on his personal website:
 \href{https://www.gerkovink.com/fundamentals}{www.gerkovink.com/fundamentals}
 
 \end{frame}
@@ -219,37 +286,6 @@ and shall not be taken as representing the views and/or beliefs of Dr. Vink.
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{A Note on Licensing}
-
-  Many open-source licenses (e.g., GPL, L-GPL) ``copyleft'' their products.
-  \vb
-  \begin{itemize}
-  \item Copyleft is designed to ensure that open-source software cannot be
-    closed.
-    \vc
-    \begin{itemize}
-    \item I can't take your copylefted software, repackage it, and sell it in
-      violation of your original licensing terms.
-    \end{itemize}
-  \end{itemize}
-  \va
-  Other open-source licenses (e.g., BSD-Types, Apache, MIT) are non-copyleft,
-  ``permissive'' licenses.
-  \vb
-  \begin{itemize}
-  \item Many of these licenses are designed to promote commercialization of
-    open-source products.
-    \vc
-    \begin{itemize}
-    \item E.g., allowing a student to develop a company selling a product they
-      developed for their dissertation
-    \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
 \sectionslide{The R Statistical Programming Language}
 
 %------------------------------------------------------------------------------%
@@ -324,17 +360,20 @@ and shall not be taken as representing the views and/or beliefs of Dr. Vink.
 \begin{frame}{What is RStudio?}
 
 RStudio is an integrated development environment (IDE) for R.
-
+\vc
 \begin{itemize}
 \item Adds a bunch of window dressing to R
+  \vc
 \item Also open-source
+  \vc
 \item Both free and paid versions
 \end{itemize}
-
+\va
 R and RStudio are independent entities.
-
+\vc
 \begin{itemize}
 \item You do not need RStudio to work with R.
+  \vc
 \item You are analyzing your data with R, not RStudio
   \begin{itemize}
   \item RStudio is just the interface through which you interact with R.
@@ -364,24 +403,6 @@ R and RStudio are independent entities.
 %------------------------------------------------------------------------------%
 
 \subsection{Using R}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{What to Expect when Opening R}
-
-As noted above, we have many ways of interacting with R:
-  \vb
-  \begin{itemize}
-  \item Base R
-    \vb
-  \item EMACS
-    \vb
-  \item RStudio
-    \vb
-  \item Text-only console (i.e., even more base R)
-  \end{itemize}
-
-\end{frame}
 
 %------------------------------------------------------------------------------%
 
@@ -483,7 +504,7 @@ As noted above, we have many ways of interacting with R:
   
   \vb
   
-  Alternatively, the internet will tell you almost everything you'd like to know
+  The internet can also tell you almost everything you'd like to know.
   
   \begin{itemize}
   \item Sites such as \url{http://www.stackoverflow.com} and 
@@ -496,28 +517,34 @@ As noted above, we have many ways of interacting with R:
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Packages}
+\begin{frame}[allowframebreaks]{Packages}
 
 Packages give R additional functionality.
-
+\vc
 \begin{itemize}
 \item By default, some packages are included when you install R.
+  \vc
 \item These packages allow you to do common statistical analyses and data
   manipulation.
+  \vc
 \item Installing additional packages allows you to perform state-of-the-art
   statistical analyses.
 \end{itemize}
 
+\newpage
+
 These packages are all developed by R users, so the throughput process is very
 timely.
-
+\vc
 \begin{itemize}
 \item Newly developed functions and software are readily available
-\item Software implementations of new methods can be quickly dissemintated
+  \vc
+\item Software implementations of new methods can be quickly disseminated
+  \vc
 \item This efficiency differs from other mainstream software (e.g., SPSS, SAS,
   MPlus) where new methodology may take years to be implemented.
 \end{itemize}
-
+\vb
 A list of available packages can be found on \href{https://cran.r-project.org}{CRAN}.
 
 \end{frame}
@@ -526,7 +553,7 @@ A list of available packages can be found on \href{https://cran.r-project.org}{C
 
 \begin{frame}{Installing \& Loading Packages}
 
-Install a package (e.g., `mice`):
+Install a package (e.g., \pkg{mice}):
 <<eval = FALSE>>=
 install.packages("mice")
 @
@@ -534,6 +561,7 @@ install.packages("mice")
 There are two ways to load a package into R
 <<>>=
 library(stats)
+
 require(stats)
 @
 
@@ -545,42 +573,30 @@ require(stats)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Working Directory}
+\begin{frame}{Project Management}
 
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Directory Structure}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{RStudio Projects}
-
-RStudio projects provide a convenient way to organize all of the code and
-supporting resources for a given research project.
-
-\begin{itemize}
-\item Every project has its own history
-\item Every research project can have its own RStudio project
-\item Every project can have its own directory
-\item Every project can have its own version control system
-\item R-studio projects can relate to GitHub (or other online) repositories
-\end{itemize}
-
+  Getting a handle on three key concepts will dramatically improve your data 
+  analytic life.
+  \vc
+  \begin{enumerate}
+  \item Working directories
+    \vc
+  \item Directory structures and file paths
+    \vc
+  \item RStudio projects
+  \end{enumerate}
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \sectionslide{Data I/O}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile]{Built-In R Data \& Workspaces}
+\begin{frame}[fragile]{R Data \& Workspaces}
 
-We have many ways to read data into R
+R has two native data formats.
 
 <<>>=
 ## Load the built-in 'bfi' data from the 'psychTools' package
@@ -589,170 +605,174 @@ data(bfi, package = "psychTools")
 ## Access the documentation for the 'bfi' data
 ?psychTools::bfi
 
-################################################################################
-## PRACTICE PROBLEM 3.1
-##
-## (a) Use the data() function to load the 'Cars93' dataset from the 'MASS'
-##     package.
-## (b) Use the dim() function to check the dimensoins of the 'Cars93' data.
-##     - How many rows?
-##     - How many columns?
-##
-################################################################################
-
 ## Define the directory holding our data
 dataDir <- "../../../data/"
 
-## Load the 'boys' data stored in the R workspace '../data/boys.RData'
+## Load the 'boys' data from the R workspace 
+## '../../../data/boys.RData'
 load(paste0(dataDir, "boys.RData"))
+
+## Load the 'titanic' data stored in R data set 
+## '../../../data/titanic.rds'
+titanic <- readRDS(paste0(dataDir, "titanic.rds"))
 @
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Delimited Data Types}
 
 <<>>=
-## Load the 'diabetes' data stored in tab-delimited file '../data/diabetes.txt'
+## Load the 'diabetes' data from the tab-delimited file 
+## '../../../data/diabetes.txt'
 diabetes <- read.table(paste0(dataDir, "diabetes.txt"),
                        header = TRUE,
                        sep = "\t")
 
-## Load the 2017 UTMB data from the comma-seperated file '../data/utmb_2017.csv'
+## Load the 2017 UTMB data from the comma-separated file 
+## '../../../data/utmb_2017.csv'
 utmb1 <- read.csv(paste0(dataDir, "utmb_2017.csv"))
-
-### NOTE: For EU-formatted CSV files, use read.csv2()
-
-## Load the 'titanic' data stored in R data set '../data/titanic.rds'
-titanic <- readRDS(paste0(dataDir, "titanic.rds"))
-
-################################################################################
-## PRACTICE PROBLEM 3.2
-##
-## (a) Load the dataset saved as '../data/diabetes.rds'.
-## (b) Use the str() function to compare the structure of the data you loaded in
-##     (a) to the diabetes data loaded above using the read.table() function.
-##     - Are there any differences between these two objects? If so, what are
-##       the differences?
-##
-################################################################################
 @ 
+
+\rmsc{Notes:} 
+\begin{itemize}
+ \item The \src{read.csv()} function assumes the values are separated by 
+   commas.
+ \item For EU-formatted CSV files---with values delimited by semicolons---we 
+   can use the \src{read.csv2()} function.
+\end{itemize}
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile]{SPSS Data}
+\begin{frame}[fragile, allowframebreaks]{SPSS Data}
 
 Reading data in from other stats packages can be a bit tricky. If we want to
-read SAV files, the two most popular options are foreign::read.spss() and
-haven::read_spss().
+read SAV files, there are two popular options:
+\begin{itemize} 
+  \item \src{foreign::read.spss()}
+  \item \src{haven::read_spss()}
+\end{itemize}
 
 <<>>=
 ## Load the foreign package:
 library(foreign)
 
-## Use foreign::read.spss() to read '../data/mtcars.sav' into a list
-(mtcars1 <- read.spss(paste0(dataDir, "mtcars.sav")))
+## Use foreign::read.spss() to read '../../../data/mtcars.sav' into a list
+mtcars1 <- read.spss(paste0(dataDir, "mtcars.sav"))
 
-attributes(mtcars1)
+## Read '../../../data/mtcars.sav' as a data frame
+mtcars2 <- read.spss(paste0(dataDir, "mtcars.sav"), to.data.frame = TRUE)
 
-## Read '../data/mtcars.sav' as a data frame
-(mtcars2 <- read.spss(paste0(dataDir, "mtcars.sav"), to.data.frame = TRUE))
+## Read '../../../data/mtcars.sav' without value labels
+mtcars3 <- read.spss(paste0(dataDir, "mtcars.sav"),
+                     to.data.frame = TRUE,
+                     use.value.labels = FALSE)
+@ 
 
-attributes(mtcars2)
+\newpage
 
-## Read '../data/mtcars.sav' without value labels
-(mtcars3 <- read.spss(paste0(dataDir, "mtcars.sav"),
-                      to.data.frame = TRUE,
-                      use.value.labels = FALSE)
-)
+<<>>=
+## View the results:
+mtcars1[1:3]
+@ 
 
-attributes(mtcars3)
+\newpage
+
+<<>>=
+head(mtcars2)
+@ 
+
+\newpage
+
+<<>>=
+head(mtcars3)
 @
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{SPSS Data}
+\begin{frame}[fragile, allowframebreaks]{SPSS Data}
 
 <<>>=
 ## Load the packages:
 library(haven)
 library(labelled)
 
-## Use haven::read_spss() to read '../data/mtcars.sav' into a tibble
-(mtcars4 <- read_spss(paste0(dataDir, "mtcars.sav")))
+## Use haven::read_spss() to read '../../../data/mtcars.sav' into a tibble
+mtcars4 <- read_spss(paste0(dataDir, "mtcars.sav"))
 
-attributes(mtcars4)
+head(mtcars4)
+@ 
 
-## have::read_spss() converts any SPSS variables with labels to labelled vectors
-mtcars$am
-attributes(mtcars$am)
+\newpage
 
-## Use the labelled::unlabelled() functio to remove the value labels (but not
-## the variable labels)
-(mtcars5 <- unlabelled(mtcars4))
+\src{haven::read_spss()} converts any SPSS variables with labels into 
+labelled vectors.
+\begin{itemize}
+\item We can use the \src{labelled::unlabelled()} function to remove the value 
+labels.
+\end{itemize}
 
-val_labels(mtcars4)
-val_labels(mtcars5)
+<<>>=
+mtcars5 <- unlabelled(mtcars4)
 
-var_label(mtcars5)
+head(mtcars5)
+@ 
 
-### NOTE: The 'labelled' package provides a bunch of utilities to manipulate the
-###       variable and value labels for data coming from, or going to, SPSS.
+\newpage
 
-################################################################################
-## PRACTICE PROBLEM 3.3
-##
-## (a) Use the haven::read_spss() function to load the SPSS dataset saved at
-##     '../data/starwars.sav'
-## (b) Use the foreign::read.spss() function to load the same dataset as above
-##     into a list with variable labels preserved.
-## (c) Use the foreign::read.spss() function to load the same dataset as above
-##     into a data frame without variable labels.
-##
-################################################################################
-@
+<<>>=
+mtcars4$am[1:20]
+mtcars5$am[1:20]
+@ 
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Excel Data}
+\begin{frame}[fragile, allowframebreaks]{Excel Data}
 
+  We have two good options for loading data from Excel spreadsheets:
+  \begin{itemize}
+  \item \src{readxl::read_excel()}
+  \item \src{openxlsx::read.xlsx()}
+  \end{itemize}
+  
 <<>>=
 ## Load the packages:
 library(readxl)
 library(openxlsx)
 
 ## Use the readxl::read_excel() function to read the data from the 'titanic'
-## sheet of the Excel workbook stored at '../data/example_data.xlsx'
-titanic2 <- read_excel(paste0(dataDir, "example_data.xlsx"), sheet = "titanic")
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic2 <- read_excel(paste0(dataDir, "example_data.xlsx"), 
+                       sheet = "titanic")
 
 ## Use the openxlsx::read.xlsx() function to read the data from the 'titanic'
-## sheet of the Excel workbook stored at '../data/example_data.xlsx'
-titanic3 <- read.xlsx(paste0(dataDir, "example_data.xlsx"), sheet = "titanic")
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic3 <- read.xlsx(paste0(dataDir, "example_data.xlsx"), 
+                      sheet = "titanic")
+@ 
 
+\newpage
+
+<<>>=
+## Check the results from read_excel():
 str(titanic2)
+@ 
+
+\newpage
+
+<<>>=
+## Check the results from read.xlsx():
 str(titanic3)
 
+## Compare:
 all.equal(as.data.frame(titanic2), titanic3)
-
-################################################################################
-## PRACTICE PROBLEM 3.4
-##
-## (a) Use the openxlsx::read.xlsx() function to load the first 100 rows (not
-##     counting column names) of the first 4 columns from the 'diabetes' sheet
-##     in the Excel workbook stored at '../data/example_data.xlsx'
-## (b) Use the readxl::read_excel() function with an appropriate specification
-##     for the 'range' argument to load the chunk of data beginning on Row 3 and
-##     Column 2 and ending on Row 100 and Column 7 from the 'titanic' sheet in
-##     '../data/example_data.xlsx'
-##
-################################################################################
 @
 
 \end{frame}
@@ -779,44 +799,46 @@ write.table(boys,
             row.names = FALSE,
             sep = "\t",
             na = "-999")
+
 write.csv2(boys, paste0(dataDir, "boys.csv"), row.names = FALSE, na = "")
+
 saveRDS(boys, paste0(dataDir, "boys.rds"))
 @
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile]{SPSS Data}
 
-To write SPSS data, the best option is the haven::write_sav() function.
+To write SPSS data, the best option is the \src{haven::write_sav()} function.
 
 <<>>=
 write_sav(mtcars2, paste0(dataDir, "mctars2.sav"))
-
-## write_sav() will preserve label information provided by factor variables and
-## the 'haven_labelled' class, but not by attributes
-write_sav(mtcars4, paste0(dataDir, "mctars4.sav"))
-write_sav(mtcars5, paste0(dataDir, "mctars5.sav"))
 @
+
+\src{write_sav()} will preserve label information provided by factor variables 
+and the 'haven\_labelled' class.
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Excel Data}
 
-The 'openxlsx' package provides a powerful toolkit for programmatically
-building Excel workbooks in R and saving the results. Of course, it also
-works for simple data writing tasks.
+The \pkg{openxlsx} package provides a powerful toolkit for programmatically
+building Excel workbooks in R and saving the results. 
+\begin{itemize}
+  \item Of course, it also works for simple data writing tasks.
+\end{itemize}
 
 <<>>=
 ## Use the openxlsx::write.xlsx() function to write the 'diabetes' data to an
 ## XLSX workbook
 write.xlsx(diabetes, paste0(dataDir, "diabetes.xlsx"), overwrite = TRUE)
 
-## Use the openxlsx::write.xlsx() function to write each data frame in a list to
-## a seperate sheet of an XLSX workbook
+## Use the openxlsx::write.xlsx() function to write each data frame in a list 
+## to a separate sheet of an XLSX workbook
 write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
            paste0(dataDir, "example_data.xlsx"),
            overwrite = TRUE)
@@ -824,16 +846,22 @@ write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Some Programming Tips}
 
+  You can save yourself a great deal of heartache by following a few simple 
+  guidelines.
   \begin{itemize}
   \item Keep your code tidy.
+    \vc
   \item Use comments to clarify what you are doing.
+    \vc
   \item When working with functions in RStudio, use the TAB key to quickly
     access the documentation of the function's arguments.
+    \vc
   \item Give your R scripts and objects meaningful names.
+    \vc
   \item Use a consistent directory structure and RStudio projects.
   \end{itemize}
 
@@ -844,23 +872,26 @@ write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
 \begin{frame}{General Style Advice}
 
 Use common sense and BE CONSISTENT.
-
+\vc
 \begin{itemize}
-\item Browse through the \href{https://style.tidyverse.org}{tidyverse style guide}.
+\item Browse the \href{https://style.tidyverse.org}{tidyverse style guide}.
 \begin{itemize}
   \item The point of style guidelines is to enforce a common vocabulary.
   \item You want people to concentrate on \emph{what} you're saying, not
     \emph{how} you're saying it.
   \end{itemize}
+\vc
 \item If the code you add to a project/codebase looks drastically different from
   the extant code, the incongruity will confuse readers and collaborators.
 \end{itemize}
-
+\vb
 Spacing and whitespace are your friends.
-
+\vc
 \begin{itemize}
-\item `a<-c(1,2,3,4,5)`
-\item `a <- c(1, 2, 3, 4, 5)`
+\item \src{a<-c(1,2,3,4,5)}
+  \vc
+\item \src{a <- c(1, 2, 3, 4, 5)}
+  \vc
 \item At least put spaces around assignment operators and after every comma!
 \end{itemize}
 

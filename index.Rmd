@@ -451,9 +451,7 @@ This week, we'll cover the basics of `R`.
 - Interacting with `R` via `R` scripts, `R` markdown, and `R` projects
 - Importing external data into `R` 
 
-*When they are ready, the lecture slides will be linked here.*
-
-<!--You can find the lecture slides [here](wk1/lecture/lecture1.html).-->
+You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 
 ### Required Reading
 

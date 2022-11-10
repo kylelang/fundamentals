@@ -22,4 +22,4 @@ all: ${NAMES}
 
 clean:
 	mv *.pdf ../
-	rm -f *.tex *.aux *.log *.out *.nav *.snm *.toc *.vrb *.bbl *.blg *.fdb_latexmk *.fls
+	rm -f *.tex *.aux *.log *.out *.nav *.snm *.toc *.vrb *.bbl *.blg *.fdb_latexmk *.fls *.tcbtemp
