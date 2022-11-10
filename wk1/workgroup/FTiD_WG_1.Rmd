@@ -63,6 +63,7 @@ knitr::opts_chunk$set(warning = FALSE,
 <li> Course structure </li>
 <li> Work group structure </li>
 <li> Assignments of the course </li>
+<li> More explanation on individual assignment </li>
 
 <br>
 
@@ -70,7 +71,6 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <br>
 
-<li> More explanation on individual assignment </li>
 <li> Starting individual assignment </li>
 
 
@@ -88,11 +88,6 @@ knitr::opts_chunk$set(warning = FALSE,
 <p id = "nametext"> Kyle Lang </p>
 </center>
 </div>
-</div><div class="horizontal">
-<center>
-<img src = "rianne.jpg" width = 100% /img><br>
-<p id = "nametext"> Rianne Kraakman </p>
-</center>
 </div>
 </center>
 
@@ -121,9 +116,9 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h3>Introduce yourself briefly:</h3>
 
+<li> What is your background (what study)? </li>
 <li> Why chose this course/minor? </li>
 <li> Experiences with R? </li>
-<li> 1 random fact about you </li>
 
 
 ## Course Structure 
