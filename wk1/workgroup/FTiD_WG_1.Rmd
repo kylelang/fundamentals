@@ -118,7 +118,6 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <li> What is your background (what study)? </li>
 <li> Why chose this course/minor? </li>
-<li> Experiences with R? </li>
 
 
 ## Course Structure 
@@ -130,7 +129,8 @@ On location <br><br><br>
 
 
 <h3>Thursday morning:</h3>
-Work group meeting <br><br>
+Work group meeting <br>
+
 - Work on (group) assignments
 </div>
 
@@ -198,6 +198,22 @@ You make an R project and an R markdown file where you:
 
 <b><u><em>All assignment information can be found on the course website!</em></u></b>
 
+
+## Individual Assignment
+
+In this assignment, you individually search for a data set that could potentially be used for assignments 1 and 2. You describe the research questions you will try to answer using this data set for the two assignment, and you apply processing steps if required.
+
+You make an R project and an R markdown file where you:
+
+- Load the data set
+- Explore the variables in this data set
+- Describe the research questions
+- Identify processing steps
+- Summarize processed variables
+
+
+<b><span style="color: black"> Make sure that you do this assignment at your own skill level! </span> </b>
+
 ## Data set - Requirements
 
 The data set for the individual assignment (and subsequently for the group assignments) has a number of requirements. The data set should <b><u>at least</u></b> contain:
@@ -222,6 +238,18 @@ There are a lot of online places that offer good data sets for these assignments
 <br>
 <b><em><u>Datasets from lectures and practicals are not allowed for these assignments</u></em></b>
 
+## Example Research Questions:
+
+<h3> Linear Regression: </h3>
+
+- Can body weight predict the level of cholesterol in Dutch adults?
+- What variables are related to income in the Netherlands?
+
+<h3> Logistic Regression: </h3>
+
+- Do body weight, calorie intake, fat intake, and age have an influence on the occurrence of a heart attack?
+- What variables can be used to predict whether students pass a driving test?
+
 ## Remainder of the meeting
 
 <h4> 1\. Start looking for a data set:</h3>
@@ -239,7 +267,18 @@ There are a lot of online places that offer good data sets for these assignments
 - Describe your variables, present relations between variables (plots!!).
 
 
-## For the next meetings
+## For the next meeting
 
 <b><u><em> Keep working on your individual assignment (you can work together, the 'individual' part is on how it is handed in and graded).</em></u></b>
+
+<br>
+
+<h4> You are on track if: </h4>
+
+- You found a data set with the required variables
+- You loaded in the data in R
+- You started on identifying the first processing steps for the data (more on this in the next lecture)
+<br><br>
+
+If you have problems that other students can't help you with, discuss them in the next workgroup meeting with your instructors!
 
