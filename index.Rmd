@@ -540,8 +540,14 @@ This week, we start looking more closely at programmatic data manipulation in `R
 
 ### Useful Information and Links
 
-You can find more information about the very useful `magrittr` package 
+You can find some useful information via the following links:
+
+- More information about the very useful `magrittr` package 
 [here](https://magrittr.tidyverse.org).
+- More information about the `dplyr` package 
+[here](https://dplyr.tidyverse.org).
+- A cheatsheet for common `dplyr` operations
+[here](https://github.com/rstudio/cheatsheets/blob/main/data-transformation.pdf).
 
 ## Column 2
 
