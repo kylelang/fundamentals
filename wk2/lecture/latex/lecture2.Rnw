@@ -494,7 +494,31 @@ mean(f1)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Tidyverse Solutions}
+\begin{frame}[fragile]{Base R Subsetting}
+
+  In Base R, we typically use three operators to subset objects:
+  \vc
+  \begin{itemize}
+  \item \src{[]}
+  \item \src{[[]]}
+  \item \src{\$}
+  \end{itemize}
+
+  \va
+
+  Which of these operators we choose to use (and how we implement the chosen
+  operator) will depend on two criteria:
+  \vc
+  \begin{itemize}
+  \item What type of object are we trying to subset?
+  \item How much of the original typing do we want to keep in the subset?
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Subsetting}
 
   The \pkg{dplyr} package provides many ways to subset data, but two functions
   are most frequently useful.
