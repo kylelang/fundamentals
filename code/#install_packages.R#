@@ -26,3 +26,5 @@ install.packages(c("psychTools",
                  repos = "https://cloud.r-project.org")
 
 update.packages()
+
+x <- 7

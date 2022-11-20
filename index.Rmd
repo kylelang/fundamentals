@@ -86,6 +86,8 @@ To pass the course:
 We will use two open-source books in this course:
 
 1. [*R for Data Science*](https://r4ds.had.co.nz) (R4DS) 
+   - You can find solutions for the R4DS exercises
+   [here](https://jrnold.github.io/r4ds-exercise-solutions/).
 1. [*Applied Statistics with R*](https://book.stat420.org) (ASWR)
 
 There is no need to purchase these books. The freely available online versions 
@@ -457,11 +459,15 @@ You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 
 ***These readings are exam materials.***
 
-  * R4DS [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html)
-  * R4DS [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html)
-  * R4DS [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html)
-  * R4DS [Chapter 11](https://r4ds.had.co.nz/data-import.html) 
-  * R4DS [Chapter 27](https://r4ds.had.co.nz/r-markdown.html)
+- R4DS [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-basics.html))
+- R4DS [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-scripts.html))
+- R4DS [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html)
+- R4DS [Chapter 11](https://r4ds.had.co.nz/data-import.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-import.html))
+- R4DS [Chapter 27](https://r4ds.had.co.nz/r-markdown.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/r-markdown.html))
 
 ### Useful Information and Links
 
@@ -523,20 +529,23 @@ This week, we start looking more closely at programmatic data manipulation in `R
 - Manipulating and transforming data
 - Working with pipes
 
-*When they are ready, the lecture slides will be linked here.*
-
-<!--You can find the lecture slides [here](wk2/lecture/lecture2.html).-->
+You can find the lecture slides [here](wk2/lecture/lecture2.pdf).
 
 ### Required Reading
 
 ***These readings are exam materials.***
 
-  * R4DS [Chapter 5](https://r4ds.had.co.nz/transform.html)
-  * R4DS [Chapter 10](https://r4ds.had.co.nz/tibbles.html)
-  * R4DS [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html)
-  * R4DS [Chapter 15](https://r4ds.had.co.nz/factors.html)
-  * R4DS [Chapter 18](https://r4ds.had.co.nz/pipes.html)
-  * R4DS [Chapter 20](https://r4ds.had.co.nz/vectors.html)
+- R4DS [Chapter 5](https://r4ds.had.co.nz/transform.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/transform.html))
+- R4DS [Chapter 10](https://r4ds.had.co.nz/tibbles.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/tibbles.html))
+- R4DS [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/strings.html))
+- R4DS [Chapter 15](https://r4ds.had.co.nz/factors.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/factors.html))
+- R4DS [Chapter 18](https://r4ds.had.co.nz/pipes.html)
+- R4DS [Chapter 20](https://r4ds.had.co.nz/vectors.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/vectors.html))
 
 ### Useful Information and Links
 
@@ -607,10 +616,13 @@ This week, we continue with our discussion of programmatic data processing.
 
 ***These readings are exam materials.***
 
-* R4DS [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html)
-* R4DS [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html) 
-* R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
-* ASWR [Chapter 4](https://book.stat420.org/summarizing-data.html)
+- R4DS [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-visualisation.html))
+- R4DS [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html) 
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/exploratory-data-analysis.html))
+- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/functions.html))
+- ASWR [Chapter 4](https://book.stat420.org/summarizing-data.html)
 
 ### Useful information and links
 
