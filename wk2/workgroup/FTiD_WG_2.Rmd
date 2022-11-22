@@ -104,7 +104,7 @@ Some variables need to be computed into new variables, such as scale totals in t
 
 <h3> Linking data sets </h3>
 
-When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)` for new observations, or `cbind(df1, df2)` when the columns can be put together. 
+When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)` for new observations (rows), or `cbind(df1, df2)` when new variables can be added together (same observations). 
 
 <br> If, however, only some observations are the same, you can join the two data frames (`full_join(df1, df2, by = "identification_variable")`). This could be used for the 2 data frames shown below.
 
@@ -120,15 +120,15 @@ When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)`
 
 
 
-<h4>First 4 steps (previous slide) should ideally be finished at the end of this meeting (and a start should be made for summarize part).</h4>
+<h4>First 4 steps (slide 2) should ideally be finished at the end of this meeting (and a start should be made for summarize part).</h4>
 
 
 ## For the next meeting
 
 <b><u><i> Hand in your individual assignment before next Wednesday, November 30th 17:00!</i></u></b>
 
-- Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week.
-- Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting!
+<h3> - Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week. </h3>
+<h3> - Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting! (Or email us otherwise). </h3>
 
 
 
