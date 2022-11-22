@@ -127,8 +127,8 @@ When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)`
 
 <b><u><i> Hand in your individual assignment before next Wednesday, November 30th 17:00!</i></u></b>
 
-- Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week.
-- Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting!
+<h3> - Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week. </h3>
+<h3> - Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting! (Or email us otherwise). </h3>
 
 
 
