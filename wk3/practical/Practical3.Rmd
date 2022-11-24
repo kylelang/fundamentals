@@ -34,6 +34,7 @@ library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(kableExtra)
+library(weathermetrics)
 ```
 
 You will work with the `mpg` dataset from the `ggplot2` package. `mpg` contains a subset of the fuel economy data that EPA makes available [here](https://fueleconomy.gov/). The data frame has 234 rows and 11 variables:
@@ -545,36 +546,92 @@ ggarrange(p1, p2, p3,
 
 ## Writing functions
 
-When doing EDA, you might find that you repeat the same operations again and again on different variables. In some cases, writing your own function can reduce this repetition. For example, the function below checks the class of each variable in the dataframe and calculates the mean and standard deviation for numeric/integer and counts the levels for factors. 
+When doing EDA, you might find that you repeat the same operations again and again on different variables. In some cases, writing your own function can reduce this repetition. 
 
-```{r}
-stats <- function(df){
-  
-  # to store output
-  out_list <-  vector("list", ncol(df))
-  names(out_list) <- names(df)
-  
-  # loop over columns
-  for(i in 1:ncol(df)){
-    
-    var <- df %>% pull(names(df)[i])
-    
-    # make table if a factor
-    if(is.factor(var)){
-      out_list[[i]] <- table(var)
-    } else {
-      # get mean and sd if numeric or integer
-      if(is.numeric(var) | is.integer(var)){
-        out_list[[i]] <- data.frame(mean = mean(var), sd = sd(var))
-      }
-    }
-  }
-  # return output as a list
-  return(out_list)
+We now consider a situation where we are interested in weather conditions at various locations. However, for some areas temperature is registered in Celsius, while in other areas it is registered in Fahrenheit or Kelvin. We can create a function that easily allows you to apply these transformations where needed. 
+
+We start with loading datasets from a couple of different areas from the `R` package `weathermetrics`. Inspect the datasets `norfolk` and `lyon` from the `weathermetrics` package.
+
+
+__20. What differences do you see in how the temperature is registered for Norfolk and Lyon?__
+
+```{r, include= params$answers}
+summary(norfolk)
+summary(lyon)
+
+# For Norfolk, the temperature is registered in Fahrenheit, while for Lyon, the temperature is registered in Celsius.
+```
+
+We first work on a function that transforms Fahrenheit into Celsius. First, we need the equation to do this transformation, which is: 
+$$ Celsius = (Fahrenheit - 32) * \frac{5}{9} $$
+
+__21. Convert the Fahrenheit temperatures from Norfolk to Celsius using this equation. Round the output up to two decimals.__
+```{r, include=params$answers}
+round((norfolk$TemperatureF-32) * (5/9), 2)
+```
+
+Next, we turn this piece of code that applied the equation into a function that can be applied to multiple datasets. Therefore, we build a function that has the following structure: 
+```{r, eval=FALSE}
+function_name <- function(input){ # Here we specify a name for the function and specify what goes in
+  output <- what does the function do and to what? # what do we do with that what goes in, and under what name we store the output
+  return(output) # Here we specify what the function should present as output
+}
+```
+
+__22. Write your own conversion function that applies the Fahrenheit to Celsius equation. Name the function `temp_conversion`, the input `temp_variable` and store the output under the name `converted_temp`.__
+```{r, include=params$answers}
+temp_conversion <- function(temp_variable){
+  converted_temp <- round((temp_variable-32) * (5/9), 2)
+  return(converted_temp)
 }
 
-stats(mpg)
 ```
+
+
+__22. Apply your function to the Norfolk temperature variable in Fahrenheit, and store the output under the name `TemperatureC`. __ 
+```{r, include=params$answers}
+norfolk$TemperatureC <- temp_conversion(temp_variable = norfolk$TemperatureF)
+```
+
+__23. Confirm that your function works by comparing the output with that the function that exists in the package named `fahrenheit.to.celsius()`.__
+```{r, include=params$answers}
+norfolk$TemperatureC
+
+fahrenheit.to.celsius(norfolk$TemperatureF)
+# These two vectors should be exactly the same. 
+```
+
+--- 
+
+Next, we extend the function in such a way that we can also use it to convert the other way around, from Celsius to Fahrenheit. We need to include three additional elements in our function:
+
+1. An extra input parameter to allow users to indicate which conversion they want to apply.
+2. The conversion equation to go from Celsius to Fahrenheit: $$ \frac{9}{5} * Fahrenheit + 32 $$ 
+3. A conditional statement allowing for the right equation to be used based on the additional input parameter.
+
+__24. Extend your function as described above.__
+```{r, include=params$answers}
+temp_conversion <- function(temp_variable, conversion_type){
+  if(conversion_type == "fahrenheit_to_celsius"){
+    converted_temp <- round((temp_variable - 32) * (5/9), 2) # equation from fahrenheit to celsius
+    } else if(conversion_type == "celsius_to_fahrenheit"){
+      converted_temp <- round((9/5) * temp_variable + 32, 2) # equation from celsius to fahrenheit
+    }
+  return(converted_temp)
+}
+```
+
+__25. Confirm that your function works by applying your function again on the norfolk data.__ 
+```{r, include=params$answers}
+temp_conversion(temp_variable = norfolk$TemperatureF, 
+                conversion_type = "fahrenheit_to_celsius")
+
+temp_conversion(temp_variable = norfolk$TemperatureC, 
+                conversion_type = "celsius_to_fahrenheit")
+
+# By comparing the output of these two statements with the variables that  are already present in the norfolk data, we can confirm that our function works in both directions now.
+```
+
 
 ---
 
