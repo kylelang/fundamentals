@@ -121,7 +121,816 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\sectionslide{Data Analytic Lifecycle}
+\sectionslide{Functions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{R Functions}
+
+  Functions are the foundation of R programming.
+  \vc
+  \begin{itemize}
+  \item Other than data objects, almost everything else that you interact with
+    when using R is a function.
+    \vc
+  \item Any R command written as a word followed by parentheses \src{()} is a
+    function.
+    \vc
+    \begin{itemize}
+    \item \src{mean()}
+    \item \src{library()}
+    \item \src{mutate()}
+    \end{itemize}
+    \vc
+  \item Infix operators are aliased functions.
+    \vc
+    \begin{itemize}
+    \item \src{<-}
+    \item \src{+}, \src{-}, \src{*}
+    \item \pipe, \expipe, \apipe
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+  
+  We can define our own functions using the \src{function()} function.
+
+  <<>>=
+  square <- function(x) {
+      out <- x^2
+      out
+  }
+  @
+
+  After defining a function, we use it in the same way as any other R function.
+
+  <<>>=
+  square(5)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+
+  One-line functions don't need braces
+
+  <<>>=
+  square <- function(x) x^2
+  square(5)
+  @
+
+  Function arguments are not strictly typed. R will try to work with whatever
+  you provide as input.
+
+  <<>>=
+  square(1:5)
+  square(pi)
+  square(TRUE)
+  square("bob") # But one can only try so hard
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+ 
+  Functions can take multiple arguments.
+  
+  <<>>=
+  mod <- function(x, y) x %% y
+  mod(10, 3)
+  @
+  
+  Sometimes it's useful to specify a list of arguments that we unpack inside the
+  function.
+
+  <<>>=
+  getLsBeta <- function(datList) {
+      X <- datList$X
+      y <- datList$y
+      
+      solve(crossprod(X)) %*% t(X) %*% y
+  }
+  
+  X       <- matrix(runif(500), ncol = 5)
+  datList <- list(y = X %*% rep(0.5, 5), X = X)
+  
+  getLsBeta(datList = datList)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+
+  Functions are first-class objects in R.
+  \begin{itemize}
+  \item We can treat them like any other R object.
+  \end{itemize}
+
+  \vb
+  
+  R views an initialized, but unevaluated, function as a special object with
+  type "closure"
+
+  <<>>=
+  class(getLsBeta)
+  typeof(getLsBeta)
+  @
+
+  After evaluation, functions are simply equivelent to the objects they return.
+
+  <<>>=
+  class(getLsBeta(datList))
+  typeof(getLsBeta(datList))
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+
+We can use functions as arguments to other operations and functions.
+
+<<>>=
+fun1 <- function(x, y) x + y
+
+## What will this command return?
+fun1(1, fun1(1, 1))
+@
+
+Why would we care?
+
+<<>>=
+s2 <- var(runif(100))
+x  <- rnorm(100, 0, sqrt(s2))
+
+X[1:10, ]
+
+c(1, 3, 6:9, 12)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Data Visualization}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Setup}
+
+  <<>>=
+  dataDir  <- "../../../data/"
+  
+  diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
+  titanic  <- readRDS(paste0(dataDir, "titanic.rds"))
+  bfi      <- readRDS(paste0(dataDir, "bfi.rds"))
+  
+  ## Convert surival indicator to a numeric dummy code:
+  titanic <- titanic %>% mutate(survived = as.numeric(survived) - 1)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Base R Graphics}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Scatterplots}
+
+  We can create a basic scatterplot using the \src{plot()} function.
+  
+  <<out.width = "50%">>=
+  diabetes %$% plot(y = tc, x = bmi)
+  @
+
+  \pagebreak
+
+  <<eval = FALSE>>=
+  diabetes %$% plot(y = tc,
+                    x = bmi,
+                    ylab = "Total Cholesterol",
+                    xlab = "Body Mass Index",
+                    main = "Relation between BMI and Cholesterol",
+                    ylim = c(0, 350),
+                    xlim = c(0, 50)
+                    )
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  diabetes %$% plot(y = tc,
+                    x = bmi,
+                    ylab = "Total Cholesterol",
+                    xlab = "Body Mass Index",
+                    main = "Relation between BMI and Cholesterol",
+                    ylim = c(0, 350),
+                    xlim = c(0, 50)
+                    )
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Histograms}
+
+  We can create a simple histogram with the \src{hist()} function.
+
+  <<out.width = "50%">>=
+  hist(diabetes$glu)
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  hist(diabetes$glu, breaks = 5)
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  hist(diabetes$glu, breaks = 50)
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  hist(diabetes$glu, col = "pink", border = "blue", probability = TRUE)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Boxplots}
+
+  We can create simple boxplots via the \src{boxplot()} function.
+
+  <<out.width = "50%">>=
+  boxplot(diabetes$progress)
+  @
+
+  \pagebreak
+
+  <<eval = FALSE>>=
+  boxplot(diabetes$progress,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Disease Progression")
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  boxplot(diabetes$progress,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Disease Progression")
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  boxplot(progress ~ sex, data = diabetes, col = "violet")
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Fancy Things}
+
+  Plotting an entire data frame produces a scatterplot matrix.
+ 
+  <<out.width = "50%">>=
+  diabetes %>% select(age, bmi, tc, glu, progress) %>% plot()
+  @
+
+  \pagebreak
+
+  The \src{density()} function estimates the density of a variable.
+  \begin{itemize}
+  \item If we plot a density object, we get a kernel density plot.
+  \end{itemize}
+    
+  <<out.width = "40%">>=
+  density(diabetes$bmi) %>% plot()
+  @
+
+  \pagebreak
+
+  <<>>=
+  d <- density(diabetes$bmi)
+  ls(d)
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  d %$% plot(y = y, x = x, type = "l")
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Workflow}
+
+  Base R graphics work by building up graphics from layers.
+
+  <<eval = FALSE>>=
+  ## Start with a simple scatterplot:
+  diabetes %$% plot(y = tc, x = bmi, pch = 20, xlab = "", ylab = "")
+  
+  ## Use the abline() function to add lines representing the means of x and y:
+  abline(h = mean(diabetes$tc), v = mean(diabetes$bmi), lty = 2)
+
+  ## Add the best fit line from a linear regression of 'tc'  onto 'bmi':
+  diabetes %$%
+      lm(tc ~ bmi) %>%
+      coef() %>%
+      abline(coef = ., col = "blue", lwd = 2)
+  
+  ## Add titles:
+  title(main = "Total Cholesterol by Body Mass Index",
+        ylab = "Total Cholesterol",
+        xlab = "Body Mass Index")
+  @
+  
+  \pagebreak
+  
+  <<echo = FALSE, out.width = "65%">>=
+  diabetes %$% plot(y = tc, x = bmi, pch = 20, xlab = "", ylab = "")
+  
+  abline(h = mean(diabetes$tc), v = mean(diabetes$bmi), lty = 2)
+
+  diabetes %$%
+      lm(tc ~ bmi) %>%
+      coef() %>%
+      abline(coef = ., col = "blue", lwd = 2)
+  
+  title(main = "Total Cholesterol by Body Mass Index",
+        ylab = "Total Cholesterol",
+        xlab = "Body Mass Index")
+  @
+
+\end{frame}
+
+% ------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Workflow}
+  
+  Add a kernel density plot on top of a histogram.
+
+  <<eval = FALSE>>=
+  diabetes %$%
+      hist(age,
+           probability = TRUE,
+           xlab = "Age",
+           main = "Distribution of Age")
+
+  diabetes %$%
+      density(age) %>%
+      lines(col = "red", lwd = 2)
+  @
+
+  \pagebreak
+  
+  <<echo = FALSE, out.width = "65%">>=
+  diabetes %$%
+      hist(age,
+           probability = TRUE,
+           xlab = "Age",
+           main = "Distribution of Age")
+
+  diabetes %$%
+      density(age) %>%
+      lines(col = "red", lwd = 2)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{GGPlot}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{GGPlot}
+
+  Base R graphics are fine for quick-and-dirty visualizations (e.g., EDA,
+  checking assumptions), but for publication quality graphics, we probably want
+  to use GGPlot.
+
+  GGPlot uses the "grammar of graphics" and "tidy data" to build up a figure
+  from modular components
+
+  \includegraphics[width = 0.8\textwidth]{images/grammar.jpg}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Basic Setup}
+
+  We start by calling the \src{ggplot()} function.
+  \begin{itemize}
+  \item We must define a data source.
+  \item We must also give some aesthetic via the \src{aes()} function.
+  \end{itemize}
+  
+  <<>>=
+  library(ggplot2)
+  p1 <- ggplot(data = diabetes, mapping = aes(x = bmi, y = glu))
+  @
+
+  \pagebreak
+
+  At this point, our plot is pretty boring.
+
+  <<out.width = "50%">>=
+  p1
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Geometries}
+  
+  We need to define some geometry via an appropriate \src{geom_X()} function.
+
+  <<out.width = "50%">>=
+  p1 + geom_point()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1 + geom_line()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1 + geom_rug()
+  @
+
+  \pagebreak
+  
+  We can also combine different geoms into a single figure
+
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_line() + geom_rug()
+  @
+
+  \pagebreak
+  
+  We can use different flavors of geom for different types of data
+
+  <<out.width = "50%">>=
+  p2 <- ggplot(diabetes, aes(tc))
+  p2 + geom_histogram()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p2 + geom_density()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p2 + geom_boxplot()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p3 <- ggplot(diabetes, aes(sex, bmi))
+  p3 + geom_boxplot()
+  @
+  
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p3 + geom_violin()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p4 <- ggplot(bfi, aes(education, age))
+  p4 + geom_point()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p4 + geom_jitter()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Statistics}
+    
+  We can also add statistical summaries of the data
+  
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_smooth(method = "lm")
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Styling}
+
+  Changing style options outside of the \src{aes()} function applies the styling
+  to the entire plot.
+
+  <<out.width = "50%">>=
+  p5 <- ggplot(titanic, aes(age, survived))
+  p5 + geom_jitter(color = "blue", size = 3, height = 0.1)
+  @
+  
+  \pagebreak
+  
+  We can also apply styles as a function of variables by defining the style
+  within the \src{aes()} function.
+
+  <<out.width = "50%">>=
+  p6.1 <- ggplot(titanic, aes(age, survived, color = sex))
+  p6.1 + geom_jitter(size = 3, height = 0.1) + geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p6.2 <- ggplot(titanic, aes(age, survived))
+  p6.2 + geom_jitter(aes(color = sex), size = 3, height = 0.1) +
+      geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p6.2 + geom_jitter(size = 3, height = 0.1) +
+      geom_smooth(aes(color = sex))
+  p6.2 + geom_jitter(aes(color = class), size = 3, height = 0.1) +
+      geom_smooth(aes(color = sex))
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p6.2 + geom_jitter(aes(shape = class), size = 3, height = 0.1) +
+    geom_smooth(aes(color = sex))
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p6.1 + geom_jitter(aes(shape = class), size = 3, height = 0.1) +
+    geom_smooth()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Themes}
+
+  We can apply several pre-baked themes to adjust a plot's overall appearance
+
+  <<out.width = "50%">>=
+  (p1.1 <- p1 + geom_point())
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_classic()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_minimal()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_bw()
+  @
+
+  \pagebreak
+
+  We can also moodifying individual theme elements.
+
+  <<eval = FALSE>>=
+  p1.1 + theme_classic() +
+      theme(axis.title = element_text(size = 16,
+                                      family = "serif",
+                                      face = "bold",
+                                      color = "blue"),
+            aspect.ratio = 1)
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  p1.1 + theme_classic() +
+      theme(axis.title = element_text(size = 16,
+                                      family = "serif",
+                                      face = "bold",
+                                      color = "blue"),
+            aspect.ratio = 1)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Facets}
+  
+  Facetting allow us to make arrays of conditional plots.
+
+  <<eval = FALSE>>=
+  (p7 <- ggplot(titanic, aes(age, survived, color = class)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  (p7 <- ggplot(titanic, aes(age, survived, color = class)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p7 + facet_wrap(vars(sex))
+  @
+
+  \pagebreak
+
+  <<eval = FALSE>>=
+  ## Use facet_grid() to condition plots on both 'sex' and 'class'
+  (p8 <- ggplot(titanic, aes(age, survived)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  (p8 <- ggplot(titanic, aes(age, survived)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+  
+  <<echo = FALSE, out.width = "65%">>=
+  p8 + facet_grid(vars(sex), vars(class))
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Joining Multiple Figures}
+
+  If we want to paste several different plots into a single figure (without
+  facetting), we can use the utilities in the \pkg{gridExtra} package.
+  
+  <<eval = FALSE>>=
+  library(gridExtra)
+  
+  grid.arrange(p1 + geom_point(),
+               p3 + geom_boxplot(),
+               p4 + geom_jitter(),
+               p8 + facet_grid(vars(sex), vars(class)),
+               ncol = 2)
+  @
+  
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  library(gridExtra)
+  
+  grid.arrange(p1 + geom_point(),
+               p3 + geom_boxplot(),
+               p4 + geom_jitter(),
+               p8 + facet_grid(vars(sex), vars(class)),
+               ncol = 2)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Saving Graphics}
+
+  To save a graphic that we've created in R, we simply redirect the graphical
+  output to a file using an appropriate function.
+
+  <<>>=
+  figDir <- "../figures/"
+  
+  ## Save as PDF
+  pdf(paste0(figDir, "example_plot.pdf"))
+
+  p7 + facet_wrap(vars(sex))
+  
+  dev.off()
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## Save as JPEG
+  jpeg(paste0(figDir, "example_plot.jpg"))
+  
+  p7 + facet_wrap(vars(sex))
+  
+  dev.off()
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## Save as PNG
+  png(paste0(figDir, "example_plot.png"))
+  
+  p7 + facet_wrap(vars(sex))
+  
+  dev.off()
+  @
+
+  \pagebreak
+  
+  With PDF documents, we can save multiple figures to a single file.
+
+  <<>>=
+  pdf(paste0(figDir, "example_plot2.pdf"))
+  
+  p6.1 + geom_jitter(size = 3, height = 0.1) + geom_smooth()
+  p7 + facet_wrap(vars(sex))
+  p8 + facet_grid(vars(sex), vars(class))
+  
+  dev.off()
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Data Cleaning}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Data Analytic Lifecycle}
 
 %------------------------------------------------------------------------------%
 
@@ -161,10 +970,6 @@ knit_theme$set('edit-kwrite')
   \end{figure}
   
 \end{frame}
-
-%------------------------------------------------------------------------------%
-
-\sectionslide{Data Cleaning}
 
 %------------------------------------------------------------------------------%
 
@@ -435,7 +1240,7 @@ print(patTab5, booktabs = TRUE)
     \begin{itemize}
     \item A human height measurement of 3 meters
       \vc
-    \item A high temperature in Tilburg of $50^\circ$
+    \item A high temperature in Utrecht of $50^\circ$
       \vc
     \item Annual income of \euro250,000 for a student
     \end{itemize}
