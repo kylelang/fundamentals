@@ -876,7 +876,7 @@ c(1, 3, 6:9, 12)
   output to a file using an appropriate function.
 
   <<>>=
-  figDir <- "../figures/"
+  figDir <- "figures/"
   
   ## Save as PDF
   pdf(paste0(figDir, "example_plot.pdf"))
@@ -1003,22 +1003,6 @@ c(1, 3, 6:9, 12)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{A Little Notation}
-  
-  \begin{align*}
-    Y &\coloneqq \text{An $N \times P$ data matrix}\\
-    \\
-    Y_{mis} &\coloneqq \text{The \emph{missing} part of $Y$}\\
-    \\
-    Y_{obs} &\coloneqq \text{The \emph{observed} part of $Y$}\\
-    \\
-    R &\coloneqq \text{An $N \times P$ pattern matrix encoding nonresponse}
-  \end{align*}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
 \begin{frame}{What are Missing Data?}
   
   Missing data are empty cells in a dataset where there should be observed 
@@ -1113,11 +1097,10 @@ print(patTab2, booktabs = TRUE)
   \textsc{Percent/Proportion Missing}
   \begin{itemize}
   \item The proportion of cells containing missing data
-  \item Good early screening measure
   \item Should be computed for each variable, not for the entire dataset
   \end{itemize}
   
-  \va
+  \vb
   
   \textsc{Attrition Rate}
   \begin{itemize}
@@ -1125,7 +1108,7 @@ print(patTab2, booktabs = TRUE)
     measurement occasion
   \end{itemize}
   
-  \va
+  \vb
   
   \textsc{Percent/Proportion of Complete Cases}
   \begin{itemize}
@@ -1133,7 +1116,7 @@ print(patTab2, booktabs = TRUE)
   \item Often reported but nearly useless quantity
   \end{itemize}
   
-  \pagebreak
+  \vb
   
   \textsc{Covariance Coverage}
   \begin{itemize}
@@ -1142,85 +1125,127 @@ print(patTab2, booktabs = TRUE)
   \item Very important to have adequate coverage for the parameters you want to 
     estimate
   \end{itemize}
-  
-  \va
-  
-  \textsc{Fraction of Missing Information}
-  \begin{itemize}
-  \item Associated with an estimated parameter, not with an incomplete variable
-  \item Like an $R^2$ for the missing data
-  \item Most important diagnostic value for missing data problems
-  \item Can only be computed after treating the missing data
-  \end{itemize}
-  
+    
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Covariance Coverage Examples}
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can calculate basic response rates with simple base R commands.
+
+  <<>>=
+  ## Load some example data:
+  data(boys, package = "mice")
+
+  ## Compute variable-wise proportions missing:
+  mMat  <- is.na(boys)
+  mMat %>% colMeans() %>% round(3)
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## Compute observation-wise proportions missing:
+  pmRow <- rowMeans(mMat)
+
+  ## Summarize the above:
+  range(pmRow)
+  range(pmRow[pmRow > 0])
+  median(pmRow)
+
+  ## Compute the proportion of complete cases:
+  mean(pmRow == 0)
+  @
   
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      
-      \begin{itemize}
-      \item What is the coverage for $cov(X, Y)$?
-        \vc
-      \item What is the coverage for $cov(W, Y)$?
-        \vc
-      \item What about $cov(X, Z)$?
-      \end{itemize}
-      
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      
-<<echo = FALSE, results = 'asis'>>=
-tmpTab4 <- matrix(c(rep("w", 10), 
-                    rep("x", 5), rep(".", 5),
-                    rep("y", 10),
-                    rep(".", 5), rep("z", 5)), 
-                 ncol = 4)
-colnames(tmpTab4) <- c("W", "X", "Y", "Z")
-
-patTab4 <- xtable(tmpTab4, align = rep("c", 5))
-print(patTab4, booktabs = TRUE)
-@
-
-\end{column}
-\end{columns}
- 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Nonresponse Rate Examples}
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can use routines from the \pkg{mice} package to calculate covariance
+  coverage and response patterns.
+
+  <<>>=
+  ## Compute the covariance coverage:
+  cc <- mice::md.pairs(boys)$rr / nrow(boys)
+
+  ## Check the result:
+  round(cc, 2)
+  @
+
+  \pagebreak
   
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      
-      \begin{itemize}
-        \item What is the percent missing at Time 2?
-          \vc
-        \item What is the attrition rate at Time 3?
-      \end{itemize}
-      
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      
-<<echo = FALSE, results = 'asis'>>=
-tmpTab5 <- matrix(c(rep("x1", 10), 
-                    rep("x2", 7), rep(".", 3),
-                    rep("x3", 5), rep(".", 5),
-                    rep("x4", 3), rep(".", 7)), 
-                 ncol = 4)
-colnames(tmpTab5) <- c("T1", "T2", "T3", "T4")
+  <<>>=
+  ## Range of coverages:
+  range(cc)
+  range(cc[cc < 1])
 
-patTab5 <- xtable(tmpTab5, align = rep("c", 5))
-print(patTab5, booktabs = TRUE)
-@
+  ## How many coverages fall below some threshold?
+  (cc[lower.tri(cc)] < 0.7) %>% sum()
+  @
 
-\end{column}
-\end{columns}
+  \pagebreak
 
+  <<out.width = "50%">>=
+  ## Compute missing data patterns:
+  pats <- mice::md.pattern(boys)
+  @
+
+  \pagebreak
+
+  <<>>=
+  pats
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## How many unique response patterns?
+  nrow(pats) - 1
+
+  ## What is the most commond response patterns?
+  maxPat <- rownames(pats) %>% as.numeric() %>% which.max()
+  pats[maxPat, ]
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{ggmice} package provides some nice ways to visualize incomplete data
+  and objects created during missing data treatment.
+
+  <<out.width = "40%">>=
+  library(ggmice); library(ggplot2)
+  
+  ggmice(boys, aes(wgt, hgt)) + geom_point()
+  @
+
+  \pagebreak
+
+  We can also create a nicer version of the response pattern plot.
+
+  <<out.width = "50%">>=
+  plot_pattern(boys, rotate = TRUE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{naniar} package also provides some nice visualization and numerical
+  summary routines for incomplete data.
+
+  <<out.width = "40%">>=
+  naniar::gg_miss_upset(boys)
+  @
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
