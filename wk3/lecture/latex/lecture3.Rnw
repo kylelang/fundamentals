@@ -1297,14 +1297,12 @@ print(patTab2, booktabs = TRUE)
   We have many methods available to diagnose potential outliers.
   \vb
   \begin{itemize}
-  \item Four of the simplest and most popular are:
+  \item Today, we'll only discuss three of the simplest:
     \vc
     \begin{enumerate}
     \item Internally studentized residuals (AKA Z-score method)
       \vc
     \item Externally studentized residuals
-      \vc
-    \item Median absolute deviation method
       \vc
     \item Tukey's boxplot method
     \end{enumerate}
@@ -1389,72 +1387,6 @@ print(patTab2, booktabs = TRUE)
   \begin{itemize}
   \item Still requires $X$ to be normally distributed
   \item Still sensitive to outliers other than the $n$th observation
-  \end{itemize}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Median Absolute Deviation Method}
-  
-<<echo = FALSE>>=
-q <- qnorm(0.75)
-b <- 1 / q
-@ 
-
-The biggest limitation of studentized residuals is that their measures of 
-central tendency and dispersion are sensitive to outliers.
-\vb
-\begin{itemize}
-\item If we can replace the (deletion) mean and the (deletion) SD with more 
-  robust statistics, we can avoid this issue.
-  \vb
-  \begin{itemize}
-  \item Replace the mean, $\bar{X}$, with the \emph{median}, $\text{Med}(X)$
-    \vb
-  \item Replace the SD with the \emph{median absolute deviation}:
-    \begin{align*}
-      MAD_X = b \times \text{Med} \left( \big| X_n - \text{Med} (X) \big| 
-      \right)
-    \end{align*}
-  \item We choose the coefficient as $b = 1/Q_{0.75}$
-    \vb
-  \item For the normal distribution, $b \approx 1/\Sexpr{round(q, 4)} \approx 
-    \Sexpr{round(b, 4)}$
-  \end{itemize}
-\end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Median Absolute Deviation Method}
-  
-  We compute our test statistic by replacing the mean with the median and the SD 
-  with the MAD in the standard Wald test formula:
-  \begin{align*}
-    T_{MAD} = \frac{X_n - \text{Med}(X)}{MAD_X}
-  \end{align*}
-  \vx{-12}
-  \begin{itemize}
-  \item $T_{MAD}$ doesn't allow for formal statistical tests.
-  \item We can use the same general cutoffs we would use for the studentized 
-    residual methods.
-    \begin{itemize}
-    \item Assuming a large sample, if $T_{(n)} > C$ (where $C$ is usually 2 or 
-      3), we label $X_n$ as an outlier.
-    \end{itemize}
-  \end{itemize}
-  
-  \vb
-  \pause
-  
-  $T_{MAD}$ is immune to the influence of, up to, 50\% outlying observations.
-  \begin{itemize}
-  \item Requires us to assume a parametric distribution for $X$
-    \begin{itemize}
-    \item This assumption is necessary to compute $b$.
-    \end{itemize}
   \end{itemize}
   
 \end{frame}
@@ -1547,6 +1479,59 @@ boxplot(salary ~ sex,
   \item Any value that falls outside of the outer fence is a \emph{probable 
     outlier}.
   \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can implement the internally studentized residual method via the
+  \src{scale()} function.
+  
+  <<>>=
+  ## Compute the absolute standardized residuals:
+  z <- boys %$% scale(bmi) %>% abs()
+
+  ## Which observations are potential outliers?
+  which(z > 3)
+
+  ## View the potentially outlying cases:
+  boys %>% filter(z > 3)
+  @
+
+  \pagebreak
+  
+  We can implement the externally studentized residual method by applying the
+  \src{rstudent()} function to a fitted intercept-only model.
+  
+  <<>>=
+  ## Compute the absolute studentized residuals:
+  z <- lm(bmi ~ 1, data = boys, na.action =  "na.exclude") %>%
+      rstudent() %>%
+      abs()
+  
+  ## Which observations are potential outliers?
+  which(z > 3)
+  
+  ## View the potentially outlying cases:
+  boys %>% filter(z > 3)
+  @
+
+  \pagebreak
+  
+  We can implement the boxplot method via the \src{boxplot.stats()} function.
+  
+  <<>>=
+  ## Find potentially outlying cases: 
+  (out <- boys %$% boxplot.stats(bmi, coef = 3)$out)
+
+  ## Which observations are potential outliers?
+  boys %$% which(bmi %in% out)
+  
+  ## View the potentially outlying cases:
+  boys %>% filter(bmi %in% out)
+  @
   
 \end{frame}
 
