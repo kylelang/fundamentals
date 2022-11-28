@@ -88,19 +88,19 @@ knitr::opts_chunk$set(warning = FALSE,
 <h4>You perform a multiple linear regression analysis in R and report this using R markdown. The assignment will be graded on the following four elements:</h4><br>
 
 -	<b>Exploratory data analysis:</b> Introduction of your research questions, description and potential processing of your data. 
--	<b>Linear regression:</b> Description of the model fit and model comparison procedure
--	<b>Assumptions:</b> Testing of model assumptions, checking for outliers and influential cases. Act upon and/or reflect on violations when needed.
--	<b>Interpretation:</b> Substantive interpretation of the final model. Answer to your research question.
--	<b>Layout:</b> Structure of the document, output if efficiently presented, custom functions are developed when needed. Graphs are presented where suitable. 
+-	<b>Linear regression:</b> Description of the building process, the model fit, and the model comparison procedure.
+-	<b>Assumptions:</b> Testing of model assumptions, checking for outliers and influential cases. Act upon and reflect on violations when needed.
+-	<b>Interpretation:</b> Substantive interpretation of the final model. Answers to your research questions.
+-	<b>Layout:</b> Structure of the document, output is efficiently presented, custom functions are developed when needed. Graphs are used where fitting. 
 
-<b><u><em> Find the complete assignment discription on the course web site.</em></u></b>
+<b><u><em> Find the complete assignment description on the course web site.</em></u></b>
 
 ## Remainder of Meeting
 
 <br><br>
 <h4> - Start on group assignment. </h4>
 <h4> - Make agreements on how to work together. </h4>
-<h4> - Improve the processing and visualisation steps you did so far.</h4>
+<h4> - Improve the processing and visualization steps you did so far.</h4>
 <h4> - The work so far can function as first sections.</h4>
 
 <br><br>
