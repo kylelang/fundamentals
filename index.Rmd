@@ -607,11 +607,12 @@ This week, we continue with our discussion of programmatic data processing.
 - Data visualization using `ggplot2`
 - Data inspection and cleaning
 - Writing functions in `R`
-  
-*When they are ready, the lecture slides will be linked here.*
 
-<!--You can find the lecture slides [here](wk3/lecture/lecture3.html)-->
-  
+You can find the lecture slides below.
+
+- [Functions and Data visualization](wk3/lecture/functions_visualization.pdf)
+- [Data cleaning](wk3/lecture/cleaning.pdf)
+
 ### Required Reading
 
 ***These readings are exam materials.***

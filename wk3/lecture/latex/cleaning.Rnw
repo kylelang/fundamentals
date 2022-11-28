@@ -1,0 +1,1113 @@
+%%% Title:    FTDS Lecture 3b: Data Cleaning
+%%% Author:   Kyle M. Lang
+%%% Created:  2015-11-06
+%%% Modified: 2022-11-28
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{eurosym}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = false,
+  linkcolor = blue,
+  filecolor = blue,
+  citecolor = black,
+  urlcolor = blue
+}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+%% The following command was adapted from LaTeX Community user 'localghost':
+\newcommand*\bigbar[1]{%
+  \hbox{%
+    \vbox{%
+      \hrule height 0.65pt % The actual bar
+      \kern0.35ex%         % Distance between bar and symbol
+      \hbox{%
+        \kern-0.1em%      % Shortening on the left side
+        \ensuremath{#1}%
+        %\kern-0.1em%      % Shortening on the right side
+      }%
+    }%
+  }%
+} 
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+% \newcommand{\src}[1]{\texttt{#1}}
+
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
+
+\title{Data Cleaning}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(dplyr)
+library(magrittr)
+library(xtable)
+
+                                        #source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/cleaning-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+\begin{document}
+  
+%------------------------------------------------------------------------------%
+
+\begin{frame}[t,plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Data Analytic Lifecycle}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Research Cycle}
+
+  The following is a representation of the \emph{Research Cycle} used for 
+  empirical research in most of the sciences.
+  
+  \begin{figure}
+    \includegraphics[width = 0.7\textwidth]{figures/research_cycle.pdf}
+  \end{figure}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{CRISP-DM}
+
+  The \emph{Cross-industry Standard Process for Data Mining} was developed to 
+  standardized the process of data mining in industry applications.
+  
+  \begin{figure}
+    \includegraphics[width = 0.7\textwidth]{figures/crisp-dm.pdf}
+  \end{figure}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Data Science Cycle}
+  
+  The \emph{Data Science Cycle} represented here was adapted from 
+  \citet{o'neilSchutt:2014}.
+  
+  \begin{figure}
+    \includegraphics[width = 0.7\textwidth]{figures/data_science_cycle.pdf}
+  \end{figure}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Data Cleaning}
+  
+  When we receive new data, they are generally messy and contaminated by various 
+  anomalies and errors.
+  \vb
+  \begin{itemize}
+  \item One of the first steps in processing a new set of data is 
+    \emph{cleaning}.
+    \vc
+  \item By cleaning the data, we ensure a few properties:
+    \vc
+    \begin{itemize}
+    \item The data are in an analyzable format.
+      \vc
+    \item All data take legal values.
+      \vc
+    \item Any outliers are located and treated.
+      \vc
+    \item Any missing data are located and treated.
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Missing Data}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What are Missing Data?}
+  
+  Missing data are empty cells in a dataset where there should be observed 
+  values.
+  \vc
+  \begin{itemize}
+  \item The missing cells correspond to true population values, but we haven't 
+    observed those values.
+  \end{itemize}
+  \vb 
+  \pause
+  Not every empty cell is a missing datum.
+  \vc
+  \begin{itemize}
+  \item Quality-of-life ratings for dead patients in a mortality study
+    \vc
+  \item Firm profitability after the company goes out of business
+    \vc
+  \item Self-reported severity of menstrual cramping for men
+    \vc
+  \item Empty blocks of data following ``gateway'' items
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\captionsetup{labelformat = empty}
+
+\begin{frame}{Missing Data Pattern}
+  
+<<echo = FALSE>>=
+tmpTab <- matrix(c("x", "x", ".", ".",
+                   "y", ".", "y", "."),
+                 ncol = 2,
+                 dimnames = list(NULL, c("X", "Y"))
+                 )
+
+patTab1 <- xtable(tmpTab, align = rep("c", 3), caption = "Patterns for $P = 2$")
+
+tmpTab <- matrix(c(rep("x", 3), ".", "x", rep(".", 3),
+                   "y", "y", ".", "y", ".", ".", "y", ".",
+                   "z", ".", "z", "z", ".", "z", ".", "."),
+                 ncol = 3,
+                 dimnames = list(NULL, c("X", "Y", "Z"))
+                 )
+
+patTab2 <- xtable(tmpTab, align = rep("c", 4), caption = "Patterns for $P = 3$")
+@ 
+
+Missing data (or response) patterns represent unique combinations of observed
+and missing items.
+\begin{itemize}
+  \item $P$ items $\Rightarrow$ $2^P$ possible patterns.
+\end{itemize}
+
+\begin{columns}
+  \begin{column}{0.45\textwidth}
+    
+<<echo = FALSE, results = 'asis'>>=
+print(patTab1, booktabs = TRUE)
+@ 
+    
+  \end{column}
+  \begin{column}{0.45\textwidth}
+\vx{-12}    
+<<echo = FALSE, results = 'asis'>>=
+print(patTab2, booktabs = TRUE)
+@ 
+     
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\captionsetup{labelformat = default}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{Nonresponse Rates}
+  
+  \textsc{Percent/Proportion Missing}
+  \begin{itemize}
+  \item The proportion of cells containing missing data
+  \item Should be computed for each variable, not for the entire dataset
+  \end{itemize}
+  
+  \vb
+  
+  \textsc{Attrition Rate}
+  \begin{itemize}
+  \item The proportion of participants that drop-out of a study at each 
+    measurement occasion
+  \end{itemize}
+  
+  \vb
+  
+  \textsc{Percent/Proportion of Complete Cases}
+  \begin{itemize}
+  \item The proportion of observations with no missing data
+  \item Often reported but nearly useless quantity
+  \end{itemize}
+  
+  \vb
+  
+  \textsc{Covariance Coverage}
+  \begin{itemize}
+  \item The proportion of cases available to estimate a given pairwise
+    relationship (e.g., a covariance between two variables)
+  \item Very important to have adequate coverage for the parameters you want to 
+    estimate
+  \end{itemize}
+    
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can calculate basic response rates with simple base R commands.
+
+  <<>>=
+  ## Load some example data:
+  data(boys, package = "mice")
+
+  ## Compute variable-wise proportions missing:
+  mMat  <- is.na(boys)
+  mMat %>% colMeans() %>% round(3)
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## Compute observation-wise proportions missing:
+  pmRow <- rowMeans(mMat)
+
+  ## Summarize the above:
+  range(pmRow)
+  range(pmRow[pmRow > 0])
+  median(pmRow)
+
+  ## Compute the proportion of complete cases:
+  mean(pmRow == 0)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can use routines from the \pkg{mice} package to calculate covariance
+  coverage and response patterns.
+
+  <<>>=
+  ## Compute the covariance coverage:
+  cc <- mice::md.pairs(boys)$rr / nrow(boys)
+
+  ## Check the result:
+  round(cc, 2)
+  @
+
+  \pagebreak
+  
+  <<>>=
+  ## Range of coverages:
+  range(cc)
+  range(cc[cc < 1])
+
+  ## How many coverages fall below some threshold?
+  (cc[lower.tri(cc)] < 0.7) %>% sum()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  ## Compute missing data patterns:
+  pats <- mice::md.pattern(boys)
+  @
+
+  \pagebreak
+
+  <<>>=
+  pats
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## How many unique response patterns?
+  nrow(pats) - 1
+
+  ## What is the most commond response patterns?
+  maxPat <- rownames(pats) %>% as.numeric() %>% which.max()
+  pats[maxPat, ]
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{ggmice} package provides some nice ways to visualize incomplete data
+  and objects created during missing data treatment.
+
+  <<out.width = "40%">>=
+  library(ggmice); library(ggplot2)
+  
+  ggmice(boys, aes(wgt, hgt)) + geom_point()
+  @
+
+  \pagebreak
+
+  We can also create a nicer version of the response pattern plot.
+
+  <<out.width = "50%">>=
+  plot_pattern(boys, rotate = TRUE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{naniar} package also provides some nice visualization and numerical
+  summary routines for incomplete data.
+
+  <<out.width = "40%">>=
+  naniar::gg_miss_upset(boys)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Outliers}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Univariate Outliers}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{What is an outlier?}
+  
+  For the time being, we're considering \emph{univariate outliers}.
+  \vb
+  \begin{itemize}
+  \item Extreme values with respect to the distribution of a variable's other 
+    observations
+    \vc
+    \begin{itemize}
+    \item A human height measurement of 3 meters
+      \vc
+    \item A high temperature in Utrecht of $50^\circ$
+      \vc
+    \item Annual income of \euro250,000 for a student
+    \end{itemize}
+    \vb
+  \item Not accounting for any particular model (we'll get to that later)
+  \end{itemize}
+  
+  \pagebreak
+  
+  A univariate outlier may, or may not, be an illegal value.
+  \vb
+  \begin{itemize}
+  \item Data entry errors are probably the most common cause.
+    \vc
+  \item Outliers can also be legal, but extreme, values.
+  \end{itemize}
+  
+  \va
+  
+  \textsc{Key Point:} We choose to view an outlier as arising from a different 
+  population than the one to which we want to generalize our findings.
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Finding Univariate Outliers}
+
+  We have many methods available to diagnose potential outliers.
+  \vb
+  \begin{itemize}
+  \item Today, we'll only discuss three of the simplest:
+    \vc
+    \begin{enumerate}
+    \item Z-score method
+      \vc
+    \item Tukey's boxplot method
+      \vc
+    \item Adjusted boxplot method
+    \end{enumerate}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Z-Score Method}
+
+  For each observation, $X_n$, we compute the following quantity:
+  \begin{align*}
+    Z_n = \frac{X_n - \bigbar{X}}{SD_X}
+  \end{align*}
+  \vx{-12}
+  \begin{itemize}
+  \item $Z_n$ represents the distance between $X_n$ and the sample mean in
+    standard deviation units.
+  \item Assuming a large sample, if $T_n > C$ (where $C$ is usually 3), we label
+    $X_n$ as an outlier.
+  \end{itemize}
+  
+  \vb
+  \pause
+  
+  Although simple (and popular), this method has some substantial limitations.
+  \begin{itemize}
+  \item The logic of the filtering rule assumes a normally distributed
+    variable.
+  \item Both $\bigbar{X}$ and $SD_X$ are highly sensitive to outliers.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+  We can implement the z-score method via the \src{scale()} function.
+  
+  <<>>=
+  ## Compute the absolute standardized residuals:
+  z <- boys %$% scale(bmi) %>% abs()
+
+  ## Which observations are potential outliers?
+  which(z > 3)
+
+  ## View the potentially outlying cases:
+  boys %>% filter(z > 3)
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Breakdown Point}
+  
+  To compare robust statistics, we consider their \emph{breakdown points}.
+  \begin{itemize}
+  \item The breakdown point is the minimum proportion of cases that must be 
+    replaced by $\infty$ to cause the value of the statistic to go to $\infty$.
+  \end{itemize}
+  \vc
+  The mean has a breakdown point of $1 / N$.
+  \begin{itemize}
+  \item Replacing a single value with $\infty$ will produce an infinite mean.
+  \end{itemize}
+  \vc
+  The deletion mean has a breakdown point of $2 / N$.
+  \begin{itemize}
+  \item We can replace, at most, 1 value with $\infty$ without producing an 
+    infinite mean.
+  \end{itemize}
+  \vc
+  The median has breakdown point of 50\%.
+  \begin{itemize}
+    \item We can replace $n < N / 2$ of the observations with $\infty$ without 
+      producing an infinite median.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Boxplot Method}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      \citet{tukey:1977} described a procedure for flagging potential outliers 
+      based on a box-and-whiskers plot.
+      \begin{itemize}
+      \item Does not require normally distributed $X$
+      \item Not sensitive to outliers
+      \end{itemize}
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      data(Salaries, package = "carData")
+      
+      boxplot(salary ~ sex,
+              data = Salaries,
+              ylab = "Salary",
+              main = "9-Month Salaries of Professors")
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Boxplot Method}
+  
+  A \emph{fence} is an interval defined as the following function of the 
+  \emph{first quartile}, the \emph{third quartile}, and the \emph{inner quartile
+    range} ($IQR = Q_3 - Q_1$):
+  \begin{align*}
+    F = \{Q_1 - C \times IQR, Q_3 + C \times IQR\}
+  \end{align*}
+  
+  \vx{-6}
+  
+  \begin{itemize}
+  \item Taking $C = 1.5$ produces the \emph{inner fence}.
+  \item Taking $C = 3.0$ produces the \emph{outer fence}.
+  \end{itemize}
+  
+  \vb
+  
+  We can use these fences to identify potential outliers:
+  \begin{itemize}
+  \item Any value that falls outside of the inner fence is a \emph{possible 
+    outlier}.
+  \item Any value that falls outside of the outer fence is a \emph{probable 
+    outlier}.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can implement the boxplot method via \src{boxplot.stats()}.
+  
+  <<>>=
+  ## Find potentially outlying cases: 
+  (out <- boys %$% boxplot.stats(bmi, coef = 3)$out)
+
+  ## Which observations are potential outliers?
+  boys %$% which(bmi %in% out)
+  
+  ## View the potentially outlying cases:
+  boys %>% filter(bmi %in% out)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Adjusted Boxplot Method}
+  
+  The original boxplot method uses symmetric fences, so it will tend to flag too
+  many outliers when the true distribution is skewed.
+  \vc
+  \begin{itemize}
+  \item \citet{hubert_vandervieren:2008} developed an adjusted boxplot method
+    that accounts for skewness when estimating the fences.
+  \end{itemize}
+
+  \vb
+
+  The adjusted boxplot incorporates a robust estimate of skewness (the
+  \emph{medcouple}, $MC$) when defining the fences:
+  \begin{align*}
+    F = \{Q_1 - C \times e^{(a \times MC)} IQR, Q_3 + C \times e^{(b \times MC)}
+    IQR\}
+  \end{align*}
+  
+  The adjusted boxplot usually performs quite well.
+  \vc
+  \begin{itemize}
+  \item When the true distribution is skewed, the adjusted boxplot will flag
+    an ``appropriate'' proportion of outliers.
+    \vc
+  \item If the true distribution is symmetric, $\hat{MC} \approx 0$, and the
+    adjusted boxplot reduces to the normal boxplot.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Boxplot: Original vs. Adjusted}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=      
+      boys %$% boxplot(bmi,
+                       ylab = "BMI",
+                       main = "Original")
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      boys %$% robustbase::adjbox(bmi,
+                                  ylab = "BMI",
+                                  main = "Adjusted",
+                                  col = "lightgray")
+      @
+      
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+  We can implement the adjusted boxplot method via the \src{adjboxStats()}
+  function from the \pkg{robustbase} package.
+  
+  <<>>=
+  library(robustbase)
+  
+  ## Find potentially outlying cases: 
+  (out <- boys %$% adjboxStats(bmi, coef = 2)$out)
+
+  ## Which observations are potential outliers?
+  boys %$% which(bmi %in% out)
+  
+  ## View the potentially outlying cases:
+  boys %>% filter(bmi %in% out)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\subsection{Multivariate Outliers}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Multivariate Outliers}
+  
+  Sometimes, the combinations of values in an observation are very unlikely, 
+  even when no individual value is an outlier.
+  \vc
+  \begin{itemize}
+  \item These observations are \emph{multivariate outliers}.
+    \vc
+    \begin{itemize}
+    \item A person in the 95\emph{th} percentile for height and the 5\emph{th} 
+      percentile for weight
+      \vc
+    \item A person who simultaneously scores highly on scales of depression and 
+      positive affect
+    \end{itemize}
+  \end{itemize}
+  \vb
+  To detect multivariate outliers, we use \emph{distance metrics}.
+  \vc
+  \begin{itemize}
+  \item Distance metrics quantify the similarity of two vectors.
+    \vc
+    \begin{itemize}
+    \item Similarity between two observations
+      \vc
+    \item Similarity between an observation and the mean vector
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Mahalanobis Distance}
+  
+  One of the most common distance metrics is the \emph{Mahalanobis Distance}.
+  \vc
+  \begin{itemize}
+  \item The Mahalanobis distance, $\Delta$, is a multivariate generalization of 
+    the z-score method:
+  \end{itemize}
+  \begin{align*}
+    \Delta_n = \sqrt{\left( \mathbf{x}_n - \hat{\mu}_{\mathbf{X}} \right) 
+      \hat{\Sigma}_{\mathbf{X}}^{-1} \left( \mathbf{x}_n - \hat{\mu}_{\mathbf{X}} 
+      \right)^T}
+  \end{align*}
+  As with z-scores, if $\Delta_n > C$, we label $\mathbf{x}_n$ as a potential
+  outlier.
+  \vc
+  \begin{itemize}
+  \item When $\mathbf{X}$ is $K$-variate normally distributed, $\Delta_n^2$ 
+    follows a $\chi^2$ distribution with $df = K$.
+    \vc
+  \item We take $C$ to be the square-root of a suitably conservative quantile 
+    (e.g., $q \in \{99\%, 99.9\%\}$) of the $\chi_K^2$ distribution: 
+    $C = \sqrt{\chi_{K, q}^2}$.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can compute Mahalanobis distances with \src{mahalanobis()}.
+  
+  <<>>=
+  ## Compute the squared Mahalanobis distances for height and weight:
+  md <- boys %>%
+      select(hgt, wgt) %>%
+      mahalanobis(center = colMeans(., na.rm = TRUE),
+                  cov = cov(., use = "pairwise")
+                  )
+
+  ## Check the first few values:
+  head(md)
+  @
+
+  \pagebreak
+
+  We compare to some critical $\chi^2$ value to flag potential outliers.
+
+  <<>>=
+  out <- md > qchisq(0.999, df = 2)
+
+  which(out)
+  boys %>% filter(out)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Problems with Mahalanobis Distance}
+  
+  Like the z-score method it generalizes, Mahalanobis distance is highly
+  sensitive to outliers.
+  \vc
+  \begin{itemize}
+  \item The underlying estimates of central tendency, $\hat{\mu}_{\mathbf{X}}$, 
+    and dispersion, $\hat{\Sigma}_{\mathbf{X}}$, are computed using all 
+    observations.
+  \end{itemize}
+  \vb
+  \pause
+  We want robust analogues of $\hat{\mu}_{\mathbf{X}}$ and 
+  $\hat{\Sigma}_{\mathbf{X}}$.
+  \vc
+  \begin{itemize}
+  \item We have several options for robust estimation of $\hat{\mu}_{\mathbf{X}}$ 
+    and $\hat{\Sigma}_{\mathbf{X}}$. E.g.:
+    \begin{itemize}
+    \item Minimum covariance determinant method \citep[MCD; ][]{rousseeuw:1985}
+      \vc
+    \item Minimum volume ellipsoid method \citep[MVE; ][]{rousseeuw:1985}
+      \vc
+    \item M-estimation \citep{maronna:1976}
+    \end{itemize}
+    \vc
+  \item Conceptually, robust methods operate by either:
+    \begin{itemize}
+    \item Using only a ``good'' subset of data to estimate $\hat{\mu}_{\mathbf{X}}$ 
+      and $\hat{\Sigma}_{\mathbf{X}}$.
+      \vc
+    \item Downweighting outlying observations when estimating 
+      $\hat{\mu}_{\mathbf{X}}$ and $\hat{\Sigma}_{\mathbf{X}}$.
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Robust Mahalanobis Distance}
+  
+  Equipped with robust estimates of central tendency, $\hat{\mu}_{R,\mathbf{X}}$, 
+  and dispersion, $\hat{\Sigma}_{R,\mathbf{X}}$, we define the robust Mahalanobis 
+  distance in the natural way:
+  \begin{align*}
+    \Delta_{R,n} = \sqrt{\left( \mathbf{x}_n - \hat{\mu}_{R,\mathbf{X}} \right) 
+      \hat{\Sigma}_{R,\mathbf{X}}^{-1} \left( \mathbf{x}_n - \hat{\mu}_{R,\mathbf{X}} 
+      \right)^T}
+  \end{align*}
+  We use $\Delta_{R,n}$ in the same way as $\Delta_n$.
+  \vc
+  \begin{itemize}
+  \item If $\Delta_{R,n} > C$, we label $\mathbf{x}_n$ as an outlier.
+    \vc
+  \item Again, we take $C$ to be the square-root of some quantile of the 
+    $\chi_K^2$ distribution: $C = \sqrt{\chi_{K, q}^2}$.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can get robust estimates of the sufficient statistics from the
+  \src{cov.mcd()} function provided by the \pkg{MASS} package.
+  \vb
+  <<>>=
+  ## The MCD method is stochastic, so we should set a seed:
+  set.seed(235711)
+  
+  ## Compute robust, MCD estimates of the sufficient stats:
+  stats <- boys %>%
+      select(hgt, wgt) %>%
+      na.omit() %>% # cov.mcd() won't accept missing values
+      MASS::cov.mcd(quantile.used = floor(0.9 * nrow(.)))
+  @
+
+  \pagebreak
+
+  Now, we can use the robust estimates of location and scale to estimate the
+  Mahalanobis distances.
+  \vb
+  <<>>=
+  ## Compute the robust squared Mahalanobis distances:
+  md <- boys %>%
+      select(hgt, wgt) %>%
+      mahalanobis(center = stats$center, cov = stats$cov)
+
+  ## Check the first few values:
+  head(md)
+  @
+
+  \pagebreak
+
+  We flag potential outliers using the usual method.
+
+  <<>>=
+  out <- md > qchisq(0.999, df = 2)
+
+  which(out)
+  boys %>% filter(out) %>% slice_head(n = 6)
+  @
+
+  \pagebreak
+
+  <<>>=
+  boys %>% filter(out) %>% slice_head(n = -6)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Practicalities: Univariate vs. Multivariate}
+
+  Univariate outlier checks are safe for most variables.\\ 
+  \vb
+  \pause
+  \textsc{\underline{Don't}} include too many variables in multivariate outlier 
+  checks.
+  \begin{itemize}
+  \item More variables increases the chances of false positives.
+  \item E.g., don't run a multivariate outlier test on your entire dataset.
+  \end{itemize}
+  \vb
+  \pause
+  \textsc{\underline{Do}} use multivariate outlier checks for scales.
+  \begin{itemize}
+  \item E.g., if you have a psychometric scale measuring depression, you should
+    check the items of that scale for multivariate outliers.
+  \end{itemize}
+  \vb 
+  \pause
+  \textsc{\underline{Maybe}} check the variables in a single model for
+  multivariate outliers.
+  \begin{itemize}
+  \item E.g., if you have a small set of items that you will include in a
+    regression model, it could make sense to check these variables for
+    multivariate outliers.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Practicalities: Outliers for Categorical Data}
+
+  Nominal, ordinal, and binary items \emph{can} have outliers.
+  \begin{itemize}
+  \item Outliers on categorical variables are often more indicative of bad
+    variables than outlying cases.
+  \end{itemize}
+  \vb
+  \pause
+  Ordinal
+  \begin{itemize}
+  \item Most participant endorse one of the lowest categories on an ordinal
+    item, but a few participants endorse the highest category.
+  \item The participants who endorse the highest category may be outliers.
+  \end{itemize}
+  \vb
+  \pause
+  Nominal
+  \begin{itemize}
+  \item Groups with very low membership may be outliers on nominal grouping
+    variables.
+  \end{itemize}
+  \vb
+  \pause
+  Binary
+  \begin{itemize}
+  \item If most endorse the item, the few who do not may be outliers.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  If we locate any outliers, they must be treated.
+  \vc
+  \begin{itemize}
+  \item Outliers cause by errors, mistakes, or malfunctions (i.e., \emph{error 
+    outliers}) should be directly corrected.
+    \vc
+  \item Labeling non-error outliers is a subjective task.
+    \begin{itemize}
+    \item A (non-error) outlier must originate from a population separate from 
+      the one we care about.
+    \item Don't blindly automate the decision process.
+    \end{itemize}
+  \end{itemize}
+  
+  \pause
+  \vb
+ 
+  The most direct solution is to delete any outlying observation.
+  \vc
+  \begin{itemize}
+  \item If you delete non-error outliers, the analysis should be reported twice: 
+    with outliers and without.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  For univariate outliers, we can use less extreme types of deletion.
+  \begin{itemize}
+  \item Delete outlying values (but not the entire observation).
+  \item These empty cells then become missing data.
+  \end{itemize}
+  \vb
+  Winsorization:
+  \begin{itemize}
+  \item Replace the missing values with the nearest non-outlying value.
+  \end{itemize}
+  \vb
+  Missing data analysis:
+  \begin{itemize}
+  \item Treat the missing values along with any naturally-occurring nonresponse.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  We can also use robust regression procedures to estimate the model directly in 
+  the presence of outliers.
+  \vc
+  \begin{itemize}
+  \item Weight the objective function to reduce the impact of outliers
+    \begin{itemize}
+    \item M-estimation
+    \end{itemize}
+    \vc
+  \item Trim outlying observations during estimation 
+    \begin{itemize}
+    \item Least trimmed squares, MCD, MVE
+    \end{itemize}
+    \vc
+  \item Take the median, instead of the mean, of the squared residuals
+    \begin{itemize}
+    \item Least median of squares
+    \end{itemize}
+    \vc
+  \item Model some quantile of the DV's distribution instead of the mean 
+    \begin{itemize}
+    \item Quantile regression
+    \end{itemize}
+    \vc
+  \item Model the outcome with a heavy-tailed distribution
+    \begin{itemize}
+    \item Laplacian, Student's T
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliographystyle{apacite}
+  \bibliography{../../../bibtex/stat_meth_refs.bib}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}
