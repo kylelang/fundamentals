@@ -32,7 +32,23 @@ h4{
 color: black;
 text-align: center;
 font-size: 35px; 
+line-height:1.5em;
 }
+
+#othertext{
+color: black;
+text-align: left;
+font-size: 20px; 
+line-height:1.5em;
+}
+
+#thirdtext{
+color: black;
+text-align: left;
+font-size: 28px; 
+line-height:1em;
+}
+
 
 </style>
 
@@ -50,10 +66,13 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## This Workgroup Meeting
 
-<h3> 1\. Forming groups </h3>
-<h3> 2\. Pitching proposals </h3>
-<h3> 3\. Present choices </h3>
-<h3> 4\. Starting group assignment </h3>
+<h3> 1\. General comments on Individual Assignment </h3>
+<h3> 2\. Forming groups </h3>
+<h3> 3\. Pitching proposals </h3>
+<h3> 4\. Present choices </h3>
+<h3> 5\. Starting group assignment </h3>
+
+## General comments - Individual Assignment
 
 
 ## Forming Groups
@@ -74,14 +93,17 @@ knitr::opts_chunk$set(warning = FALSE,
 - Are data processing steps done correctly?
 - Is the topic interesting and are the Research questions relevant? 
 
-<h4> As a group, choose the data set that you want to use for the assignments </h4>
+<h4> As a group, choose the data set(s) that you want to use for the assignments </h4>
+<p id ="othertext"> Note that you can decide to select different data sets for Assignment 1 and Assignment 2 </p>
 
 <br>
-<h3> 4 rounds of 5 minutes </h3>
+<p id="thirdtext"> Take 5 minutes for every person to present and discuss <br> (3 or 4 rounds) </p>
+
 
 ## Group Choices
 <br><br>
-<p id ="centertext"> As a group, present the data set you chose </p>
+<p id ="centertext"> Present the data set(s) you chose for the other groups </p>
+
 
 ## Assignment 1
 
@@ -98,6 +120,7 @@ knitr::opts_chunk$set(warning = FALSE,
 ## Remainder of Meeting
 
 <br><br>
+<h4> - Send names of group members and preliminary RQs to teachers. </h4>
 <h4> - Start on group assignment. </h4>
 <h4> - Make agreements on how to work together. </h4>
 <h4> - Improve the processing and visualization steps you did so far.</h4>
