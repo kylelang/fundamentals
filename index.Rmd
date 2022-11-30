@@ -626,7 +626,8 @@ You can find recordings of the data cleaning lecture below.
                encrypted-media; 
                gyroscope; 
                picture-in-picture" 
-        allowfullscreen>
+        allowfullscreen
+        data-external="1">
 </iframe>
 
 <iframe width="560" 
@@ -640,7 +641,8 @@ You can find recordings of the data cleaning lecture below.
                encrypted-media; 
                gyroscope; 
                picture-in-picture" 
-        allowfullscreen>
+        allowfullscreen
+        data-external="1">
 </iframe>
 
 <iframe width="560" 
@@ -654,7 +656,8 @@ You can find recordings of the data cleaning lecture below.
                encrypted-media; 
                gyroscope; 
                picture-in-picture" 
-        allowfullscreen>
+        allowfullscreen
+        data-external="1">
 </iframe>
 
 <iframe width="560" 
@@ -668,7 +671,8 @@ You can find recordings of the data cleaning lecture below.
                encrypted-media; 
                gyroscope; 
                picture-in-picture" 
-        allowfullscreen>
+        allowfullscreen
+        data-external="1">
 </iframe>
 
 ### Required Reading
