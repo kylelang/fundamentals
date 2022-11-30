@@ -613,6 +613,64 @@ You can find the lecture slides below.
 - [Functions and Data visualization](wk3/lecture/functions_visualization.pdf)
 - [Data cleaning](wk3/lecture/cleaning.pdf)
 
+You can find recordings of the data cleaning lecture below.
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/TKx146AMjo8" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen>
+</iframe>
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/O5Np9uwsPPI" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen>
+</iframe>
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/3iQ1JtSEMXA" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen>
+</iframe>
+
+<iframe width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/cxVB24Meb08" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; 
+               autoplay; 
+               clipboard-write; 
+               encrypted-media; 
+               gyroscope; 
+               picture-in-picture" 
+        allowfullscreen>
+</iframe>
+
 ### Required Reading
 
 ***These readings are exam materials.***
@@ -627,8 +685,13 @@ You can find the lecture slides below.
 
 ### Useful information and links
 
-You can find an excellent introduction to `ggplot2` [here](https://www.youtube.com/watch?v=N5gYo43oLE8).
-  
+Below, you can find links to some useful resources.
+
+- [Introduction to `ggplot2`](https://www.youtube.com/watch?v=N5gYo43oLE8).
+- [Official webpage for `ggplot2`](https://ggplot2.tidyverse.org/index.html)
+- [Official webpage for `naniar`](https://naniar.njtierney.com/)
+- [Official webpage for `ggmice`](https://amices.org/ggmice/index.html)
+
 ## Column 2
 
 ### Workgroup
