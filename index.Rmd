@@ -227,7 +227,7 @@ The assignment consists of the following steps:
 1. You search for a publicly available dataset that contains at least the 
 following variables:
     - 1 Continuous outcome variable (for the linear regression analysis)
-    - 1 Categorical outcome variable (for the logistic regression analysis)
+    - 1 Dichotomous outcome variable (for the logistic regression analysis)
     - 2 Continuous predictor variables 
     - 1 Categorical predictor variable 
 $\vb$
