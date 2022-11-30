@@ -74,6 +74,23 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## General comments - Individual Assignment
 
+<h3> - Annotate code </h3>
+<h3> - Write text to explain your steps </h3>
+<h3> - Explain variables clearly (in text) </h3>
+<h3> - Choose what to include <br> <tab> -> Use *head()*, *warnings=FALSE*, make tables </h3>
+<h3> - Style plots, tables, text </h3>
+
+
+## General comments - Individual Assignment
+
+<h3> - Annotate code </h3>
+<h3> - Write text to explain your steps </h3>
+<h3> - Explain variables clearly (in text) </h3>
+<h3> - Choose what to include <br> <tab> -> Use *head()*, *warnings=FALSE*, make tables </h3>
+<h3> - Style plots, tables, text </h3>
+
+<br><br>
+<h3 style = "color: Blue"> - Name your .zip-file accordingly </h3>
 
 ## Forming Groups
 
