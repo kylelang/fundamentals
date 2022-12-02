@@ -2919,121 +2919,165 @@ and the <code>3</code> indicates Practical 3.</li>
 <li><a href="wk3/practical/Practical3_answers.html">Practical 3
 answers</a></li>
 </ul>
-<!-----------------------------------------------------------------------------
-
-# Week 4
-
-## Column 1
-
-### Lecture
-Today's lecture covers:
-
-  * Specifying linear models in `R` using the `lm()`function
-  * Model fit and model comparison
-  * Categorical predictors
-  * Moderation
-  
-You can find the lecture slides [here](wk4/lecture/lecture4.html)
-
-
-### Required Reading
-
-***These readings are exam materials.*** 
-
-  * ASWR [Chapter 7 (only 7.1-7.4)](https://book.stat420.org/simple-linear-regression.html)
-  * ASWR [Chapter 9 (only 9.1-9.4)](https://book.stat420.org/multiple-linear-regression.html)
-  * ASWR [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions) 
-  * ASWR [Chapter 16 (only 16.1 (not 16.1.4.) and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html).| 
-
-## Column 2
-   
-### Workgroup
-
-In today's workgroup, you continue to work with your group on Assignment 1. You 
-will build your multiple linear regression model. You start with one variable and 
-build the model up from there, including moderation, by comparing the models 
-using the various model fit criteria discussed during the lecture. You interpret 
-the final model.
-
-The slides for this workgroup meeting can be found [here](wk4/workgroup/FTiD_WG_4.html).
-
-### `R` practical
-
-This week's `R` practical is about linear regression, model comparison and includes
-more data visualization. 
-
-  * Complete [Practical 4](wk4/practical/Practical4.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 4](https://surfdrive.surf.nl/files/index.php/s/G3Dwam4nPKAkt16) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_4.Rmd` and `your_name_4.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `4` indicates Practical 4. 
-
-**Answers**
-
-You can find suggested answers to the practical here:
-
-  * [Answers practical 4](wk4/practical/Practical4_answers.html).
-
-
-
-<!-----------------------------------------------------------------------------
-
-# Week 5
-
-## Column 1
-
-### Lecture 
-
-In this week's lecture, we'll cover: 
-
-  * Assumptions of the linear model
-  * leverage, outliers and influential points. 
-  
-You can find the lecture slides [here](wk5/lecture/lecture5.html)
-  
-### Required Reading
-
-***These readings are exam materials.***
-  
-  * ASWR [Chapter 13](https://book.stat420.org/model-diagnostics.html)
-  
-
-## Column 2
-
-### Workgroup 
-
-In this week's workgroup, you will work on:
-
-  * Checking the assumptions of your model
-  * Inspect your model for unusual observations
-  * You make adjustments to the data or model if necessary
-  * Draw your final conclusions.
-  
-***Hand in your assignment 1 Monday December 19, 17:00. See the course manual page for details.***
-
-The slides for this workgroup meeting can be found [here](wk5/workgroup/FTiD_WG_5.html).
-
-
-### `R` practical
-
-This week's `R` practical guides you through the various assumptions of the linear
-model as well as checks for outliers and influential cases. 
-
-  * Download the dataset to use for this practical from [Surfdrive datasets](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
-  * Complete [Practical 5](wk5/practical/Practical5.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 5](https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_5.Rmd` and `your_name_5.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `5` indicates Practical 5. 
-
-**Answers**
-
-You can find suggested answers to the practical here:
-
-  * [Answers practical 5](wk5/practical/Practical5_answers.html).
-
-
-
+<!----------------------------------------------------------------------------->
+</div>
+</div>
+</div>
+<div id="week-4" class="section level1">
+<h1>Week 4</h1>
+<div id="column-1-6" class="section level2">
+<h2>Column 1</h2>
+<div id="lecture-3" class="section level3">
+<h3>Lecture</h3>
+<p>This week, we move on from <code>R</code> programming and begin our
+discussion of linear modeling. Specifically, we will cover the following
+topics.</p>
+<ul>
+<li>Specifying linear models in <code>R</code> using the
+<code>lm()</code> function</li>
+<li>Model fit and model comparison</li>
+<li>Categorical predictors</li>
+<li>Moderation</li>
+</ul>
+<p><strong>When they are ready, the lecture slides will be linked
+here.</strong></p>
+<!--You can find the lecture slides [here](wk4/lecture/lecture4.html)-->
+</div>
+<div id="required-reading-3" class="section level3">
+<h3>Required Reading</h3>
+<p><strong><em>These readings are exam materials.</em></strong></p>
+<ul>
+<li>ASWR <a href="https://book.stat420.org/simple-linear-regression.html">Chapter 7
+(only 7.1–7.4)</a></li>
+<li>ASWR <a href="https://book.stat420.org/multiple-linear-regression.html">Chapter
+9 (only 9.1–9.4)</a></li>
+<li>ASWR <a href="https://book.stat420.org/categorical-predictors-and-interactions.html#interactions">Chapter
+11 (only 11.2 and 11.3)</a></li>
+<li>ASWR <a href="https://book.stat420.org/variable-selection-and-model-building.html">Chapter
+16 (only 16.1—not 16.1.4—and 16.2)</a></li>
+</ul>
+</div>
+</div>
+<div id="column-2-6" class="section level2">
+<h2>Column 2</h2>
+<div id="workgroup-3" class="section level3">
+<h3>Workgroup</h3>
+<p>In this week’s workgroup, you will continue to work with your group
+on Assignment 1. In particular, you will build your multiple linear
+regression model. You start will build up your final model in steps:</p>
+<ul>
+<li>Begin with a single predictor variable</li>
+<li>Add additional predictors</li>
+<li>Add complexity to the right hand side of your model (e.g.,
+interaction terms to test for moderation)</li>
+<li>Compare models using the various model fit criteria discussed in the
+lecture</li>
+</ul>
+<p>Finally, you will interpret the results of your optimal model.</p>
+<p>You can find the slides for this workgroup meeting <a href="wk4/workgroup/FTiD_WG_4.html">here</a>.</p>
+</div>
+<div id="r-practical-3" class="section level3">
+<h3><code>R</code> practical</h3>
+<p>This week’s <code>R</code> practical is about linear regression and
+model comparison. The practical also includes more practice with data
+visualization.</p>
+<ul>
+<li>Complete <a href="wk4/practical/Practical4.html">Practical
+4</a>.</li>
+<li>Submit your <em>RMD</em> script and the compiled <em>HTML</em> file
+it produces to the <a href="https://surfdrive.surf.nl/files/index.php/s/G3Dwam4nPKAkt16">SurfDrive
+folder</a> for this practical <strong>before the next lecture</strong>.
+<ul>
+<li>Name the files <code>your_name_4.Rmd</code> and
+<code>your_name_4.html</code>, respectively. Where
+<code>your_name</code> is your full name in <em>lower snake case</em>,
+and the <code>4</code> indicates Practical 4.</li>
+</ul></li>
+</ul>
+<p><strong>Answers</strong></p>
+<p>You can find suggested answers to the practical here:</p>
+<ul>
+<li><a href="wk4/practical/Practical4_answers.html">Practical 4
+answers</a>.</li>
+</ul>
+<!----------------------------------------------------------------------------->
+</div>
+</div>
+</div>
+<div id="week-5" class="section level1">
+<h1>Week 5</h1>
+<div id="column-1-7" class="section level2">
+<h2>Column 1</h2>
+<div id="lecture-4" class="section level3">
+<h3>Lecture</h3>
+<p>This week, we wrap up our discussion of the linear model by
+considering how we can check if our model results are trustworthy.
+Specifically, we’ll cover the following points.</p>
+<ul>
+<li>Assumptions of the linear model</li>
+<li>Regression diagnostics</li>
+<li>Outliers, high-leverage cases, and influential observations</li>
+</ul>
+<p><strong>Once they’re ready, the lecture slides will be linked
+here.</strong></p>
+<!--You can find the lecture slides [here](wk5/lecture/lecture5.html)-->
+</div>
+<div id="required-reading-4" class="section level3">
+<h3>Required Reading</h3>
+<p><strong><em>These readings are exam materials.</em></strong></p>
+<ul>
+<li>ASWR <a href="https://book.stat420.org/model-diagnostics.html">Chapter
+13</a></li>
+</ul>
+</div>
+</div>
+<div id="column-2-7" class="section level2">
+<h2>Column 2</h2>
+<div id="workgroup-4" class="section level3">
+<h3>Workgroup</h3>
+<p>In this week’s workgroup, you will:</p>
+<ul>
+<li>Check the assumptions of your model</li>
+<li>Check for the influence of unusual observations</li>
+<li>Make adjustments to your data or model, if necessary</li>
+<li>Draw your final conclusions</li>
+</ul>
+<p>You can find the slides for this workgroup meeting <a href="wk5/workgroup/FTiD_WG_5.html">here</a>.</p>
+</div>
+<div id="deadlines-2" class="section level3">
+<h3>Deadlines</h3>
+<p>You must submit Assignment 1 by <strong><em>Monday December 19,
+17:00</em></strong>.</p>
+<ul>
+<li>See the <em>Course Manual</em> page for details.</li>
+</ul>
+</div>
+<div id="r-practical-4" class="section level3">
+<h3><code>R</code> practical</h3>
+<p>This week’s <code>R</code> practical guides you through the various
+assumptions of the linear model as well as checks for outliers and
+influential cases.</p>
+<ul>
+<li>Download the dataset for this practical from the <a href="https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf">Surfdrive
+datasets folder</a>.</li>
+<li>Complete <a href="wk5/practical/Practical5.html">Practical
+5</a>.</li>
+<li>Submit your <em>RMD</em> script and the compiled <em>HTML</em> file
+it produces to the <a href="https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT">SurfDrive
+folder</a> for this practical <strong>before the next lecture</strong>.
+<ul>
+<li>Name the files <code>your_name_5.Rmd</code> and
+<code>your_name_5.html</code>, respectively. Where
+<code>your_name</code> is your full name in <em>lower snake case</em>,
+and the <code>5</code> indicates Practical 5.</li>
+</ul></li>
+</ul>
+<p><strong>Answers</strong></p>
+<p>You can find suggested answers to the practical here:</p>
+<ul>
+<li><a href="wk5/practical/Practical5_answers.html">Practical 5
+answers</a>.</li>
+</ul>
 <!-----------------------------------------------------------------------------
 
 # Week 6
