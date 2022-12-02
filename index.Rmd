@@ -739,64 +739,73 @@ You can find suggested answers to the practical exercises here:
 
 - [Practical 3 answers](wk3/practical/Practical3_answers.html)
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 4
 
 ## Column 1
 
 ### Lecture
-Today's lecture covers:
 
-  * Specifying linear models in `R` using the `lm()`function
-  * Model fit and model comparison
-  * Categorical predictors
-  * Moderation
+This week, we move on from `R` programming and begin our discussion of linear 
+modeling. Specifically, we will cover the following topics.
+
+- Specifying linear models in `R` using the `lm()` function
+- Model fit and model comparison
+- Categorical predictors
+- Moderation
   
-You can find the lecture slides [here](wk4/lecture/lecture4.html)
+**When they are ready, the lecture slides will be linked here.**
 
+<!--You can find the lecture slides [here](wk4/lecture/lecture4.html)-->
 
 ### Required Reading
 
 ***These readings are exam materials.*** 
 
-  * ASWR [Chapter 7 (only 7.1-7.4)](https://book.stat420.org/simple-linear-regression.html)
-  * ASWR [Chapter 9 (only 9.1-9.4)](https://book.stat420.org/multiple-linear-regression.html)
-  * ASWR [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions) 
-  * ASWR [Chapter 16 (only 16.1 (not 16.1.4.) and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html).| 
+- ASWR [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html)
+- ASWR [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html)
+- ASWR [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions) 
+- ASWR [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html)
 
 ## Column 2
    
 ### Workgroup
 
-In today's workgroup, you continue to work with your group on Assignment 1. You 
-will build your multiple linear regression model. You start with one variable and 
-build the model up from there, including moderation, by comparing the models 
-using the various model fit criteria discussed during the lecture. You interpret 
-the final model.
+In this week's workgroup, you will continue to work with your group on 
+Assignment 1. In particular, you will build your multiple linear regression model. 
+You start will build up your final model in steps:
 
-The slides for this workgroup meeting can be found [here](wk4/workgroup/FTiD_WG_4.html).
+- Begin with a single predictor variable
+- Add additional predictors
+- Add complexity to the right hand side of your model (e.g., interaction terms
+to test for moderation)
+- Compare models using the various model fit criteria discussed in the lecture
+
+Finally, you will interpret the results of your optimal model.
+
+You can find the slides for this workgroup meeting [here](wk4/workgroup/FTiD_WG_4.html).
 
 ### `R` practical
 
-This week's `R` practical is about linear regression, model comparison and includes
-more data visualization. 
+This week's `R` practical is about linear regression and model comparison. The
+practical also includes more practice with data visualization. 
 
-  * Complete [Practical 4](wk4/practical/Practical4.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 4](https://surfdrive.surf.nl/files/index.php/s/G3Dwam4nPKAkt16) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_4.Rmd` and `your_name_4.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `4` indicates Practical 4. 
+- Complete [Practical 4](wk4/practical/Practical4.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/G3Dwam4nPKAkt16) 
+for this practical **before the next lecture**. 
+    - Name the files `your_name_4.Rmd` and `your_name_4.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `4` 
+    indicates Practical 4. 
 
 **Answers**
 
 You can find suggested answers to the practical here:
 
-  * [Answers practical 4](wk4/practical/Practical4_answers.html).
+- [Practical 4 answers](wk4/practical/Practical4_answers.html).
 
-
-
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 5
 
@@ -804,55 +813,63 @@ You can find suggested answers to the practical here:
 
 ### Lecture 
 
-In this week's lecture, we'll cover: 
+This week, we wrap up our discussion of the linear model by considering how we
+can check if our model results are trustworthy. Specifically, we'll cover the
+following points.
 
-  * Assumptions of the linear model
-  * leverage, outliers and influential points. 
+- Assumptions of the linear model
+- Regression diagnostics
+- Outliers, high-leverage cases, and influential observations 
   
-You can find the lecture slides [here](wk5/lecture/lecture5.html)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!--You can find the lecture slides [here](wk5/lecture/lecture5.html)-->
   
 ### Required Reading
 
 ***These readings are exam materials.***
   
-  * ASWR [Chapter 13](https://book.stat420.org/model-diagnostics.html)
-  
+- ASWR [Chapter 13](https://book.stat420.org/model-diagnostics.html)
 
 ## Column 2
 
 ### Workgroup 
 
-In this week's workgroup, you will work on:
+In this week's workgroup, you will:
 
-  * Checking the assumptions of your model
-  * Inspect your model for unusual observations
-  * You make adjustments to the data or model if necessary
-  * Draw your final conclusions.
+- Check the assumptions of your model
+- Check for the influence of unusual observations
+- Make adjustments to your data or model, if necessary
+- Draw your final conclusions
   
-***Hand in your assignment 1 Monday December 19, 17:00. See the course manual page for details.***
+You can find the slides for this workgroup meeting [here](wk5/workgroup/FTiD_WG_5.html).
 
-The slides for this workgroup meeting can be found [here](wk5/workgroup/FTiD_WG_5.html).
+### Deadlines
 
+You must submit Assignment 1 by ***Monday December 19, 17:00***. 
+
+- See the *Course Manual* page for details.
 
 ### `R` practical
 
 This week's `R` practical guides you through the various assumptions of the linear
 model as well as checks for outliers and influential cases. 
 
-  * Download the dataset to use for this practical from [Surfdrive datasets](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
-  * Complete [Practical 5](wk5/practical/Practical5.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 5](https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_5.Rmd` and `your_name_5.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `5` indicates Practical 5. 
+- Download the dataset for this practical from the 
+[Surfdrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 5](wk5/practical/Practical5.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_5.Rmd` and `your_name_5.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `5` 
+    indicates Practical 5. 
 
 **Answers**
 
 You can find suggested answers to the practical here:
 
-  * [Answers practical 5](wk5/practical/Practical5_answers.html).
-
-
+- [Practical 5 answers](wk5/practical/Practical5_answers.html).
 
 <!-----------------------------------------------------------------------------
 
