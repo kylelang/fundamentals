@@ -2903,6 +2903,15 @@ p2 +
 
 \end{frame}
 
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliographystyle{apacite}
+  \bibliography{../../../bibtex/stat_meth_refs.bib}
+
+\end{frame}
+
 %------------------------------------------------------------------------------%
 
 \end{document}
