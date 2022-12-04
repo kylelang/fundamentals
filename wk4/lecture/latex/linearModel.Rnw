@@ -1,7 +1,7 @@
 %%% Title:    Overview of Linear Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2022-12-03
+%%% Modified: 2022-12-04
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -30,6 +30,9 @@ library(MASS)
 library(DAAG)
 library(xtable)
 library(MLmetrics)
+library(dplyr)
+
+dataDir <- "../data/"
 
 source("../../../code/supportFunctions.R")
 
@@ -54,19 +57,19 @@ knit_theme$set('edit-kwrite')
   \tableofcontents
 \end{frame}
 
-% ------------------------------------------------------------------------------%
+%------------------------------------------------------------------------------%
 
 \section{Simple Linear Regression}
 
-% ------------------------------------------------------------------------------%
+%------------------------------------------------------------------------------%
 
 \begin{frame}{Visualizations of Simple Linear Regression}
   
   \begin{columns}
     \begin{column}{0.5\textwidth}
       
-      <<>>=
-      data(Cars93)
+      <<echo = FALSE>>=
+      data(Cars93, package = "MASS")
       
       out1 <- lm(Horsepower ~ Price, data = Cars93)
       Cars93$yHat  <- fitted(out1)
@@ -90,7 +93,8 @@ knit_theme$set('edit-kwrite')
         }\\
         \va
         \tiny{Image retrieved from:
-          \url{http://www.seaturtle.org/mtn/archives/mtn122/mtn122p1.shtml}}
+          \url{http://www.seaturtle.org/mtn/archives/mtn122/mtn122p1.shtml}
+        }
       \end{figure}
       
     \end{column}
@@ -153,7 +157,6 @@ knit_theme$set('edit-kwrite')
         @
       }
       \only<2>{
-
         <<echo = FALSE, cache = TRUE>>=
         p2 <- p + geom_smooth(method = "lm", color = "blue", se = FALSE) +
             geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
@@ -229,12 +232,16 @@ knit_theme$set('edit-kwrite')
   Estimate the least squares coefficients for our example data:
 
   <<cache = TRUE>>=
-  #data(Cars93)
+  data(Cars93, package = "MASS")
+
   out1 <- lm(Horsepower ~ Price, data = Cars93)
   coef(out1)
   @
   
   <<echo = FALSE, cache = TRUE>>=
+  Cars93$yMean <- mean(Cars93$Horsepower)
+  Cars93$yHat <- fitted(out1)
+  
   b0 <- round(coef(out1)[1], 2)
   b1 <- round(coef(out1)[2], 2)
   @
@@ -246,652 +253,247 @@ knit_theme$set('edit-kwrite')
   \vb
   The estimated slope is: $\hat{\beta}_1 = \Sexpr{b1}$.
   \begin{itemize}
-  \item For every additional \$1000 in price, a car is expected to gain \Sexpr{b1}
-    horsepower.
+  \item For every additional \$1000 in price, a car is expected to gain
+    \Sexpr{b1} horsepower.
   \end{itemize}
 
 \end{frame}
 
-% ------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  \subsection{Inference for Regression Parameters}
+%------------------------------------------------------------------------------%
 
-  \watermarkoff %----------------------------------------------------------------%
-
-  \begin{frame}{Sampling Distribution}
-
-    Sampling distribution = Probability distribution of a parameter.
-    \vb
-    \begin{columns}
-      \begin{column}{0.5\textwidth}
-
-        \begin{itemize}
-        \item The \emph{population} is defined by an infinite sequence of repeated
-          estimations.
-          \vb
-          \begin{itemize}
-          \item The sampling distribution quantifies the possible values of the
-            statistic over infinite repeated sampling.
-          \end{itemize}
-          \vb
-        \item The area of a region under the curve represents the probability of
-          observing a \emph{statistic} within the corresponding interval.
-        \end{itemize}
-
-      \end{column}
-      \begin{column}{0.5\textwidth}
-
-        <<echo = FALSE, cache = TRUE>>=
-        b  <- coef(out1)[2]
-        se <- sqrt(diag(vcov(out1)))[2]
-
-        x    <- seq((b - 4 * se), (b + 4 * se), length.out = 1000)
-        dat1 <- data.frame(B = x, density = dnorm(x = x, b, se))
-
-        p0 <- ggplot(dat1, aes(x = B, y = density)) +
-            geom_line() +
-            theme_classic() +
-            theme(text = element_text(size = 16, family = "Courier"),
-                  plot.title = element_text(size = 20, face = "bold", hjust = 0.5)
-                  )
-        p0 + labs(title = "Sampling Distribution of Slope")
-@
-
-\end{column}
-\end{columns}
-\vb
-\textbf{\emph{Intuition}}: \url{http://onlinestatbook.com/stat_sim/sampling_dist/}
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Test Statistics}
-
-  To ``test'' a slope coefficient, $\hat{\beta}$, we need a point of comparison.
-  \begin{itemize}
-  \item The \emph{null-hypothesized} value of the slope,
-    $H_0: \beta = \tilde{\beta}$.
-  \end{itemize}
-
-  \vb
-
-  Our hypothesis test is actually a test for the size of the difference:
-  $\hat{\beta} - \tilde{\beta}$
-  \begin{itemize}
-  \item We define a \emph{test statistic}, $t$, to quantify the size of this
-    difference accounting for the precision with which we've estimated
-    $\hat{\beta}$.
-  \end{itemize}
-
-  \vb
-
-  We can construct the test statistic for $\hat{\beta}$ as follows:
-  \begin{align*}
-    t = \frac{\hat{\beta} - \tilde{\beta}}{SE\left(\hat{\beta}\right)}
-    ~~\overset{\tilde{\beta} = 0}{\mathlarger{\Rightarrow}}~~
-    t = \frac{\hat{\beta} - 0}{SE\left(\hat{\beta}\right)} =
-    \frac{\hat{\beta}}{SE\left(\hat{\beta}\right)}
-  \end{align*}
-
-  <<echo = FALSE, cache = TRUE>>=
-  se1 <- round(se, 2)
-  df  <- out1$df.residual
-  moe <- round(qt(0.975, df = df) * se1, 2)
-  @
-  
-  For the slope in our example, we get a test statistic of:
-  \begin{align*}
-    t = \frac{\hat{\beta}_1}{SE\left(\hat{\beta}_1\right)} =
-    \frac{\Sexpr{b1}}{\Sexpr{se1}} = \Sexpr{b1 / se1}
-  \end{align*}
-
-\end{frame}
+\subsection{Model Fit}
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Sampling Distribution of Test Statistic}
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-      The t-statistic also has a sampling distribution.
-      \vc
-      \begin{itemize}
-      \item Quantifies the possible values we could get if we repeatedly drew
-        samples, of the \underline{same size}, from the \underline{same
-          population} and re-computed a t-statistic each time.
-        \vb
-      \item The distribution under the null hypothesis assumes a population
-        wherein $\hat{\beta}$ = $\tilde{\beta}$, and, consequently, $t = 0$.
-      \end{itemize}
-
-    \end{column}
-    \begin{column}{0.5\textwidth}
-
-      <<echo = FALSE, cache = TRUE>>=
-      x    <- seq(-4, 4, length.out = 1000)
-      dat1 <- data.frame(t = x, density = dt(x = x, df = df))
-
-      p1 <- ggplot(dat1, aes(x = t, y = density)) +
-          geom_line() +
-          theme_classic() +
-          theme(text = element_text(size = 16, family = "Courier"),
-                plot.title = element_text(size = 20, face = "bold", hjust = 0.5)
-                )
-
-      p1 + labs(title = "Sampling Distribution\nCentral t-Statistic")
-      @
-      
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{P-Values}
-
-  Once we compute our estimated test statistic, $\hat{t}$, we compare it to the
-  appropriate null-hypothesized sampling distribution.
-  \vb
+\begin{frame}{Model Fit}
+  We may also want to know how well our model explains the outcome.
   \begin{itemize}
-  \item By calculating the area in the null distribution that exceeds our
-    estimated test statistic, we can compute the probability of observing the
-    given test statistic, or one more extreme, if the null hypothesis were
-    true.
-    \vb
-    \begin{itemize}
-    \item In other words, we can compute the probability of having sampled the
-      data we observed, or more unusual data, from a population wherein there
-      is no true difference between $\hat{\beta}$ and $\tilde{\beta}$.
-    \end{itemize}
-    \vb
-  \item This value is the infamous \emph{p-value}.
+  \item Our model explains some proportion of the outcome's variability.
+  \item The residual variance $\hat{\sigma}^2 = \textrm{Var}(\hat{\varepsilon})$
+    will be less than $\textrm{Var}(Y)$.
   \end{itemize}
 
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{P-Values}
-
   \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-      <<echo = FALSE, cache = TRUE>>=
-      tHat <- 2.15
-
-      p1 <- p1 +
-          geom_ribbon(data = dat1[dat1$t >= tHat, ],
-                      mapping = aes(x = t, ymin = 0, ymax = density),
-                      fill = "gray")
-      p1 + labs(title = "One-Tailed Test")
-      @
-      
-    \end{column}
-    \begin{column}{0.5\textwidth}
-
-      <<echo = FALSE, cache = TRUE>>=
-      p1 + geom_ribbon(data = dat1[dat1$t <= -tHat, ],
-                       mapping = aes(x = t, ymin = 0, ymax = density),
-                       fill = "gray") +
-          labs(title = "Two-Tailed Test")
-      @
-      
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Interpreting P-Values}
-
-  <<echo = FALSE>>=
-  pv <- pt(q          = tHat,
-           df         = df,
-           lower.tail = FALSE)
-  @
-  
-  Consider the one-tailed test for our estimated test-statistic of $\hat{t} =
-  \Sexpr{round(tHat, 2)}$ that produces a p-value of $p = \Sexpr{round(pv, 3)}$.
-  \vc
-  \begin{itemize}
-  \item We \emph{\underline{cannot}} say that there is a $\Sexpr{round(pv, 3)}$
-    probability that the true mean difference is greater than zero.
-    \vc
-  \item We \emph{\underline{cannot}} say that there is a $\Sexpr{round(pv, 3)}$
-    probability that the alternative hypothesis is true.
-    \vc
-  \item We \emph{\underline{cannot}} say that there is a $\Sexpr{round(pv, 3)}$
-    probability that the null hypothesis is false.
-    \vc
-  \item We \emph{\underline{cannot}} say that there is a $\Sexpr{round(pv, 3)}$
-    probability that the observed result is due to chance alone.
-    \vc
-  \item We \emph{\underline{cannot}} say that there is a $\Sexpr{round(pv, 3)}$
-    probability of replicating the observed effect in future studies.
-  \end{itemize}
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}{Interpreting P-Values}
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-      The p-value tells us $P(t \geq \hat{t}|H_0)$
-      \begin{itemize}
-      \item What we really want to know is $P(H_0|t \geq \hat{t})$.
-      \end{itemize}
-      \vb
-      All that we \emph{\underline{can}} say is that there is a
-      $\Sexpr{round(pv, 3)}$ probability of observing a test statistic
-      at least as large as $\hat{t}$, if the null hypothesis is true.
-      \vc
-      \begin{itemize}
-      \item Our test uses the same logic as \emph{proof by contradiction}.
-      \end{itemize}
-
-    \end{column}
-    \begin{column}{0.5\textwidth}
-
-      <<echo = FALSE>>=
-      p1
-      @
-      
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-% ------------------------------------------------------------------------------%
-
-\begin{frame}{Interpreting P-Values}
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-      Note that $P(t \geq \hat{t}|H_0) \neq P(t = \hat{t}|H_0)$
-      \begin{itemize}
-      \item We \emph{\underline{cannot}} say that there is a
-        $\Sexpr{round(pv, 3)}$ probability of observing $\hat{t}$, if the null
-        hypothesis is true.
-      \end{itemize}
-      \vb
-      The probability of observing any individual point on a continuous
-      distribution is exactly zero.
-      \vc
-      \begin{itemize}
-      \item $P(t = \hat{t}|H_0) = 0$
-      \end{itemize}
-
-    \end{column}
-    \begin{column}{0.5\textwidth}
-
-      <<echo = FALSE>>=
-      p1
-      @
-      
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-% ------------------------------------------------------------------------------%
-
-\begin{frame}{Confidence Intervals}
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      A sampling distribution quantifies the possible values of the statistic.
-      \vc
-      \begin{itemize}
-      \item We can use this distribution to estimate a \emph{plausible range}
-        for the population parameter.
-        \vc
-        \begin{enumerate}
-        \item<2-> Exclude the tails of the distribution.
-          \vc
-        \item<3-> The remaining values represent a good guess for plausible
-          population values of the parameter.
-        \end{enumerate}
-        \vc
-      \item<3-> This range is known as the \emph{confidence interval}.
-      \end{itemize}
-
-    \end{column}
-    \begin{column}{0.5\textwidth}
+    \begin{column}{0.4\textwidth}
 
       \only<1>{
-        <<echo = FALSE, cache = TRUE>>=
-        p0 + labs(title = "Sampling Distribution of the Slope")
+        <<echo = FALSE>>=
+        dat3 <- data.frame(y = Cars93$Horsepower, r = resid(out1))
+        
+        p10 <- ggplot(data = dat3, aes(x = y)) +
+            coord_cartesian() + theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p10 + geom_density() + xlim(0, 350) + labs(x = "Original Outcome")
+        @
+      }
+      \only<2>{
+        <<echo = FALSE>>=
+        p5 <- ggplot(data = Cars93, aes(x = Price, y = Horsepower)) +
+            coord_cartesian() +
+            theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p5 + geom_smooth(method = "lm", formula = y ~ 1, color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yMean),
+                         color = "red") +
+            geom_point()
+        @
+      }
+      
+    \end{column}
+    \begin{column}{0.1\textwidth}
+
+      \Huge{$\rightarrow$}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}
+
+      \only<1>{
+        <<echo = FALSE>>=
+        p11 <- ggplot(data = dat3, aes(x = r)) +
+            coord_cartesian() + theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p11 + geom_density() + xlim(-140, 150) + labs(x = "Residuals")
+        @
+      }
+      \only<2>{
+        <<echo = FALSE>>=
+        p7 <- p5 + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                         color = "red") +
+            geom_point()
+        p7
         @
       }
 
-      \only<2>{
-        <<echo = FALSE, cache = TRUE>>=
-        b  <- coef(out1)[2]
-        se <- sqrt(diag(vcov(out1)))[2]
-
-        x    <- seq((b - 4 * se), (b + 4 * se), length.out = 1000)
-        dat1 <- data.frame(B = x, density = dnorm(x = x, b, se))
-
-        ci <- confint(out1)[2, ]
-
-        dat2 <- data.frame(x = ci, y = dnorm(ci, b, se))
-
-        p0 <- p0 +
-            geom_segment(data = dat2, mapping = aes(x = x, y = 0, xend = x, yend = y),
-                         linetype = 2,
-                         size = 1) +
-            labs(title = "Confidence Bounds for Slope")
-        p0
-@
-}
-
-\only<3>{
-<<echo = FALSE, cache = TRUE>>=
-p0 + geom_ribbon(data = dat1[dat1$B > ci[1] & dat1$B < ci[2], ],
-                       mapping = aes(x = B, ymin = 0, ymax = density),
-                       fill = "gray") +
-    labs(title = "Confidence Interval for Slope")
-@
-}
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
 
-\begin{frame}{Confidence Intervals}
+\begin{frame}[shrink = 5]{Model Fit}
 
-  We can construct confidence intervals by:
+  We quantify the proportion of the outcome's variance that is explained by our
+  model using the $R^2$ statistic:
   \begin{align*}
-    CI = \hat{\beta} \pm t_{crit} \times SE\left(\hat{\beta}\right)
+    R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS}
+  \end{align*}
+  where
+  \begin{align*}
+    TSS = \sum_{n = 1}^N \left(Y_n - \bar{Y}\right)^2 =
+    \textrm{Var}(Y)\times (N - 1)
   \end{align*}
 
-  For our example slope, we get a 95\% CI of:
+  <<echo = FALSE, cache = TRUE>>=
+  ssr <- resid(out1) %>% crossprod() %>% round()
+  sst <- scale(Cars93$Horsepower, scale = FALSE) %>% crossprod() %>% round()
+  r2 <- round(1 - (ssr / sst), 2)
+  @
+  
+  For our example problem, we get:
   \begin{align*}
-    CI_{95} = \Sexpr{b1} \pm \Sexpr{round(qt(0.975, df = df), 2)} \times
-    \Sexpr{se1} = [\Sexpr{b1 - moe}; \Sexpr{b1 + moe}]
+    R^2 = 1 - \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{as.integer(sst)}} \approx
+    \Sexpr{r2}
   \end{align*}
-  Which suggests that we can be 95\% certain that the true value of $\beta_1$ is
-  somewhere between $\Sexpr{b1 - moe}$ and $\Sexpr{b1 + moe}$.
-  \vc
-  \begin{itemize}
-  \item We are \emph{95\% certain} in the sense that if we repeat this analysis
-    an infinite number of times, 95\% of the CIs that we calculate will surround
-    the true value of $\beta_1$.
-  \end{itemize}
-
+  Indicating that car price explains \Sexpr{r2 * 100}\% of the variability in
+  horsepower.
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Interpreting Confidence Intervals}
+\begin{frame}{Model Fit for Prediction}
 
-  Say we estimate a regression slope of $\hat{\beta}_1 = 0.5$ with an associated
-  95\% confidence interval of $CI = [0.25; 0.75]$.
-  \pause
-  \vc
-  \begin{itemize}
-  \item We \emph{\underline{cannot}} say that there is 95\% chance that the true
-    value of $\beta_1$ is between 0.25 and 0.75.
-    \vc
-  \item We \emph{\underline{cannot}} say that the true value of $\beta_1$ is
-    between 0.25 and 0.75, with probability 0.95.
-  \end{itemize}
+  When assessing predictive performance, we will most often use the \emph{mean
+    squared error} (MSE) as our criterion.
   \vb
-  \pause
-  The true value of $\beta_1$ is fixed; it's a single quantity.
+  \begin{align*}
+    MSE &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
+        &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 -
+          \sum_{p = 1}^P \hat{\beta}_p X_{np} \right)^2\\
+        &= \frac{RSS}{N}
+  \end{align*}
+  
+  <<echo = FALSE, cache = TRUE>>=
+  mse <- round(ssr / nrow(Cars93), 2)
+  @
+  
+  For our example problem, we get:
+  \begin{align*}
+    MSE = \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}} \approx \Sexpr{mse}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interpreting MSE}
+  
+  <<echo = FALSE>>=
+  rmse <- round(sqrt(ssr/nrow(Cars93)), 2)
+  @
+  
+  The MSE quantifies the average squared prediction error.
   \begin{itemize}
-  \item $\beta_1$ is either in our estimated interval or it is not; there is no
-    uncertainty.
-    \vc
-  \item The probability that $\beta_1$ is within our estimated interval is either
-    exactly 1 or exactly 0.
+  \item Taking the square root improves interpretation.
   \end{itemize}
+  \begin{align*}
+    RMSE = \sqrt{MSE}
+  \end{align*}
+  The RMSE estimates the magnitude of the expected prediction error.
+  \begin{itemize}
+  \item For our example problem, we get:
+  \end{itemize}
+  \begin{align*}
+    RMSE = \sqrt{\frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}}} \approx
+    \Sexpr{rmse}
+  \end{align*}
+  \vx{-8}
+  \begin{itemize}
+  \item When using price as the only predictor of horsepower, we expect
+    prediction errors with magnitudes of \Sexpr{rmse} horsepower.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Information Criteria}
+  
+  We can use \emph{information criteria} to quickly compare \emph{non-nested}
+  models while accounting for model complexity.\\
+
+  \vb
+  
+  \begin{itemize}
+  \item Akaike's Information Criterion (AIC)
+    \only<1>{
+      \begin{align*}
+        AIC = 2K - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \item Bayesian Information Criterion (BIC)
+    \only<1>{
+      \begin{align*}
+        BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \end{itemize}
+  \onslide<2>{
+    Information criteria balance two competing forces.
+    \vc
+    \begin{itemize}
+    \item \blue{The optimized loglikelihood quantifies fit to the data.}
+      \vc
+    \item \red{The penalty term corrects for model complexity}.
+    \end{itemize}
+  }
 
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Interpreting Confidence Intervals}
-
-  We don't talk about 95\% probabilities when interpreting CIs; instead, we
-  talk about 95\% confidence.
-  \vc
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-      \begin{itemize}
-      \item If we collected a new sample---of the same size---re-estimated our
-        model, and re-computed the 95\% CI for $\hat{\beta_1}$, we would get a
-        different interval.
-        \vc
-      \item Repeating this process an infinite number of times would give us a
-        distribution of CIs.
-        \vc
-      \item 95\% of those CIs would surround the true value of $\beta_1$.
-      \end{itemize}
-
-    \end{column}
-    \begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-reps <- 100
-n    <- 500
-
-ci <- beta <- list()
-for(rp in 1 : reps) {
-    x <- rnorm(n)
-    y <- 0.5 * x + rnorm(n)
-
-    fit <- lm(y ~ x)
-
-    beta[[rp]] <- coef(fit)[2]
-    ci[[rp]]   <- confint(fit)[2, ]
-}
-
-ci   <- do.call(rbind, ci)
-beta <- unlist(beta)
-
-check <- ci[ , 1] <= 0.5 & ci[ , 2] >= 0.5
-
-cols         <- rep("blue", length(check))
-cols[!check] <- "red"
-
-dat1 <- data.frame(ind = 1 : reps, beta = beta, lb = ci[ , 1], ub = ci[ , 2])
-
-ggplot(dat1, mapping = aes(x = ind, y = beta, group = 1)) +
-    geom_point(colour = cols) +
-    geom_errorbar(width   = 0.1,
-                  mapping = aes(ymin = lb, ymax = ub),
-                  colour  = cols) +
-    geom_abline(slope = 0.0, intercept = 0.5) +
-    theme_classic() +
-    theme(text = element_text(size = 16, family = "Courier")) +
-    ylab("Beta") +
-    xlab("Replication") +
-    labs(title = "100 95% CIs for Beta = 0.5") +
-    theme(plot.title = element_text(size = 20, face = "bold", hjust = 0.5))
-@
-
-\end{column}
-\end{columns}
-
+\begin{frame}[fragile]{Information Criteria}
+  
+  <<include = FALSE>>=
+  ll1 <- logLik(out1)
+  
+  6 - 2 * ll1
+  AIC(out1)
+  
+  k <- 3
+  n <- nrow(Cars93)
+  @
+  
+  For our example, we get the following estimates of AIC and BIC:
+  \begin{align*}
+    AIC &= 2(\Sexpr{k}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(AIC(out1), 2)}\\[8pt]
+    BIC &= \Sexpr{k}\ln(\Sexpr{n}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(BIC(out1), 2)}
+  \end{align*}
+  
+  To compute the AIC/BIC from a fitted \texttt{lm()} object in R:
+  <<>>=
+  AIC(out1)
+  BIC(out1)
+  @
+  
 \end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Inference with Confidence Intervals}
-
-  In terms of sampling distributions, our inferential task is to say something
-  about how distinct the null and alternative distributions are.
-
-<<echo = FALSE>>=
-x0 <- seq(-4, 4, length.out = 1000)
-x1 <- seq(-1.5, 6.5, length.out = 1000)
-x2 <- seq(-2.5, 5.5, length.out = 1000)
-
-h0 <- dnorm(x0)
-h1 <- dnorm(x1, mean = 2.5)
-h2 <- dnorm(x2, mean = 1.5)
-
-ci1 <- qnorm(c(0.025, 0.975), mean = 2.5)
-ci2 <- qnorm(c(0.025, 0.975), mean = 1.5)
-
-dat2 <- data.frame(x0, x1, x2, h0, h1, h2)
-
-ym0 <- dat2$h0[which.max(dat2$h0)]
-ym1 <- dat2$h1[which.max(dat2$h1)]
-ym2 <- dat2$h2[which.max(dat2$h2)]
-
-yl1 <- dat2$h1[which.min(abs(dat2$x1 - ci1[1]))]
-yu1 <- dat2$h1[which.min(abs(dat2$x1 - ci1[2]))]
-yl2 <- dat2$h2[which.min(abs(dat2$x2 - ci2[1]))]
-yu2 <- dat2$h2[which.min(abs(dat2$x2 - ci2[2]))]
-
-p0 <- ggplot(dat2, aes(x = x0, y = h0)) +
-    geom_line() +
-    geom_segment(mapping  = aes(x = 0, y = 0, xend = 0, yend = ym0),
-                 linetype = 2) +
-    theme_classic() +
-    theme(text = element_text(size = 16, family = "Courier")) +
-    xlab("Beta") +
-    ylab("Density")
-@
-
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-p1.1 <- p0 +
-    geom_line(mapping = aes(x = x1, y = h1), colour = "blue") +
-    geom_segment(mapping  = aes(x = 2.5, y = 0, xend = 2.5, yend = ym1),
-                 colour   = "blue",
-                 linetype = 2)
-p1.1
-@
-
-\end{column}
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-p1.2 <- p0 +
-    geom_line(mapping = aes(x = x2, y = h2), colour = "blue") +
-    geom_segment(mapping  = aes(x = 1.5, y = 0, xend = 1.5, yend = ym2),
-                 colour   = "blue",
-                 linetype = 2)
-p1.2
-@
-
-\end{column}
-\end{columns}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Inference with Confidence Intervals}
-
-  CIs give us a plausible range for the population value of $\beta$, so we can
-  use CIs to support inference.
-
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-p1.1 + geom_segment(mapping  = aes(x = ci1[1], y = 0, xend = ci1[1], yend = yl1),
-                    colour   = "red",
-                    linetype = 1,
-                    size     = 0.75) +
-    geom_segment(mapping  = aes(x = ci1[2], y = 0, xend = ci1[2], yend = yu1),
-                 colour   = "red",
-                 linetype = 1,
-                 size     = 0.75)
-@
-
-\end{column}
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2),
-                    colour   = "red",
-                    linetype = 1,
-                    size     = 0.75) +
-    geom_segment(mapping  = aes(x = ci2[2], y = 0, xend = ci2[2], yend = yu2),
-                 colour   = "red",
-                 linetype = 1,
-                 size     = 0.75)
-@
-
-\end{column}
-\end{columns}
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Model-Based Prediction}
-
-  In the social and behavioral sciences, regression modeling is often focused on
-  inference about estimated model parameters.
-  \vc
-  \begin{itemize}
-  \item The association between the price of a car and its power.
-    \vc
-  \item We model the system and scrutinize $\hat{\beta}_1$ to make inferences
-    about the association between price and power.
-  \end{itemize}
-  \vb
-  \pause
-  In data science applications, we're often more interested in predicting the
-  outcome for new observations.
-  \vc
-  \begin{itemize}
-  \item After we estimate $\hat{\beta}_0$ and $\hat{\beta}_1$, we can plug in
-    new predictor data and get a predicted outcome value for any new case.
-  \vc
-  \item In our example, these predictions represent the projected horsepower
-    ratings of cars with prices given by the new $X_{price}$ values.
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Inference vs. Prediction}
-
-  When doing statistical inference, we focus on how certain variables relate to
-  the outcome.
-  \begin{itemize}
-  \item Do men have higher job-satisfaction than women?
-  \item Does increased spending on advertising correlate with more sales?
-  \item Is there a relationship between the number of liquor stores in a
-    neighborhood and the amount of crime?
-  \end{itemize}
-
-  \vb
-  \pause
-
-  When doing prediction (or classification), we want to build a tool that can
-  accurately guess future values.
-  \begin{itemize}
-  \item Will it rain tomorrow?
-  \item How much will a company earn from investing in a certain research
-    profile?
-  \item What is a patient's risk of heart disease based on their medical history
-    and test results?
-  \end{itemize}
-
-\end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \watermarkon %-----------------------------------------------------------------%
 
@@ -949,59 +551,59 @@ p1.2 + geom_segment(mapping  = aes(x = ci2[1], y = 0, xend = ci2[1], yend = yl2)
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Example}
-
-<<cache = TRUE>>=
-## Read in the 'diabetes' dataset:
-dDat <- readRDS("../data/diabetes.rds")
-
-## Simple regression with which we're familiar:
-out1 <- lm(bp ~ age, data = dDat)
-@
-
-\va
-
-\textsc{Asking}: What is the effect of age on average blood pressure?
-
+  
+  <<cache = TRUE>>=
+  ## Read in the 'diabetes' dataset:
+  dDat <- readRDS("../data/diabetes.rds")
+  
+  ## Simple regression with which we're familiar:
+  out1 <- lm(bp ~ age, data = dDat)
+  @
+  
+  \va
+  
+  \textsc{Asking}: What is the effect of age on average blood pressure?
+  
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks, fragile]{Example}
-
-<<cache = TRUE>>=
-partSummary(out1, -1)
-@
-
+  
+  <<cache = TRUE>>=
+  partSummary(out1, -1)
+  @
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Example}
-
-<<cache = TRUE>>=
-## Add in another predictor:
-out2 <- lm(bp ~ age + bmi, data = dDat)
-@
-
-\va
-
-\textsc{Asking}: What is the effect of BMI on average blood pressure,
-\emph{after controlling for age?}
-\vb
-\begin{itemize}
+  
+  <<cache = TRUE>>=
+  ## Add in another predictor:
+  out2 <- lm(bp ~ age + bmi, data = dDat)
+  @
+  
+  \va
+  
+  \textsc{Asking}: What is the effect of BMI on average blood pressure,
+  \emph{after controlling for age?}
+  \vb
+  \begin{itemize}
   \item We're partialing age out of the effect of BMI on blood pressure.
-\end{itemize}
-
+  \end{itemize}
+  
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks, fragile]{Example}
-
-<<cache = TRUE>>=
-partSummary(out2, -1)
-@
-
+  
+  <<cache = TRUE>>=
+  partSummary(out2, -1)
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1037,260 +639,26 @@ partSummary(out2, -1)
 
 %------------------------------------------------------------------------------%
 
-\subsection{Model Fit}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}{Model Fit}
-  We may also want to know how well our model explains the outcome.
-  \begin{itemize}
-  \item Our model explains some proportion of the outcome's variability.
-  \item The residual variance $\hat{\sigma}^2 = \textrm{Var}(\hat{\varepsilon})$
-    will be less than $\textrm{Var}(Y)$.
-  \end{itemize}
-
-  \begin{columns}
-    \begin{column}{0.4\textwidth}
-      \only<1>{
-<<echo = FALSE>>=
-dat3 <- data.frame(y = Cars93$Horsepower, r = resid(out1))
-
-p10 <- ggplot(data = dat3, aes(x = y)) +
-    coord_cartesian() + theme_classic() +
-    theme(text = element_text(size = 16, family = "Courier"))
-
-p10 + geom_density() + xlim(0, 350) + labs(x = "Original Outcome")
-@
-      }
-      \only<2>{
-<<echo = FALSE>>=
-p5 <- ggplot(data = Cars93, aes(x = Price, y = Horsepower)) +
-    coord_cartesian() +
-    theme_classic() +
-    theme(text = element_text(size = 16, family = "Courier"))
-
-p5 + geom_smooth(method = "lm", formula = y ~ 1, color = "blue", se = FALSE) +
-    geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yMean),
-                 color = "red") +
-    geom_point()
-@
-      }
-    \end{column}
-    \begin{column}{0.1\textwidth}
-
-      \Huge{$\rightarrow$}
-
-    \end{column}
-    \begin{column}{0.4\textwidth}
-
-      \only<1>{
-<<echo = FALSE>>=
-p11 <- ggplot(data = dat3, aes(x = r)) +
-    coord_cartesian() + theme_classic() +
-    theme(text = element_text(size = 16, family = "Courier"))
-
-p11 + geom_density() + xlim(-140, 150) + labs(x = "Residuals")
-@
-      }
-      \only<2>{
-
-<<echo = FALSE>>=
-p7 <- p5 + geom_smooth(method = "lm", color = "blue", se = FALSE) +
-    geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
-                 color = "red") +
-    geom_point()
-p7
-@
-      }
-
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}[shrink = 5]{Model Fit}
-
-  We quantify the proportion of the outcome's variance that is explained by our
-  model using the $R^2$ statistic:
-  \begin{align*}
-    R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS}
-  \end{align*}
-  where
-  \begin{align*}
-    TSS = \sum_{n = 1}^N \left(Y_n - \bar{Y}\right)^2 =
-    \textrm{Var}(Y)\times (N - 1)
-  \end{align*}
-
-<<echo = FALSE, cache = TRUE>>=
-ssr <- round(crossprod(resid(out1)))
-sst <- round(crossprod(scale(Cars93$Horsepower, scale = FALSE)))
-r2 <- round(1 - (ssr / sst), 2)
-@
-
-For our example problem, we get:
-\begin{align*}
-  R^2 = 1 - \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{as.integer(sst)}} \approx
-  \Sexpr{r2}
-\end{align*}
-Indicating that car price explains \Sexpr{r2 * 100}\% of the variability in
-horsepower.
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Model Fit for Prediction}
-
-  When assessing predictive performance, we will most often use the \emph{mean
-    squared error} (MSE) as our criterion.
-  \vb
-  \begin{align*}
-    MSE &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
-    &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 -
-    \sum_{p = 1}^P \hat{\beta}_p X_{np} \right)^2\\
-    &= \frac{RSS}{N}
-  \end{align*}
-
-<<echo = FALSE, cache = TRUE>>=
-mse <- round(ssr / nrow(Cars93), 2)
-@
-
-For our example problem, we get:
-\begin{align*}
-  MSE = \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}} \approx \Sexpr{mse}
-\end{align*}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Interpreting MSE}
-
-<<echo = FALSE>>=
-rmse <- round(sqrt(ssr/nrow(Cars93)), 2)
-@
-
-  The MSE quantifies the average squared prediction error.
-  \begin{itemize}
-  \item Taking the square root improves interpretation.
-  \end{itemize}
-  \begin{align*}
-    RMSE = \sqrt{MSE}
-  \end{align*}
-  The RMSE estimates the magnitude of the expected prediction error.
-  \begin{itemize}
-  \item For our example problem, we get:
-  \end{itemize}
-  \begin{align*}
-    RMSE = \sqrt{\frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}}} \approx
-    \Sexpr{rmse}
-  \end{align*}
-  \vx{-8}
-  \begin{itemize}
-  \item When using price as the only predictor of horsepower, we expect
-    prediction errors with magnitudes of \Sexpr{rmse} horsepower.
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Information Criteria}
-
-  We can use \emph{information criteria} to quickly compare \emph{non-nested}
-  models while accounting for model complexity.\\
-
-  \vb
-  \begin{itemize}
-  \item Akaike's Information Criterion (AIC)
-    \only<1>{
-      \begin{align*}
-        AIC = 2K - 2\hat{\ell}(\theta|X)
-      \end{align*}
-    }
-    \only<2>{
-      \begin{align*}
-        AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
-      \end{align*}
-    }
-  \item Bayesian Information Criterion (BIC)
-    \only<1>{
-      \begin{align*}
-        BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
-      \end{align*}
-    }
-    \only<2>{
-      \begin{align*}
-        BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
-      \end{align*}
-    }
-  \end{itemize}
-  \onslide<2>{
-    Information criteria balance two competing forces.
-    \vc
-    \begin{itemize}
-    \item \blue{The optimized loglikelihood quantifies fit to the data.}
-      \vc
-    \item \red{The penalty term corrects for model complexity}.
-    \end{itemize}
-  }
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Information Criteria}
-
-<<include = FALSE>>=
-ll1 <- logLik(out1)
-
-6 - 2 * ll1
-AIC(out1)
-
-k <- 3
-n <- nrow(Cars93)
-@
-
-  For our example, we get the following estimates of AIC and BIC:
-  \begin{align*}
-    AIC &= 2(\Sexpr{k}) - 2(\Sexpr{round(ll1, 2)})\\
-    &= \Sexpr{round(AIC(out1), 2)}\\[8pt]
-    BIC &= \Sexpr{k}\ln(\Sexpr{n}) - 2(\Sexpr{round(ll1, 2)})\\
-    &= \Sexpr{round(BIC(out1), 2)}
-  \end{align*}
-
-  To compute the AIC/BIC from a fitted \texttt{lm()} object in R:
-<<>>=
-AIC(out1)
-BIC(out1)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
 \subsection{Model Comparison}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Multiple $R^2$}
-
+  
   How much variation in blood pressure is explained by the two models?
   \begin{itemize}
-    \item Check the $R^2$ values.
+  \item Check the $R^2$ values.
   \end{itemize}
-
-<<cache = TRUE>>=
-## Extract R^2 values:
-r2.1 <- summary(out1)$r.squared
-r2.2 <- summary(out2)$r.squared
-
-r2.1
-r2.2
-@
-
+  
+  <<cache = TRUE>>=
+  ## Extract R^2 values:
+  r2.1 <- summary(out1)$r.squared
+  r2.2 <- summary(out2)$r.squared
+  
+  r2.1
+  r2.2
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1301,21 +669,21 @@ r2.2
   \begin{itemize}
   \item We use the F-statistic to test $H_0: R^2 = 0$ vs. $H_1: R^2 > 0$.
   \end{itemize}
-
-<<>>=
-f1 <- summary(out1)$fstatistic
-f1
-pf(q = f1[1], df1 = f1[2], df2 = f1[3], lower.tail = FALSE)
-@
-
-\pagebreak
-
-<<>>=
-f2 <- summary(out2)$fstatistic
-f2
-pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
-@
-
+  
+  <<>>=
+  f1 <- summary(out1)$fstatistic
+  f1
+  pf(q = f1[1], df1 = f1[2], df2 = f1[3], lower.tail = FALSE)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  f2 <- summary(out2)$fstatistic
+  f2
+  pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1327,53 +695,53 @@ pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
   \begin{itemize}
   \item Compute the $\Delta R^2$
   \end{itemize}
-
-<<cache = TRUE>>=
-## Compute change in R^2:
-r2.2 - r2.1
-@
-
+  
+  <<cache = TRUE>>=
+  ## Compute change in R^2:
+  r2.2 - r2.1
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Significance Testing}
-
-How do we know if $\Delta R^2$ represents a significantly greater degree of
-explained variation?
-\begin{itemize}
-\item Use an $F$-test for $H_0: \Delta R^2 = 0$ vs. $H_1: \Delta R^2 > 0$
-\end{itemize}
-
-<<>>=
-## Is that increase significantly greater than zero?
-anova(out1, out2)
-@
-
+  
+  How do we know if $\Delta R^2$ represents a significantly greater degree of
+  explained variation?
+  \begin{itemize}
+  \item Use an $F$-test for $H_0: \Delta R^2 = 0$ vs. $H_1: \Delta R^2 > 0$
+  \end{itemize}
+  
+  <<>>=
+  ## Is that increase significantly greater than zero?
+  anova(out1, out2)
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Comparing Models}
-
+  
   We can also compare models based on their prediction errors.
   \begin{itemize}
   \item For OLS regression, we usually compare MSE values.
   \end{itemize}
   \vx{-6}
-<<>>=
-mse1 <- MSE(y_pred = predict(out1), y_true = dDat$bp)
-mse2 <- MSE(y_pred = predict(out2), y_true = dDat$bp)
-
-mse1
-mse2
-@
-
-In this case, the MSE for the model with $BMI$ included is smaller.
-\begin{itemize}
-\item We should prefer the the larger model.
-\end{itemize}
-
+  <<>>=
+  mse1 <- MSE(y_pred = predict(out1), y_true = dDat$bp)
+  mse2 <- MSE(y_pred = predict(out2), y_true = dDat$bp)
+  
+  mse1
+  mse2
+  @
+  
+  In this case, the MSE for the model with $BMI$ included is smaller.
+  \begin{itemize}
+  \item We should prefer the the larger model.
+  \end{itemize}
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1381,98 +749,23 @@ In this case, the MSE for the model with $BMI$ included is smaller.
 \begin{frame}[fragile]{Comparing Models}
 
   Finally, we can compare models based on information criteria.
-
-<<>>=
-AIC(out1, out2)
-BIC(out1, out2)
-@
-
-In this case, both the AIC and the BIC for the model with $BMI$ included are
-smaller.
-\begin{itemize}
-\item We should prefer the the larger model.
-\end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\sectionslide{Categorical Predictors}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Categorical Predictors}
-
-  Most of the predictors we've considered thus far have been
-  \emph{quantitative}.
-  \vc
+  
+  <<>>=
+  AIC(out1, out2)
+  BIC(out1, out2)
+  @
+  
+  In this case, both the AIC and the BIC for the model with $BMI$ included are
+  smaller.
   \begin{itemize}
-  \item Continuous variables that can take any real value in their range
-    \vc
-  \item Interval or Ratio scaling
+  \item We should prefer the the larger model.
   \end{itemize}
-  \vb
-  We often want to include grouping factors as predictors.
-  \vc
-  \begin{itemize}
-  \item These variables are \emph{qualitative}.
-    \begin{itemize}
-    \item Their values are simply labels.
-      \vc
-    \item There is no ordering of the categories.
-      \vc
-    \item Nominal scaling
-    \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{How to Model Categorical Predictors}
-
-  We need to be careful when we include categorical predictors into a regression
-  model.
-  \vc
-  \begin{itemize}
-  \item The variables need to be coded before entering the model
-  \end{itemize}
-  \vb
-  Consider the following indicator of major:
-  $X_{maj} = \{1 = \textit{Law}, 2 = \textit{Economics}, 3 = \textit{Data Science}\}$
-  \vc
-  \begin{itemize}
-    \item What would happen if we na\"ively used this variable to predict
-      program satisfaction?
-  \end{itemize}
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[allowframebreaks, fragile]{How to Model Categorical Predictors}
-
-<<>>=
-mDat <- readRDS("../data/major_data.rds")
-mDat[seq(25, 150, 25), ]
-out1 <- lm(sat ~ majN, data = mDat)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{How to Model Categorical Predictors}
-
-<<>>=
-partSummary(out1, -1)
-@
-
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
 
-\subsection{Dummy Coding}
+\sectionslide{Categorical Predictors}
 
 %------------------------------------------------------------------------------%
 
@@ -1494,31 +787,35 @@ partSummary(out1, -1)
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Example Dummy Code}
- Let's look at the simple example of coding biological sex:
-<<echo = FALSE, results = "asis">>=
-sex  <- factor(sample(c("male", "female"), 10, TRUE))
-male <- as.numeric(model.matrix(~sex)[ , -1])
 
-xTab2 <- xtable(data.frame(sex, male), digits = 0)
-print(xTab2, booktabs = TRUE)
-@
+  Let's look at the simple example of coding biological sex:
 
+  <<echo = FALSE, results = "asis">>=
+  sex  <- factor(sample(c("male", "female"), 10, TRUE))
+  male <- as.numeric(model.matrix(~sex)[ , -1])
+  
+  xTab2 <- xtable(data.frame(sex, male), digits = 0)
+  print(xTab2, booktabs = TRUE)
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Example Dummy Codes}
- Now, a slightly more complex  example:
-<<echo = FALSE, results = "asis">>=
-drink <- factor(sample(c("coffee", "tea", "juice"), 10, TRUE))
 
-codes           <- model.matrix(~drink)[ , -1]
-colnames(codes) <- c("juice", "tea")
+  Now, a slightly more complex  example:
 
-xTab3 <- xtable(data.frame(drink, codes), digits = 0)
-print(xTab3, booktabs = TRUE)
-@
-
+  <<echo = FALSE, results = "asis">>=
+  drink <- factor(sample(c("coffee", "tea", "juice"), 10, TRUE))
+  
+  codes           <- model.matrix(~drink)[ , -1]
+  colnames(codes) <- c("juice", "tea")
+  
+  xTab3 <- xtable(data.frame(drink, codes), digits = 0)
+  print(xTab3, booktabs = TRUE)
+  @
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1538,21 +835,22 @@ print(xTab3, booktabs = TRUE)
   \item Each slope represents the difference between the mean of $Y$ in the
     coded group and the mean of $Y$ in the reference group.
   \end{itemize}
-
+  
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Example}
 
-<<>>=
-## Read in some data:
-cDat <- readRDS("../data/cars_data.rds")
+  <<>>=
+  ## Load some data:
+  data(Cars93, package = "MASS")
 
-out3 <- lm(price ~ front + rear, data = cDat)
-partSummary(out3, -1)
-@
-
+  ## Use a nominal predictor:
+  out3 <- lm(Price ~ DriveTrain, data = Cars93)
+  partSummary(out3, -1)
+  @
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -1581,7 +879,7 @@ partSummary(out3, -1)
   Include two sets of dummy codes:
 
 <<>>=
-out4 <- lm(price ~ mtOpt + front + rear, data = cDat)
+out4 <- lm(Price ~ Man.trans.avail + DriveTrain, data = Cars93)
 partSummary(out4, -c(1, 2))
 @
 
@@ -1613,6 +911,37 @@ partSummary(out4, -c(1, 2))
 
 \watermarkoff %----------------------------------------------------------------%
 
+\begin{frame}[fragile]{Contrasts}
+  
+  All R factors have an associated \emph{contrasts} attribute.
+  \vc
+  \begin{itemize}
+  \item The contrasts define a coding to represent the grouping information.
+    \vc
+  \item Modeling functions code the factors using the rules defined by the contrasts.
+  \end{itemize}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      contrasts(Cars93$Man.trans.avail)
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      contrasts(Cars93$DriveTrain)
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
 \subsection{Significance Testing for Dummy Codes}
 
 %------------------------------------------------------------------------------%
@@ -1623,7 +952,7 @@ partSummary(out4, -c(1, 2))
   significance by evaluating the significance of a single dummy code.
 
 <<>>=
-out2 <- lm(price ~ mtOpt, data = cDat)
+out2 <- lm(Price ~ Man.trans.avail, data = Cars93)
 partSummary(out2, -c(1, 2))
 @
 
@@ -1666,362 +995,9 @@ partSummary(out3, -c(1, 2))
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Model-Building}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model-Building Example}
-
-  Let's walk through an example of the model-building process.
-  \vc
-  \begin{itemize}
-    \item We'll take $Y_{bp} = \beta_0 + \beta_1 X_{age.30} + \varepsilon$ as
-      our baseline model.
-      \vc
-    \item Next, we simultaneously add predictors of LDL and HDL cholesterol.
-  \end{itemize}
-
-<<cache = TRUE>>=
-diabetes <- readRDS("../data/diabetes.rds")
-
-## Center predictor variables:
-diabetes <- mutate(diabetes,
-                   ldl100 = ldl - 100,
-                   hdl60 = hdl - 60,
-                   age30 = age - 30)
-
-## Baseline model:
-out1 <- lm(bp ~ age30, data = diabetes)
-
-## Simultaneously add two predictors:
-out2 <- lm(bp ~ age30 + ldl100 + hdl60, data = diabetes)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[allowframebreaks, fragile]{Model-Building Example}
-
-<<cache = TRUE>>=
-partSummary(out1, -1)
-@
-
-\pagebreak
-
-<<cache = TRUE>>=
-partSummary(out2, -1)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Interpretations}
-
-  \begin{itemize}
-  \item The expected average blood pressure for a 30 year old patient with LDL =
-    100 and HDL = 60 is \Sexpr{round(coef(out2)[1], 2)}.
-    \vb
-  \item For each additional year older, average blood pressure is expected to
-    increase by \Sexpr{round(coef(out2)['age30'], 2)}, after controlling for LDL
-    and HDL levels.
-    \vb
-  \item For each additional unit of LDL level, average blood pressure is
-    expected to increase by \Sexpr{round(coef(out2)['ldl100'], 2)}, after
-    controlling for age and HDL.
-    \vb
-  \item For each additional unit of HDL level, average blood pressure is
-    expected to decrease by \Sexpr{round(coef(out2)['hdl60'], 2)}, after
-    controlling for age and LDL.
-  \end{itemize}
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-<<cache = TRUE>>=
-## Compute change in R^2:
-summary(out2)$r.squared - summary(out1)$r.squared
-
-## Significance test for change in R^2:
-anova(out1, out2)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-<<>>=
-(mse1 <- MSE(y_pred = predict(out1), y_true = diabetes$bp))
-(mse2 <- MSE(y_pred = predict(out2), y_true = diabetes$bp))
-
-AIC(out1, out2)
-BIC(out1, out2)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Interpretations}
-
-<<echo = FALSE>>=
-r2.1 <- summary(out1)$r.squared
-r2.2 <- summary(out2)$r.squared
-@
-
-\begin{itemize}
-\item Age, LDL, and HDL explain a combined \Sexpr{round(100 * r2.2, 1)}\% of
-  the variation in blood pressure.
-  \vc
-  \begin{itemize}
-  \item This proportion of variation explained is significantly greater than
-    zero.
-  \end{itemize}
-  \vb
-\item Adding LDL and HDL produces a model that explains \Sexpr{round(100 *
-  (r2.2 - r2.1), 1)}\% more variation in blood pressure than a model with age
-  as the only predictor.
-  \vc
-  \begin{itemize}
-  \item This increase in variation explained is significantly greater than zero.
-  \end{itemize}
-  \vb
-\item Adding LDL and HDL produces a model with lower prediction error
-  (i.e., MSE = \Sexpr{round(mse2, 2)} vs. MSE = \Sexpr{round(mse1, 2)}).
-  \vb
-\item Both the AIC and the BIC also suggest that adding LDL and HDL
-  produces a better model.
-\end{itemize}
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Continue Building the Model}
-
-  So far we've established that age, LDL, and HDL are all significant predictors
-  of average blood pressure.
-  \vc
-  \begin{itemize}
-  \item We've also established that adding LDL and HDL, together, explain
-    significantly more variation than age alone.
-  \end{itemize}
-  \vb
-  Next, we'll add BMI to see what additional explanatory role it can play
-  above and beyond age and cholesterol.
-
-<<cache = TRUE>>=
-## Center BMI:
-diabetes <- mutate(diabetes, bmi25 = bmi - 25)
-
-## Now, add bmi:
-out3 <- lm(bp ~ age30 + ldl100 + hdl60 + bmi25, data = diabetes)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model-Building Example}
-
-<<cache = TRUE>>=
-partSummary(out3, -1)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Interpretations}
-
-  BMI seems to have a pretty strong effect on average blood pressure, after
-  controlling for age and cholesterol levels.
-  \vc
-  \begin{itemize}
-  \item After controlling for BMI, cholesterol levels no longer seem to be
-    important predictors.
-    \vc
-  \item Let's take a look at what happens to the cholesterol effects when we add
-    BMI:
-  \end{itemize}
-
-<<echo = FALSE, cache = TRUE, results = 'asis'>>=
-tab1 <- rbind(coef(out2)[-c(1, 2)], coef(out3)[-c(1, 2, 5)])
-rownames(tab1) <- c("Without BMI", "With BMI")
-colnames(tab1) <- c("LDL", "HDL")
-xTab1 <- xtable(tab1, align = rep("l", 3), digits = 3)
-print(xTab1, booktabs = TRUE)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-  How much additional variability in blood pressure is explained by BMI above
-  and beyond age and cholesterol levels?
-<<cache = TRUE>>=
-r2.3 <- summary(out3)$r.squared
-r2.3 - r2.2
-@
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-  Is the additional \Sexpr{round(100 * (r2.3 - r2.2), 2)}\% variation explained
-  a significant increase?
-
-<<>>=
-anova(out2, out3)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-<<>>=
-mse3 <- MSE(y_pred = predict(out3), y_true = diabetes$bp)
-
-mse2
-mse3
-
-AIC(out2, out3)
-BIC(out2, out3)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Modification}
-
-  Maybe cholesterol levels are not important features once we've accounted for
-  BMI.
-  \vc
-  \begin{itemize}
-  \item Let's try a model including BMI but excluding cholesterol levels.
-  \end{itemize}
-
-<<cache = TRUE>>=
-## Take out the cholesterol variables:
-out4 <- lm(bp ~ age30 + bmi25, data = diabetes)
-@
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model-Building Example}
-
-<<cache = TRUE>>=
-partSummary(out4, -1)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-  How much explained variation did we loose by removing the LDL and HDL
-  variables?
-
-<<cache = TRUE>>=
-r2.4 <- summary(out4)$r.squared
-r2.3 - r2.4
-@
-
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-  Is this \Sexpr{round(100 * (r2.3 - r2.4), 2)}\% loss in explained variance
-  significant?
-
-<<>>=
-anova(out4, out3)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model Comparison}
-
-<<>>=
-mse4 <- MSE(y_pred = predict(out4), y_true = diabetes$bp)
-
-mse3
-mse4
-
-AIC(out3, out4)
-BIC(out3, out4)
-@
-
-\end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Model-Based Prediction}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Prediction}
-
-  So far, we've focused mostly on inferences about the estimated regression
-  coefficients.
-  \vb
-  \begin{itemize}
-  \item Asking questions about how $X$ is related to $Y$.
-  \end{itemize}
-  \vb
-  We can also use linear regression for \emph{prediction}.
-  \vb
-  \begin{itemize}
-  \item Given a new observation, $X_m$, what outcome value, $\hat{Y}_m$, does
-    our model attribute to the \emph{m}th observation?
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Prediction}
-
-  Train a model to predict psychological well-being from diet-related and
-  exercise-related features.
-  \vb
-  \begin{itemize}
-  \item Plug-in new feature values corresponding to an experimental wellness
-    program to see the expected well-being for a hypothetical patient treated
-    with the new program.
-  \end{itemize}
-  \vb
-  Predict future gasoline prices based on geo-political events in oil-producing
-  countries.
-  \vb
-  \begin{itemize}
-    \item If conflict escalates in the Middle East, adjust the appropriate
-      features and project likely changes in gasoline prices.
-  \end{itemize}
-
-\end{frame}
 
 %------------------------------------------------------------------------------%
 
@@ -2035,8 +1011,8 @@ BIC(out3, out4)
   \end{align*}
 
 <<echo = FALSE>>=
-trainDat <- diabetes[1 : 400, ]
-testDat  <- diabetes[401 : 442, ]
+trainDat <- dDat[1 : 400, ]
+testDat  <- dDat[401 : 442, ]
 
 out1 <- lm(ldl ~ bp + glu + bmi, data = trainDat)
 b0 <- round(coef(out1)[1], 3)
@@ -2158,7 +1134,9 @@ p1 <- ggplot(data = testDat, aes(x = bmi, y = bp)) +
     theme(text = element_text(size = 16, family = "Courier")) +
     geom_segment(aes(x = bmi, y = bp, xend = bmi, yend = preds),
                  color = "red") +
-    geom_line(mapping = aes(x = bmi, y = preds), color = "blue", size = 1) +
+    geom_line(mapping = aes(x = bmi, y = preds),
+              color = "blue",
+              linewidth = 1) +
     geom_point() +
     ylim(range(pi))
 @
@@ -2170,16 +1148,24 @@ print(p1)
 \only<2>{
 <<echo = FALSE, cache = TRUE>>=
 p2 <- p1 +
-    geom_line(mapping = aes(x = bmi, y = ciLo), size = 1, linetype = "solid") +
-    geom_line(mapping = aes(x = bmi, y = ciHi), size = 1, linetype = "solid")
+    geom_line(mapping = aes(x = bmi, y = ciLo),
+              linewidth = 1,
+              linetype = "solid") +
+    geom_line(mapping = aes(x = bmi, y = ciHi),
+              linewidth = 1,
+              linetype = "solid")
 p2
 @
 }
 \only<3>{
 <<echo = FALSE, cache = TRUE, warning = FALSE>>=
 p2 +
-    geom_line(mapping = aes(x = bmi, y = piLo), size = 1, linetype = "dashed") +
-    geom_line(mapping = aes(x = bmi, y = piHi), size = 1, linetype = "dashed")
+    geom_line(mapping = aes(x = bmi, y = piLo),
+              linewidth = 1,
+              linetype = "dashed") +
+    geom_line(mapping = aes(x = bmi, y = piHi),
+              linewidth = 1,
+              linetype = "dashed")
 @
 }
 
@@ -2253,8 +1239,7 @@ p2 +
   \begin{align*}
     Y = \beta_0 + \beta_1X + \beta_2Z + \varepsilon
   \end{align*}
-  This additive equation assumes that $X$ and $Z$ are independent
-  predictors of $Y$.\\
+  This equation assumes that $X$ and $Z$ are independent predictors of $Y$.\\
   \va
   When $X$ and $Z$ are independent predictors, the following are true:
   \vb
@@ -2469,69 +1454,101 @@ partSummary(out2, -c(1, 2))
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Visualizing the Interaction}
-
+\begin{frame}[fragile]{Visualizing the Interaction}
+  
   \begin{columns}
     \begin{column}{0.5\textwidth}
       We can get a better idea of the patterns of moderation by plotting the
       focal effect at conditional values of the moderator.
     \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      m1 <- mean(dDat$ldl)
+      s1 <- sd(dDat$ldl)
+      
+      dDat$ldlLo  <- dDat$ldl - (m1 - s1)
+      dDat$ldlMid <- dDat$ldl - m1
+      dDat$ldlHi  <- dDat$ldl - (m1 + s1)
+      
+      outLo  <- lm(bp ~ bmi*ldlLo, data = dDat)
+      outMid <- lm(bp ~ bmi*ldlMid, data = dDat)
+      outHi  <- lm(bp ~ bmi*ldlHi, data = dDat)
+      
+      b0Lo <- coef(outLo)[1]
+      b1Lo <- coef(outLo)["bmi"]
+      
+      b0Mid <- coef(outMid)[1]
+      b1Mid <- coef(outMid)["bmi"]
+      
+      b0Hi <- coef(outHi)[1]
+      b1Hi <- coef(outHi)["bmi"]
+      
+      x    <- seq(min(dDat$bmi), max(dDat$bmi), 0.1)
+      dat1 <- data.frame(x    = x,
+                         yLo  = b0Lo + b1Lo * x,
+                         yMid = b0Mid + b1Mid * x,
+                         yHi  = b0Hi + b1Hi * x)
+      
+      p1 <- ggplot(data = dDat, aes(x = bmi, y = bp)) +
+          theme_classic() +
+          theme(text = element_text(family = "Courier", size = 16))
+      p2 <- p1 + geom_point(colour = "gray") +
+          geom_line(mapping   = aes(x = x, y = yLo, colour = "Mean LDL - 1 SD"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          geom_line(mapping   = aes(x = x, y = yMid, colour = "Mean LDL"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          geom_line(mapping   = aes(x = x, y = yHi, colour = "Mean LDL + 1 SD"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          xlab("BMI") +
+          ylab("BP")
+      
+      p2 + scale_colour_manual(name = "", values = c("Mean LDL" = "black",
+                                                     "Mean LDL - 1 SD" = "red",
+                                                     "Mean LDL + 1 SD" = "blue")
+                               ) +
+          theme(legend.justification = c(1, 0), legend.position = c(0.975, 0.025))
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
 
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Visualizing the Interaction}
+  
+  \begin{columns}
     \begin{column}{0.5\textwidth}
 
-<<echo = FALSE>>=
-m1 <- mean(dDat$ldl)
-s1 <- sd(dDat$ldl)
-
-dDat$ldlLo  <- dDat$ldl - (m1 - s1)
-dDat$ldlMid <- dDat$ldl - m1
-dDat$ldlHi  <- dDat$ldl - (m1 + s1)
-
-outLo  <- lm(bp ~ bmi*ldlLo, data = dDat)
-outMid <- lm(bp ~ bmi*ldlMid, data = dDat)
-outHi  <- lm(bp ~ bmi*ldlHi, data = dDat)
-
-b0Lo <- coef(outLo)[1]
-b1Lo <- coef(outLo)["bmi"]
-
-b0Mid <- coef(outMid)[1]
-b1Mid <- coef(outMid)["bmi"]
-
-b0Hi <- coef(outHi)[1]
-b1Hi <- coef(outHi)["bmi"]
-
-x    <- seq(min(dDat$bmi), max(dDat$bmi), 0.1)
-dat1 <- data.frame(x    = x,
-                   yLo  = b0Lo + b1Lo * x,
-                   yMid = b0Mid + b1Mid * x,
-                   yHi  = b0Hi + b1Hi * x)
-
-p1 <- ggplot(data = dDat, aes(x = bmi, y = bp)) +
-    theme_classic() +
-    theme(text = element_text(family = "Courier", size = 16))
-p2 <- p1 + geom_point(colour = "gray") +
-    geom_line(mapping = aes(x = x, y = yLo, colour = "Mean LDL - 1 SD"),
-              data    = dat1,
-              size    = 1.5) +
-    geom_line(mapping = aes(x = x, y = yMid, colour = "Mean LDL"),
-              data    = dat1,
-              size    = 1.5) +
-    geom_line(mapping = aes(x = x, y = yHi, colour = "Mean LDL + 1 SD"),
-              data    = dat1,
-              size    = 1.5) +
-    xlab("BMI") +
-    ylab("BP")
-
-p2 + scale_colour_manual(name = "", values = c("Mean LDL" = "black",
-                                               "Mean LDL - 1 SD" = "red",
-                                               "Mean LDL + 1 SD" = "blue")
-                         ) +
-    theme(legend.justification = c(1, 0), legend.position = c(0.975, 0.025))
-@
-
-\end{column}
-\end{columns}
-
+      <<eval = FALSE>>=
+      library(rockchalk)
+      plotSlopes(out2,
+                 plotx = "bmi",
+                 modx = "ldl",
+                 modxVals = "std.dev")
+      @
+      
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      library(rockchalk)
+      plotSlopes(out2,
+                 plotx = "bmi",
+                 modx = "ldl",
+                 modxVals = "std.dev")
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -2623,11 +1640,11 @@ p4 <- p3 + geom_jitter(na.rm = TRUE) +
 p4 + geom_abline(slope     = coef(out4)["tanSat"],
                  intercept = coef(out4)[1],
                  colour    = "red",
-                 size      = 1.5) +
+                 linewidth = 1.5) +
     geom_abline(slope     = coef(out5)["tanSat"],
                 intercept = coef(out5)[1],
                 colour    = "blue",
-                size      = 1.5) +
+                linewidth = 1.5) +
     ggtitle("Moderation by Gender") +
     xlab("Tangible Satisfaction") +
     theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
@@ -2648,11 +1665,11 @@ p4 + geom_abline(slope     = coef(out4)["tanSat"],
 p4 + geom_abline(slope     = coef(out66)["tangiblesat"],
                  intercept = coef(out66)[1],
                  colour    = "red",
-                 size      = 1.5) +
+                 linewidth = 1.5) +
     geom_abline(slope     = coef(out66)["tangiblesat"],
                 intercept = (coef(out66)[1] + coef(out66)["gendermale"]),
                 colour    = "blue",
-                size      = 1.5) +
+                linewidth = 1.5) +
     ggtitle("Additive Gender Effect") +
     xlab("Tangible Satisfaction") +
     theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
