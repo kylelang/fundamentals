@@ -755,9 +755,7 @@ modeling. Specifically, we will cover the following topics.
 - Categorical predictors
 - Moderation
   
-**When they are ready, the lecture slides will be linked here.**
-
-<!--You can find the lecture slides [here](wk4/lecture/lecture4.html)-->
+You can find the lecture slides [here](wk4/lecture/linearModel.pdf)
 
 ### Required Reading
 
