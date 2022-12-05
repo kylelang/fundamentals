@@ -37,6 +37,10 @@ saveRDS(ins0, paste0(dataDir, "insurance0.rds"))
 saveRDS(ins1, paste0(dataDir, "insurance1.rds"))
 ```
 
+```{r klippy, echo = FALSE}
+klippy::klippy(position = c("top", "right"))
+```
+
 In this document, I will demonstrate how to implement the analyses discussed in
 the lecture using R.
 
@@ -553,9 +557,9 @@ don't need to do anything fancy to probe the interaction.
 
 ```{r}
 ## Test 'female' simple slope by changing reference group:
-bfi$gender2 <- relevel(bfi$gender, ref = "female")
+bfi %<>% mutate(gender = relevel(gender, ref = "female"))
 
-out2.1 <- lm(neuro ~ agree * gender2, data = bfi)
+out2.1 <- lm(neuro ~ agree * gender, data = bfi)
 summary(out2.1)
 ```
 
@@ -582,11 +586,12 @@ summary(out0)
 anova(out0, out1)
 
 ## Test different simple slopes by changing reference group:
-iris$Species2 <- relevel(iris$Species, ref = "virginica")
-iris$Species3 <- relevel(iris$Species, ref = "versicolor")
+iris %<>% mutate(Species = relevel(Species, ref = "virginica"))
+out1.1 <- lm(Petal.Width ~ Sepal.Width * Species, data = iris)
 
-out1.1 <- lm(Petal.Width ~ Sepal.Width * Species2, data = iris)
-out1.2 <- lm(Petal.Width ~ Sepal.Width * Species3, data = iris)
+
+iris %<>% mutate(Species = relevel(Species, ref = "versicolor"))
+out1.2 <- lm(Petal.Width ~ Sepal.Width * Species, data = iris)
 
 summary(out1)
 summary(out1.1)
