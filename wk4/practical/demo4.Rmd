@@ -141,7 +141,7 @@ yHat1.1 - yHat1.2
 ---
 
 Now, we fit a *multiple linear regression* (MLR) model by adding `wt` (the car's
-weight) and `carb` (the number of carborators) into the model as additional 
+weight) and `carb` (the number of carburetors) into the model as additional 
 predictors.
 
 ```{r}

@@ -797,6 +797,12 @@ for this practical **before the next lecture**.
     Where `your_name` is your full name in *lower snake case*, and the `4` 
     indicates Practical 4. 
 
+You can find an additional R code demonstration script [here](wk4/practical/demo4.html).
+
+- You don't need to submit anything related to this demonstration script.
+- This script simply provides more information on how to implement this week's 
+topics in R.
+
 **Answers**
 
 You can find suggested answers to the practical here:
