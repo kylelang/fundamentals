@@ -82,8 +82,13 @@ knitr::opts_chunk$set(warning = FALSE,
 ## Recap on R output - Plot with intervals
 
 <center>
-![R output](Model_plot_intervals.PNG){width=85%}
+![](Model_plot_intervals.PNG){width=70%}
 </center>
+
+<h5> Code for intervals: <br> </h5>
+
+<p style ="color: black; font-size: 15px;"> 
+**predict(model, newdata = data, interval = c("confidence"/"prediction"), level = .95)** </p>
 
 ## Recap on R output - Complex model
 
