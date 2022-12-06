@@ -53,10 +53,48 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h3> Linear Regression </h3>
 
+- Recap R output
 - Continue group assignment: apply practical to own data set.
-- Build model step by step.
-- Moderation (categorical variable).
-- Model comparison.
+<h5> - Build model step by step. </h5>
+<h5> - Moderation (categorical variable). </h5>
+<h5> - Model comparison. </h5>
+
+## Recap on R output - Iris data
+
+<center>
+![R output](Iris_snippet.PNG){width=60%}
+</center>
+
+## Recap on R output - Iris levels
+
+<center>
+<br><br><br>
+
+![R snippet](Iris_levels.PNG){width=100%}
+</center>
+
+## Recap on R output - Simple model
+
+<center>
+![R output](Model_output_easy.PNG)
+</center>
+
+## Recap on R output - Plot with intervals
+
+<center>
+![](Model_plot_intervals.PNG){width=70%}
+</center>
+
+<h5> Code for intervals: <br> </h5>
+
+<p style ="color: black; font-size: 15px;"> 
+**predict(model, newdata = data, interval = c("confidence"/"prediction"), level = .95)** </p>
+
+## Recap on R output - Complex model
+
+<center>
+![R output](Model_output.PNG)
+</center>
 
 ## Assignment 1 - Next part
 
@@ -75,12 +113,12 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h4> In grading this part of the assignment, the following aspects will be considered: </h4><br>
 
--	Data description and exploration
 -	Model building
+- Model comparison
 -	Interpretation of model output
 -	Illustration of prediction
 -	Can we follow and reproduce all the steps you take? 
--	Dou you present output concisely 
+-	Output presented concisely 
 -	Does the output and figures you present serve the right purpose? 
 
 ## For Next Meeting
