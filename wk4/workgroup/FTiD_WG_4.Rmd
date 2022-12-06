@@ -55,9 +55,9 @@ knitr::opts_chunk$set(warning = FALSE,
 
 - Recap R output
 - Continue group assignment: apply practical to own data set.
-- Build model step by step.
-- Moderation (categorical variable).
-- Model comparison.
+<h5> - Build model step by step. </h5>
+<h5> - Moderation (categorical variable). </h5>
+<h5> - Model comparison. </h5>
 
 ## Recap on R output - Iris data
 
