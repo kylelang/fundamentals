@@ -12,8 +12,49 @@
 %\usepackage{fancybox}
 \usepackage{booktabs}
 \usepackage{relsize}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
 
 \newcommand{\eqit}[1]{\textrm{\textit{#1}}}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
 
 \title{Regression Assumptions \& Diagnostics}
 \subtitle{Fundamental Techniques in Data Science with R}
@@ -91,23 +132,6 @@ knit_theme$set('edit-kwrite')
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Assumptions in Statistics}
-
-  Why do we need \emph{assumptions} in statistics?
-  \begin{itemize}
-  \item Data, by themselves, do not offer enough information to support
-    statistical analysis.
-    \vc
-  \item We need to assume some properties of the population model that generated
-    the data.
-    \vc
-  \item We also use assumptions to simplify problems.
-  \end{itemize}
-
-\end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks]{Assumptions of MLR}
@@ -376,6 +400,9 @@ plot(out1, 1)
     \begin{itemize}
     \item These transformations will shrink extreme values more than
       small/moderate ones.
+      \vc
+    \item It's usually a good idea to first shift the variable's scale by
+      setting the minimum value to 1.
     \end{itemize}
     \vb
   \item Refit the model using \emph{weighted least squares}.
@@ -1380,6 +1407,9 @@ qqline(resid(out1))
   \item Observations in the tails of the distribution are weighted less in the
     estimation process, so outliers and high-leverage points cannot exert
     substantial influence on the fit.
+    \vc
+  \item We can do robust regression with the \src{rlm()} function from the
+    \pkg{MASS} package.
   \end{itemize}
 
 \end{frame}

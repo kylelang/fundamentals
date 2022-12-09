@@ -825,15 +825,20 @@ following points.
 - Regression diagnostics
 - Outliers, high-leverage cases, and influential observations 
   
-**Once they're ready, the lecture slides will be linked here.**
-
-<!--You can find the lecture slides [here](wk5/lecture/lecture5.html)-->
+You can find the lecture slides [here](wk5/lecture/assumptions.pdf)
   
 ### Required Reading
 
 ***These readings are exam materials.***
   
 - ASWR [Chapter 13](https://book.stat420.org/model-diagnostics.html)
+
+### Useful information and links
+
+Below, you can find links to some useful resources.
+
+- [An introduction to robust regression in R](https://stats.oarc.ucla.edu/r/dae/robust-regression/)
+- [More information on sandwich estimators in R](https://sandwich.r-forge.r-project.org/articles/sandwich.html)
 
 ## Column 2
 
