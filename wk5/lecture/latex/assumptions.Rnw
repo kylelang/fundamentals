@@ -1,7 +1,7 @@
 %%% Title:    Regression Assumptions & Diagnostics
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2021-11-24
+%%% Modified: 2022-12-09
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -64,8 +64,8 @@ knit_theme$set('edit-kwrite')
 \sectionslide{Assumptions \& Diagnostics}
 
 %------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{frame}{Algebraic Example}
+
+\begin{frame}{Why Assume?}
 
   Consider the following equation:
   \begin{align*}
@@ -92,7 +92,7 @@ knit_theme$set('edit-kwrite')
 \end{frame}
 
 %------------------------------------------------------------------------------%
-
+\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Assumptions in Statistics}
 
   Why do we need \emph{assumptions} in statistics?
@@ -399,12 +399,15 @@ plot(out1, 1)
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{frame}[fragile, allowframebreaks]{Example}
 
 <<>>=
 ## The 'sandwich' package provides several HC estimators:
 library(sandwich)
+
+## the 'lmtest' package provides fancy testing tools for linear models:
+library(lmtest)
 
 ## Use sandwich estimator to compute ACOV matrix:
 hcCov <- vcovHC(out1)
@@ -425,7 +428,7 @@ defTest
 @
 
 \end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Correlated Errors}
@@ -924,37 +927,37 @@ qqline(resid(out1))
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Studentized Residual Plots}
+\begin{frame}[fragile]{Studentized Residual Plots}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
-
+      
       Index plots of the externally studentized residuals can help spotlight
       potential outliers.
       \vb
       \begin{itemize}
       \item Look for observations that clearly ``stand out from the crowd.''
       \end{itemize}
-
+      
     \end{column}
-
+    
     \begin{column}{0.5\textwidth}
-
-<<>>=
-plot(rstudent(out1))
-@
-
-<<echo = FALSE, eval = FALSE>>=
-p1 <- gg0(x = c(1 : nrow(Cars93)), y = rstudent(out1))
-
-p1 + geom_hline(yintercept = c(-3, 3), colour = "red") +
-    xlab("Index") +
-    ylab("Externally Studentized Residual MPG")
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<>>=
+      rstudent(out1) %>% plot()
+      @
+      
+      <<echo = FALSE, eval = FALSE>>=
+      p1 <- gg0(x = c(1 : nrow(Cars93)), y = rstudent(out1))
+      
+      p1 + geom_hline(yintercept = c(-3, 3), colour = "red") +
+          xlab("Index") +
+          ylab("Externally Studentized Residual MPG")
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -982,7 +985,7 @@ p1 + geom_hline(yintercept = c(-3, 3), colour = "red") +
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Leverage Plots}
+\begin{frame}[fragile]{Leverage Plots}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -997,24 +1000,24 @@ p1 + geom_hline(yintercept = c(-3, 3), colour = "red") +
     \end{column}
 
     \begin{column}{0.5\textwidth}
-
-<<>>=
-plot(hatvalues(out1))
-@
-
-<<echo = FALSE, eval = FALSE>>=
-n <- nrow(Cars93)
-
-p1 <- gg0(x = c(1 : n), y = hatvalues(out1))
-
-p1 + geom_hline(yintercept = 2 / n, colour = "red") +
-    xlab("Index") +
-    ylab("Leverage Values")
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<>>=
+      hatvalues(out1) %>% plot()
+      @
+      
+      <<echo = FALSE, eval = FALSE>>=
+      n <- nrow(Cars93)
+      
+      p1 <- gg0(x = c(1 : n), y = hatvalues(out1))
+      
+      p1 + geom_hline(yintercept = 2 / n, colour = "red") +
+          xlab("Index") +
+          ylab("Leverage Values")
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -1099,76 +1102,76 @@ p1 + geom_hline(yintercept = 2 / n, colour = "red") +
       \begin{itemize}
       \item Look for observations that clearly ``stand out from the crowd.''
       \end{itemize}
-
+      
     \end{column}
     \begin{column}{0.5\textwidth}
-
-<<echo = FALSE, eval = FALSE>>=
-fCrit <- qf(0.5, 2, n - 2)
-
-p1 <- gg0(x = c(1 : n), y = cooks.distance(out1))
-
-p1 + geom_hline(yintercept = c(fCrit), colour = "red") +
-    xlab("Index") +
-    ylab("Cook's Distance")
-@
-
-<<>>=
-cd <- cooks.distance(out1)
-plot(cd)
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<echo = FALSE, eval = FALSE>>=
+      fCrit <- qf(0.5, 2, n - 2)
+      
+      p1 <- gg0(x = c(1 : n), y = cooks.distance(out1))
+      
+      p1 + geom_hline(yintercept = c(fCrit), colour = "red") +
+          xlab("Index") +
+          ylab("Cook's Distance")
+      @
+      
+      <<>>=
+      cd <- cooks.distance(out1)
+      plot(cd)
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
-%------------------------------------------------------------------------------%
+% ------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Plots of DFBETAS}
-
-<<eval = FALSE>>=
-dfb <- dfbetas(out1)
-plot(dfb[ , 1], main = "Intercept")
-plot(dfb[ , 2], main = "Slope")
-@
-
+  
+  <<eval = FALSE>>=
+  dfb <- dfbetas(out1)
+  plot(dfb[ , 1], main = "Intercept")
+  plot(dfb[ , 2], main = "Slope")
+  @
+  
   \begin{columns}
     \begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-dfb <- dfbetas(out1)
-plot(dfb[ , 1], main = "Intercept")
-@
-
-<<echo = FALSE, eval = FALSE>>=
-dfb <- dfbetas(out1)
-
-p1 <- gg0(x = c(1 : n), y = dfb[ , 1])
-
-p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
-    xlab("Index") +
-    ylab("DFBETAS for Intercept")
-@
-
-\end{column}
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-plot(dfb[ , 2], main = "Slope")
-@
-
-<<echo = FALSE, eval = FALSE>>=
-p1 <- gg0(x = c(1 : n), y = dfb[ , 2])
-
-p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
-    xlab("Index") +
-    ylab("DFBETAS for Slope")
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<echo = FALSE>>=
+      dfb <- dfbetas(out1)
+      plot(dfb[ , 1], main = "Intercept")
+      @
+      
+      <<echo = FALSE, eval = FALSE>>=
+      dfb <- dfbetas(out1)
+      
+      p1 <- gg0(x = c(1 : n), y = dfb[ , 1])
+      
+      p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
+          xlab("Index") +
+          ylab("DFBETAS for Intercept")
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      plot(dfb[ , 2], main = "Slope")
+      @
+      
+      <<echo = FALSE, eval = FALSE>>=
+      p1 <- gg0(x = c(1 : n), y = dfb[ , 2])
+      
+      p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
+          xlab("Index") +
+          ylab("DFBETAS for Slope")
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -1178,14 +1181,14 @@ p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Removing Influential Observations}
-
-<<>>=
-(maxD <- which.max(cd))
-@
-
+  
+  <<>>=
+  (maxD <- which.max(cd))
+  @
+  
   \begin{columns}
     \begin{column}{0.5\textwidth}
-
+      
       Observation number \Sexpr{maxD} was the most influential
       according to Cook's Distance.
       \vb
@@ -1200,83 +1203,83 @@ p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
     \end{column}
 
     \begin{column}{0.5\textwidth}
-
-<<echo = FALSE, message = FALSE>>=
-x <- Cars93$Horsepower
-y <- Cars93$Price
-
-x2 <- x[-maxD]
-y2 <- y[-maxD]
-
-colVec <- rep("black", nrow(Cars93))
-colVec[maxD] <- "red"
-
-p1 <- gg0(x = x, y = y, points = FALSE) +
-    geom_point(aes(colour = colVec), show.legend = FALSE, size = 2) +
-    xlab("Horsepower") +
-    ylab("Price")
-
-p1 + geom_smooth(method = "lm", se = FALSE, size = 2) +
-geom_smooth(mapping  = aes(x = x2, y = y2),
-            method   = "lm",
-            se       = FALSE,
-            color    = "red",
-            linetype = "dashed",
-            size     = 2) +
-scale_colour_manual(values = c("black", "red"))
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<echo = FALSE, message = FALSE>>=
+      x <- Cars93$Horsepower
+      y <- Cars93$Price
+      
+      x2 <- x[-maxD]
+      y2 <- y[-maxD]
+      
+      colVec <- rep("black", nrow(Cars93))
+      colVec[maxD] <- "red"
+      
+      p1 <- gg0(x = x, y = y, points = FALSE) +
+          geom_point(aes(colour = colVec), show.legend = FALSE, size = 2) +
+          xlab("Horsepower") +
+          ylab("Price")
+      
+      p1 + geom_smooth(method = "lm", se = FALSE, linewidth = 2) +
+          geom_smooth(mapping   = aes(x = x2, y = y2),
+                      method    = "lm",
+                      se        = FALSE,
+                      color     = "red",
+                      linetype  = "dashed",
+                      linewidth = 2) +
+          scale_colour_manual(values = c("black", "red"))
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
-%------------------------------------------------------------------------------%
+% ------------------------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Removing Influential Observations}
-
-<<>>=
-## Exclude the influential case:
-Cars93.2 <- Cars93[-maxD, ]
-
-## Fit model with reduced sample:
-out2 <- lm(Price ~ Horsepower, data = Cars93.2)
-
-round(summary(out1)$coefficients, 6)
-round(summary(out2)$coefficients, 6)
-@
-
-\pagebreak
-
-<<>>=
-partSummary(out1, 2)
-partSummary(out2, 2)
-@
-
-\pagebreak
-
-<<>>=
-summary(out1)[c("sigma", "r.squared", "fstatistic")] %>%
-    unlist() %>%
-    head(3)
-summary(out2)[c("sigma", "r.squared", "fstatistic")] %>%
-    unlist() %>%
-    head(3)
-@
-
+  
+  <<>>=
+  ## Exclude the influential case:
+  Cars93.2 <- Cars93[-maxD, ]
+  
+  ## Fit model with reduced sample:
+  out2 <- lm(Price ~ Horsepower, data = Cars93.2)
+  
+  round(summary(out1)$coefficients, 6)
+  round(summary(out2)$coefficients, 6)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  partSummary(out1, 2)
+  partSummary(out2, 2)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  summary(out1)[c("sigma", "r.squared", "fstatistic")] %>%
+      unlist() %>%
+      head(3)
+  summary(out2)[c("sigma", "r.squared", "fstatistic")] %>%
+      unlist() %>%
+      head(3)
+  @
+  
 \end{frame}
 
-%------------------------------------------------------------------------------%
+% ------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Removing Influential Observations}
-
-<<>>=
-(maxDs <- sort(cd) %>% names() %>% tail(2) %>% as.numeric())
-@
-
+  
+  <<>>=
+  (maxDs <- sort(cd) %>% names() %>% tail(2) %>% as.numeric())
+  @
+  
   \begin{columns}
     \begin{column}{0.5\textwidth}
-
+      
       If we remove the two most influential observations, \Sexpr{maxDs[1]} and
       \Sexpr{maxDs[2]}, the fitted regression line barely changes at all.
       \vc
@@ -1285,87 +1288,87 @@ summary(out2)[c("sigma", "r.squared", "fstatistic")] %>%
         another.
       \item We're probably still better off, though.
       \end{itemize}
-
+      
     \end{column}
-
+    
     \begin{column}{0.5\textwidth}
-
-<<echo = FALSE, message = FALSE>>=
-x <- Cars93$Horsepower
-y <- Cars93$Price
-
-x2 <- x[-maxDs]
-y2 <- y[-maxDs]
-
-colVec <- rep("black", nrow(Cars93))
-colVec[maxDs] <- "red"
-
-p1 <- gg0(x = x, y = y, points = FALSE) +
-    geom_point(aes(colour = colVec), show.legend = FALSE, size = 2) +
-    xlab("Horsepower") +
-    ylab("Price")
-
-p1 + geom_smooth(method = "lm", se = FALSE, size = 2) +
-geom_smooth(mapping  = aes(x = x2, y = y2),
-            method   = "lm",
-            se       = FALSE,
-            color    = "red",
-            linetype = "dashed",
-            size     = 2) +
-scale_colour_manual(values = c("black", "red"))
-@
-
-\end{column}
-\end{columns}
-
+      
+      <<echo = FALSE, message = FALSE>>=
+      x <- Cars93$Horsepower
+      y <- Cars93$Price
+      
+      x2 <- x[-maxDs]
+      y2 <- y[-maxDs]
+      
+      colVec <- rep("black", nrow(Cars93))
+      colVec[maxDs] <- "red"
+      
+      p1 <- gg0(x = x, y = y, points = FALSE) +
+          geom_point(aes(colour = colVec), show.legend = FALSE, size = 2) +
+          xlab("Horsepower") +
+          ylab("Price")
+      
+      p1 + geom_smooth(method = "lm", se = FALSE, linewidth = 2) +
+          geom_smooth(mapping   = aes(x = x2, y = y2),
+                      method    = "lm",
+                      se        = FALSE,
+                      color     = "red",
+                      linetype  = "dashed",
+                      linewidth = 2) +
+          scale_colour_manual(values = c("black", "red"))
+      @
+      
+    \end{column}
+  \end{columns}
+  
 \end{frame}
 
-%------------------------------------------------------------------------------%
+% ------------------------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Removing Influential Observations}
-
-<<>>=
-## Exclude influential cases:
-Cars93.2 <- Cars93[-maxDs, ]
-
-## Fit model with reduced sample:
-out2.2 <- lm(Price ~ Horsepower, data = Cars93.2)
-
-round(summary(out1)$coefficients, 6)
-round(summary(out2.2)$coefficients, 6)
-@
-
-\pagebreak
-
-<<>>=
-partSummary(out1, 2)
-partSummary(out2.2, 2)
-@
-
-\pagebreak
-
-<<>>=
-summary(out1)[c("sigma", "r.squared", "fstatistic")] %>%
-    unlist() %>%
-    head(3)
-summary(out2.2)[c("sigma", "r.squared", "fstatistic")] %>%
-    unlist() %>%
-    head(3)
-@
-
+  
+  <<>>=
+  ## Exclude influential cases:
+  Cars93.2 <- Cars93[-maxDs, ]
+  
+  ## Fit model with reduced sample:
+  out2.2 <- lm(Price ~ Horsepower, data = Cars93.2)
+  
+  round(summary(out1)$coefficients, 6)
+  round(summary(out2.2)$coefficients, 6)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  partSummary(out1, 2)
+  partSummary(out2.2, 2)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  summary(out1)[c("sigma", "r.squared", "fstatistic")] %>%
+      unlist() %>%
+      head(3)
+  summary(out2.2)[c("sigma", "r.squared", "fstatistic")] %>%
+      unlist() %>%
+      head(3)
+  @
+  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Treating Influential Points}
-
+  
   The most common way to address influential observations is simply to delete
   them and refit the model.
   \vc
   \begin{itemize}
   \item This approach is often effective---and always simple---but it is not
     fool-proof.
-  \vc
+    \vc
   \item Although an observation is influential, we may not be able to justify
     excluding it from the analysis.
   \end{itemize}
