@@ -43,6 +43,26 @@ In this practical, you will perform regression analyses using `glm()` and inspec
 
 ---
 
+# Logistic regression
+
+Logistic regression is a supervised learning algorithm that classifies data into categories, by predicting the probability that an observation falls into a particular category based on its features. In this tutorial we will consider binary classification, where we determine which of two categories a data point belongs to.
+
+The logistic function can be described as:
+
+$$ P(y = 1|X) = sigmoid(z) = \frac{1}{1+e^{-z}}   $$
+where
+
+$$ z = \hat{\beta_0} + \hat{\beta_1}x_1 + \hat{\beta_2}x_2 + ... + \hat{\beta_k}x_k $$
+$z$ is like the linear predictor in linear regression, but it is transformed by the sigmoid function so that results can be interpreted as probabilities (between 0 and 1). The probability is compared to a threshold to determine what class $y$ belongs to based on $X$. You can choose what this threshold is and it is context dependent. For example, if you are predicting the chances of recovery in a clinical trial you might set a very high threshold of 0.90. A common threshold for low-stakes research is 0.50. 
+
+The `glm()` function is used to specify several different models, among which the logistic regression model. The logistic regression model can be specified by setting the `family` argument to _"binomial"_. You can save a model in an object and request summary statistics with the `summary()` command. 
+
+For logistic regression, it important to know and check what category the predicted probabilities refer to, so you can interpret the model and it's coefficients correctly. If your outcome variable is coded as a factor, the `glm()` function predicts the 2nd category, which is by default the alphabetical latter one. For example, if the categories are coded as 0 and 1, the probability of belonging to "1" is predicted by the model. 
+
+When a model is stored in an object you can ask for the coefficients _(model\$coeffients)_, the predicted probabilities of belonging to the 'higher' category category _(model\$fitted.values)_, and the aic _(model\$aic)_. To investigate all additional model information that is stored in the object, check out the list of the model by selecting it in the environment-list.
+
+---
+
 # Working with odds and log-odds 
 
 Before we get started with logistic modelling it helps to understand how odds, log-odds, and probability are related. Essentially, they are all just different expressions of the same thing and converting between them involve simple formulas. 
@@ -186,7 +206,7 @@ titanic %$%
 titanic %>% 
   ggplot(aes(Sex, fill = Survived)) +
   geom_bar(position = "dodge") +
-  labs(x = "Passenger Class",
+  labs(x = "Sex",
        y = "Count") +
   theme_bw()
 
@@ -199,7 +219,7 @@ titanic %>%
 titanic %>% 
   ggplot(aes(Age, fill = Survived)) +
   geom_histogram(colour = "white") +
-  labs(x = "Passenger Class",
+  labs(x = "Age",
        y = "Count") +
   facet_wrap(~Survived) +
   theme_bw()
@@ -207,21 +227,6 @@ titanic %>%
 # The distribution of age is different for survivors and non-survivors. Younger passengers have higher chances of survival compared to older passengers.
 ```
 
----
-
-# Logistic regression
-
-Logistic regression is a supervised learning algorithm that classifies data into categories, by predicting the probability that an observation falls into a particular category based on its features. In this tutorial we will consider binary classification, where we determine which of two categories a data point belongs to.
-
-The logistic function can be described as:
-
-$$ P(y = 1|X) = sigmoid(z) = \frac{1}{1+e^{-z}}   $$
-where
-
-$$ z = \hat{\beta_0} + \hat{\beta_1}x_1 + \hat{\beta_2}x_2 + ... + \hat{\beta_k}x_k $$
-$z$ is like the linear predictor in linear regression, but it is transformed by the sigmoid function so that results can be interpreted as probabilities (between 0 and 1). The probability is compared to a threshold to determine what class $y$ belongs to based on $X$. You can choose what this threshold is and it is context dependent. For example, if you are predicting the chances of recovery in a clinical trial you might set a very high threshold of 0.90. A common threshold for low-stakes research is 0.50. 
-
-With the `glm()` function you can specify a logistic regression model. You can save a model in object and request summary statistics with the `summary()` command. When a model is stored in an object you can ask for the coefficients with `coefficients()`. 
 
 ---
 
@@ -469,6 +474,6 @@ titanic %>%
 
 # End of practical
 
-You are now at the end of this week's practical. Next week, we will spend some time on model fit, comparison, and assumptions. 
+You are now at the end of this week's practical. Next week, we will discuss model assumptions, model prediction, and the confusion matrix. 
 
 ---
