@@ -62,7 +62,7 @@
 
 \begin{document}
 
-<<setup, include=FALSE>>=
+<<setup, include = FALSE>>=
 set.seed(235711)
 
 library(knitr)
@@ -261,7 +261,7 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{General Linear Model $\subset$ Generalized Linear Model}
+\begin{frame}{General Linear Model as a Special Case}
 
   The general linear model is a special case of GLM.
   \vb
@@ -282,7 +282,39 @@ knit_theme$set('edit-kwrite')
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  <<>>=
+  data(iris)
+
+  ## General linear model:
+  lmFit <- lm(Petal.Length ~ Petal.Width + Species, data = iris)
+
+  ## Generalized linear model:
+  glmFit <- glm(Petal.Length ~ Petal.Width + Species,
+                family = gaussian(link = "identity"),
+                data = iris)
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(lmFit, 2)
+  partSummary(glmFit, 2)
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(lmFit, 3)
+  partSummary(glmFit, 3)
+  @ 
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Logistic Regression}
 
@@ -622,7 +654,7 @@ Log odds do not lend themselves to interpretation.
   \end{itemize}
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Example}
 
@@ -647,7 +679,7 @@ Log odds do not lend themselves to interpretation.
   
   <<>>=
   ## Estimate the logistic regression model:
-  fit <- glm(Finish ~ Sex, data = utmb, family = "binomial")
+  fit <- glm(Finish ~ Sex, family = binomial(link = "logit"), data = utmb)
   @
 
   \pagebreak
@@ -671,7 +703,7 @@ Log odds do not lend themselves to interpretation.
   
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Multiple Logistic Regression}
 
@@ -693,7 +725,7 @@ Log odds do not lend themselves to interpretation.
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Example}
 
@@ -772,7 +804,7 @@ Log odds do not lend themselves to interpretation.
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Example in Equations}
 
@@ -800,9 +832,9 @@ Log odds do not lend themselves to interpretation.
     \beta_1 X_{age} +
     \beta_2 X_{male} +
     \beta_3 X_{2nd} +
-    \beta_3 X_{3rd}
+    \beta_4 X_{3rd}
   \end{align*}
-  
+  \va
   By fitting this model to the \emph{titanic} data we get:
   \begin{align*}
     \mathrm{logit}(\hat{\pi}_{died}) =
@@ -810,9 +842,9 @@ Log odds do not lend themselves to interpretation.
     \Sexpr{b1} X_{age} + 
     \Sexpr{b2} X_{male} +
     \Sexpr{b3} X_{2nd} +
-    \Sexpr{b3} X_{3rd}
+    \Sexpr{b4} X_{3rd}
   \end{align*}
-
+  \va
   Exponentiating the coefficients produces:
   \begin{align*}
     \frac{\hat{\pi}_{died}}{1 - \hat{\pi}_{died}} =
@@ -821,7 +853,7 @@ Log odds do not lend themselves to interpretation.
     \Sexpr{eB1}^{X_{age}} \times
     \Sexpr{eB2}^{X_{male}} \times
     \Sexpr{eB3}^{X_{2nd}} \times
-    \Sexpr{eB3}^{X_{3rd}}
+    \Sexpr{eB4}^{X_{3rd}}
   \end{align*}
   
 \end{frame}
@@ -984,57 +1016,112 @@ Log odds do not lend themselves to interpretation.
   
 \end{frame}
 
-% ------------------------------------------------------------------------------%
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+  Let's generate a grid of hypothetical passengers to explore the model's
+  predictions.
+  
+  <<>>=
+  passengers <-
+      expand.grid(
+          age   = 1:100,
+          sex   = c("male", "female"),
+          class = c("1st", "2nd", "3rd")
+      ) %>%
+      data.frame()
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Example}
 
+  View 10 random passengers.
+  
   <<>>=
-  passengers <- expand.grid(
-      age = c(5, 20, 40),
-      sex = c("male", "female"),
-      class = c("1st", "3rd")
-  ) %>% data.frame()
-  @
-
-  \pagebreak
-
-  <<>>=
-  passengers
+  passengers %>% slice_sample(n = 10)
   @ 
 
   \pagebreak
 
+  We can generate predictions on the scale of the linear predictor (i.e.,
+  log-odds), or we can generate predicted probabilities.
+  
   <<>>=
-  passengers %<>% mutate(etaHat = predict(fit2, newdata = ., type = "link"),
-                         piHat  = predict(fit2, newdata = ., type = "response"),
-                         yHat   = ifelse(piHat > 0.5, "yes", "no") %>% factor()
-                         )
+  passengers %<>%
+      mutate( 
+          ## Predicted log odds of dying:
+          etaHat = predict(fit2, newdata = ., type = "link"),
+
+          ## Predicted probabilities of dying:
+          piHat = predict(fit2, newdata = ., type = "response")
+      )
+  @
+
+  We can then use the predicted probabilities of dying to classify:
+
+  <<>>=
+  passengers %<>%
+      mutate(dieHat = ifelse(piHat > 0.5, "dead", "alive") %>% factor())
   @
 
   \pagebreak
 
+  View the predictions for 10 random passengers:
+  
   <<>>=
-  passengers
+  passengers %>% slice_sample(n = 10)
   @
 
   \pagebreak
 
+  We can visualize the predicted probabilities of dying.
+  
   <<eval = FALSE>>=
   library(ggplot2)
   
   ggplot(passengers, aes(age, piHat, color = sex)) +
-      geom_point() +
-      facet_wrap(vars(class))
+      geom_line() +
+      facet_wrap(vars(class)) +
+      ylab("Predicted Probability of Death")
   @ 
 
   \pagebreak
 
-  <<echo = FALSE, out.width = "50%">>=
+  <<echo = FALSE, out.width = "65%">>=
   library(ggplot2)
   
   ggplot(passengers, aes(age, piHat, color = sex)) +
-      geom_point() +
-      facet_wrap(vars(class))
+      geom_line() +
+      facet_wrap(vars(class)) +
+      ylab("Predicted Probability of Death")
+  @ 
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can also visualize the classifications the model would make.
+  
+  <<eval = FALSE>>=
+  ggplot(passengers, aes(dieHat, age, color = class)) +
+      geom_boxplot() +
+      facet_wrap(vars(sex)) +
+      xlab("Predicted Death")
+  @ 
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  ggplot(passengers, aes(dieHat, age, color = class)) +
+      geom_boxplot() +
+      facet_wrap(vars(sex)) +
+      xlab("Predicted Death")
   @ 
 
 \end{frame}
