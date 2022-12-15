@@ -897,7 +897,39 @@ Log odds do not lend themselves to interpretation.
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Model Comparison}
+
+  <<>>=
+  ## Estimate a restricted model:
+  fit0 <- update(fit, ". ~ . - class")
+
+  ## Check the result:
+  partSummary(fit0, 1:3)
+  @
+
+  \pagebreak
+
+  We don't have an $R^2$ statistic for logistic regression models, so we need to
+  use a \emph{likelihood ratio test} to compare nested models.
+  
+  <<>>=
+  anova(fit0, fit, test = "LRT")
+  @
+
+  \pagebreak
+
+  We can also use information criteria.
+  
+  <<>>=
+  AIC(fit0, fit)
+  BIC(fit0, fit)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Classification}
 

@@ -865,7 +865,7 @@ This week's `R` practical guides you through the various assumptions of the line
 model as well as checks for outliers and influential cases. 
 
 - Download the dataset for this practical from the 
-[Surfdrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+[SurfDrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
 - Complete [Practical 5](wk5/practical/Practical5.html).
 - Submit your *RMD* script and the compiled *HTML* file it produces to the 
 [SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT)
@@ -880,7 +880,7 @@ You can find suggested answers to the practical here:
 
 - [Practical 5 answers](wk5/practical/Practical5_answers.html).
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 6
 
@@ -888,14 +888,16 @@ You can find suggested answers to the practical here:
 
 ### Lecture
 
-This week's lecture covers the generalized linear model and the basics of logistic
-regression:
+This week's lecture covers the generalized linear model and the basics of 
+logistic regression. Specifically, we'll cover the following.
 
-  * Specifying generalized linear models using the `glm()` function in `R `
-  * Logistic regression modelling definition
-  * Model estimation and interpretation
+- Overview of the GLM
+- Probabilities, odds, and odds-ratios
+- Definition of the logistic regression model
+- Interpreting logistic regression estimates
+- Classification using logistic regression
 
-- You can find the lecture slides [here](wk6/lecture/glm.pdf)
+You can find the lecture slides [here](wk6/lecture/glm.pdf)
 
 ### Required Reading
 
@@ -903,40 +905,42 @@ regression:
 
   * [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/)
 discussing how to interpret the estimates from a logistic regression
-  * ASWR [Chapter 17 (only 17.1-17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
-
+  * ASWR [Chapter 17 (only 17.1 -- 17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
 
 ## Column 2
 
 ### Workgroup
 
-In this week's workgroup, you will start working on Assignment 2. You perform some
-final data inspection and cleaning steps for the dataset that you chose for this
-assignment. Next, you formulate your research questions and using model fit 
-criteria, you find your best fitting model, which you interpret. 
+In this week's workgroup, you will start working on Assignment 2. 
 
-The slides for this workgroup meeting can be found [here](wk6/workgroup/FTiD_WG_6.html).
+- You will perform final data inspection and cleaning for the dataset that you 
+chose for Assignment 2. 
+- You will formulate your research questions.
+- You will fit and interpret some logistic regression models to test your 
+research question.
 
+You can find the slides for this workgroup meeting [here](wk6/workgroup/FTiD_WG_6.html).
 
 ### `R` practical
 
-This week's `R` practical guides you through the various assumptions of the linear
-model as well as checks for outliers and influential cases. 
+This week's `R` practical guides you through the basics of logistic regression 
+analyses. 
 
-  * Download the dataset to use for this practical from [Surfdrive datasets](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
-  * Complete [Practical 6](wk6/practical/Practical6.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 6](https://surfdrive.surf.nl/files/index.php/s/uEnCP1lduGiKlT1) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_6.Rmd` and `your_name_6.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `6` indicates Practical 6. 
+- Download the dataset for this practical from the 
+[SurfDrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 6](wk6/practical/Practical6.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/uEnCP1lduGiKlT1)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_6.Rmd` and `your_name_6.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `6` 
+    indicates Practical 6. 
 
 **Answers**
 
 You can find suggested answers to the practical here:
 
-  * [Answers practical 6](wk6/practical/Practical6_answers.html).
-
-
+- [Practical 6 Answers](wk6/practical/Practical6_answers.html)
 
 <!-----------------------------------------------------------------------------
 
