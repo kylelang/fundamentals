@@ -102,9 +102,9 @@ These resources will also be linked in this dashboard.
 | Week # | Topic | `R` Exercise | Workgroup | Reading |
 |--|---|----|----|----|
 | 1 | The basics of `R` | How to work with `R` scripts; `R` projects; `R` markdown and how to import external data into `R` | Search for a dataset for the two group assignments | R4DS: [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html), [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html), [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html), [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
-| 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset to prepare it for the group assignments | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), and [Chapter 18](https://r4ds.had.co.nz/pipes.html), [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
+| 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset to prepare it for the group assignments | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
 | 3 | Programmatic data manipulation 2 | Data visualization; Data inspection; Data cleaning; Writing functions in `R` | Form groups; Pitch your found data to your group; Continue with data inspection and cleaning for the first assignment; Formulate hypotheses; **Submit your individual assignment** | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html), and [Chapter 19](https://r4ds.had.co.nz/functions.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
-| 4 | Multiple linear regression | Estimating linear models in `R` using the `lm()`function; Model fit and model comparison; Categorical predictors; Moderation | Find a best fitting model; Test your hypotheses | ASWR: [Chapter 7 (only 7.1-7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1-9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions), and [Chapter 16 (only 16.1 (not 16.1.4.) and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
+| 4 | Multiple linear regression | Estimating linear models in `R` using the `lm()`function; Model fit and model comparison; Categorical predictors; Moderation | Find a best fitting model; Test your hypotheses | ASWR: [Chapter 7 (only 7.1-7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1-9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
 | 5 | Model assumptions and diagnostics | Assumptions of the linear model; Leverage, outliers, and influential cases | Check assumptions of your model and inspect for unusual observations; Make adjustments if necessary; Draw conclusions; **Submit Assignment 1** | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
 | 6 | Generalized linear model and logistic regression | Estimating generalized linear models using the `glm()` function in `R `; Definition, estimation, and interpretation of logistic regression models | Perform data inspection and cleaning for the second assignment; Formulate hypothesis; Find a best fitting model and test your hypotheses | ASWR: [Chapter 17 (only 17.1-17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
 | 7 | Logistic regression assumptions and classification | Logistic regression assumptions; Classification; Confusion matrix | Check the assumptions of your model and make adjustments if necessary; Make classifications | ASWR: [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) | 
@@ -942,7 +942,7 @@ You can find suggested answers to the practical here:
 
 - [Practical 6 Answers](wk6/practical/Practical6_answers.html)
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 7
 
@@ -950,48 +950,53 @@ You can find suggested answers to the practical here:
 
 ### Lecture 
 
-This week's lecture covers the model assumptions of logistic regression as well
-as classification and the confusion matrix. 
+This week, we have a guest lecturer! [Mingyang Cai](https://www.uu.nl/medewerkers/MCai) 
+will cover the assumptions of logistic regression and evaluating classification 
+performance via confusion matrices. 
+
+**When they are ready, the slides will be linked here.**
+
+<!--You can find the lecture slides [here](wk7/lecture/lecture7.pdf)-->
 
 ### Required Reading
 
 ***These readings are exam materials.***
 
-  *  [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
+- [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
 through an example analysis using logistic regression
-  * ASWR [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
-
+- ASWR [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
 
 ## Column 2
 
 ### Workgroup
 
-In this week's workgroup, you will continue to work on Assignment 2. You work on 
-checking the assumptions of your model and making adjustments if necessary. Also,
+In this week's workgroup, you will continue to work on Assignment 2. You will 
+check the assumptions of your model and make adjustments, if necessary. Also,
 you will interpret the confusion matrix of your model. 
 
-The slides for this workgroup meeting can be found [here](wk7/workgroup/FTiD_WG_7.html).
-
+You can find the slides for this workgroup meeting [here](wk7/workgroup/FTiD_WG_7.html).
 
 ### `R` practical
 
-This week's `R` practical guides you through the various assumptions of the linear
-model as well as checks for outliers and influential cases. 
+This week's `R` practical guides you through the process of checking the 
+assumptions of the logistic regression model and evaluating classification 
+performance. 
 
-  * Download the dataset to use for this practical from [Surfdrive datasets](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
-  * Complete [Practical 7](wk7/practical/Practical7.html).
-  * Submit your *RMD* script and the compiled *HTML* file it produces to the [SurfDrive Practical 7](https://surfdrive.surf.nl/files/index.php/s/OaYQF4jl39Z2hMO) folder 
-  for this practical **before the next lecture**. Name the files 
-  `your_name_7.Rmd` and `your_name_7.html`, respectively. Where `your_name` 
-  is your full name in *lower snake case*, and the `7` indicates Practical 7. 
+- Download the dataset for this practical from the 
+[Surfdrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 7](wk7/practical/Practical7.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/OaYQF4jl39Z2hMO) 
+for this practical **before the next lecture**. 
+    - Name the files `your_name_7.Rmd` and `your_name_7.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `7` 
+    indicates Practical 7. 
 
 **Answers**
 
 You can find suggested answers to the practical here:
 
-  * [Answers practical 7](wk7/practical/Practical7_answers.html).
-
-
+- [Practical 7 Answers](wk7/practical/Practical7_answers.html)
 
 <!-----------------------------------------------------------------------------
 
@@ -1023,7 +1028,7 @@ The slides for this workgroup meeting can be found [here](wk8/workgroup/FTiD_WG_
 There is no R exercise this week. Use your time to finish the second assignment 
 and prepare for the exam. 
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Exam Material
 
@@ -1033,15 +1038,33 @@ and prepare for the exam.
 
 You can find the practice exam [here](https://kylelang.shinyapps.io/practice_exam)
 
+***NOTE: This practice exam will be updated in the coming days. You will know 
+the practice exam is finalized when this message disappears.***
+
 ### **What can be tested?**
 
-Anything mentioned in the lectures may appear on the exam. This includes both 
-information printed in the lecture slides and information delivered verbally 
-during a lecture itself.
+Anything mentioned in the lectures may appear on the exam. 
 
-- Although the readings should be helpful for learning/reinforcing the concepts 
-covered in the lectures, we will not test you on any concept that appears in 
-a reading but was not addressed in the lectures.
+- This includes both information printed in the lecture slides and information 
+delivered verbally during a lecture itself.
+
+Anything covered in the required readings may appear on the exam. 
+
+- Obviously, this is a lot of material. To prioritize, keep in mind that topics 
+mentioned in the lectures and topics directly related to ideas covered in the 
+lectures are most likely to appear on the exam.
+
+#### Summary of Required Readings
+
+| Week # | Topic | Reading |
+|--|---|----|
+| 1 | The basics of `R` | R4DS: [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html), [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html), [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html), [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
+| 2 | Programmatic data manipulation 1 | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
+| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html), and [Chapter 19](https://r4ds.had.co.nz/functions.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 4 | Multiple linear regression | ASWR: [Chapter 7 (only 7.1-7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1-9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.2 and 11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html#interactions), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
+| 5 | Model assumptions and diagnostics | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
+| 6 | Generalized linear model and logistic regression | ASWR: [Chapter 17 (only 17.1-17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
+| 7 | Logistic regression assumptions and classification | ASWR: [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) | 
 
 ### **What about equations?**
 
@@ -1067,7 +1090,7 @@ comfortable with the following.
    - $\text{odds} = \frac{p}{1-p}$
 
 - The definition of the logit function:
-   - $\log(\text{odds}) = \log\left(\frac{p}{1-p}\right) = \text{logit}(p)$
+   - $\ln(\text{odds}) = \ln\left(\frac{p}{1-p}\right) = \text{logit}(p)$
 
 - The definition of the logistic function, its relation to the logit function, 
 and its role in logistic regression:
@@ -1079,8 +1102,8 @@ statistics from two models that you are trying to compare).
 
 **Note**: Although all examples above are shown in terms of simple linear 
 regression models, you should also be able to do these calculations/interpretations 
-using multiple linear regression models and models that include dummy codes, 
-interactions, or polynomial terms.
+using multiple linear regression models and models that include dummy codes and
+interactions.
 
 ### **What if you're still unsure?**
 
