@@ -1,7 +1,7 @@
 ---
 title: "Fundamental Techniques in Data Science with `R` Practical 6"
 params:
-  answers: false
+  answers: true
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
@@ -139,7 +139,7 @@ summary(glm(prop ~ conc,
 
 # A unit increase in conc increases the log-odds of inhibition by 0.0121 units, and this increase is statistically significant.
 
-# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.0121 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.
+# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.01215 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.
 ```
 
 ---
@@ -324,7 +324,7 @@ summary(fit1)
 17. __What does the intercept mean when there is a continuous predictor?__
 
 ```{r, include=params$answers}
-# In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is 0.019.
+# In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is -0.143, corresponding with the odds of survival at 0.867 (= exp(log odds)).
 ```
 
 18. __How are the odds and log-odds interpreted for a continuous predictor?__
@@ -332,7 +332,7 @@ summary(fit1)
 ```{r, include=params$answers}
 # For continuous predictors, the log-odds either increase or decrease with every unit increase in the continuous predictor. So, in our model:
 # For every increase in age of one year, the log-odds of survival decrease by -0.011, meaning that as age increases the chances of survival decrease.
-# For every increase in age of one year, the odds of survival are 0.99 times the odds of those with one age unit less, or -1.09%.
+# For every increase in age of one year, the odds of survival are 0.99 (= exp(-0.0112)) times the odds of those with one age unit less, or -1.09%.
 ```
 
 ---
@@ -377,7 +377,7 @@ Model selection is an important step and there are several metrics for assessing
 summary(fit1)
 summary(fit2)
 
-# For model 1, the null deviance is 964.52 and the residual deviance is 960.23 For model 2, the null deviance is 964.52 and the residual deviance is 635.39
+# For model 1, the null deviance is 1186.7 and the residual deviance is 1182.3 For model 2, the null deviance is 1186.66 and the residual deviance is 793.82
 ```
 
 We can use the `anova()` function to perform an analysis of deviance that compares the difference in deviances between competing models.  
@@ -387,7 +387,7 @@ We can use the `anova()` function to perform an analysis of deviance that compar
 ```{r, include=params$answers}
 anova(fit1, fit2, test = "Chisq")
 
-# The analysis of deviance indicates that there is a reduction in residual deviance of 324.84 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.
+# The analysis of deviance indicates that there is a reduction in residual deviance of 388.46 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.
 ```
 
 ---
