@@ -366,7 +366,7 @@ data</code></pre>
 ## Number of Fisher Scoring iterations: 4</code></pre>
 <pre class="r"><code># A unit increase in conc increases the log-odds of inhibition by 0.0121 units, and this increase is statistically significant.
 
-# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.0121 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.</code></pre>
+# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.01215 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.</code></pre>
 <hr />
 </div>
 <div id="titanic-data" class="section level1">
@@ -661,13 +661,13 @@ summary(fit1)</code></pre>
 <ol start="17" style="list-style-type: decimal">
 <li><strong>What does the intercept mean when there is a continuous predictor?</strong></li>
 </ol>
-<pre class="r"><code># In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is 0.019.</code></pre>
+<pre class="r"><code># In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is -0.143, corresponding with the odds of survival at 0.867 (= exp(log odds)).</code></pre>
 <ol start="18" style="list-style-type: decimal">
 <li><strong>How are the odds and log-odds interpreted for a continuous predictor?</strong></li>
 </ol>
 <pre class="r"><code># For continuous predictors, the log-odds either increase or decrease with every unit increase in the continuous predictor. So, in our model:
 # For every increase in age of one year, the log-odds of survival decrease by -0.011, meaning that as age increases the chances of survival decrease.
-# For every increase in age of one year, the odds of survival are 0.99 times the odds of those with one age unit less, or -1.09%.</code></pre>
+# For every increase in age of one year, the odds of survival are 0.99 (= exp(-0.0112)) times the odds of those with one age unit less, or -1.09%.</code></pre>
 <hr />
 </div>
 <div id="multinomial-model-with-an-interaction-term" class="section level2">
@@ -779,7 +779,7 @@ summary(fit1)</code></pre>
 ## AIC: 805.82
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<pre class="r"><code># For model 1, the null deviance is 964.52 and the residual deviance is 960.23 For model 2, the null deviance is 964.52 and the residual deviance is 635.39</code></pre>
+<pre class="r"><code># For model 1, the null deviance is 1186.7 and the residual deviance is 1182.3 For model 2, the null deviance is 1186.66 and the residual deviance is 793.82</code></pre>
 <p>We can use the <code>anova()</code> function to perform an analysis of deviance that compares the difference in deviances between competing models.</p>
 <ol start="22" style="list-style-type: decimal">
 <li><strong>Compare the fit of model 1 with the fit of model 2 using <code>anova() and</code>test = “Chisq”`.</strong></li>
@@ -790,7 +790,7 @@ summary(fit1)</code></pre>
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["Resid. Df"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["Resid. Dev"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["Df"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["Deviance"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["Pr(>Chi)"],"name":[5],"type":["dbl"],"align":["right"]}],"data":[{"1":"889","2":"1182.2782","3":"NA","4":"NA","5":"NA","_rn_":"1"},{"1":"885","2":"793.8245","3":"4","4":"388.4537","5":"8.68722e-83","_rn_":"2"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
-<pre class="r"><code># The analysis of deviance indicates that there is a reduction in residual deviance of 324.84 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.</code></pre>
+<pre class="r"><code># The analysis of deviance indicates that there is a reduction in residual deviance of 388.46 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.</code></pre>
 <hr />
 </div>
 <div id="information-criteria" class="section level2">
