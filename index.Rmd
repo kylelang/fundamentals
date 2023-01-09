@@ -954,9 +954,7 @@ This week, we have a guest lecturer! [Mingyang Cai](https://www.uu.nl/medewerker
 will cover the assumptions of logistic regression and evaluating classification 
 performance via confusion matrices. 
 
-**When they are ready, the slides will be linked here.**
-
-<!--You can find the lecture slides [here](wk7/lecture/lecture7.pdf)-->
+You can find the lecture slides [here](wk7/lecture/logistic_regression.pdf)
 
 ### Required Reading
 

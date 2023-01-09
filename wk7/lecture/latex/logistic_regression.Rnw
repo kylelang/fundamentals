@@ -1,0 +1,873 @@
+%%% Title:    FTDS Lecture 7: Logistic regression
+%%% Author:   Mingyang Cai
+%%% Created:  2022-12-03
+%%% Modified: 2022-12-19
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+\usepackage{caption}
+\captionsetup{labelformat=empty}
+
+\hypersetup{
+  colorlinks = false,
+  linkcolor = blue,
+  filecolor = blue,
+  citecolor = black,
+  urlcolor = blue
+}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+% \DeclareTotalTCBox{\src}
+% { s v }
+% {verbatim, colupper = white, colback = black!75!white, colframe = black}
+% {%
+% \IfBooleanT{#1}{\textcolor{red}{\ttfamily\bfseries >}}%
+% \lstinline[language = command.com, keywordstyle = \color{blue!35!white}\bfseries]^#2^%
+% }
+
+%   \newtcbinputlisting[]{\src}[1][]{
+%   listing only,
+%   nobeforeafter,
+%   after={\xspace},
+%   hbox,
+%   tcbox raise base,
+%   fontupper=\ttfamily,
+%   colback=lightgray,
+%   colframe=lightgray,
+%   size=fbox
+% }{#1}
+
+%   \newcommand{\src}[1]{%
+%   \begin{tcbwritetemp} \tcboxverb[beamer]{#1} \end{tcbwritetemp}%
+%   \tcbusetemp%
+% }
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+% \newcommand{\src}[1]{\texttt{#1}}
+
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
+
+\title{Logistic regression}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Mingyang Cai}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(xtable)
+library(kableExtra)
+library(readr)
+library(pROC)
+library(regclass)
+library(caret)
+library(robust)
+library(ROCR)
+library(OptimalCutpoints)
+
+                                        #source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/r_basics-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+%------------------------------------------------------------------------------%
+
+\begin{document}
+
+\begin{frame}[t, plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Recap}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Generalized linear models (GLMs)}
+\begin{itemize}
+\item The mean $E(Y|X) = g^{-1}(\eta) = g^{-1}(\beta_0 + \sum_{p = 1}^P \beta_p X_p)$
+\begin{itemize}
+\item A linear function $\eta$
+\item The link function $g$
+\end{itemize}
+\item The variance $V(g^{-1}(\eta))$
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Logistic regression}
+The link function of logistic regression is logit link:
+\begin{align*}
+ln(\frac{p(Y = 1)}{p(Y=0)}) = \beta_0 + \sum_{p = 1}^P \beta_p X_p
+\end{align*}
+
+The interpretation of the coefficients is on log odds units.
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Model assumptions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Titanic data}
+<<>>=
+titanic <- read.csv(file = "data/titanic.csv", header = TRUE, 
+                    stringsAsFactors = TRUE)
+@
+
+The titanic data describes the survival status of passengers on the Titanic. For the heuristic, We only include four variables.
+<<>>=
+titanic %>% head()
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+  
+\begin{frame}[fragile]{Binary response variable} 
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+ 
+Logistic regression assumes that the response variable only has two possible outcomes.   
+\va
+
+For example, ``survived" describes the passenger's survival status where 0 indicates did not survive and 1 indicates survived.
+
+\end{column}
+
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+titanic %>% 
+  ggplot(aes(x = Survived, fill = Survived)) +
+  geom_bar(width = 0.3, fill = "#FF6666") +
+  labs(x = "Survival",
+       y = "Count",
+       title = "Distribution of the outcome variable") +
+  theme_bw()
+@    
+    
+    \end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Binary response variable}
+We can also check the levels of the response variable.
+<<>>=
+titanic$Survived %>% unique()
+titanic$Survived %>% factor() %>% levels()
+@
+
+The assumption is violated when the outcome is
+\begin{itemize}
+\item a multiclass categorical variable. (multinomial logistic regression \src{mnet::mutinom()})
+\item an ordinal categorical variable. (ordered logistic regression \src{MASS::polr()})
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Balanced outomes}
+The logistic regression may not perform well when there is an imbalance in the classes of the binary response. A possible consequence is the inaccurate classification.
+\va
+
+A certain amount of imbalance is normal and can be handled well by the logistic model in most cases. However, we should care about the severe imbalance, for instance, 1000 cases in the majority class and 1 case in the minority class.
+
+<<>>=
+titanic$Survived %>% factor() %>% table() %>% 
+  prop.table() %>% round(digits = 3)
+@
+
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Balanced outomes}
+<<echo = FALSE, fig.width = 8, fig.height = 5>>=
+titanic %>% 
+  ggplot(aes(x = Survived, fill = Survived)) +
+  geom_bar(aes(y = ..prop.., group = 1), width = 0.3, fill = "#FF6666") +
+  labs(x = "Survival",
+       y = "Percentage",
+       title = "Proportion of the outcome variable") +
+  theme_bw()
+@ 
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Balanced outomes}
+Some solutions:
+\begin{itemize}
+  \item down-sampling the majority class
+  \item up-sampling the minority class
+  \item adding weights to logistic regression (\src{weights} argument in \src{glm()})
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Sufficiently large sample size}
+Sample size in logistic regression is a complex issue. It depends on:
+\begin{itemize}
+ \item the number of predictors
+ \item the sample space of predictors
+ \item the distribution of the binary response variable
+ \item the scientific interests
+\end{itemize}
+\va
+Some suggestions for the sample size
+\begin{itemize}
+ \item 10 cases for each predictor in the model \citep{agresti2018introduction}
+ \item $N = \frac{10*k} {p}$, where
+ \begin{itemize}
+ \item $k$ is the number of predictors
+ \item $p$ is the proportion of the minority class \citep{peduzzi1996simulation}
+ \end{itemize}
+\item $N = 100 + 50*k$, where $k$ is the number of predictors \citep{bujang2018review}
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Issue : perfect prediction}
+Imbalanced outcomes and a small sample size may cause perfect prediction. The \src{glm()} may show warnings messages:
+\begin{itemize}
+\item glm.fit: algorithm did not converge
+\item fitted probabilities numerically 0 or 1 occurred
+\end{itemize}
+\va
+One possible solution is to fit the logistic regression with regularization (\src{glmnet::glmnet}).
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{No multicollinearity}
+The same assumption as in linear regression is that is no multicollinearity among the linear predictors.  
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% 
+   VIF()
+@
+
+A VIF value larger than 10 indicates high multicollinearity.
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Linearity}
+Logistic regression assumes a linear relationship between continuous predictors and \emph{the logit of the response variable}. 
+<<eval = FALSE>>=
+pred <- glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>%              
+        predict(., type = "link")
+
+ggplot(data = data.frame(Age = titanic$Age, pred = pred), 
+       aes(Age, pred)) +
+  geom_point(size = 0.5, alpha = 0.5) + 
+  geom_smooth(method = "glm") + theme_bw()
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Linearity}
+<<echo = FALSE, fig.height = 4>>=
+pred <- glm(Survived ~ Age + Sex*Pclass, family = binomial, data = titanic) %>%              predict(., type = "link")
+
+ggplot(data = data.frame(Age = titanic$Age, pred = pred), aes(Age, pred)) +
+  geom_point(size = 0.5, alpha = 0.5) + 
+  geom_smooth(method = "glm") + theme_bw()
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Linearity}
+Some solutions for the violation of linearity:
+\begin{itemize}
+\item transform predictors (log transformation)
+\item add interaction terms or higher-order terms
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{No influential values or outliers}
+Influential values or outliers can seriously influence the fit of the logistic regression. 
+<<fig.width = 8, fig.height = 4>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% plot(., which = 4)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{No influential values or outliers}
+<<fig.width = 8, fig.height = 4>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% plot(., which = 5)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{No influential values or outliers}
+Some solutions for influential values or outliers:
+\begin{itemize}
+\item remove them
+\item keep them but mention them in the result
+\item robust logistic regression (\src{robust::glmrob})
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{No influential values or outliers}
+<<>>=
+glmRob(Survived ~ Age + Sex + Pclass, family = binomial(), 
+       data = titanic, method = "cubif") %>% 
+       summary() %>% .$coefficients
+glm(Survived ~ Age + Sex + Pclass, family = binomial, data = titanic) %>% 
+  summary() %>% .$coefficients
+@
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Residuals}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Raw residual}
+The most basic residual is the \emph{raw residual}, which is the difference between the observed value and the predicted probability:
+\begin{align*}
+    e_i = y_i - \hat{p_i}
+  \end{align*}
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% residuals(., type = "response") %>% 
+  head()
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Pearson residual}
+The Pearson residual is a scaled version of the raw residual. 
+\begin{align*}
+    r_i = \frac{e_i}{\sqrt{\hat{p_i}(1-\hat{p_i})}}
+  \end{align*}
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% residuals(., type = "pearson") %>% 
+  head()
+@
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Pearson residual}
+<<fig.height = 4>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% plot(., which = 1)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Deviance residual}
+Deviance residuals can be approximated with a standard normal distribution if the model fits well.
+\begin{align*}
+    d_i = sign(e_i)[-2(y_iln\hat{p_i} + (1-y_i)ln(1-\hat{p_i}))]^{1/2}
+  \end{align*}
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %T>% 
+  {residuals(., type = "deviance") %>% 
+      head(., n = 6) %>% 
+      print()} %>% 
+  summary() %>% .$deviance.resid %>% 
+  head(., n = 6)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Residual deviance}
+The residual deviance is the sum of squared deviance residuals.  
+\begin{align*}
+    D = \sum_{i = 1}^{N}d_{i}^2
+  \end{align*}
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% 
+  summary() %>% .$deviance
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Residual deviance}
+The residual deviance is used to measure how well the model fits the data. It is similar to the sum of squared errors in linear regression. 
+<<>>=
+result <- glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+            data = titanic) %>% summary()
+1 - pchisq(result$null.deviance - result $deviance, 
+           result$df.null - result$df.residual)
+@
+\begin{align*}
+\texttt{null}:& \texttt{$\beta_{1} = \beta_{2} = \dots = \beta_{p} =$ 0} \\
+\texttt{alt}:& \texttt{at least one of the $\beta_{i}$ is different from 0}
+\end{align*}
+\vc
+Generally, if the value is less than 0.05, the logistic regression is overall significant.  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Model selection}
+
+%------------------------------------------------------------------------------%
+\begin{frame}[fragile]{Model selection}
+Because including irrelevant variables leads to a needlessly complex model, we need to make the model selection among a large set of candidate models.  
+\va
+I will introduce two techniques:
+\begin{itemize}
+\item forward selection
+\item backward selection
+\end{itemize}
+
+\end{frame}
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Forward selection}
+\begin{itemize}
+\item Start with the null model (a model contains no variables)
+\item Include the most important variable in the model from the remaining predictors 
+\item repeat step 2 until a stopping rule is reached
+\end{itemize}
+\va
+The selection criterion defines the most important variable. For example,
+If the criterion is AIC, the added variable should make the model has the lowest AIC.
+
+\end{frame}
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Backward selection}
+\begin{itemize}
+\item Start with the full model (a model contains all possible variables)
+\item Remove the least important variable from the model
+\item repeat step 2 until a stopping rule is reached
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Model selection}
+Here, I show the backward selection by minimizing AIC. The stopping rule is that removal of the least important variable results in the increase of AIC.
+<<>>=
+glm(Survived ~ .^2, family = binomial, data = titanic) %>% 
+  step(trace = 0)
+@
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Confusion matrix}
+
+%------------------------------------------------------------------------------%
+\begin{frame}[fragile]{Confusion matrix}
+One of the most direct ways to evaluate classification performance is the \emph{Confusion matrix}.
+<<echo = FALSE, results = "asis">>=
+yTrue <- factor(titanic$Survived, labels = c("Not survived", "Survived"))
+pred <- glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% predict(., type = "response")
+yPred <- factor(pred > 0.5, labels = c("Not survived", "Survived"))
+tab  <- table(Predicted = yPred, True = yTrue)
+xTab <- xtable(tab, caption ="Confusion Matrix of passengers' survival on the
+Titanic", digits = 0)
+
+adds <- list(pos = list(0, 0),
+             command = c("& \\multicolumn{2}{c}{True} \\\\\n",
+                         "Predicted & Not survived & Survived \\\\\n")
+             )
+
+print(xTab, add.to.row = adds, include.colnames = FALSE)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion matrix}
+In the titanic example,
+\begin{itemize}
+\item \textbf{TP}: correctly predict people that survived
+\item \textbf{TN}: correctly predict people that did not survive
+\item \textbf{FP}: predict people survived, when they did not 
+\item \textbf{FN}: predict people did not survive, but they did
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion matrix}
+\begin{itemize}
+\item \textbf{true positive(TP)}: A test result that correctly indicates the presence of a condition.
+\item \textbf{true negative(TN)}: A test result that correctly indicates the absence of a condition.
+\item \textbf{false positive(FP)}: A test result which wrongly indicates that a particular condition is present. 
+\item \textbf{false negative(FN)}: A test result which wrongly indicates that a particular condition is absent. 
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion matrix}
+<<echo = FALSE, fig.height = 5>>=
+plot.new()
+plot.window(xlim=c(50, 200), ylim = c(300, 500))
+rect(75, 300, 100, 370, col = "white")
+text(87, 335, "Negative(N)", cex = 0.75)
+rect(100, 300, 150, 370, col = "white")
+text(125, 335, "Flase positive(FP)", cex = 0.75)
+rect(150, 300, 200, 370, col = "white")
+text(175, 335, "True negative(TN)", cex = 0.75)
+
+rect(75, 370, 100, 440, col = "white")
+text(87, 405, "Positive(P)", cex = 0.75)
+rect(100, 370, 150, 440, col = "white")
+text(125, 405, "True positive(TP)", cex = 0.75)
+rect(150, 370, 200, 440, col = "white")
+text(175, 405, "False negative(FN)", cex = 0.75)
+
+rect(100, 440, 150, 450, col = "white")
+text(125, 445, "Positive(PP)", cex = 0.75)
+rect(150, 440, 200, 450, col = "white")
+text(175, 445, "Negative(PN)", cex = 0.75)
+
+rect(65,300, 75, 440, col = "white")
+text(70, 370, "Actual condition", cex = 0.75, srt= 90)
+rect(100,450, 200, 460, col = "white")
+text(150, 455, "Predicted condition", cex = 0.75)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion matrix}
+<<>>=
+Confusion.matrix<- glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% predict(., type = "response") %>% 
+  {ifelse(. > 0.5, 1, 0)} %>% as.factor() %>% 
+  confusionMatrix(., reference = as.factor(titanic$Survived), 
+                  positive = "1")
+Confusion.matrix$table
+Confusion.matrix$overall
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion matrix}
+<<>>=
+Confusion.matrix$byClass
+@
+
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Summary of the confusion matrix}
+\emph{Accuracy}:
+\begin{itemize}
+\item accuracy = (TP + TN) / (P + N)
+\item In titanic example, accuracy = 0.79, meaning that 79\% are correctly classified.
+\end{itemize}
+\va
+\emph{Error rate}:
+\begin{itemize}
+\item error rate = (FP + FN) / (P + N) = 1 - accuracy
+\item In titanic example, error rate = 0.21, meaning that 21\% are not correctly classified.
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Summary of the confusion matrix}
+\emph{Sensitivity}:
+\begin{itemize}
+\item sensitivity = TP / (TP + FN)
+\item In titanic example, sensitivity = 0.58, meaning that if the passenger did survive, there is a 58\% chance the model will detect this.
+\end{itemize}
+\va
+\emph{Specificity}:
+\begin{itemize}
+\item specificity = TN / (TN + FP)
+\item In titanic example, specificity = 0.92, meaning that if the passenger did not survive, there is a 92\% chance the model will detect this. 
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Summary of the confusion matrix}
+\emph{False positive rate}:
+\begin{itemize}
+\item false positive rate (FPR) = FP / (TN + FP) = 1 - specificity
+\item In titanic example, FPR = 0.08, meaning that if a passenger did not survive, there is an 8\% chance that the model predicts this passenger as surviving. 
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Summary of the confusion matrix}
+\emph{Positive predictive value}:
+\begin{itemize}
+\item positive predictive value (PPV) = TP / (TP + FP)
+\item In titanic example, PPV = 0.83, meaning that if the passenger is predicted as surviving, there is an 83\% chance that this passenger indeed survived. 
+\end{itemize}
+\va
+\emph{Negative predictive value}:
+\begin{itemize}
+\item negative predictive value (NPV) = TN / (TN + FN)
+\item In titanic example, NPV = 0.78, meaning that if a passenger is predicted as not surviving, there is a 78\% chance that this passenger indeed does not survive.  
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{ROC curve}
+A receiver operating characteristic curve (ROC curve) is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. The ROC curve is created by plotting sensitivity against FPR (1 - specificity) at various threshold values. 
+\va
+
+ROC curve is mainly used for:
+\begin{itemize}
+\item evaluating the classification performance
+\item selecting discrimination threshold
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{ROC curve}
+<<fig.height = 3.5>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% predict(., type = "response") %>% 
+  ROCR::prediction(., as.factor(titanic$Survived)) %>% 
+  ROCR::performance(., "tpr", "fpr") %>% 
+  plot()
+@
+\end{frame}
+
+%------------------------------------------------------------------------------%
+\begin{frame}[fragile]{Sensitivity versus specificity trade-off}
+Since sensitivity has a positive correlation with the false positive rate, there is a trade-off between sensitivity and specificity. 
+
+\end{frame}
+%------------------------------------------------------------------------------%
+\begin{frame}[fragile]{ROC curve}
+The Area Under the ROC Curve (AUC) summarizes the performance of the classification.
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% predict(., type = "response") %>% 
+  pROC::roc(as.factor(titanic$Survived), .) %>% 
+  auc()
+@
+
+\begin{itemize}
+\item AUC value from 0.7-0.8: acceptable
+\item AUC value from 0.8-0.9: excellent
+\item AUC value over 0.9: outstanding \citep{mandrekar2010receiver}
+\end{itemize}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Threshold selection}
+Sometimes, we do not want to use 0.5 as the threshold. 
+<<>>=
+glm(Survived ~ Age + Sex*Pclass, family = binomial, 
+    data = titanic) %>% predict(., type = "response") %>% 
+  mutate(titanic, pred = .) %>% 
+  OptimalCutpoints::optimal.cutpoints(X = pred  ~ Survived, 
+                                      tag.healthy = 0, 
+                        control = control.cutpoints(),
+                        methods = "ROC01", 
+                        data = ., ci.fit = FALSE, 
+                        conf.level = 0.95, 
+                        trace = FALSE) %>% 
+      .$ROC01 %>% .$Global %>% .$optimal.cutoff %>% .$cutoff
+@
+
+This threshold minimizes the distance between the selected point on the ROC plot and point (0, 1). 
+\end{frame}
+
+%------------------------------------------------------------------------------
+
+
+\begin{frame}[fragile]{Weight sensitivity or specificity?}
+Selecting a point with the smallest distance to the point (0, 1) is to maximize $sensitivity ^2 + specificity ^ 2$. This optimized function has equal weights to sensitivity and specificity. However, in some scenarios, we care more about sensitivity or specificity.  
+\end{frame}
+
+
+%------------------------------------------------------------------------------
+\begin{frame}[fragile]{Weight sensitivity or specificity?}
+\begin{itemize}
+\item \emph{When sensitivity is more important}
+\begin{itemize}
+\item Predict whether a patient has a specific disease.
+\end{itemize}
+\vb
+\item \emph{When specificity is more important}
+\begin{itemize}
+\item Predict whether a person has committed a crime.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+
+
+%------------------------------------------------------------------------------
+
+\begin{filecontents}{ftds_refs_w7.bib}
+@Article{mandrekar2010receiver,
+  author    = {Mandrekar, Jayawant N},
+  journal   = {Journal of Thoracic Oncology},
+  title     = {Receiver operating characteristic curve in diagnostic test assessment},
+  year      = {2010},
+  number    = {9},
+  pages     = {1315--1316},
+  volume    = {5},
+  publisher = {Elsevier},
+}
+
+@Book{agresti2018introduction,
+  author    = {Agresti, Alan},
+  publisher = {John Wiley \& Sons},
+  title     = {An introduction to categorical data analysis},
+  year      = {2018},
+}
+
+@Article{peduzzi1996simulation,
+  author    = {Peduzzi, Peter and Concato, John and Kemper, Elizabeth and Holford, Theodore R and Feinstein, Alvan R},
+  journal   = {Journal of clinical epidemiology},
+  title     = {A simulation study of the number of events per variable in logistic regression analysis},
+  year      = {1996},
+  number    = {12},
+  pages     = {1373--1379},
+  volume    = {49},
+  publisher = {Elsevier},
+}
+
+@Article{bujang2018review,
+  author    = {Bujang, Mohamad Adam and Omar, Evi Diana and Baharum, Nur Akmal},
+  journal   = {The Malaysian journal of medical sciences: MJMS},
+  title     = {A review on sample size determination for Cronbach’s alpha test: a simple guide for researchers},
+  year      = {2018},
+  number    = {6},
+  pages     = {85},
+  volume    = {25},
+  publisher = {School of Medical Sciences, Universiti Sains Malaysia},
+}
+\end{filecontents}
+
+\let\origharvardyearright\harvardyearright
+\makeatletter
+\renewcommand\harvardyearright{\origharvardyearright\@ifnextchar,\@gobble\empty}
+\makeatother
+
+\begin{frame}{References}
+\bibliographystyle{apacite}
+\bibliography{ftds_refs_w7}
+\end{frame}
+
+\end{document}
