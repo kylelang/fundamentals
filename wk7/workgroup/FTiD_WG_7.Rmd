@@ -130,5 +130,9 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h3 id = "centerh3"> Next workgroup meeting to finish up the assignment </h3>
 
+<br><br>
+
+<h3 id = "centerh3"> Note: E-mail questions for wrap-up lecture to Kyle <br> before this Friday! </h3>
+
 
 
