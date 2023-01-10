@@ -336,7 +336,7 @@ pred <- glm(Survived ~ Age + Sex*Pclass, family = binomial,
 ggplot(data = data.frame(Age = titanic$Age, pred = pred), 
        aes(Age, pred)) +
   geom_point(size = 0.5, alpha = 0.5) + 
-  geom_smooth(method = "glm") + theme_bw()
+  geom_smooth(method = "lowess") + theme_bw()
 @
 
 \end{frame}
@@ -507,51 +507,6 @@ Generally, if the value is less than 0.05, the logistic regression is overall si
 
 %------------------------------------------------------------------------------%
 
-\subsection{Model selection}
-
-%------------------------------------------------------------------------------%
-\begin{frame}[fragile]{Model selection}
-Because including irrelevant variables leads to a needlessly complex model, we need to make the model selection among a large set of candidate models.  
-\va
-I will introduce two techniques:
-\begin{itemize}
-\item forward selection
-\item backward selection
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Forward selection}
-\begin{itemize}
-\item Start with the null model (a model contains no variables)
-\item Include the most important variable in the model from the remaining predictors 
-\item repeat step 2 until a stopping rule is reached
-\end{itemize}
-\va
-The selection criterion defines the most important variable. For example,
-If the criterion is AIC, the added variable should make the model has the lowest AIC.
-
-\end{frame}
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Backward selection}
-\begin{itemize}
-\item Start with the full model (a model contains all possible variables)
-\item Remove the least important variable from the model
-\item repeat step 2 until a stopping rule is reached
-\end{itemize}
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model selection}
-Here, I show the backward selection by minimizing AIC. The stopping rule is that removal of the least important variable results in the increase of AIC.
-<<>>=
-glm(Survived ~ .^2, family = binomial, data = titanic) %>% 
-  step(trace = 0)
-@
-\end{frame}
 
 %------------------------------------------------------------------------------%
 

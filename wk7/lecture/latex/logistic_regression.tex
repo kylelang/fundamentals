@@ -408,7 +408,7 @@ Logistic regression assumes a linear relationship between continuous predictors 
 \hlkwd{ggplot}\hlstd{(}\hlkwc{data} \hlstd{=} \hlkwd{data.frame}\hlstd{(}\hlkwc{Age} \hlstd{= titanic}\hlopt{$}\hlstd{Age,} \hlkwc{pred} \hlstd{= pred),}
        \hlkwd{aes}\hlstd{(Age, pred))} \hlopt{+}
   \hlkwd{geom_point}\hlstd{(}\hlkwc{size} \hlstd{=} \hlnum{0.5}\hlstd{,} \hlkwc{alpha} \hlstd{=} \hlnum{0.5}\hlstd{)} \hlopt{+}
-  \hlkwd{geom_smooth}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"glm"}\hlstd{)} \hlopt{+} \hlkwd{theme_bw}\hlstd{()}
+  \hlkwd{geom_smooth}\hlstd{(}\hlkwc{method} \hlstd{=} \hlstr{"lowess"}\hlstd{)} \hlopt{+} \hlkwd{theme_bw}\hlstd{()}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -681,70 +681,6 @@ Generally, if the value is less than 0.05, the logistic regression is overall si
 
 %------------------------------------------------------------------------------%
 
-\subsection{Model selection}
-
-%------------------------------------------------------------------------------%
-\begin{frame}[fragile]{Model selection}
-Because including irrelevant variables leads to a needlessly complex model, we need to make the model selection among a large set of candidate models.  
-\va
-I will introduce two techniques:
-\begin{itemize}
-\item forward selection
-\item backward selection
-\end{itemize}
-
-\end{frame}
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Forward selection}
-\begin{itemize}
-\item Start with the null model (a model contains no variables)
-\item Include the most important variable in the model from the remaining predictors 
-\item repeat step 2 until a stopping rule is reached
-\end{itemize}
-\va
-The selection criterion defines the most important variable. For example,
-If the criterion is AIC, the added variable should make the model has the lowest AIC.
-
-\end{frame}
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Backward selection}
-\begin{itemize}
-\item Start with the full model (a model contains all possible variables)
-\item Remove the least important variable from the model
-\item repeat step 2 until a stopping rule is reached
-\end{itemize}
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Model selection}
-Here, I show the backward selection by minimizing AIC. The stopping rule is that removal of the least important variable results in the increase of AIC.
-\begin{knitrout}\footnotesize
-\definecolor{shadecolor}{rgb}{0.878, 0.918, 0.933}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{glm}\hlstd{(Survived} \hlopt{~} \hlstd{.}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwc{family} \hlstd{= binomial,} \hlkwc{data} \hlstd{= titanic)} \hlopt{%>%}
-  \hlkwd{step}\hlstd{(}\hlkwc{trace} \hlstd{=} \hlnum{0}\hlstd{)}
-\end{alltt}
-\begin{verbatim}
-
-Call:  glm(formula = Survived ~ Pclass + Age + Sex + Pclass:Sex + Age:Sex, 
-    family = binomial, data = titanic)
-
-Coefficients:
-   (Intercept)          Pclass             Age  
-       6.73391        -2.09689        -0.01681  
-       Sexmale  Pclass:Sexmale     Age:Sexmale  
-      -4.86677         1.19508        -0.02689  
-
-Degrees of Freedom: 890 Total (i.e. Null);  885 Residual
-Null Deviance:	    1187 
-Residual Deviance: 778.4 	AIC: 790.4
-\end{verbatim}
-\end{kframe}
-\end{knitrout}
-\end{frame}
 
 %------------------------------------------------------------------------------%
 
@@ -754,7 +690,7 @@ Residual Deviance: 778.4 	AIC: 790.4
 \begin{frame}[fragile]{Confusion matrix}
 One of the most direct ways to evaluate classification performance is the \emph{Confusion matrix}.
 % latex table generated in R 4.2.1 by xtable 1.8-4 package
-% Thu Jan  5 23:45:38 2023
+% Mon Jan  9 23:03:56 2023
 \begin{table}[ht]
 \centering
 \begin{tabular}{rrr}
@@ -803,7 +739,7 @@ In the titanic example,
 \begin{knitrout}\footnotesize
 \definecolor{shadecolor}{rgb}{0.878, 0.918, 0.933}\color{fgcolor}
 
-{\centering \includegraphics[width=\maxwidth]{figure/r_basics-unnamed-chunk-21-1} 
+{\centering \includegraphics[width=\maxwidth]{figure/r_basics-unnamed-chunk-20-1} 
 
 }
 
@@ -960,7 +896,7 @@ ROC curve is mainly used for:
 \end{alltt}
 \end{kframe}
 
-{\centering \includegraphics[width=\maxwidth]{figure/r_basics-unnamed-chunk-24-1} 
+{\centering \includegraphics[width=\maxwidth]{figure/r_basics-unnamed-chunk-23-1} 
 
 }
 
