@@ -996,7 +996,7 @@ You can find suggested answers to the practical here:
 
 - [Practical 7 Answers](wk7/practical/Practical7_answers.html)
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Week 8
 
@@ -1004,27 +1004,32 @@ You can find suggested answers to the practical here:
 
 ### Lecture
 
-In this week's lecture, we will wrap up the course. I'll give an overview of the 
-main points we've covered. 
+In this week's lecture, we will wrap up the course, and I'll give an overview of 
+the main points we've covered. 
 
-- You can find the lecture slides [here](wk8/summary.pdf)
+- You can find the lecture slides [here](wk8/lecture/summary.pdf)
 
 ## Column 2
 
 ### Workgroup
 
-In this week's workgroup, you will finalize your second group project. Check if you 
-have performed all steps as discussed last week, and if you have time left you 
-can pay extra attention to correct interpretation of your model outputs as well
-as efficient presentation of figures and tables in your markdown document. 
+In this week's workgroup, you will finalize your second group project. First,
+you will confirm that you have performed all steps as discussed last week. If 
+you have time left, you can can fine-tune the interpretation of your results and
+polish the figures and tables in your markdown document. 
 
-***Hand in your assignment 2 Thursday January 19, 17:00. See the course manual page for details.***
+- You can find the slides for this workgroup meeting [here](wk8/workgroup/FTiD_WG_8.html).
 
-The slides for this workgroup meeting can be found [here](wk8/workgroup/FTiD_WG_8.html).
+### Deadlines
 
-### `R` exercise
-There is no R exercise this week. Use your time to finish the second assignment 
-and prepare for the exam. 
+You must submit Assignment 2 by ***Thursday January 19, 17:00***. 
+
+- See the *Course Manual* page for details.
+
+### `R` practical
+
+There is no R practical this week. Use your time to finish the second assignment 
+and prepare for the exam.
 
 <!----------------------------------------------------------------------------->
 
