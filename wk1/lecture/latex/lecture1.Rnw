@@ -1,0 +1,909 @@
+%%% Title:    FTDS Lecture 1: R Basics
+%%% Author:   Kyle M. Lang
+%%% Created:  2016-01-28
+%%% Modified: 2022-11-10
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{fancyvrb}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = true,
+  linkcolor = blue,
+  filecolor = blue,
+  citecolor = black,      
+  urlcolor = blue
+}
+ 
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+    on line, 
+    colback = codebackground, 
+    colframe = codebackground, 
+    left = 0pt, 
+    right = 0pt, 
+    top = 0pt, 
+    bottom = 0pt%
+  ]{%
+    \lstinline[%
+      language = R, 
+      basicstyle = \ttfamily,
+      keywordstyle = \color{codekeyword},
+      commentstyle = \color{codecomment}\itshape,
+      stringstyle = \color{codestring},
+      deletekeywords = {_}
+      %frame = single,
+      %frameround = tttt,
+      %fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+%\DeclareTotalTCBox{\src}
+%                  { s v }
+%                  {verbatim, colupper = white, colback = black!75!white, colframe = black} 
+%                  {%
+%                    \IfBooleanT{#1}{\textcolor{red}{\ttfamily\bfseries >}}% 
+%                    \lstinline[language = command.com, keywordstyle = \color{blue!35!white}\bfseries]^#2^%
+%                  }
+
+%\newtcbinputlisting[]{\src}[1][]{
+%  listing only,
+%  nobeforeafter,
+%  after={\xspace},
+%  hbox,
+%  tcbox raise base,
+%  fontupper=\ttfamily,
+%  colback=lightgray,
+%  colframe=lightgray,
+%  size=fbox
+%  }{#1}
+
+%\newcommand{\src}[1]{%
+%  \begin{tcbwritetemp} \tcboxverb[beamer]{#1} \end{tcbwritetemp}%
+%  \tcbusetemp%
+%}
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+%\newcommand{\src}[1]{\texttt{#1}}
+
+\title{R Basics}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+
+#source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/r_basics-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+%------------------------------------------------------------------------------%
+
+\begin{document}
+
+\begin{frame}[t, plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Attribution}
+  
+This course was originally developed by Gerko Vink. You can access the original
+version of these materials on Dr. Vink's GitHub page:
+\url{https://github.com/gerkovink/fundamentals}.
+\va
+The course materials have been (extensively) modified. Any errors or 
+inaccuracies introduced via these modifications are fully my own responsibility
+and shall not be taken as representing the views and/or beliefs of Dr. Vink.
+\va
+You can see Gerko's version of the course on his personal website:
+\href{https://www.gerkovink.com/fundamentals}{www.gerkovink.com/fundamentals}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Open-Source Software}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What is ``Open-Source''?}
+
+  R is an open-source software project, but what does that mean?
+  \va
+  \begin{itemize}
+  \item Source code is freely available to anyone who wants it.
+    \vb
+    \begin{itemize}
+    \item Free Speech, not necessarily Free Beer
+    \end{itemize}
+    \vb
+  \item Anyone can edit the original source code to suit their needs.
+    \vb
+    \begin{itemize}
+    \item Ego-less programming
+    \end{itemize}
+    \vb
+  \item Many open source programs are also ``freeware'' that are available free
+    of charge.
+    \vb
+    \begin{itemize}
+    \item R is both open-source and freeware
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Strengths of Open-Source Software}
+
+  \rmsc{Freedom}
+  \vb
+  \begin{itemize}
+  \item If the software you are using is broken (or just limited in capability),
+    you can modify it in any way you like.
+    \vb
+  \item If you are unsure of what the software you are using is doing, you can
+    dig into the source code and confirm its procedures.
+    \vb
+  \item If you create some software, you can easily, and independently,
+    distribute it to the world.
+    \vb
+    \begin{itemize}
+    \item There is a global community of potential users that are all linked via
+      a common infrastructure that facilitates open-source software development
+      and distribution.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Strengths of Open-Source Software}
+
+  \rmsc{Peer Review}
+  \vb
+  \begin{itemize}
+  \item Every user of open-source software is a reviewer of that software.
+    \vb
+  \item What ``bedroom programmers'' lack in term of quality control procedures
+    is overcome by the scrutiny of a large and empowered user-base.
+    \vc
+    \begin{itemize}
+    \item When we use closed source software, we are forced to trust the honesty
+      of the developing company.
+      \vb
+    \item We have no way of checking the actual implementation.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Strengths of Open-Source Software}
+
+  \rmsc{Accessibility}
+  \vb
+  \begin{itemize}
+  \item Many open-source programs (like R) can be downloaded, for free, from the
+    internet.
+    \begin{itemize}
+      \vb
+    \item You can have R installed on all of you computers (and your mobile
+      phone, your car's info-tainment system, your microwave, your clock-radio,
+      ...).
+      \vb
+    \item No need to beg, borrow, or steal funds to get yourself up-and-running
+      with a cutting-edge data analysis suite.
+    \end{itemize}
+    \vb
+  \item Licensing legality is very simple---no worries about being sued for
+    installing open-source software on ``too many'' computers.
+    \vb
+  \item Open-source software tends to run on more platforms than closed-source
+    software will.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Open-Source Licensing}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{A Note on Licensing}
+
+  Some popular open-source licenses:
+  \vb
+  \begin{itemize}
+  \item The GNU General Public License (GPL)
+    \begin{itemize}
+    \item \url{http://www.gnu.org/licenses/gpl-3.0.en.html}
+    \end{itemize}
+    \vc
+  \item The GNU Lesser General Public License (L-GPL)
+    \begin{itemize}
+    \item \url{http://www.gnu.org/licenses/lgpl-3.0.en.html}
+    \end{itemize}
+    \vc
+  \item The Apache License
+    \begin{itemize}
+    \item \url{http://www.apache.org/licenses/}
+    \end{itemize}
+    \vc
+  \item The BSD 2-Clause License (FreeBSD License)
+    \begin{itemize}
+    \item \url{http://opensource.org/licenses/BSD-2-Clause}
+    \end{itemize}
+    \vc
+  \item The MIT License
+    \begin{itemize}
+    \item \url{https://opensource.org/licenses/MIT}
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{The R Statistical Programming Language}
+
+%------------------------------------------------------------------------------%
+
+\subsection{What is R?}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What is R?}
+
+  R is a holistic (open-source) software system for data analysis and
+  statistical programming.
+  \vc
+  \begin{itemize}
+  \item R is an implementation of the S language.
+    \begin{itemize}
+    \item Developed by John Chambers and colleagues
+      \begin{itemize}
+      \item \citet{beckerChambers:1984}
+      \item \citet{beckerEtAl:1988}
+      \item \citet{chambersHastie:1992}
+      \item \citet{chambers:1998}
+      \end{itemize}
+    \end{itemize}
+    \vc
+  \item Introduced by \citet{ihakaGentleman:1996}.
+    \begin{itemize}
+    \item Currently maintained by the \emph{R Core Team}.
+    \end{itemize}
+    \vc
+  \item Support by thousands of world-wide contributors.
+    \begin{itemize}
+    \item Anyone can contribute an R package to the \emph{Comprehensive R
+        Archive Network} (CRAN)
+    \item Must conform to the licensing and packaging requirements.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What is R?}
+
+  I prefer to think about R as a \emph{statistical programming language}, rather
+  than as a data analysis program.
+  \vb
+  \begin{itemize}
+  \item R \textbf{IS NOT} its GUI (no matter which GUI you use).
+    \vb
+  \item You can write R code in whatever program you like (e.g., RStudio, EMACS,
+    VIM, Notepad, directly in the console/shell/command line).
+    \vb
+  \item R can be used for basic (or advanced) data analysis, but its real
+    strength is its flexible programming framework.
+    \vc
+    \begin{itemize}
+      \item Tedious tasks can be automated.
+        \vc
+      \item Computationally demanding jobs can be run in parallel.
+        \vc
+      \item R-based research \emph{wants} to be reproducible.
+        \vc
+      \item Analyses are automatically documented via their scripts.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What is RStudio?}
+
+RStudio is an integrated development environment (IDE) for R.
+\vc
+\begin{itemize}
+\item Adds a bunch of window dressing to R
+  \vc
+\item Also open-source
+  \vc
+\item Both free and paid versions
+\end{itemize}
+\va
+R and RStudio are independent entities.
+\vc
+\begin{itemize}
+\item You do not need RStudio to work with R.
+  \vc
+\item You are analyzing your data with R, not RStudio
+  \begin{itemize}
+  \item RStudio is just the interface through which you interact with R.
+  \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Getting R}
+
+  You can download R, for free, from the following web page:
+  \va
+  \begin{itemize}
+  \item \url{https://www.r-project.org/}
+  \end{itemize}
+  \va
+  Likewise, you can freely download RStudio via the following page:
+  \va
+  \begin{itemize}
+  \item \url{https://www.rstudio.com/}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Using R}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{How R Works}
+
+  R is an interpreted programming language.
+  \vb
+  \begin{itemize}
+  \item The commands you enter into the R \emph{Console} are executed
+    immediately.
+    \vc
+  \item You don't need to compile your code before running it.
+    \vc
+  \item In this sense, interacting with R is similar to interacting with other
+    syntax-based statistical packages (e.g., SAS, STATA, Mplus).
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{How R Works}
+
+  R mixes the \emph{functional} and \emph{object-oriented} programming
+  paradigms.
+  \vc
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      \begin{center}
+        \rmsc{Functional}
+      \end{center}
+
+      \begin{itemize}
+      \item R is designed to break down problems into functions.
+        \vc
+      \item Every R function is a first-class object.
+        \vc
+      \item R uses pass-by-value semantics.
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+      \begin{center}
+        \rmsc{Object-Oriented}
+      \end{center}
+
+      \begin{itemize}
+      \item Everything in R is an object.
+        \vc
+      \item R functions work by creating and modifying R objects.
+        \vc
+      \item The R workflow is organized by assigning objects to names.
+      \end{itemize}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interacting with R}
+
+  When working with R, you will write \emph{scripts} that contain all of the
+  commands you want to execute.
+  \va
+  \begin{itemize}
+    \item There is no ``clicky-box'' Tom-foolery in R.
+    \vb
+    \item Your script can be run interactively or in ``batch-mode'', as a
+      self-contained program.
+  \end{itemize}
+  \va
+  The primary purpose of the commands in your script will be to create and
+  modify various objects (e.g., datasets, variables, function calls, graphical
+  devices).
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Getting Help}
+  
+  Everything published on the Comprehensive R Archive Network (CRAN), and 
+  intended for R users, must be accompanied by a help file.
+  
+  \begin{itemize}
+  \item If you know the name of the function (e.g., \src{anova()}), then execute
+    \src{?anova} or \src{help(anova)}.
+  \item If you do not know the name of the function, type \src{??} followed by 
+    your search criterion. 
+    \begin{itemize}
+    \item For example, \src{??anova} returns a list of all help pages that
+      contain the word "anova".
+    \end{itemize}
+  \end{itemize}
+  
+  \vb
+  
+  The internet can also tell you almost everything you'd like to know.
+  
+  \begin{itemize}
+  \item Sites such as \url{http://www.stackoverflow.com} and 
+    \url{http://www.stackexchange.com} can be very helpful.
+  \item If you google R-related issues, include "R" somewhere in your search 
+    string.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{Packages}
+
+Packages give R additional functionality.
+\vc
+\begin{itemize}
+\item By default, some packages are included when you install R.
+  \vc
+\item These packages allow you to do common statistical analyses and data
+  manipulation.
+  \vc
+\item Installing additional packages allows you to perform state-of-the-art
+  statistical analyses.
+\end{itemize}
+
+\newpage
+
+These packages are all developed by R users, so the throughput process is very
+timely.
+\vc
+\begin{itemize}
+\item Newly developed functions and software are readily available
+  \vc
+\item Software implementations of new methods can be quickly disseminated
+  \vc
+\item This efficiency differs from other mainstream software (e.g., SPSS, SAS,
+  MPlus) where new methodology may take years to be implemented.
+\end{itemize}
+\vb
+A list of available packages can be found on \href{https://cran.r-project.org}{CRAN}.
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Installing \& Loading Packages}
+
+Install a package (e.g., \pkg{mice}):
+<<eval = FALSE>>=
+install.packages("mice")
+@
+
+There are two ways to load a package into R
+<<>>=
+library(stats)
+
+require(stats)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Project Management}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Project Management}
+
+  Getting a handle on three key concepts will dramatically improve your data 
+  analytic life.
+  \vc
+  \begin{enumerate}
+  \item Working directories
+    \vc
+  \item Directory structures and file paths
+    \vc
+  \item RStudio projects
+  \end{enumerate}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Data I/O}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{R Data \& Workspaces}
+
+R has two native data formats.
+
+<<>>=
+## Load the built-in 'bfi' data from the 'psychTools' package
+data(bfi, package = "psychTools")
+
+## Access the documentation for the 'bfi' data
+?psychTools::bfi
+
+## Define the directory holding our data
+dataDir <- "../../../data/"
+
+## Load the 'boys' data from the R workspace 
+## '../../../data/boys.RData'
+load(paste0(dataDir, "boys.RData"))
+
+## Load the 'titanic' data stored in R data set 
+## '../../../data/titanic.rds'
+titanic <- readRDS(paste0(dataDir, "titanic.rds"))
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Delimited Data Types}
+
+<<>>=
+## Load the 'diabetes' data from the tab-delimited file 
+## '../../../data/diabetes.txt'
+diabetes <- read.table(paste0(dataDir, "diabetes.txt"),
+                       header = TRUE,
+                       sep = "\t")
+
+## Load the 2017 UTMB data from the comma-separated file 
+## '../../../data/utmb_2017.csv'
+utmb1 <- read.csv(paste0(dataDir, "utmb_2017.csv"))
+@ 
+
+\rmsc{Notes:} 
+\begin{itemize}
+ \item The \src{read.csv()} function assumes the values are separated by 
+   commas.
+ \item For EU-formatted CSV files---with values delimited by semicolons---we 
+   can use the \src{read.csv2()} function.
+\end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{SPSS Data}
+
+Reading data in from other stats packages can be a bit tricky. If we want to
+read SAV files, there are two popular options:
+\begin{itemize} 
+  \item \src{foreign::read.spss()}
+  \item \src{haven::read_spss()}
+\end{itemize}
+
+<<>>=
+## Load the foreign package:
+library(foreign)
+
+## Use foreign::read.spss() to read '../../../data/mtcars.sav' into a list
+mtcars1 <- read.spss(paste0(dataDir, "mtcars.sav"))
+
+## Read '../../../data/mtcars.sav' as a data frame
+mtcars2 <- read.spss(paste0(dataDir, "mtcars.sav"), to.data.frame = TRUE)
+
+## Read '../../../data/mtcars.sav' without value labels
+mtcars3 <- read.spss(paste0(dataDir, "mtcars.sav"),
+                     to.data.frame = TRUE,
+                     use.value.labels = FALSE)
+@ 
+
+\newpage
+
+<<>>=
+## View the results:
+mtcars1[1:3]
+@ 
+
+\newpage
+
+<<>>=
+head(mtcars2)
+@ 
+
+\newpage
+
+<<>>=
+head(mtcars3)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{SPSS Data}
+
+<<>>=
+## Load the packages:
+library(haven)
+library(labelled)
+
+## Use haven::read_spss() to read '../../../data/mtcars.sav' into a tibble
+mtcars4 <- read_spss(paste0(dataDir, "mtcars.sav"))
+
+head(mtcars4)
+@ 
+
+\newpage
+
+\src{haven::read_spss()} converts any SPSS variables with labels into 
+labelled vectors.
+\begin{itemize}
+\item We can use the \src{labelled::unlabelled()} function to remove the value 
+labels.
+\end{itemize}
+
+<<>>=
+mtcars5 <- unlabelled(mtcars4)
+
+head(mtcars5)
+@ 
+
+\newpage
+
+<<>>=
+mtcars4$am[1:20]
+mtcars5$am[1:20]
+@ 
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Excel Data}
+
+  We have two good options for loading data from Excel spreadsheets:
+  \begin{itemize}
+  \item \src{readxl::read_excel()}
+  \item \src{openxlsx::read.xlsx()}
+  \end{itemize}
+  
+<<>>=
+## Load the packages:
+library(readxl)
+library(openxlsx)
+
+## Use the readxl::read_excel() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic2 <- read_excel(paste0(dataDir, "example_data.xlsx"), 
+                       sheet = "titanic")
+
+## Use the openxlsx::read.xlsx() function to read the data from the 'titanic'
+## sheet of the Excel workbook stored at '../../../data/example_data.xlsx'
+titanic3 <- read.xlsx(paste0(dataDir, "example_data.xlsx"), 
+                      sheet = "titanic")
+@ 
+
+\newpage
+
+<<>>=
+## Check the results from read_excel():
+str(titanic2)
+@ 
+
+\newpage
+
+<<>>=
+## Check the results from read.xlsx():
+str(titanic3)
+
+## Compare:
+all.equal(as.data.frame(titanic2), titanic3)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Writing Data}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Workspaces \& Delimited Data}
+
+All of the data reading functions we saw earlier have complementary data writing
+versions.
+
+<<>>=
+## The save() function writes an R workspace to disk
+save(boys, file = paste0(dataDir, "tmp.RData"))
+
+## For delimited text files and RDS data, the write.table(), write.csv(), and
+## saveRDS() function do what you'd expect
+write.table(boys,
+            paste0(dataDir, "boys.txt"),
+            row.names = FALSE,
+            sep = "\t",
+            na = "-999")
+
+write.csv2(boys, paste0(dataDir, "boys.csv"), row.names = FALSE, na = "")
+
+saveRDS(boys, paste0(dataDir, "boys.rds"))
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{SPSS Data}
+
+To write SPSS data, the best option is the \src{haven::write_sav()} function.
+
+<<>>=
+write_sav(mtcars2, paste0(dataDir, "mctars2.sav"))
+@
+
+\src{write_sav()} will preserve label information provided by factor variables 
+and the 'haven\_labelled' class.
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Excel Data}
+
+The \pkg{openxlsx} package provides a powerful toolkit for programmatically
+building Excel workbooks in R and saving the results. 
+\begin{itemize}
+  \item Of course, it also works for simple data writing tasks.
+\end{itemize}
+
+<<>>=
+## Use the openxlsx::write.xlsx() function to write the 'diabetes' data to an
+## XLSX workbook
+write.xlsx(diabetes, paste0(dataDir, "diabetes.xlsx"), overwrite = TRUE)
+
+## Use the openxlsx::write.xlsx() function to write each data frame in a list 
+## to a separate sheet of an XLSX workbook
+write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
+           paste0(dataDir, "example_data.xlsx"),
+           overwrite = TRUE)
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Some Programming Tips}
+
+  You can save yourself a great deal of heartache by following a few simple 
+  guidelines.
+  \begin{itemize}
+  \item Keep your code tidy.
+    \vc
+  \item Use comments to clarify what you are doing.
+    \vc
+  \item When working with functions in RStudio, use the TAB key to quickly
+    access the documentation of the function's arguments.
+    \vc
+  \item Give your R scripts and objects meaningful names.
+    \vc
+  \item Use a consistent directory structure and RStudio projects.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{General Style Advice}
+
+Use common sense and BE CONSISTENT.
+\vc
+\begin{itemize}
+\item Browse the \href{https://style.tidyverse.org}{tidyverse style guide}.
+\begin{itemize}
+  \item The point of style guidelines is to enforce a common vocabulary.
+  \item You want people to concentrate on \emph{what} you're saying, not
+    \emph{how} you're saying it.
+  \end{itemize}
+\vc
+\item If the code you add to a project/codebase looks drastically different from
+  the extant code, the incongruity will confuse readers and collaborators.
+\end{itemize}
+\vb
+Spacing and whitespace are your friends.
+\vc
+\begin{itemize}
+\item \src{a<-c(1,2,3,4,5)}
+  \vc
+\item \src{a <- c(1, 2, 3, 4, 5)}
+  \vc
+\item At least put spaces around assignment operators and after every comma!
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{References}
+  \bibliographystyle{apacite}
+  \bibliography{../../../bibtex/ftds_refs.bib}
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}

@@ -1,7 +1,7 @@
 %%% Title:    GLM and Logistic Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2017-09-12
-%%% Modified: 2021-12-17
+%%% Modified: 2022-12-15
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -12,8 +12,45 @@
 \usepackage{booktabs}
 \usepackage{fancybox}
 \usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
 
 \newcommand{\kfold}[0]{\emph{K}-fold cross-validation}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
 
 \captionsetup[table]{labelformat = empty}
 
@@ -25,15 +62,17 @@
 
 \begin{document}
 
-<<setup, include=FALSE>>=
+<<setup, include = FALSE>>=
 set.seed(235711)
 
 library(knitr)
 library(ggplot2)
 library(xtable)
 library(MLmetrics)
-library(caret)
-library(pROC)
+library(dplyr)
+                                        #library(caret)
+                                        #library(pROC)
+dataDir <- "../../../data/"
 
 source("../../../code/supportFunctions.R")
 
@@ -222,7 +261,7 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{General Linear Model $\subset$ Generalized Linear Model}
+\begin{frame}{General Linear Model as a Special Case}
 
   The general linear model is a special case of GLM.
   \vb
@@ -243,7 +282,39 @@ knit_theme$set('edit-kwrite')
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  <<>>=
+  data(iris)
+
+  ## General linear model:
+  lmFit <- lm(Petal.Length ~ Petal.Width + Species, data = iris)
+
+  ## Generalized linear model:
+  glmFit <- glm(Petal.Length ~ Petal.Width + Species,
+                family = gaussian(link = "identity"),
+                data = iris)
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(lmFit, 2)
+  partSummary(glmFit, 2)
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(lmFit, 3)
+  partSummary(glmFit, 3)
+  @ 
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Logistic Regression}
 
@@ -378,7 +449,7 @@ eta2 <- beta[1] + beta[2] * tmp
 pi2  <- exp(eta2) / (1 + exp(eta2))
 dat2 <- data.frame(x = tmp, y = pi2)
 
-p1 + geom_line(aes(x = x, y = y), data = dat2, colour = "blue", size = 1)
+p1 + geom_line(aes(x = x, y = y), data = dat2, colour = "blue", linewidth = 1)
 @
 
 \end{column}
@@ -451,42 +522,6 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\pause
-\begin{alignat*}{2}
-P(Finish | Male) &=
-\frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "Yes"]} + \Sexpr{xTab["Male", "No"]}} &&=
-\Sexpr{round(xTab["Male", "Yes"] / sum(xTab["Male", ]), 3)}\\[8pt]
-P(Finish | Female) &=
-\frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "Yes"]} + \Sexpr{xTab["Female", "No"]}} &&=
-\Sexpr{round(xTab["Female", "Yes"] / sum(xTab["Female", ]), 3)}
-\end{alignat*}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Odds}
-
-<<echo = FALSE, results = "asis">>=
-print(xTab, add.to.row = adds, include.colnames = FALSE)
-@
-\vb
-What are the odds of finishing for each sex?
-\pause
-\begin{alignat*}{2}
-O(Finish | Male) &=
-\frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "No"]}} &&=
-\Sexpr{round(xTab["Male", "Yes"] / xTab["Male", "No"], 3)}\\[8pt]
-O(Finish | Female) &=
-\frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "No"]}} &&=
-\Sexpr{round(xTab["Female", "Yes"] / xTab["Female", "No"], 3)}
-\end{alignat*}
-
-\end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Link Function for Logistic Regression}
@@ -619,7 +654,56 @@ Log odds do not lend themselves to interpretation.
   \end{itemize}
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  Let's use logistic regression to compute the odds of finishing the UTMB.
+  
+  <<eval = FALSE>>=
+  ## Read the UTMB data:
+  utmb <- readRDS(paste0(dataDir, "utmb_finish_2017.rds"))
+  @
+  
+  We use the \src{glm()} function to estimate generalized linear models.
+  \vc
+  \begin{itemize}
+  \item To get a logistic regression model, we need to do two things:
+    \vc
+    \begin{enumerate}
+    \item Specify a binary outcome variable
+      \vc
+    \item Specify the \src{family = "binomial"} argument.
+    \end{enumerate}
+  \end{itemize}
+  
+  <<>>=
+  ## Estimate the logistic regression model:
+  fit <- glm(Finish ~ Sex, family = binomial(link = "logit"), data = utmb)
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(fit, -1)
+  @
+
+  \pagebreak
+
+  The raw coefficient estimates are in units of log-odds.
+  \begin{itemize}
+  \item We need to exponentiate the estimates to get odds ratios.
+  \end{itemize}
+  
+  <<>>=
+  library(dplyr)
+  
+  coef(fit) %>% exp()
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Multiple Logistic Regression}
 
@@ -641,83 +725,211 @@ Log odds do not lend themselves to interpretation.
 
 \end{frame}
 
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  Let's use logistic regression to predict the chances that Titanic passengers
+  survived the sinking based on their age, sex, and ticket class.
+  
+  <<>>=
+  ## Read the data:
+  titanic <- readRDS(paste0(dataDir, "titanic.rds"))
+
+  ## Estimate the logistic regression model:
+  fit <- glm(survived ~ age + sex + class,
+             data = titanic,
+             family = "binomial")
+  @
+
+  \pagebreak
+
+  <<>>=
+  partSummary(fit, -1)
+  @
+
+\end{frame}
+
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Multiple Logistic Regression Example}
+\begin{frame}[fragile, allowframebreaks]{Example}
 
-<<echo = FALSE>>=
-diabetes <- readRDS("../data/diabetes.rds")
+  Compute odds ratios.
+  
+  <<>>=
+  (or <- coef(fit) %>% exp())
+  @
 
-diabetes$highGlu <- as.numeric(diabetes$glu > 90)
+  Odds ratios smaller than 1.0 can be difficult to explain.
+  \begin{itemize}
+  \item We can ease interpretation by reciprocating the estimates.
+  \end{itemize}
+  
+  <<>>=
+  1 / or
+  @
 
-diabetes$age40 <- diabetes$age - 40
-diabetes$bmi25 <- diabetes$bmi - 25
-diabetes$bp100 <- diabetes$bp - 100
+  \pagebreak
 
-out1 <-
-    glm(highGlu ~ age40 + bmi25 + bp100, data = diabetes, family = binomial())
+  To convince ourselves that the above operation is sensible, we can compare the
+  inverse odds ratios to the odds ratios we get from predicting the chances of
+  dying.
 
-beta1  <- coef(out1)
-eBeta1 <- exp(beta1)
+  <<>>=
+  library(magrittr)
+  
+  fit2 <- titanic %>%
+      mutate(died = relevel(survived, ref = "yes")) %$% 
+      glm(died ~ age + sex + class, family = "binomial")
+  @
 
-b0 <- round(beta1[1], 3)
-b1 <- round(beta1[2], 3)
-b2 <- round(beta1[3], 3)
-b3 <- round(beta1[4], 3)
+  \pagebreak
 
-eB0 <- round(eBeta1[1], 3)
-eB1 <- round(eBeta1[2], 3)
-eB2 <- round(eBeta1[3], 3)
-eB3 <- round(eBeta1[4], 3)
-@
+  <<>>=
+  partSummary(fit2, -1)
+  @
 
-Suppose we want to predict the probability of a patient having ``high'' blood
-glucose from their age, BMI, and average blood pressure.
-\vc
-\begin{itemize}
-\item We could do so with the following model:
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We get the same odds ratios that we derived through reciprocation.
+  
+  <<>>=
+  coef(fit2) %>% exp()
+  1 / or
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Example in Equations}
+
+  <<echo = FALSE>>=
+  beta1  <- coef(fit2)
+  eBeta1 <- exp(beta1)
+  
+  b0 <- round(beta1[1], 2)
+  b1 <- round(beta1[2], 2)
+  b2 <- round(beta1[3], 2)
+  b3 <- round(beta1[4], 2)
+  b4 <- round(beta1[5], 2)
+  
+  eB0 <- round(eBeta1[1], 2)
+  eB1 <- round(eBeta1[2], 2)
+  eB2 <- round(eBeta1[3], 2)
+  eB3 <- round(eBeta1[4], 2)
+  eB4 <- round(eBeta1[5], 2)
+  @
+  
+  Here's the symbolic representation of our logistic regression model:
   \begin{align*}
-    \mathrm{logit}(\pi_{hi.gluc}) =
-    \beta_0 + \beta_1 X_{age.40} + \beta_2 X_{BMI.25} + \beta_3 X_{BP.100}
+    \mathrm{logit}(\pi_{died}) =
+    \beta_0 +
+    \beta_1 X_{age} +
+    \beta_2 X_{male} +
+    \beta_3 X_{2nd} +
+    \beta_4 X_{3rd}
   \end{align*}
-\item By fitting this model to our usual ``diabetes'' data we get:
+  \va
+  By fitting this model to the \emph{titanic} data we get:
   \begin{align*}
-    \mathrm{logit}(\hat{\pi}_{hi.gluc}) =
-    \Sexpr{b0} + \Sexpr{b1} X_{age.40} + \Sexpr{b2} X_{BMI.25} + \Sexpr{b3} X_{BP.100}
+    \mathrm{logit}(\hat{\pi}_{died}) =
+    \Sexpr{b0} +
+    \Sexpr{b1} X_{age} + 
+    \Sexpr{b2} X_{male} +
+    \Sexpr{b3} X_{2nd} +
+    \Sexpr{b4} X_{3rd}
   \end{align*}
-\item Exponentiating the coefficients produces:
+  \va
+  Exponentiating the coefficients produces:
   \begin{align*}
-    \frac{\hat{\pi}_{hi.gluc}}{1 - \hat{\pi}_{hi.gluc}} =
-    \Sexpr{eB0} \times \Sexpr{eB1}^{X_{age.40}} \times \Sexpr{eB2}^{X_{BMI.25}} \times
-    \Sexpr{eB3}^{X_{BP.100}}
+    \frac{\hat{\pi}_{died}}{1 - \hat{\pi}_{died}} =
+    \frac{\hat{\pi}_{died}}{\hat{\pi}_{survived}} 
+    = \Sexpr{eB0} \times
+    \Sexpr{eB1}^{X_{age}} \times
+    \Sexpr{eB2}^{X_{male}} \times
+    \Sexpr{eB3}^{X_{2nd}} \times
+    \Sexpr{eB4}^{X_{3rd}}
   \end{align*}
-\end{itemize}
-
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Exponentiating the Systematic Component}
-
+  
   \begin{align*}
-    \mathrm{logit}(\hat{\pi}_{hi.gluc}) &= \Sexpr{b0} + \Sexpr{b1} X_{age.40} +
-    \Sexpr{b2} X_{BMI.25} + \Sexpr{b3} X_{BP.100}\\[12pt]
-    e^{\mathrm{logit}(\hat{\pi}_{hi.gluc})} &=
-    e^{\left(\Sexpr{b0} ~ + ~ \Sexpr{b1} X_{age.40} ~ + ~ \Sexpr{b2} X_{BMI.25}
-      ~ + ~ \Sexpr{b3} X_{BP.100} \right)}\\[8pt]
-    \frac{\hat{\pi}_{hi.gluc}}{1 - \hat{\pi}_{hi.gluc}} &=
-    e^{\Sexpr{b0}} \times e^{\Sexpr{b1} X_{age.40}} \times e^{\Sexpr{b2} X_{BMI.25}} \times
-    e^{\Sexpr{b3} X_{BP.100}}\\[8pt]
-    &= \left(e^{\Sexpr{b0}}\right) \times \left(e^{\Sexpr{b1}}\right)^{X_{age.40}} \times
-    \left(e^{\Sexpr{b2}}\right)^{X_{BMI.25}} \times
-    \left(e^{\Sexpr{b3}}\right)^{X_{BP.100}}\\[14pt]
-    &= \Sexpr{eB0} \times \Sexpr{eB1}^{X_{age.40}} \times \Sexpr{eB2}^{X_{BMI.25}}
-    \times \Sexpr{eB3}^{X_{BP.100}}
+    \mathrm{logit}(\hat{\pi}_{died}) &=
+    \Sexpr{b0} +
+    \Sexpr{b1} X_{age} +
+    \Sexpr{b2} X_{male} +
+    \Sexpr{b3} X_{2nd} +
+    \Sexpr{b4} X_{3rd}\\[12pt]
+    e^{\mathrm{logit}(\hat{\pi}_{died})} &=
+    e^{\left(
+    \Sexpr{b0} ~+~
+    \Sexpr{b1} X_{age} ~+~
+    \Sexpr{b2} X_{male} ~+~
+    \Sexpr{b3} X_{2nd} ~+~
+    \Sexpr{b4} X_{3rd}
+    \right)}\\[8pt]
+    \frac{\hat{\pi}_{died}}{\hat{\pi}_{survived}} &=
+    e^{\Sexpr{b0}} \times
+    e^{\Sexpr{b1} X_{age}} \times
+    e^{\Sexpr{b2} X_{male}} \times
+    e^{\Sexpr{b3} X_{2nd}} \times
+    e^{\Sexpr{b4} X_{3rd}}\\[6pt]
+    &= e^{\Sexpr{b0}} \times
+    \left(e^{\Sexpr{b1}}\right)^{X_{age}} \times
+    \left(e^{\Sexpr{b2}}\right)^{X_{male}} \times
+    \left(e^{\Sexpr{b3}}\right)^{X_{2nd}} \times
+    \left(e^{\Sexpr{b4}}\right)^{X_{3rd}}\\[12pt]
+    &= \Sexpr{eB0} \times
+    \Sexpr{eB1}^{X_{age}} \times
+    \Sexpr{eB2}^{X_{male}} \times
+    \Sexpr{eB3}^{X_{2nd}} \times
+    \Sexpr{eB4}^{X_{3rd}}
   \end{align*}
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Model Comparison}
+
+  <<>>=
+  ## Estimate a restricted model:
+  fit0 <- update(fit, ". ~ . - class")
+
+  ## Check the result:
+  partSummary(fit0, 1:3)
+  @
+
+  \pagebreak
+
+  We don't have an $R^2$ statistic for logistic regression models, so we need to
+  use a \emph{likelihood ratio test} to compare nested models.
+  
+  <<>>=
+  anova(fit0, fit, test = "LRT")
+  @
+
+  \pagebreak
+
+  We can also use information criteria.
+  
+  <<>>=
+  AIC(fit0, fit)
+  BIC(fit0, fit)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Classification}
 
@@ -787,312 +999,165 @@ glucose from their age, BMI, and average blood pressure.
 %------------------------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks]{Classification Example}
-
-<<echo = FALSE>>=
-xn   <- c(1, 57 - 40, 28 - 25, 92 - 100)
-eta1 <- crossprod(xn, beta1)
-pi1  <- round(exp(eta1) / (1 + exp(eta1)), 3)
-eta1 <- round(eta1, 3)
-g    <- as.numeric(pi1 > 0.5) + 1
-@
-
-Say we want to classify a new patient into either the ``high glucose'' group
-or the ``not high glucose'' group using the model fit above.
-\begin{itemize}
-\item Assume this patient has the following characteristics:
+  
+  <<echo = FALSE>>=
+  xn   <- c(1, 17, 1, 1, 0)
+  eta1 <- crossprod(xn, beta1)
+  pi1  <- round(exp(eta1) / (1 + exp(eta1)), 3)
+  eta1 <- round(eta1, 3)
+  g    <- as.numeric(pi1 > 0.5) + 1
+  @
+  
+  Say we want to classify a hypothetical passenger as either having died or
+  survived the sinking.
   \begin{itemize}
-  \item They are 57 years old
-  \item Their BMI is 28
-  \item Their average blood pressure is 92
+  \item Assume this passenger has the following characteristics:
+    \begin{itemize}
+    \item They are 17 years old
+    \item They are male
+    \item They are a second class passenger
+    \end{itemize}
   \end{itemize}
-\end{itemize}
-\vb
-First we plug their predictor data into the fitted model to get their
-model-implied $\eta$:
-\begin{align*}
-  \hat{\eta} &= \Sexpr{b0} + \Sexpr{b1} (57 - 40) + \Sexpr{b2} (28 - 25) + \Sexpr{b3} (92 - 100)\\
-  &= \Sexpr{eta1}
-\end{align*}
-
-\pagebreak
-
-Next we convert the predicted $\eta$ value into a model-implied success
-probability by applying the logistic function:
-\begin{align*}
-  \frac{e^{\Sexpr{eta1}}}{1 + e^{\Sexpr{eta1}}} = \Sexpr{pi1}
-\end{align*}\\
-\vb
-Finally, to make the classification, assume a threshold of $\hat{\pi}' = 0.5$ as
-the decision boundary.
-\begin{itemize}
-\item Because $\Sexpr{pi1} \Sexpr{c("<", ">")[g]} 0.5$ we would classify this
-  patient into the ``\Sexpr{c("low", "high")[g]} glucose'' group.
-\end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\sectionslide{Evaluating Classification Performance}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Confusion Matrix}
-
-  One of the most direct ways to evaluate classification performance is to
-  tabulate the true and predicted classes.
+  \vb
+  First we plug their predictor data into the fitted model to get their
+  model-implied $\eta$:
+  \begin{align*}
+    \hat{\eta}_{died} &=
+                        \Sexpr{b0} +
+                        \Sexpr{b1} \times 17 +
+                        \Sexpr{b2} \times 1 +
+                        \Sexpr{b3} \times 1 +
+                        \Sexpr{b4} \times 0\\[6pt]
+                      &= \Sexpr{eta1}
+  \end{align*}
+  
+  \pagebreak
+  
+  Next we convert the predicted $\eta$ value into a model-implied success
+  probability by applying the logistic function:
+  \begin{align*}
+    \frac{e^{\Sexpr{eta1}}}{1 + e^{\Sexpr{eta1}}} = \Sexpr{pi1}
+  \end{align*}\\
+  \vb
+  Finally, to make the classification, assume a threshold of $\hat{\pi}' = 0.5$
+  as the decision boundary.
   \begin{itemize}
-  \item Such a cross-tabulation is called a \emph{confusion matrix}.
+  \item Because $\Sexpr{pi1} \Sexpr{c("<", ">")[g]} 0.5$ we would classify this
+    passenger as having \Sexpr{c("survived", "died")[g]}.
   \end{itemize}
-
-<<echo = FALSE, results = "asis">>=
-yTrue <- factor(diabetes$highGlu, labels = c("Low", "High"))
-yPred <- factor(predict(out1, type = "response") > 0.5, labels = c("Low", "High"))
-
-tab  <- table(True = yTrue, Predicted = yPred)
-xTab <- xtable(tab, caption = "Confusion Matrix of Blood Glucose Level", digits = 0)
-
-adds <- list(pos = list(0, 0),
-             command = c("& \\multicolumn{2}{c}{Predicted} \\\\\n",
-                         "True & Low & High \\\\\n")
-             )
-
-print(xTab, add.to.row = adds, include.colnames = FALSE)
-@
-
-\pause
-
-We can summarize the confusion matrix in many ways.
-\begin{itemize}
-\item Different summaries highlight different aspects of the classifier's
-  performance.
-\end{itemize}
-
+  
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Summarizing the Confusion Matrix}
+\begin{frame}[fragile]{Example}
 
-  Sensitivity (Recall, Hit Rate, True-Positive Rate):
-  \begin{align*}
-    Sensitivity = \frac{True~Postives}{True~Positives + False~Negatives} = \frac{True~Postives}{Total~Positives}
-  \end{align*}\\
-
-  \va
-
-  Specificity (Selectivity, True-Negative Rate):
-  \begin{align*}
-    Specificity = \frac{True~Negatives}{True~Negatives + False~Positives} = \frac{True~Negatives}{Total~Negatives}
-  \end{align*}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Summarizing the Confusion Matrix}
-
-  Accuracy:
-  \begin{align*}
-    Accuracy = \frac{True~Positives + True~Negatives}{TP + TN + FP + FN} = \frac{Correct~Classifications}{Total~Cases}
-  \end{align*}\\
-
-\va
-
-  Error Rate:
-  \begin{align*}
-    Error~Rate = \frac{False~Positives + False~Negatives}{TP + TN + FP + FN} = \frac{Incorrect~Classifications}{Total~Cases}
-  \end{align*}
+  Let's generate a grid of hypothetical passengers to explore the model's
+  predictions.
+  
+  <<>>=
+  passengers <-
+      expand.grid(
+          age   = 1:100,
+          sex   = c("male", "female"),
+          class = c("1st", "2nd", "3rd")
+      ) %>%
+      data.frame()
+  @
 
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile]{ROC Curve}
+\begin{frame}[fragile, allowframebreaks]{Example}
 
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
+  View 10 random passengers.
+  
+  <<>>=
+  passengers %>% slice_sample(n = 10)
+  @ 
 
-      We can visualize a classifier's potential performance via a \emph{Receiver
-        Operating Characteristic} Curve.
-      \vb
-      \begin{itemize}
-      \item Y-Axis: True-Positive Rate
-        \begin{itemize}
-        \item Sensitivity
-        \end{itemize}
-        \vb
-      \item X-Axis: False-Positive Rate
-        \begin{itemize}
-        \item 1 - Specificity
-        \end{itemize}
-        \vb
-      \item Area Under the ROC Curve (AUC) summarizes the classifier's
-        discrimination
-      \end{itemize}
+  \pagebreak
 
-    \end{column}
-    \begin{column}{0.5\textwidth}
+  We can generate predictions on the scale of the linear predictor (i.e.,
+  log-odds), or we can generate predicted probabilities.
+  
+  <<>>=
+  passengers %<>%
+      mutate( 
+          ## Predicted log odds of dying:
+          etaHat = predict(fit2, newdata = ., type = "link"),
 
-<<echo = FALSE>>=
-true <- rbinom(100, 1, 0.5)
-pred <- true + rnorm(100, 0, 0.5)
+          ## Predicted probabilities of dying:
+          piHat = predict(fit2, newdata = ., type = "response")
+      )
+  @
 
-roc0 <- roc(response = true, predictor = pred)
+  We can then use the predicted probabilities of dying to classify:
 
-plot(roc0, legacy.axes = TRUE, main = "ROC Curve")
-@
+  <<>>=
+  passengers %<>%
+      mutate(dieHat = ifelse(piHat > 0.5, "dead", "alive") %>% factor())
+  @
 
-\end{column}
-\end{columns}
+  \pagebreak
 
-\end{frame}
+  View the predictions for 10 random passengers:
+  
+  <<>>=
+  passengers %>% slice_sample(n = 10)
+  @
 
-%------------------------------------------------------------------------------%
+  \pagebreak
 
-\begin{frame}{Example}
+  We can visualize the predicted probabilities of dying.
+  
+  <<eval = FALSE>>=
+  library(ggplot2)
+  
+  ggplot(passengers, aes(age, piHat, color = sex)) +
+      geom_line() +
+      facet_wrap(vars(class)) +
+      ylab("Predicted Probability of Death")
+  @ 
 
-<<echo = FALSE>>=
-roc0 <- roc(response = diabetes$highGlu,
-            predictor = predict(out1, type = "response")
-            )
-@
+  \pagebreak
 
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-    
-    \begin{minipage}{\textwidth}
-      
-      \begin{alignat*}{2}
-        Sensitivity &= \frac{\Sexpr{tab[2, 2]}}{\Sexpr{tab[2, 2]} + \Sexpr{tab[2, 1]}} &&=
-        \Sexpr{round(tab[2, 2] / sum(tab[2, ]), 3)}\\[8pt]
-        Specificity &= \frac{\Sexpr{tab[1, 1]}}{\Sexpr{tab[1, 1]} + \Sexpr{tab[1, 2]}} &&=
-        \Sexpr{round(tab[1, 1] / sum(tab[1, ]), 3)}\\[8pt]
-        AUC &&&= \Sexpr{round(auc(roc0), 3)}
-      \end{alignat*}
-      
-    \end{minipage}
-    
-  \end{column}
-  \begin{column}{0.5\textwidth}
-    
-    \begin{minipage}{\textwidth}
-
-<<echo = FALSE>>=
-plot(roc0, legacy.axes = TRUE, main = "ROC of Blood Glucose Classifier")
-@
-
-\end{minipage}
-
-\end{column}
-\end{columns}
-
-\vb
-\pause
-What is the accuracy? What is the error rate?
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-\comment{%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-  Accuracy &= \frac{\Sexpr{tab[2, 2]} + \Sexpr{tab[1, 1]}}{\Sexpr{tab[2, 2]} +
-   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
-  \Sexpr{round((tab[2, 2] + tab[1, 1])/ sum(tab), 3)}\\[8pt]
-   Error~Rate &= \frac{\Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}}{\Sexpr{tab[2, 2]} +
-   \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
-  \Sexpr{round((tab[2, 1] + tab[1, 2])/ sum(tab), 3)}\\[8pt]
-
-
-\begin{frame}{Classification Error}
-
-  The MSE is not an appropriate error measure for classification.
-  \begin{itemize}
-  \item The differences between predicted and observed outcomes have little
-    meaning.
-  \end{itemize}
-  \vb
-  One of the most popular error measures is the \emph{Cross-Entropy Error}:
-  \begin{align*}
-    CEE = -N^{-1} \sum_{n = 1}^N Y_n \ln(\hat{\pi}_n) + (1 - Y_n)\ln(1 - \hat{\pi}_n)
-  \end{align*}
-  \vx{-6}
-  \begin{itemize}
-  \item The CEE is sensitive to classification confidence.
-  \item Stronger predictions are more heavily weighted.
-  \end{itemize}
+  <<echo = FALSE, out.width = "65%">>=
+  library(ggplot2)
+  
+  ggplot(passengers, aes(age, piHat, color = sex)) +
+      geom_line() +
+      facet_wrap(vars(class)) +
+      ylab("Predicted Probability of Death")
+  @ 
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Why not Accuracy?}
+\begin{frame}[fragile, allowframebreaks]{Example}
 
-<<echo = FALSE>>=
-yTrue <- rbinom(100, 1, 0.5)
+  We can also visualize the classifications the model would make.
+  
+  <<eval = FALSE>>=
+  ggplot(passengers, aes(dieHat, age, color = class)) +
+      geom_boxplot() +
+      facet_wrap(vars(sex)) +
+      xlab("Predicted Death")
+  @ 
 
-pi1   <- yTrue * 0.9 + (1 - yTrue) * 0.1
-pred1 <- as.numeric(pi1 > 0.5)
+  \pagebreak
 
-pi2   <- yTrue * 0.55 + (1 - yTrue) * 0.45
-pred2 <- as.numeric(pi2 > 0.5)
-
-cee1 <- LogLoss(y_pred = pi1, y_true = yTrue)
-cee2 <- LogLoss(y_pred = pi2, y_true = yTrue)
-@
-
- The accuracy is a na\"{i}vely appealing option.
-  \begin{itemize}
-  \item The proportion of cases assigned to the correct group
-  \end{itemize}
-  \vb
-  Consider two perfect classifiers:
-  \begin{enumerate}
-  \item $P(\hat{Y}_n = 1 | Y_n = 1) = 0.90$,  $P(\hat{Y}_n = 1 | Y_n = 0) = 0.10$, $n = 1, 2, \ldots, N$
-  \item $P(\hat{Y}_n = 1 | Y_n = 1) = 0.55$,  $P(\hat{Y}_n = 1 | Y_n = 0) = 0.45$, $n = 1, 2, \ldots, N$
-  \end{enumerate}
-  \vb
-  Both of these classifiers will have the same accuracy.
-  \begin{itemize}
-  \item Neither model ever makes an incorrect group assignment.
-  \end{itemize}
-  \vb
-  The first model will have a lower CEE.
-  \begin{itemize}
-  \item The classifications are made with higher confidence.
-  \item $CEE_1 = \Sexpr{round(cee1, 3)}$, $CEE_2 = \Sexpr{round(cee2, 3)}$
-  \end{itemize}
+  <<echo = FALSE, out.width = "65%">>=
+  ggplot(passengers, aes(dieHat, age, color = class)) +
+      geom_boxplot() +
+      facet_wrap(vars(sex)) +
+      xlab("Predicted Death")
+  @ 
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Conclusion}
-
-  \begin{itemize}
-  \item The Generalized Linear Model is a flexible class of models that we can
-    use for non-normally distributed outcomes.
-    \begin{itemize}
-    \item Multiple linear regression is a special type of GLM.
-    \end{itemize}
-    \vc
-  \item We cannot model nominal outcomes with linear regression.
-    \begin{itemize}
-    \item We should use some form of logistic regression.
-    \end{itemize}
-    \vc
-  \item We use logistic regression for binary outcomes and multinomial logistic
-    regression for multi-class nominal outcomes.
-    \vc
-  \item We must take care when interpreting the coefficients from logistic
-    regression models.
-    \vc
-  \item We can use the estimated success probabilities from a fitted model to
-    classify new observations.
-  \end{itemize}
-
-\end{frame}
-}%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %------------------------------------------------------------------------------%
 
 \end{document}

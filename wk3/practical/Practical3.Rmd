@@ -29,11 +29,12 @@ In this practical you will learn about exploratory data analysis (EDA). EDA invo
  
 You will need the following packages for this tutorial. 
 
-```{r, message=FALSE}
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
 library(ggpubr)
 library(kableExtra)
+library(weathermetrics)
 ```
 
 You will work with the `mpg` dataset from the `ggplot2` package. `mpg` contains a subset of the fuel economy data that EPA makes available [here](https://fueleconomy.gov/). The data frame has 234 rows and 11 variables:
@@ -52,27 +53,15 @@ You will work with the `mpg` dataset from the `ggplot2` package. `mpg` contains 
 
 You can also type `?mpg` into the console to learn more. 
 
-Let's load the data. 
-
-```{r}
-mpg <- mpg
-```
-
-Next get an overview of the data.
+Let's get an overview of the data.
 
 ```{r}
 head(mpg)
 ```
 
-```{r}
-head(mpg) %>% 
-  kable() %>% 
-  kable_styling(latex_options = c("hover", "condensed", "striped"))
-```
-
 In previous weeks we learned that `str()` can be used to get an overview of the data and the structure of a dataframe. You can also use `glimpse()` from the `tidyverse` which returns similar results in a more readable format.
 
-```{r, results = 'hide'}
+```{r}
 glimpse(mpg)
 ```
 
@@ -81,19 +70,20 @@ Before you begin exploring your data, you need to check that the class or mode o
 1. __Are there any variables that do not have the class you expect it to?__
 
 ```{r, include = params$answers}
-# The character variables do not have factor levels.
+# All variables that are listed as 'character' are categorical and should be listed as 'factor'.
 ```
 
 2. __Make any changes you feel are necessary.__
 
-```{asis}
-*Here we should change all of the character variables to factor variables with levels. For now, we leave the levels as they are.*
-
-*There are a couple of methods to do this, but the quickest way is using `mutate_if()` which performs a conditional operation. Base R is also fine.*
-```
 ```{r, include = params$answers}
+# Here we should change all of the character variables to factor variables with levels. For now, we leave the levels as they are.
+# There are a couple of methods to do this, but the quickest way is using `mutate_if()` which performs a conditional operation. Base R is also fine.
+  
 mpg <- mpg %>% 
   mutate_if(is.character, as.factor)
+
+# If we inspect the data gain using glimpse(), we now see that the character variables are converted into factors
+glimpse(mpg)
 ```
 
 ---
@@ -108,7 +98,7 @@ EDA is very flexible and iterative process and gives the researcher a lot of fre
 
 ## Variation
 
-**Variation** describes how the values of a variable change each time you measure it. A continuous variable that is measured on one occassion will have different values to that same variable measured on another occasion. This variation between measurement occasions are what we call "error". Categorical variables also vary across measurement occasions or across individuals. Visualising variation is a very intuitive way to understand trends or patterns within a variable. 
+**Variation** describes how the values of a variable change each time you measure it. A continuous variable that is measured on one occassion will have different values to that same variable measured on another occasion. This variation between measurement occasions are what we call "error". Categorical variables also vary across measurement occasions or across individuals. Visualizing variation is a very intuitive way to understand trends or patterns within a variable. 
 
 ---
 
@@ -130,12 +120,12 @@ Below we summarise `hwy` by vehicle `class`, by asking for commonly used summary
 
 ```{r}
 mpg %>% 
-  group_by(class) %>% 
-  summarise(min = min(hwy),
-            mean = mean(hwy),
-            sd = sd(hwy),
-            max = max(hwy),
-            n = n())  %>% 
+  group_by(class) %>%         # by class
+  summarise(min = min(hwy),   # minimum of hwy
+            mean = mean(hwy), # mean
+            sd = sd(hwy),     # standard deviation
+            max = max(hwy),   # maximum
+            n = n())  %>%     # nr of observations
   kbl() %>%  
   kable_styling(latex_options = c("striped", "hover"), full_width = F)  
 ```
@@ -144,12 +134,12 @@ mpg %>%
 
 ```{r, include = params$answers}
 mpg %>% 
-  group_by(year) %>% 
-  summarise(min = min(displ),
-            Q1 = quantile(displ, 0.25),
-            median = median(displ),
-            Q3 = quantile(displ, 0.75),
-            max = max(displ)) %>% 
+  group_by(year) %>%                    # by year
+  summarise(min = min(displ),           # minimum of engine displacement
+            Q1 = quantile(displ, 0.25), # first quantile
+            median = median(displ),     # median
+            Q3 = quantile(displ, 0.75), # third quantile
+            max = max(displ)) %>%       # maximum
   kbl() %>%  
   kable_styling(latex_options = c("striped", "hover"), full_width = F)          
 ```
@@ -234,19 +224,20 @@ ggplot(mpg) +
 4. __Create a bar chart that shows a count for the different vehicle classes in `mpg`.__
 
 ```{r, include = params$answers}
-ggplot(mpg) +
-  geom_bar(aes(x = class))
+ggplot(mpg) +              # list the dataset
+  geom_bar(aes(x = class)) # geom_bar for a barplot, and the 'class' variable on the x-axis. 
+
+# geom_bar adds counts on the y-axis by default
 ```
 
 5. __Look up different `ggplot` themes, and apply one to the bar chart you just created.__
 
-```{asis}
-*There are different `ggplot` themes and the one you choose is largely down to personal preference, but you also want one that enhances your data visualisation. Here I choose `+ theme_bw()` but other examples include `+ theme_minimal()` and `+ theme_light()`.*
-```
 ```{r, include = params$answers}
 ggplot(mpg) +
   geom_bar(aes(x = class)) +
-  theme_bw()
+  theme_bw() # Here we add the theme
+
+# There are different `ggplot` themes and the one you choose is largely down to personal preference, but you also want one that enhances your data visualization. Here I choose `+ theme_bw()` but other examples include `+ theme_minimal()` and `+ theme_light()`.
 ```
 
 ---
@@ -259,7 +250,8 @@ ggplot(mpg) +
 
 ```{r}
 ggplot(mpg) +
-  geom_histogram(aes(cty), binwidth = 3)
+  geom_histogram(aes(x = cty), 
+                 binwidth = 3)
 ```
 
 You can change the value of `binwidth` to adjust the width of the intervals. Different binwidths can reveal different patterns in the data. 
@@ -268,7 +260,8 @@ You can change the value of `binwidth` to adjust the width of the intervals. Dif
 
 ```{r,include = params$answers}
 ggplot(mpg) +
-  geom_histogram(aes(cty), binwidth = 1)
+  geom_histogram(aes(x = cty), 
+                 binwidth = 1)
 
 # The general distribution does not drastically change, but it is now much easier to spot outliers. Specifically, there are two extreme values to the right of the distribution where the city miles per gallon exceed 30 in a small number of cases.
 ```
@@ -278,7 +271,7 @@ ggplot(mpg) +
 `geom_density` transforms the data into smoothed kernel density estimates (basically a smooth histogram). It is useful for continuous data that come from an underlying smooth distribution. 
 
 ```{r}
-ggplot(mpg, aes(cty)) +
+ggplot(mpg, aes(x = cty)) +
   geom_density(fill = "darkseagreen") 
 ```
 You can also include raw data in a histogram in the form of "rug" marks. 
@@ -286,9 +279,10 @@ You can also include raw data in a histogram in the form of "rug" marks.
 7. __Add rug marks to plot above by adding the argument `+ geom_rug(size = 1, colour = "darkorange")`.__
 
 ```{r,include = params$answers}
-ggplot(mpg, aes(cty)) +
+ggplot(mpg, aes(x = cty)) +
   geom_density(fill = "darkseagreen") +
-  geom_rug(size = 1, colour = "darkorange")
+  geom_rug(size = 1, 
+           colour = "darkorange")
 ```
 
 ---
@@ -305,21 +299,26 @@ ggplot(mpg, aes(cty)) +
 
 ```{r}
 ggplot(mpg) +
-  geom_point(aes(x = displ, y = hwy))
+  geom_point(aes(x = displ, 
+                 y = hwy))
 ```
 
 Some of these values might be clustered together based on another characteristic. You can explore this by adding colour to the aesthetic mappings, for example. 
 
 ```{r}
 ggplot(mpg) +
-  geom_point(aes(x = displ, y = hwy, colour = class))
+  geom_point(aes(x = displ, 
+                 y = hwy, 
+                 colour = class))
 ```
 
 8. __Repeat the plot above, but mapping the type of transmission to the `colour` aesthetic. Add a theme and change the titles of the x- and y-axes.__
 
 ```{r, include = params$answers}
 ggplot(mpg) +
-  geom_point(aes(x = displ, y = hwy, colour = trans)) +
+  geom_point(aes(x = displ, 
+                 y = hwy, 
+                 colour = trans)) +
   labs(x = "Engine Displacement (L)",
        y = "Highway miles per gallon",) +
   theme_bw()
@@ -330,7 +329,8 @@ Different aesthetic mappings can be combined in one plot. For example, you may w
 9. __Create a scatter plot showing the relationship between engine displacement and city miles, including a line of best fit.__
 
 ```{r, include = params$answers}
-ggplot(mpg, aes(x = displ, y = hwy)) +
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) +
   geom_point() +
   geom_smooth() +
   labs(x = "Engine Displacement (L)",
@@ -345,9 +345,12 @@ You can fit more than one line in the same plot. This is often useful in multile
 **10. Recreate the previous plot, but adding `colour = class` to the aesthetic mappings. Use `method = "lm"` and set `se = FALSE` in `geom_smooth()`. What difference does this make?**
 
 ```{r, include = params$answers}
-ggplot(mpg, aes(displ, hwy, colour = class)) +
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                colour = class)) +
   geom_point() +
-  geom_smooth(method = lm, se = FALSE) +
+  geom_smooth(method = lm, 
+              se = FALSE) +
   labs(x = "Engine Displacement (L)",
        y = "Highway miles per gallon",) +
   theme_bw()
@@ -365,7 +368,8 @@ ggplot(mpg, aes(displ, hwy, colour = class)) +
 
 ```{r}
 ggplot(mpg) +
-  geom_boxplot(aes(x = drv, y = hwy))
+  geom_boxplot(aes(x = drv, 
+                   y = hwy))
 ```
 
 These features of the boxplot are:
@@ -379,11 +383,11 @@ These features of the boxplot are:
 11. __What do each of these features tell us?__
 
 ```{r, include = params$answers}
-# Lower horizontal line - 25th percentile*
-# Thicker horizontal middle line - median*
-# Upper horizontal line - 75th percentile*
-# Vertical whiskers - IQR * 1.5*
-# Points beyond the whiskers -  OUTLIERS*
+# Lower horizontal line -> 25th percentile
+# Thicker horizontal middle line -> median
+# Upper horizontal line -> 75th percentile
+# Vertical whiskers -> IQR 
+# 1.5 Points beyond the whiskers ->  OUTLIERS
 ```
 
 12. __Add `+ coord_flip()` to the plot above. What does this do?__
@@ -399,7 +403,7 @@ ggplot(mpg) +
 13. __What can you conclude about the highway miles per gallon of each type of drive train from the boxplot above?__
 
 ```{r, include = params$answers}
-# There are many outliers (points beyond the whiskers) for drive traint type "f", which represents a front-wheel drive.* *There are no outliers beyond the IQR for the other types of drive train, 4-wheel drive and rear-wheel drive.
+# There are many outliers (points beyond the whiskers) for drive traint type "f", which represents a front-wheel drive. There are no outliers beyond the IQR for the other types of drive train, 4-wheel drive and rear-wheel drive.
 ```
 
 The variable `trans` contains 10 different transmissions types. These 10 categories can be assumed under 2 broader categories: **manual** and **auto**. 
@@ -408,15 +412,25 @@ The variable `trans` contains 10 different transmissions types. These 10 categor
 ```{r, include = params$answers}
 mpg <- mpg %>% 
   mutate(trans = fct_collapse(trans,
-                             "auto" = c("auto(av)", "auto(l3)", "auto(l4)", "auto(l5)", "auto(l6)", "auto(s4)", "auto(s5)", "auto(s6)"),
-                             "manual" = c("manual(m5)", "manual(m6)"))) 
+                             "auto" = c("auto(av)", 
+                                        "auto(l3)", 
+                                        "auto(l4)", 
+                                        "auto(l5)", 
+                                        "auto(l6)", 
+                                        "auto(s4)", 
+                                        "auto(s5)", 
+                                        "auto(s6)"),
+                             "manual" = c("manual(m5)", 
+                                          "manual(m6)"))) 
 ```
 
 15. __Use the previous example to create a boxplot mapping `cty` on the y-axis and `drv` on the x-axis, this time adding the argument `colour = trans` to `aes()`. What has changed?__
 
 ```{r, include = params$answers}
   ggplot(mpg) +
-  geom_boxplot(aes(x = drv, y = cty, colour = trans))
+  geom_boxplot(aes(x = drv, 
+                   y = cty, 
+                   colour = trans))
 
 # Adding the argument `colour = trans` to the aesthetic mappings further splits the drive train into auto and manual.
 
@@ -424,10 +438,20 @@ mpg <- mpg %>%
 
 mpg %>% 
     mutate(trans = fct_collapse(trans,
-                             "auto" = c("auto(av)", "auto(l3)", "auto(l4)", "auto(l5)", "auto(l6)", "auto(s4)", "auto(s5)", "auto(s6)"),
-                             "manual" = c("manual(m5)", "manual(m6)"))) %>% 
+                             "auto" = c("auto(av)", 
+                                        "auto(l3)", 
+                                        "auto(l4)", 
+                                        "auto(l5)", 
+                                        "auto(l6)", 
+                                        "auto(s4)", 
+                                        "auto(s5)", 
+                                        "auto(s6)"),
+                             "manual" = c("manual(m5)", 
+                                          "manual(m6)"))) %>% 
   ggplot() +
-  geom_boxplot(aes(x = drv, y = cty, colour = trans))
+  geom_boxplot(aes(x = drv, 
+                   y = cty, 
+                   colour = trans))
 ```
 
 ---
@@ -440,7 +464,8 @@ To do this, you use the command `facet_wrap()` to facet by a single variable. Th
 
 ```{r}
 ggplot(mpg) + 
-  geom_point(aes(x = displ, y = hwy)) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
   facet_wrap(~ class, nrow = 2)
 ```
 
@@ -448,7 +473,8 @@ It is possible to facet on a combination of two variables using `facet_grid()`. 
 
 ```{r, include = params$answers}
 ggplot(mpg) + 
-  geom_point(aes(x = displ, y = hwy)) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
   facet_grid(drv ~ cyl)
 ```
 
@@ -462,7 +488,8 @@ ggplot(mpg) +
 
 ```{r, include = params$answers}
 ggplot(mpg) + 
-  geom_point(aes(x = displ, y = hwy)) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
   facet_wrap(~manufacturer, nrow = 3)
 ```
 
@@ -470,7 +497,8 @@ ggplot(mpg) +
 
 ```{r, include = params$answers}
 ggplot(mpg) + 
-  geom_point(aes(x = displ, y = hwy)) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
   labs(x = "Engine displacement (litres)", 
        y = "Highway miles per gallon") +
   facet_wrap(~manufacturer, nrow = 3) 
@@ -495,6 +523,7 @@ __C. A jittered scatterplot of `hwy` and `cty` miles per gallon, assigning `clas
 **Remember to save each plot as an object to be called upon later.**
 
 ```{r, include = params$answers}
+# plot A
 p1 <- ggplot(data = mpg, aes(class, fill = class)) +
         geom_bar() +
         labs(x = "Vehicle class",
@@ -502,20 +531,21 @@ p1 <- ggplot(data = mpg, aes(class, fill = class)) +
         coord_flip() +  
         theme_bw()
 
+# plot B
 p2 <- ggplot(data = mpg) + 
         geom_boxplot(mapping = aes(x = class, y = hwy, colour = class)) +
         labs(x = "Vehicle class",
              y = "Highway mpg") +
         coord_flip() +
         theme_bw()
-
+# plot C
 p3 <- ggplot(data = mpg) + 
         geom_jitter(mapping = aes(x = cty, y = hwy, colour = class)) +
         labs(x = "Vehicle class",
              y = "Highway mpg") +
         theme_bw()
 
-# I create three plots names "p1", "p2", and "p3", using previous examples to guide me if necessary. For p1 and p2 I add `coord_flip()` to make the categories easier to read.* 
+# I create three plots names "p1", "p2", and "p3", using previous examples to guide me if necessary. For p1 and p2 I add `coord_flip()` to make the categories easier to read.
 ```
 
 __D. Use `ggarrange()` to arrange the three plots in one space. `ggarrange()` takes the plots as arguments as well as `ncol` or `nrow` to customise the arrangement__
@@ -545,36 +575,92 @@ ggarrange(p1, p2, p3,
 
 ## Writing functions
 
-When doing EDA, you might find that you repeat the same operations again and again on different variables. In some cases, writing your own function can reduce this repetition. For example, the function below checks the class of each variable in the dataframe and calculates the mean and standard deviation for numeric/integer and counts the levels for factors. 
+When doing EDA, you might find that you repeat the same operations again and again on different variables. In some cases, writing your own function can reduce this repetition. 
 
-```{r}
-stats <- function(df){
-  
-  # to store output
-  out_list <-  vector("list", ncol(df))
-  names(out_list) <- names(df)
-  
-  # loop over columns
-  for(i in 1:ncol(df)){
-    
-    var <- df %>% pull(names(df)[i])
-    
-    # make table if a factor
-    if(is.factor(var)){
-      out_list[[i]] <- table(var)
-    } else {
-      # get mean and sd if numeric or integer
-      if(is.numeric(var) | is.integer(var)){
-        out_list[[i]] <- data.frame(mean = mean(var), sd = sd(var))
-      }
-    }
-  }
-  # return output as a list
-  return(out_list)
+We now consider a situation where we are interested in weather conditions at various locations. However, for some areas temperature is registered in Celsius, while in other areas it is registered in Fahrenheit or Kelvin. We can create a function that easily allows you to apply these transformations where needed. 
+
+We start with loading datasets from a couple of different areas from the `R` package `weathermetrics`. Inspect the datasets `norfolk` and `lyon` from the `weathermetrics` package.
+
+
+__20. What differences do you see in how the temperature is registered for Norfolk and Lyon?__
+
+```{r, include= params$answers}
+summary(norfolk)
+summary(lyon)
+
+# For Norfolk, the temperature is registered in Fahrenheit, while for Lyon, the temperature is registered in Celsius.
+```
+
+We first work on a function that transforms Fahrenheit into Celsius. First, we need the equation to do this transformation, which is: 
+$$ Celsius = (Fahrenheit - 32) * \frac{5}{9} $$
+
+__21. Convert the Fahrenheit temperatures from Norfolk to Celsius using this equation. Round the output up to two decimals.__
+```{r, include=params$answers}
+round((norfolk$TemperatureF-32) * (5/9), 2)
+```
+
+Next, we turn this piece of code that applied the equation into a function that can be applied to multiple datasets. Therefore, we build a function that has the following structure: 
+```{r, eval=FALSE}
+function_name <- function(input){ # Here we specify a name for the function and specify what goes in
+  output <- what does the function do and to what? # what do we do with that what goes in, and under what name we store the output
+  return(output) # Here we specify what the function should present as output
+}
+```
+
+__22. Write your own conversion function that applies the Fahrenheit to Celsius equation. Name the function `temp_conversion`, the input `temp_variable` and store the output under the name `converted_temp`.__
+```{r, include=params$answers}
+temp_conversion <- function(temp_variable){
+  converted_temp <- round((temp_variable-32) * (5/9), 2)
+  return(converted_temp)
 }
 
-stats(mpg)
 ```
+
+
+__22. Apply your function to the Norfolk temperature variable in Fahrenheit, and store the output under the name `TemperatureC`. __ 
+```{r, include=params$answers}
+norfolk$TemperatureC <- temp_conversion(temp_variable = norfolk$TemperatureF)
+```
+
+__23. Confirm that your function works by comparing the output with that the function that exists in the package named `fahrenheit.to.celsius()`.__
+```{r, include=params$answers}
+norfolk$TemperatureC
+
+fahrenheit.to.celsius(norfolk$TemperatureF)
+# These two vectors should be exactly the same. 
+```
+
+--- 
+
+Next, we extend the function in such a way that we can also use it to convert the other way around, from Celsius to Fahrenheit. We need to include three additional elements in our function:
+
+1. An extra input parameter to allow users to indicate which conversion they want to apply.
+2. The conversion equation to go from Celsius to Fahrenheit: $$ Celsius = \frac{9}{5} * Fahrenheit + 32 $$ 
+3. A conditional statement allowing for the right equation to be used based on the additional input parameter.
+
+__24. Extend your function as described above.__
+```{r, include=params$answers}
+temp_conversion <- function(temp_variable, conversion_type){
+  if(conversion_type == "fahrenheit_to_celsius"){
+    converted_temp <- round((temp_variable - 32) * (5/9), 2) # equation from fahrenheit to celsius
+    } else if(conversion_type == "celsius_to_fahrenheit"){
+      converted_temp <- round((9/5) * temp_variable + 32, 2) # equation from celsius to fahrenheit
+    }
+  return(converted_temp)
+}
+```
+
+__25. Confirm that your function works by applying your function again on the norfolk data.__ 
+```{r, include=params$answers}
+temp_conversion(temp_variable = norfolk$TemperatureF, 
+                conversion_type = "fahrenheit_to_celsius")
+
+temp_conversion(temp_variable = norfolk$TemperatureC, 
+                conversion_type = "celsius_to_fahrenheit")
+
+# By comparing the output of these two statements with the variables that  are already present in the norfolk data, we can confirm that our function works in both directions now.
+```
+
 
 ---
 

@@ -1,0 +1,614 @@
+--- 
+title: "R Code Demonstration"
+subtitle: "Linear Modeling"
+author: "Kyle M. Lang"
+date: "Last updated: `r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+    df_print: paged
+    css: "style.css"
+editor_options: 
+  chunk_output_type: console
+---
+
+\newcommand{\va}{\\[12pt]}
+\newcommand{\vb}{\\[6pt]}
+\newcommand{\vc}{\\[3pt]}
+\newcommand{\vx}[1]{\\[#1pt]}
+
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.align = "center")
+
+set.seed(235711)
+
+dataDir <- "../../data/"
+ins     <- read.csv(paste0(dataDir, "insurance.csv")) 
+
+x <- sample(1:nrow(ins))
+
+ins0 <- ins[x[1:1000], ]
+ins1 <- ins[x[1001:1300], ]
+
+saveRDS(ins0, paste0(dataDir, "insurance0.rds"))
+saveRDS(ins1, paste0(dataDir, "insurance1.rds"))
+```
+
+```{r klippy, echo = FALSE}
+klippy::klippy(position = c("top", "right"))
+```
+
+In this document, I will demonstrate how to implement the analyses discussed in
+the lecture using R.
+
+---
+
+First, we need to load some extra packages.
+
+```{r}
+library(MLmetrics) # For MSEs
+library(dplyr)     # For data processing
+library(magrittr)  # For fancy pipes
+library(rockchalk) # For interaction probing
+```
+
+---
+
+Now, we'll read in and prepare some data.
+
+```{r}
+set.seed(235711)
+
+dataDir <- "../../data/"
+
+cars <- readRDS(paste0(dataDir, "mtcars.rds"))
+ins0 <- readRDS(paste0(dataDir, "insurance0.rds")) 
+ins1 <- readRDS(paste0(dataDir, "insurance1.rds")) 
+ginz <- readRDS(paste0(dataDir, "ginzberg.rds"))
+bfi  <- readRDS(paste0(dataDir, "bfi_scored.rds"))
+
+## Load the iris data
+data(iris)
+
+## Sample 100 rows to unbalance group sizes:
+iris %<>% slice_sample(n = 100, replace = TRUE)
+```
+
+---
+
+# Simple Linear Regression
+
+---
+
+First we'll fit a simple linear regression (SLR) model wherein we use the `cars`
+data to regress `qsec` (quarter mile lap time in seconds) onto `hp` (horsepower 
+rating of the engine).
+
+```{r}
+## Fit a simple linear regression model:
+out1 <- lm(qsec ~ hp, data = cars)
+
+## Summarize the results:
+summary(out1)
+```
+
+Our fitted `lm` object is a list containing many elements.
+
+```{r}
+## See what's inside the fitted lm object:
+ls(out1)
+```
+
+The output of `summary()` is just another object that we can save to a variable.
+
+```{r}
+s1 <- summary(out1)
+ls(s1)
+s1
+```
+
+We can access particular pieces of the model output.
+
+```{r}
+## Access the R^2 slot in the summary object:
+s1$r.squared
+
+## Extract coefficients:
+coef(out1)
+
+## Extract residuals:
+res3 <- resid(out1)
+res3
+
+## Extract fitted values (two ways):
+yHat1.1 <- fitted(out1)
+yHat1.2 <- predict(out1)
+
+yHat1.1
+yHat1.2
+
+## Compare:
+yHat1.1 - yHat1.2
+```
+
+---
+
+# Multiple Linear Regression
+
+---
+
+Now, we fit a *multiple linear regression* (MLR) model by adding `wt` (the car's
+weight) and `carb` (the number of carburetors) into the model as additional 
+predictors.
+
+```{r}
+## Fit a multiple linear regression model:
+out2 <- lm(qsec ~ hp + wt + carb, data = cars)
+
+## Summarize the model:
+s2 <- summary(out2)
+s2
+
+## Extract R^2:
+s2$r.squared
+
+## Extract F-stat:
+s2$fstatistic
+
+## Extract coefficients:
+(cf <- coef(out2))
+```
+
+The `confint()` function computes confidence intervals (CIs) for the coefficients.
+
+```{r}
+## Compute confidence intervals for coefficients:
+confint(out2)
+confint(out2, parm = "hp")
+confint(out2, parm = c("(Intercept)", "wt"), level = 0.99)
+```
+
+We can also compute our own statistics based on the fitted model object.
+
+```{r}
+## Manually compute standard errors and t-statistics:
+se <- out2 %>% vcov() %>% diag() %>% sqrt()
+t  <- cf / se
+
+s2
+t
+```
+
+---
+
+# Model Comparison
+
+---
+
+Now, we'll compare the SLR and MLR models.
+
+```{r}
+## Change in R^2:
+s2$r.squared - s1$r.squared
+
+## Significant increase in R^2?
+anova(out1, out2)
+
+## Compare MSE values:
+MSE(y_pred = predict(out1), y_true = cars$qsec)
+MSE(y_pred = predict(out2), y_true = cars$qsec)
+
+## Information criteria:
+AIC(out1, out2)
+BIC(out1, out2)
+```
+
+---
+
+If we want to update and rerun an existing `lm()` model, we can use the 
+`update()` function to do so without a bunch of copy-pasting.
+
+```{r}
+## The long way:
+out1 <- lm(qsec ~ hp, data = mtcars)
+out2 <- lm(qsec ~ hp + wt, data = mtcars)
+out3 <- lm(qsec ~ hp + wt + gear + carb, data = mtcars)
+
+## The short way:
+out2.1 <- update(out1, ". ~ . + wt")
+out3.1 <- update(out2.1, ". ~ . + gear + carb")
+out3.2 <- update(out1, ". ~ . + wt + gear + carb")
+
+## We can also remove variables:
+out1.1 <- update(out2, ". ~ . - wt")
+
+summary(out2)
+summary(out2.1)
+
+all.equal(out1, out1.1)
+all.equal(out2, out2.1)
+all.equal(out3, out3.1)
+all.equal(out3, out3.2)
+
+## We can rerun the same model on new data:
+mtcars2 <- mtcars[1 : 15, ]
+
+out4 <- update(out3, data = mtcars2)
+
+summary(out3)
+summary(out4)
+```
+
+---
+
+# Categorical Predictors
+
+---
+
+## Factor Variables
+
+R represents nominal variables as *factors*. 
+
+```{r}
+## Look at the 'Species' factor:
+iris$Species
+is.factor(iris$Species)
+
+str(iris$Species)
+summary(iris$Species)
+```
+
+Factors have special attributes to allow them to encode grouping information.
+
+```{r}
+attributes(iris$Species)
+attributes(iris$Petal.Length)
+attributes(iris)
+
+## Factors have labeled levels:
+levels(iris$Species)
+nlevels(iris$Species)
+```
+
+Although the underlying data are represented numerically, factors are not 
+numeric variables. So, we cannot use a factor as a numeric vector.
+
+```{r, error = TRUE}
+mean(iris$Species)
+var(iris$Species)
+iris$Species - iris$Species
+```
+
+## Dummy Codes
+
+If we use a factor variable as a predictor in the `lm()` function, the function
+will automatically generate a set of dummy codes.
+
+```{r}
+## Use a factor variable as a predictor:
+out1 <- lm(Petal.Length ~ Species, data = iris)
+summary(out1)
+```
+
+The `lm()` function only knows how to create these codes because of the factor's 
+*contrasts*.
+
+```{r}
+## Check the contrasts:
+contrasts(iris$Species)
+```
+
+If we want to influence the factors eventual coding, we need to modify its
+contrasts.
+
+```{r}
+## Change the reference group:
+iris$Species2 <- relevel(iris$Species, ref = "virginica")
+
+levels(iris$Species)
+levels(iris$Species2)
+
+## How are the contrasts affected?
+contrasts(iris$Species)
+contrasts(iris$Species2)
+
+## Which carries through to the models:
+out2 <- lm(Petal.Length ~ Species2, data = iris)
+summary(out1)
+summary(out2)
+```
+
+## Significance Testing 
+
+To test the overall significance of a grouping factor, we generally need to 
+compare a full model that contains the dummy codes representing that factor to a 
+restricted model that excludes the dummy codes.
+
+```{r}
+## Test the partial effect of Species:
+out0 <- lm(Petal.Length ~ Petal.Width, data = iris)
+out1 <- update(out0, ". ~ . + Species")
+
+(s0 <- summary(out0))
+(s1 <- summary(out1))
+
+## Compute R^2 difference and test its significance:
+s1$r.squared - s0$r.squared
+anova(out0, out1)
+```
+
+For models that contain the grouping factor as the only predictor, we can use
+an intercept-only model as the restricted model.
+
+```{r}
+## Test the effect of Species:
+out0 <- lm(Petal.Length ~ 1, data = iris)
+out1 <- update(out0, ". ~ . + Species")
+
+(s0 <- summary(out0))
+(s1 <- summary(out1))
+
+anova(out0, out1)
+```
+
+We don't need to go through all the trouble of fitting an intercept-only model, 
+though.
+
+```{r}
+s1$r.squared - s0$r.squared
+
+## An intercept only model has R^2 = 0:
+s0$r.squared
+
+## So, the model comparison above is equivalent to the ordinary F-test from the 
+## full model:
+s1$fstatistic
+```
+
+---
+
+# Prediction
+
+---
+
+Now, we'll use the *insurance* data (`ins0`, `ins1`) to explore the process of 
+generating and evaluating predictions.
+
+```{r}
+## Estimate three models:
+out1 <- lm(charges ~ age + sex, data = ins0)
+out2 <- update(out1, ". ~ . + region + children")
+out3 <- update(out2, ". ~ . + bmi + smoker")
+
+## Check that everything worked:
+summary(out1)
+summary(out2)
+summary(out3)
+```
+
+We use the `predict()` function to generate predictions from a fitted model. As
+we saw above, if we provide the fitted model object as the only argument to 
+`predict()`, we simply get the model-implied outcomes (i.e., $\hat{Y}$).
+
+```{r}
+## Generate model-implied outcomes (i.e., y-hats):
+p1 <- predict(out1)
+p2 <- predict(out2)
+p3 <- predict(out3)
+```
+
+We can use these $\hat{Y}$ values to compute mean squared errors (MSEs) with the
+`MLmetrics::MSE()` function.
+
+```{r}
+## Generate MSEs:
+MSE(y_pred = p1, y_true = ins$charges)
+MSE(y_pred = p2, y_true = ins$charges)
+MSE(y_pred = p3, y_true = ins$charges)
+```
+
+We can generate out-of-sample predictions for new data by supplying a new data 
+frame to the `newdata` argument in `predict()`.
+
+```{r}
+## Generate out-of-sample (i.e., true) predictions:
+p1.2 <- predict(out1, newdata = ins1)
+p2.2 <- predict(out2, newdata = ins1)
+p3.2 <- predict(out3, newdata = ins1)
+
+## Generate MSEs:
+MSE(y_pred = p1.2, y_true = ins1$charges)
+MSE(y_pred = p2.2, y_true = ins1$charges)
+MSE(y_pred = p3.2, y_true = ins1$charges)
+```
+
+We can compute confidence or prediction intervals for predictions by specifying
+an appropriate value for the `interval` argument in `predict()`.
+
+```{r}
+## Get confidence and prediction intervals:
+p3.3 <- predict(out3, newdata = ins1, interval = "confidence")
+p3.4 <- predict(out3, newdata = ins1, interval = "prediction")
+
+head(p3.3)
+head(p3.4)
+```
+
+---
+
+# Moderation
+
+---
+
+Finally, we'll consider methods of testing for moderation and probing significant
+interactions.
+
+---
+
+## Contiuous Moderators
+
+We'll start by using the Ginzberg depression data (`ginz`) to estimate a 
+moderated regression model with a continuous moderator variable.
+
+```{r}
+## Focal effect:
+out0 <- lm(depression ~ fatalism, data = ginz)
+summary(out0)
+
+## Additive model:
+out1 <- lm(depression ~ fatalism + simplicity, data = ginz)
+summary(out1)
+
+## Moderated model:
+out2 <- lm(depression ~ fatalism * simplicity, data = ginz)
+summary(out2)
+```
+
+```{r, echo = FALSE}
+s2 <- summary(out2)$coef
+
+b <- s2[4, 1]
+t <- s2[4, 3]
+p <- s2[4, 4]
+
+df <- out2$df.residual
+```
+
+## Probing the Interaction
+
+Based on the results above, we can conclude that *simplistic thinking* 
+significantly moderates the effect of *fatalism* on *depression* 
+($\beta = `r round(b, 3)`$, $t[`r df`] = `r round(t, 2)`$, $p = `r round(p, 3)`$).
+So, we probably want to probe that interaction to get a better sense of what's 
+happening.
+
+We can use the `rockchalk::plotSlopes()` function to generate simple slopes plots.
+
+```{r}
+## First we use 'plotSlopes' to estimate the simple slopes:
+plotOut1 <- plotSlopes(out2,
+                       plotx      = "fatalism",
+                       modx       = "simplicity",
+                       modxVals   = "std.dev",
+                       plotPoints = TRUE)
+
+## We can also get simple slopes at the quartiles of simplicity's distribution:
+plotOut2 <- plotSlopes(out2,
+                       plotx      = "fatalism",
+                       modx       = "simplicity",
+                       modxVals   = "quantile",
+                       plotPoints = TRUE)
+
+## Or we can manually pick some values:
+range(ginz$simplicity)
+plotOut3 <- plotSlopes(out2,
+                       plotx      = "fatalism",
+                       modx       = "simplicity",
+                       modxVals   = seq(0.5, 2.5, 0.5),
+                       plotPoints = TRUE)
+```
+
+We can also test the significance of the simple slopes plotted above. Doing so
+is call *simple slopes analysis* and is generally a good thing to do after finding
+a significant interaction.
+
+We can use the `rockchalk::testSlopes()` function to easily implement the tests.
+
+```{r}
+## Test the simple slopes via the 'testSlopes' function:
+testOut1 <- testSlopes(plotOut1)
+ls(testOut1)
+testOut1$hypotests
+
+testOut2 <- testSlopes(plotOut2)
+testOut2$hypotests
+
+testOut3 <- testSlopes(plotOut3)
+testOut3$hypotests
+```
+
+## Binary Categorical Moderators
+
+Of course, we're not limited to continuous moderators only. We can easily estimate
+models with binary moderator variables. Below, we'll use the `bfi` data to see
+if *gender* (actually, biological sex) moderates the effect of *agreeableness* 
+on *neuroticism*.
+
+```{r}
+## Focal effect:
+out0 <- lm(neuro ~ agree, data = bfi)
+summary(out0)
+
+## Additive model:
+out1 <- lm(neuro ~ agree + gender, data = bfi)
+summary(out1)
+
+## Moderated model:
+out2 <- lm(neuro ~ agree * gender, data = bfi)
+summary(out2)
+```
+
+In the case of categorical moderators, the estimate for the conditional focal 
+effect automatically represents the simple slope in the reference group. So, we
+don't need to do anything fancy to probe the interaction.
+
+```{r}
+## Test 'female' simple slope by changing reference group:
+bfi %<>% mutate(gender = relevel(gender, ref = "female"))
+
+out2.1 <- lm(neuro ~ agree * gender, data = bfi)
+summary(out2.1)
+```
+
+If we want to, we can also use **rockchalk**.
+
+```{r}
+plotSlopes(out2, plotx = "agree", modx = "gender") %>% testSlopes()
+```
+
+## Nominal Categorical Moderators (G > 2)
+
+Finally, the situation doesn't really get any more complicated for multinomial 
+moderators.
+
+```{r}
+## Moderated model:
+out1 <- lm(Petal.Width ~ Sepal.Width * Species, data = iris)
+summary(out1)
+
+## Test for significant moderation:
+out0 <- lm(Petal.Width ~ Sepal.Width + Species, data = iris)
+summary(out0)
+
+anova(out0, out1)
+
+## Test different simple slopes by changing reference group:
+iris %<>% mutate(Species = relevel(Species, ref = "virginica"))
+out1.1 <- lm(Petal.Width ~ Sepal.Width * Species, data = iris)
+
+
+iris %<>% mutate(Species = relevel(Species, ref = "versicolor"))
+out1.2 <- lm(Petal.Width ~ Sepal.Width * Species, data = iris)
+
+summary(out1)
+summary(out1.1)
+summary(out1.2)
+
+## Do the same test using 'rockchalk':
+plotOut1 <- plotSlopes(model      = out1,
+                       plotx      = "Sepal.Width",
+                       modx       = "Species",
+                       plotPoints = FALSE)
+
+testOut1 <- testSlopes(plotOut1)
+testOut1$hypotests
+```
+
+---
+
+End of Demonstration
+
+---
