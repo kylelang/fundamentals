@@ -49,6 +49,8 @@ pre { /* Code block - determines code spacing between lines */
 library(learnr)
 library(mice)
 library(magrittr)
+library(gradethis)
+library(htmltools)
 gradethis::gradethis_setup()
 ```
 
@@ -216,29 +218,49 @@ question(
 )
 ```
 
----
 
-# Open Questions
+---
 
 ## Question 6
 
-**Why do we use cross-validation?**
-
-```{r filter, exercise = TRUE}
-# Type your answer as text. Your answer should not be code, regardless of what 
-# input this window is requesting.
-
-# Hit the "Solution" button to see a model answer.
+```{r eval = FALSE}
+# choose a subset of variables
+iris %>% XXX(Sepal.Length, Petal.Width, Species) %>%
 ```
 
-```{r filter-solution}
-# Fundamentally, we are trying to estimate the prediction error we can expect 
-# when applying our model to new data. We may want to do this for its own sake 
-# (i.e., to evaluate the expected out-of-sample performance of our model), or we 
-# may want to use this information for model-selection/parameter tuning. 
+```{r q6, echo = FALSE}
+question(
+  "In the code shown above, only a few of the variables of the data frame are chosen to use for further steps in the processing. Which of the following tidyverse function names should replace XXX in this case?",
+  
+  answer(
+    "filter", 
+    message = "Filter is used for observations (so the rows, not the columns)."
+  ),
+  
+  answer(
+    "group_by", 
+    message = "The group_by function would be used to do subsequent functions on aggregated level for a categorical variable."
+  ),
+  
+  answer(
+    "summarize",
+    message = "The summarize function can be used to obtain statistics from the data frame."
+  ),
+  
+    answer(
+    "select",
+    correct = TRUE
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
 ```
 
 ---
+
+# Open Question
 
 ## Question 7
 

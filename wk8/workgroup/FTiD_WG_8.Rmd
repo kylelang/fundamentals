@@ -61,16 +61,26 @@ knitr::opts_chunk$set(warning = FALSE,
 ## This Workgroup Meeting
 
 <h3>Finish Assignment 2:</h3>
+
 - All elements present?
 - Any questions/points of doubt? Today is the last moment to ask question!
 - Visually neat? Concise presentation?
 
-## Assignment 2
+<h3> If all elements are done: </h3>
 
-
-<h3> If all elements are done: </h3><br>
 - Put more effort in the interpretation of the output (such as the logit coefficients).
 - Spend some time on improving visualizations/plots
+
+## Exam
+
+<h3> Wednesday January 25th, 13:30, Olympos Hall 2 </h3> <br>
+
+<h4> If you are entitled to extra time, you will receive your location in an email! </h4> <br>
+
+<h4> Check your Remindo access beforehand! </h4> 
+
+
+
 
 ## This is the Last Meeting
 
