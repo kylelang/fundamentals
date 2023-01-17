@@ -1041,9 +1041,6 @@ and prepare for the exam.
 
 You can find the practice exam [here](https://kylelang.shinyapps.io/practice_exam)
 
-***NOTE: This practice exam will be updated in the coming days. You will know 
-the practice exam is finalized when this message disappears.***
-
 ### **What can be tested?**
 
 Anything mentioned in the lectures may appear on the exam. 
