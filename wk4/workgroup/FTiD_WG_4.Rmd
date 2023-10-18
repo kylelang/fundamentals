@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 4"
 author: "Fundamental Techniques in Data Science with R"
-date: "December 8, 2022"
+date: "December 7, 2023"
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -124,5 +124,5 @@ knitr::opts_chunk$set(warning = FALSE,
 ## For Next Meeting
 
 <br><br>
-<p id = "centertext"> Keep working on your assignment! Deadline (19th of December, 17:00) approaches faster than you think! </p>
+<p id = "centertext"> Keep working on your assignment! Deadline (Monday 18th of December, 17:00) approaches faster than you think! </p>
 

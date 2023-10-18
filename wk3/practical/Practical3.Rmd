@@ -1,5 +1,5 @@
 ---
-title: "Fundamental Techniques in Data Science with `R` Practical 3"
+title: "Fundamental Techniques in Data Science with `R` - Practical 3"
 params:
   answers: false
 mainfont: Arial
@@ -12,8 +12,37 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    # pandoc_args: --output=supervised_1_answers.html
+    #pandoc_args: --output=Practical3_answers.html
 ---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.pos = 'H')
@@ -23,7 +52,6 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # Introduction
 
----
 
 In this practical you will learn about exploratory data analysis (EDA). EDA involves inspecting, transforming and visualising data with the goal of finding interesting features to substantiate one or more research questions. This practical will draw on skills you learned in week 1 and week 2, while introducing you to some new material like visualisation with `ggplot()`. 
  
@@ -130,7 +158,7 @@ mpg %>%
   kable_styling(latex_options = c("striped", "hover"), full_width = F)  
 ```
 
-**3. Create a summary of engine displacement by year, including the minimum, maximum, median, and interquantile range.**
+**3. Create a summary of engine displacement by year, including the minimum, maximum, median, and inter quantile range.**
 
 ```{r, include = params$answers}
 mpg %>% 
@@ -164,7 +192,7 @@ plot(x = mpg$displ, y = mpg$hwy,
      ylab = "Engine displacement (L)")
 ```
 
-These plots are quick to produce and are useful for an initial understanding of the data, but the syntax used to create them is specific to the type of plot. In contrast, `ggplot` has a streamlined approach to plotting involving largely the same steps regardless of plot type. Specifically, in `ggplot` we build up visualisations layer by layer using the `+` operator (which is similar to the ` %>% ` operator we are already familiar with). 
+These plots are quick to produce and are useful for an initial understanding of the data, but the syntax used to create them is specific to the type of plot. In contrast, `ggplot` has a streamlined approach to plotting involving largely the same steps regardless of plot type. Specifically, in `ggplot` we build up visualizations layer by layer using the `+` operator (which is similar to the ` %>% ` operator we are already familiar with). 
 
 The main, important, layers in `ggplot` are:
 
@@ -571,100 +599,10 @@ ggarrange(p1, p2, p3,
 # Setting `common.legend = TRUE` gets rid of the repetitive legend and slightly improves the look. In this example I move the legend to the bottom position, but "top", "left", and "right" are other options.
 ```
 
----
-
-## Writing functions
-
-When doing EDA, you might find that you repeat the same operations again and again on different variables. In some cases, writing your own function can reduce this repetition. 
-
-We now consider a situation where we are interested in weather conditions at various locations. However, for some areas temperature is registered in Celsius, while in other areas it is registered in Fahrenheit or Kelvin. We can create a function that easily allows you to apply these transformations where needed. 
-
-We start with loading datasets from a couple of different areas from the `R` package `weathermetrics`. Inspect the datasets `norfolk` and `lyon` from the `weathermetrics` package.
-
-
-__20. What differences do you see in how the temperature is registered for Norfolk and Lyon?__
-
-```{r, include= params$answers}
-summary(norfolk)
-summary(lyon)
-
-# For Norfolk, the temperature is registered in Fahrenheit, while for Lyon, the temperature is registered in Celsius.
-```
-
-We first work on a function that transforms Fahrenheit into Celsius. First, we need the equation to do this transformation, which is: 
-$$ Celsius = (Fahrenheit - 32) * \frac{5}{9} $$
-
-__21. Convert the Fahrenheit temperatures from Norfolk to Celsius using this equation. Round the output up to two decimals.__
-```{r, include=params$answers}
-round((norfolk$TemperatureF-32) * (5/9), 2)
-```
-
-Next, we turn this piece of code that applied the equation into a function that can be applied to multiple datasets. Therefore, we build a function that has the following structure: 
-```{r, eval=FALSE}
-function_name <- function(input){ # Here we specify a name for the function and specify what goes in
-  output <- what does the function do and to what? # what do we do with that what goes in, and under what name we store the output
-  return(output) # Here we specify what the function should present as output
-}
-```
-
-__22. Write your own conversion function that applies the Fahrenheit to Celsius equation. Name the function `temp_conversion`, the input `temp_variable` and store the output under the name `converted_temp`.__
-```{r, include=params$answers}
-temp_conversion <- function(temp_variable){
-  converted_temp <- round((temp_variable-32) * (5/9), 2)
-  return(converted_temp)
-}
-
-```
-
-
-__22. Apply your function to the Norfolk temperature variable in Fahrenheit, and store the output under the name `TemperatureC`. __ 
-```{r, include=params$answers}
-norfolk$TemperatureC <- temp_conversion(temp_variable = norfolk$TemperatureF)
-```
-
-__23. Confirm that your function works by comparing the output with that the function that exists in the package named `fahrenheit.to.celsius()`.__
-```{r, include=params$answers}
-norfolk$TemperatureC
-
-fahrenheit.to.celsius(norfolk$TemperatureF)
-# These two vectors should be exactly the same. 
-```
-
---- 
-
-Next, we extend the function in such a way that we can also use it to convert the other way around, from Celsius to Fahrenheit. We need to include three additional elements in our function:
-
-1. An extra input parameter to allow users to indicate which conversion they want to apply.
-2. The conversion equation to go from Celsius to Fahrenheit: $$ Celsius = \frac{9}{5} * Fahrenheit + 32 $$ 
-3. A conditional statement allowing for the right equation to be used based on the additional input parameter.
-
-__24. Extend your function as described above.__
-```{r, include=params$answers}
-temp_conversion <- function(temp_variable, conversion_type){
-  if(conversion_type == "fahrenheit_to_celsius"){
-    converted_temp <- round((temp_variable - 32) * (5/9), 2) # equation from fahrenheit to celsius
-    } else if(conversion_type == "celsius_to_fahrenheit"){
-      converted_temp <- round((9/5) * temp_variable + 32, 2) # equation from celsius to fahrenheit
-    }
-  return(converted_temp)
-}
-```
-
-__25. Confirm that your function works by applying your function again on the norfolk data.__ 
-```{r, include=params$answers}
-temp_conversion(temp_variable = norfolk$TemperatureF, 
-                conversion_type = "fahrenheit_to_celsius")
-
-temp_conversion(temp_variable = norfolk$TemperatureC, 
-                conversion_type = "celsius_to_fahrenheit")
-
-# By comparing the output of these two statements with the variables that  are already present in the norfolk data, we can confirm that our function works in both directions now.
-```
-
 
 ---
 
-# End of practical 
+End of practical 
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 5"
 author: "Fundamental Techniques in Data Science with R"
-date: "December 15, 2022"
+date: "December 14, 2023"
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -66,6 +66,8 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## Model Assumptions & Influential Cases
 
+<h3> First decide on a final model, then check: </h3>
+
 <h3> Assumptions: </h3>
 - Check all model assumptions
 - Apply changes if needed
@@ -79,5 +81,5 @@ knitr::opts_chunk$set(warning = FALSE,
 ## For Next Meeting
 
 <br><br>
-<p id = "centertext"><b> Hand in assignment 1 before Monday December 19, 17:00!!!</b></p>
+<p id = "centertext"><b> Hand in assignment 1 before Monday December 18, 17:00!!!</b></p>
 

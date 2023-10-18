@@ -1,5 +1,5 @@
 ---
-title: "Fundamental Techniques in Data Science with `R` Practical 2"
+title: "Fundamental Techniques in Data Science with `R` - Practical 2"
 params:
   answers: false
 mainfont: Arial
@@ -12,8 +12,37 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    # pandoc_args: --output=supervised_1_answers.html
+    #pandoc_args: --output=practical2_answers.html
 ---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.pos = 'H')
@@ -23,9 +52,7 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # Introduction
 
----
-
-Welcome to the second practical of the Applied Data Science minor! The aim of this practical is to learn a bit more about different data types and objects in R, how to transform data and create new variables, and how to work with pipes. 
+Welcome to the second practical of Fundamental Techniques in Data Science with R! The aim of this practical is to learn a bit more about different data types and objects in R, how to transform data and create new variables, and how to work with pipes. 
 
 * Tibbles and data frames
 * Data transformation
@@ -37,7 +64,7 @@ Welcome to the second practical of the Applied Data Science minor! The aim of th
 
 # Preparation 
 
-Start by creating a new R Project and open a new R Markdown file within it. If you can't remember how to do this, refer to the first practical. 
+Start by creating a new R Project and open a new R Markdown file within it. If you can't remember how to do this, you can find more instructions in the preparation practical. 
 
 You should by now have `tidyverse` installed, which we need for this practical. Within the `tidyverse` we will use the `dplyr` and `magrittr` packaged which have useful functions for data manipulation and working with factors. We will also use `kableExtra` to create nicely formatted tables. 
 
@@ -97,7 +124,7 @@ as_tibble(gss_cat)
 
 # Working with pipes
 
-Pipes are a useful tool that make it easier to express a sequence of multiple operations in R. Pipes ` %>% ` come from the `magrittr` package, so they are automatically loaded when you use the `tidyverse`. Pipes make code more intuitive and easier to understand - which is good for practising open science! 
+Pipes are a useful tool that make it easier to express a sequence of multiple operations in R. Pipes ` %>% ` come from the `magrittr` package, so they are automatically loaded when you use the `tidyverse`. Pipes make code more intuitive and easier to understand - which is good for practicing open science! 
 
 Let's compare code written with - and without - pipes. 
 

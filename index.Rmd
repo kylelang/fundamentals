@@ -23,10 +23,10 @@ This dashboard covers the course materials for the course
 ---
 
 Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
-Lecturer: [Kyle Lang](https://www.kylemlang.com) <br>
+Lecturer: [Kyle Lang](https://www.uu.nl/medewerkers/KMLang) <br>
 WG Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
-WG Instructor: [Thijs Carrière](https://www.uu.nl/medewerkers/TCCarriere) <br>
-WG Instructor: [Anastasia Giachanou](http://www.giachanou.com/) <br>
+WG Instructor: [Anastasia Giachanou](https://www.uu.nl/medewerkers/AGiachanou/) <br>
+WG Instructor: [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero/) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam 
 <!--[Course SurfDrive folder][sd]-->
@@ -37,12 +37,12 @@ Assessment: Assignments and Exam
 |-------------|---------------------|-------------------------|
 |             |                     |                         |
 | Lecture     | Monday<br>17:15     | Ruppert<br>040          | 
-| WG1         | Thursday<br>09:00   | Ruppert<br>119          |
-| WG2         | Thursday<br>11:00   | Ruppert<br>119          |
-| WG3         | Thursday<br>09:00   | Ruppert<br>011          |
-| WG4         | Thursday<br>11:00   | Ruppert<br>011          |
-| Practical   | Thursday<br>17:15   | Teams                   |
-| Exam        | 2023-01-25<br>13:30 | Olympos<br>Hal 2        |
+| Practical   | Tuesday <br>13:15   | Ruppert<br>040          |
+| WG1         | Thursday<br>09:00   | Ruppert<br>011          |
+| WG2         | Thursday<br>11:00   | Ruppert<br>011          |
+| WG3         | Thursday<br>09:00   | BOL<br>1.051            |
+| WG4         | Thursday<br>11:00   | BOL<br>1.051            |
+| Exam        | 2023-01-25<br>13:30 | Educatorium<br>ALFA     |
 
 Check [MyTimetable](https://mytimetable.uu.nl/schedule) for changes in the schedule!
 
@@ -62,7 +62,7 @@ lectures, there will also be a weekly computer lab exercise that connects the
 statistical theory to practice. You will also attend weekly workgroup meetings 
 wherein you will work on solving motivating, real-world case studies. 
 
-### Assignment and Grading
+### **Assignment and Grading**
 
 The final grade is computed as follows
 
@@ -81,7 +81,11 @@ To pass the course:
 1. Your final exam grade must be 5.5 or higher
 1. Both of your assignments grades must be 5.5 or higher
 
-### Literature
+### **Attendance** 
+During this course, you will attend 8 workgroup sessions and hand in 7 practical assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and hand in at least 6 out of 7 practical assignments (before the deadline). If you do not meet these requirements, you lose the right to resit the exam. 
+
+
+### **Literature**
 
 We will use two open-source books in this course:
 
@@ -97,13 +101,13 @@ These resources will also be linked in this dashboard.
 
 ## Column 2 {data-width=400}
 
-### Schedule
+### **Schedule**
 
 | Week # | Topic | `R` Exercise | Workgroup | Reading |
 |--|---|----|----|----|
-| 1 | The basics of `R` | How to work with `R` scripts; `R` projects; `R` markdown and how to import external data into `R` | Search for a dataset for the two group assignments | R4DS: [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html), [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html), [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html), [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
-| 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset to prepare it for the group assignments | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
-| 3 | Programmatic data manipulation 2 | Data visualization; Data inspection; Data cleaning; Writing functions in `R` | Form groups; Pitch your found data to your group; Continue with data inspection and cleaning for the first assignment; Formulate hypotheses; **Submit your individual assignment** | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html), and [Chapter 19](https://r4ds.had.co.nz/functions.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 1 | The basics of `R` | How to work with `R` scripts; `R` projects; `R` markdown; how to import external data into `R`; functions and iterations | Form groups; Search for a dataset for the two group assignments; Formulate research questions| R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
+| 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
+| 3 | Programmatic data manipulation 2 | Data visualization; Data inspection; Data cleaning | Continue with data inspection and cleaning | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html) and [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
 | 4 | Multiple linear regression | Estimating linear models in `R` using the `lm()`function; Model fit and model comparison; Categorical predictors; Moderation | Find a best fitting model; Test your hypotheses | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
 | 5 | Model assumptions and diagnostics | Assumptions of the linear model; Leverage, outliers, and influential cases | Check assumptions of your model and inspect for unusual observations; Make adjustments if necessary; Draw conclusions; **Submit Assignment 1** | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
 | 6 | Generalized linear model and logistic regression | Estimating generalized linear models using the `glm()` function in `R `; Definition, estimation, and interpretation of logistic regression models | Perform data inspection and cleaning for the second assignment; Formulate hypothesis; Find a best fitting model and test your hypotheses | ASWR: [Chapter 17 (only 17.1--17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
@@ -116,7 +120,7 @@ These resources will also be linked in this dashboard.
 
 ## Column 1 {data-width=400}
 
-### Course Content
+### **Course Content**
 
 Regression techniques are widely used to quantify the relationship between two 
 or more variables. In data science, linear and logistic regression are common 
@@ -134,7 +138,7 @@ dplyr. This course helps prepare students for an entry-level research career
 (e.g., a [research] Master program or a PhD).
 
 
-### Course goals
+### **Course goals**
 
 At the end of this course, students are able to:
 
@@ -173,7 +177,7 @@ $\vb$
 $\vb$
 1. Use `R` Markdown to document the results of a statistical analysis.
 
-### Relation between assessment and objective 
+### **Relation between assessment and objective**
 
 In this course, skills and knowledge are evaluated with two types of assignment.
 
@@ -187,7 +191,10 @@ $\vb$
 basic data analytic problems, execute quantitative data analyses on real-world 
 data sets, and document the results (learning goals 6–10).
 
-### Course structure 
+
+## Column 2 {data-width=400}
+
+### **Course structure**
 
 In eight weeks, you will learn the basics of data handling and statistical 
 programming with R and details about regression techniques in the context of 
@@ -202,55 +209,16 @@ $\vb$
 1. During the weekly workgroup meetings, you will work on real-world data 
 analysis with a group of your peers.
 
-## Column 2 {data-width=400}
+### **Attendance** 
+During this course, you will attend 8 workgroup sessions and hand in 7 practical assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and hand in at least 6 out of 7 practical assignments (before the deadline). If you do not meet these requirements, you lose the right to resit the exam. 
 
-### Individual assignment
-
-**Type of assignment:** Individual
-
-**Grading:** Pass/fail 
-
-**Deadline:**  Wednesday November 30, 17:00 
-
-**What to submit:** a ZIP archive containing the complete R project (dataset, RMD, HTML)
-
-**Where to submit:** [This Surfdrive folder](https://surfdrive.surf.nl/files/index.php/s/NJX2hZHDjQXTTXy)
-
-**Description:** 
-In this assignment, you individually search for a dataset that could be used for 
-Assignments 1 and 2. You describe the research questions you will try to answer 
-using this dataset during the two group assignments, and you apply any necessary 
-data processing steps.
-
-The assignment consists of the following steps:
-
-1. You search for a publicly available dataset that contains at least the 
-following variables:
-    - 1 Continuous outcome variable (for the linear regression analysis)
-    - 1 Dichotomous outcome variable (for the logistic regression analysis)
-    - 2 Continuous predictor variables 
-    - 1 Categorical predictor variable 
-$\vb$
-1. You make an R project and an R markdown file wherein you: 
-    - Load the dataset
-    - Explore the variables in this dataset
-    - Describe the research questions that you will try to answer in Assignments 
-    1 and 2 
-    - Identify any processing steps that must be taken in order to prepare your 
-    variables for analyses, such as:
-        - Change the structure of variables 
-        - Inspect how missing values are recorded (and adjust if needed)
-        - Inspect if all observed scores are plausible  
-        - Construct scales
-    - Summarize and plot your processed variables
-
-### Group assignment 1: Linear regression
+### **Group assignment 1: Linear regression**
 
 **Type of assignment:** Group (4 students) 
 
 **Grading:** 25% of your final grade 
 
-**Deadline:** Monday December 19, 17:00 
+**Deadline:** Monday December 18, 17:00 
 
 **What to submit:** A ZIP archive containing the complete R project (dataset, 
 RMD, HTML) 
@@ -278,13 +246,13 @@ $\vb$
 of custom functions (when applicable). Presentation of suitable visualizations. 
 
 
-### Group assignment 2: Logistic regression
+### **Group assignment 2: Logistic regression**
 
 **Type of assignment:** Group (4 students) 
 
 **Grading:** 25% of your final grade 
 
-**Deadline:** Thursday January 19, 17:00 
+**Deadline:** Thursday January 18, 17:00 
 
 **What to submit:** A ZIP archive containing the complete R project (dataset, 
 RMD, HTML) 
@@ -341,7 +309,7 @@ you also need to install `RStudio`.
 ### **2. Install `RStudio` Desktop**
 
 `RStudio` is an Integrated Development Environment (IDE) for `R`. You can 
-download `RStudio` as stand-alone software [here](https://www.rstudio.com/products/rstudio/download/#download). 
+download `RStudio` as stand-alone software [here](https://posit.co/download/rstudio-desktop/#download). 
 The free and open-source `RStudio Desktop` version is sufficient.
 
 ### **3. Start RStudio and install the following packages. **
@@ -395,7 +363,7 @@ corresponding button if the question presents as a dialog box).
 If the suggested steps fail, or you have insufficient rights on your machine, 
 you can use the following web-based solutions. 
 
-1. Open a free account on [rstudio.cloud](https://rstudio.cloud). 
+1. Open a free account on [posit.cloud](https://posit.cloud/). 
 
    - You can run your own cloud-based `RStudio` environment there.
 $\va$
@@ -412,7 +380,17 @@ Naturally, you will need internet access to use these services.
 
 To familiarize yourself with basic `R` usage, complete the following 
 [exercise](preparation/exercise_prep.html) before the first lecture. This 
-exercise will get you started with `R` and `RStudio`.
+exercise will get you started with `R` and `RStudio`. You can always also have 
+a look at the [posit website](https://docs.posit.co/ide/user/ide/get-started/) 
+for more detailed tutorials. 
+
+Suggested reading:
+
+- R4DS [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-basics.html))
+- R4DS [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-scripts.html))
+- R4DS [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html)
 
 ### Basic statistical concepts
 
@@ -459,11 +437,6 @@ You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 
 ***These readings are exam materials.***
 
-- R4DS [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html)
-([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-basics.html))
-- R4DS [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html)
-([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-scripts.html))
-- R4DS [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html)
 - R4DS [Chapter 11](https://r4ds.had.co.nz/data-import.html)
 ([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-import.html))
 - R4DS [Chapter 27](https://r4ds.had.co.nz/r-markdown.html)
@@ -471,20 +444,30 @@ You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 
 ### Useful Information and Links
 
-Well organized, tidy code is easier to debug, maintain, and understand. 
+- Well organized, tidy code is easier to debug, maintain, and understand. 
 [The tidyverse style guide](https://style.tidyverse.org) provides a useful set
 of formatting conventions that you can apply to your own code.
+- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
+- R4DS [Chapter 21](https://r4ds.had.co.nz/iteration.html)
 
 ## Column 2
 
 ### Workgroup
 
 In this week's workgroup meeting, we discuss the assignments and expectations 
-for your work in this course. You will also work on your individual assignment 
-by starting your search for a dataset to use in the two group assignments and 
-thinking of possible research questions.
+for your work in this course. You will form groups and decide which research questions
+you will answer for Assignments 1 and 2. You will search for a dataset to use in 
+the two group assignments and thinking of possible research questions.
 
 You can find the slides for this workgroup meeting [here](wk1/workgroup/FTiD_WG_1.html).
+
+**Deadline:**
+
+Email the following information to your workgroup instructor **before the end 
+of the workgroup meeting**.
+
+- The names of your group members 
+- The research questions your group will use for Assignments 1 and 2
 
 ### `R` Practical
 
@@ -562,18 +545,10 @@ You can find some useful information via the following links:
 
 ### Workgroup
 
-In this week's meeting, you continue to work with the dataset you located as 
-part of your individual assignment. You refine your research questions and 
+In this week's meeting, you refine your research questions and 
 perform any necessary manipulations to the variables in your dataset.
 
 You can find the slides for this workgroup meeting [here](wk2/workgroup/FTiD_WG_2.html).
-
-### Deadlines
-
-You don't need to submit anything this week, but be aware that your individual 
-assignment is due by **Wednesday November 30, 17:00**.
-
-- See the *Course Manual* page for details.
 
 ### `R` practical
 
@@ -700,25 +675,9 @@ Below, you can find links to some useful resources.
 
 ### Workgroup
 
-In today's workgroup, you will form groups and decide which research questions
-you will answer for Assignments 1 and 2. You will continue with inspecting and 
-cleaning your group's chosen dataset. 
+In today's workgroup, you will continue with inspecting and cleaning your group's chosen dataset. 
 
 You can find the slides for this workgroup meeting [here](wk3/workgroup/FTiD_WG_3.html).
-
-### Deadlines
-
-This week, you'll need to submit two things:
-
-1. You must submit your individual assignment by **Wednesday November 30, 17:00**.
-    - See the *Course Manual* for details
-    - Submit your assignment via the [Surdrive folder]() for the individual 
-    assignments.
-$\va$
-1. Email the following information to your workgroup instructor **before the end 
-of the workgroup meeting**.
-    - The names of your group members 
-    - The research questions your group will use for Assignments 1 and 2
 
 ### `R` practical
 
@@ -1058,9 +1017,9 @@ lectures are most likely to appear on the exam.
 
 | Week # | Topic | Reading |
 |--|---|----|
-| 1 | The basics of `R` | R4DS: [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html), [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html), [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html), [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
+| 1 | The basics of `R` | R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html) and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
 | 2 | Programmatic data manipulation 1 | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
-| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html), and [Chapter 19](https://r4ds.had.co.nz/functions.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
 | 4 | Multiple linear regression | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
 | 5 | Model assumptions and diagnostics | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
 | 6 | Generalized linear model and logistic regression | ASWR: [Chapter 17 (only 17.1--17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
