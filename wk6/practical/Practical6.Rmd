@@ -1,7 +1,7 @@
 ---
 title: "Fundamental Techniques in Data Science with `R` Practical 6"
 params:
-  answers: false
+  answers: true
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
@@ -40,6 +40,26 @@ library(readr)
 ```
 
 In this practical, you will perform regression analyses using `glm()` and inspect variables by plotting these variables, using `ggplot()`.
+
+---
+
+# Logistic regression
+
+Logistic regression is a supervised learning algorithm that classifies data into categories, by predicting the probability that an observation falls into a particular category based on its features. In this tutorial we will consider binary classification, where we determine which of two categories a data point belongs to.
+
+The logistic function can be described as:
+
+$$ P(y = 1|X) = sigmoid(z) = \frac{1}{1+e^{-z}}   $$
+where
+
+$$ z = \hat{\beta_0} + \hat{\beta_1}x_1 + \hat{\beta_2}x_2 + ... + \hat{\beta_k}x_k $$
+$z$ is like the linear predictor in linear regression, but it is transformed by the sigmoid function so that results can be interpreted as probabilities (between 0 and 1). The probability is compared to a threshold to determine what class $y$ belongs to based on $X$. You can choose what this threshold is and it is context dependent. For example, if you are predicting the chances of recovery in a clinical trial you might set a very high threshold of 0.90. A common threshold for low-stakes research is 0.50. 
+
+The `glm()` function is used to specify several different models, among which the logistic regression model. The logistic regression model can be specified by setting the `family` argument to _"binomial"_. You can save a model in an object and request summary statistics with the `summary()` command. 
+
+For logistic regression, it important to know and check what category the predicted probabilities refer to, so you can interpret the model and it's coefficients correctly. If your outcome variable is coded as a factor, the `glm()` function predicts the 2nd category, which is by default the alphabetical latter one. For example, if the categories are coded as 0 and 1, the probability of belonging to "1" is predicted by the model. 
+
+When a model is stored in an object you can ask for the coefficients _(model\$coeffients)_, the predicted probabilities of belonging to the 'higher' category category _(model\$fitted.values)_, and the aic _(model\$aic)_. To investigate all additional model information that is stored in the object, check out the list of the model by selecting it in the environment-list.
 
 ---
 
@@ -119,7 +139,7 @@ summary(glm(prop ~ conc,
 
 # A unit increase in conc increases the log-odds of inhibition by 0.0121 units, and this increase is statistically significant.
 
-# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.0121 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.
+# If we exponentiate the slope estimate, we can get an interpretation in odds units, but the effect becomes multiplicative instead of additive. So for every unit increase in conc, the odds of inhibition are 1.01215 times higher. Note then that odds above 1 indicate inhibition is x-times higher, while odds below 1 indicate inhibition is x-times less.
 ```
 
 ---
@@ -186,7 +206,7 @@ titanic %$%
 titanic %>% 
   ggplot(aes(Sex, fill = Survived)) +
   geom_bar(position = "dodge") +
-  labs(x = "Passenger Class",
+  labs(x = "Sex",
        y = "Count") +
   theme_bw()
 
@@ -199,7 +219,7 @@ titanic %>%
 titanic %>% 
   ggplot(aes(Age, fill = Survived)) +
   geom_histogram(colour = "white") +
-  labs(x = "Passenger Class",
+  labs(x = "Age",
        y = "Count") +
   facet_wrap(~Survived) +
   theme_bw()
@@ -207,21 +227,6 @@ titanic %>%
 # The distribution of age is different for survivors and non-survivors. Younger passengers have higher chances of survival compared to older passengers.
 ```
 
----
-
-# Logistic regression
-
-Logistic regression is a supervised learning algorithm that classifies data into categories, by predicting the probability that an observation falls into a particular category based on its features. In this tutorial we will consider binary classification, where we determine which of two categories a data point belongs to.
-
-The logistic function can be described as:
-
-$$ P(y = 1|X) = sigmoid(z) = \frac{1}{1+e^{-z}}   $$
-where
-
-$$ z = \hat{\beta_0} + \hat{\beta_1}x_1 + \hat{\beta_2}x_2 + ... + \hat{\beta_k}x_k $$
-$z$ is like the linear predictor in linear regression, but it is transformed by the sigmoid function so that results can be interpreted as probabilities (between 0 and 1). The probability is compared to a threshold to determine what class $y$ belongs to based on $X$. You can choose what this threshold is and it is context dependent. For example, if you are predicting the chances of recovery in a clinical trial you might set a very high threshold of 0.90. A common threshold for low-stakes research is 0.50. 
-
-With the `glm()` function you can specify a logistic regression model. You can save a model in object and request summary statistics with the `summary()` command. When a model is stored in an object you can ask for the coefficients with `coefficients()`. 
 
 ---
 
@@ -319,7 +324,7 @@ summary(fit1)
 17. __What does the intercept mean when there is a continuous predictor?__
 
 ```{r, include=params$answers}
-# In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is 0.019.
+# In the case of a continuous predictor there is no real reference group. Instead, the intercept is the log-odds of survival when age = 0. In this model, the log-odds of survival for passengers of age 0 is -0.143, corresponding with the odds of survival at 0.867 (= exp(log odds)).
 ```
 
 18. __How are the odds and log-odds interpreted for a continuous predictor?__
@@ -327,7 +332,7 @@ summary(fit1)
 ```{r, include=params$answers}
 # For continuous predictors, the log-odds either increase or decrease with every unit increase in the continuous predictor. So, in our model:
 # For every increase in age of one year, the log-odds of survival decrease by -0.011, meaning that as age increases the chances of survival decrease.
-# For every increase in age of one year, the odds of survival are 0.99 times the odds of those with one age unit less, or -1.09%.
+# For every increase in age of one year, the odds of survival are 0.99 (= exp(-0.0112)) times the odds of those with one age unit less, or -1.09%.
 ```
 
 ---
@@ -372,7 +377,7 @@ Model selection is an important step and there are several metrics for assessing
 summary(fit1)
 summary(fit2)
 
-# For model 1, the null deviance is 964.52 and the residual deviance is 960.23 For model 2, the null deviance is 964.52 and the residual deviance is 635.39
+# For model 1, the null deviance is 1186.7 and the residual deviance is 1182.3 For model 2, the null deviance is 1186.66 and the residual deviance is 793.82
 ```
 
 We can use the `anova()` function to perform an analysis of deviance that compares the difference in deviances between competing models.  
@@ -382,7 +387,7 @@ We can use the `anova()` function to perform an analysis of deviance that compar
 ```{r, include=params$answers}
 anova(fit1, fit2, test = "Chisq")
 
-# The analysis of deviance indicates that there is a reduction in residual deviance of 324.84 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.
+# The analysis of deviance indicates that there is a reduction in residual deviance of 388.46 that is statistically significant. Model 2 is a better model. For a binomial model, the statistical test should be the chi-square difference test.
 ```
 
 ---
@@ -469,6 +474,6 @@ titanic %>%
 
 # End of practical
 
-You are now at the end of this week's practical. Next week, we will spend some time on model fit, comparison, and assumptions. 
+You are now at the end of this week's practical. Next week, we will discuss model assumptions, model prediction, and the confusion matrix. 
 
 ---

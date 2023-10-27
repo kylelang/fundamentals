@@ -1,0 +1,85 @@
+---
+title: "Work Group Meeting 5"
+author: "Fundamental Techniques in Data Science with R"
+date: "December 14, 2023"
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+  line-height: 1.5;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+#centertext{
+color: black;
+text-align: center;
+font-size: 35px;
+line-height: 1.4;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<h3> Linear Regression: last meeting </h3>
+
+<h4> Check model assumptions </h4>
+
+- Take steps if needed
+- Explain violations/changes
+
+<h4> Conclusion section </h4>
+
+- Summarize results
+- Answer research question
+
+## Model Assumptions & Influential Cases
+
+<h3> First decide on a final model, then check: </h3>
+
+<h3> Assumptions: </h3>
+- Check all model assumptions
+- Apply changes if needed
+- Explain/reflect on effects of violations
+
+<h3> Influential Observations: </h3>
+- Check for influential cases/outliers
+- If needed: account for these cases
+- Explain why steps are taken/not taken
+
+## For Next Meeting
+
+<br><br>
+<p id = "centertext"><b> Hand in assignment 1 before Monday December 18, 17:00!!!</b></p>
+

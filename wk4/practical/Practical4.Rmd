@@ -1,7 +1,7 @@
 ---
-title: "Fundamental Techniques in Data Science with `R` Practical 4"
+title: "Fundamental Techniques in Data Science with `R` - Practical 4"
 params:
-  answers: false
+  answers: true
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
@@ -12,8 +12,38 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    # pandoc_args: --output=supervised_1_answers.html
+    pandoc_args: --output=Practical4_answers.html
+    
 ---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
 
 ```{r global_options, include=FALSE}
 knitr::opts_chunk$set(fig.pos = 'H')
@@ -23,7 +53,6 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 # Introduction
 
----
 
 We will use the following packages in this practical:
 
@@ -34,9 +63,9 @@ library(ggplot2)
 library(gridExtra)
 ```
 
-In this practical, you will perform regression analyses using `lm()` and inspect variables by plotting these variables, using `ggplot()`. 
+In this practical, you will learn how to perform regression analyses in `R` using `lm()` and inspect variables by plotting these variables, using `ggplot()`, repeating some topics of the last 3 weeks. 
 
---
+---
 
 # Loading the dataset
 
@@ -72,7 +101,7 @@ ggplot(data) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-A loess curve can be added to the plot to get a general idea of the relation between the two variables. You can add a loess curve to a ggplot with `stat_smooth(...., method = "loess")`.
+A loess curve can be added to the plot to get a general idea of the relation between the two variables. You can add a loess curve to a ggplot with `stat_smooth(method = "loess")`.
 
 3. __Add a loess curve to the plot under question 2, for further inspection.__
 
@@ -113,9 +142,28 @@ ggplot(data, aes(x = Sepal.Length, y = Petal.Width)) +
 
 # Simple linear regression
 
-With the `lm()` function, you can specify a linear regression model. You can save a model in an object and request summary statistics with the `summary` command.
+With the `lm()` function, you can specify a linear regression model. You can save a model in an object and request summary statistics with the `summary()` command. The model is always specified with the code `outcome_variable ~ predictor`.
 
-When a model is stored in an object, you can ask for the coefficients with `coefficients()`. 
+When a model is stored in an object, you can ask for the coefficients with `coefficients()`. The next code block shows how you would specify a model where petal width is predicted by sepal width, and how summary statistics for this model would look like
+
+```{r}
+# Specify model: outcome = petal width, predictor = sepal width
+iris_model1 <- lm(Petal.Width ~ Sepal.Width,
+                  data = iris)
+
+summary(iris_model1)
+```
+
+The summary of the model provides:
+
+- The model formula;
+- Estimated coefficients (with standard errors and their significance tests);
+- Information on the residuals;
+- A general test for the significance of the model (F-test);
+- The (adjusted) R squared as a metric for model performance.
+
+Individual elements can be extracted by calling specific model elements (e.g. `iris_model1$coefficients`).
+
 
 5. __Specify a regression model where Sepal length is predicted by Petal width. Store this model as `model1. Supply summary statistics for this model.__
 
@@ -134,7 +182,7 @@ summary(model1)
 # The regression coefficient indicates the amount of change in the predicted variable when the predictor variable is changed with one unit. In case of the example model, this means that for every centimeter that a petal leave is width, the predicted length of a sepal leave increases with .89 cm.
 ```
 
-7. __Relate the summary statistics and coefficients to the plots you made earlier.__
+7. __Relate the summary statistics and coefficients to the plots you made in questions 2 - 4.__
 
 ```{r, include = params$answers}
 # The coefficients seem to be in accordance with the earlier plots. They are not exactly the same, but indicate a similar positive relationship.
@@ -144,7 +192,7 @@ summary(model1)
 
 # Multiple linear regression
 
-You can add additional predictors to a model. This can improve the fit and the predictions. When multiple predictors are used in a regression model, it's called a Multiple linear regression. 
+You can add additional predictors to a model. This can improve the fit and the predictions. When multiple predictors are used in a regression model, it's called a Multiple linear regression. You specify this model as `outcome_variable ~ predictor_1 + predictor_2 + ... + predictor_n`.
 
 8. __Add Petal length as a second predictor to the model specified as `model1` and store this under the name `model2`, and supply summary statistics. Again, give a substantive interpretation of the coefficients and the model.__
 
@@ -165,9 +213,10 @@ summary(model2)
 
 Up to here, we only included continuous predictors in our models. We will now include a categorical predictor in the model as well. 
 
-When a categorical predictor is added, this predictor is split in several comparisons, where each group is compared to a reference group. In our example Iris data, the variable 'Species' is a categorical variable that indicate the species of flower. This variable can be added as example for a categorical predictor.
+When a categorical predictor is added, this predictor is split in several contrasts (or dummies), where each group is compared to a reference group. In our example Iris data, the variable 'Species' is a categorical variable that indicate the species of flower. This variable can be added as example for a categorical predictor. Contrasts, and thus the dummy coding, can be inspected through `contrasts()`.
 
-9. __Add species as a predictor to the model specified as `model2`, store it under the name `model3` and interpret the coefficients of this new model.__
+
+9. __Add species as a predictor to the model specified as `model2`, store it under the name `model3` and interpret the categorical coefficients of this new model.__
 
 
 ```{r, include = params$answers}
@@ -186,20 +235,20 @@ summary(model3)
 
 # Model comparison
 
-Now you have created multiple models, you can compare how well these models function (compare the model fit). There are multiple ways of testing the model fit and to compare models. In this practical, we use the following:
+Now you have created multiple models, you can compare how well these models function (compare the model fit). There are multiple ways of testing the model fit and to compare models, as explained in the lecture and the reading material. In this practical, we use the following:
 
-* AIC
-* BIC
-* RMSE
-* Deviance test
+* AIC (use the function `AIC()` on the model object)
+* BIC (use the function `BIC()` on the model object)
+* MSE (use `MSE()` of the `MLmetrics` package, or calculate by transforming the `model$residuals`)
+* Deviance test (use `anova()` to compare 2 models)
 
 10. __Compare the fit of the model specified under question 5 and the model specified under question 8. Use all four fit comparison methods listed above. Interpret the fit statistics you obtain/tests you use to compare the fit.__
 
 ```{r, include = params$answers}
 AICvalues <- rbind(AIC(model1), AIC(model2))
 BICvalues <- rbind(BIC(model1), BIC(model2))
-RMSEvalues <- rbind(sqrt(mean(model1$residuals^2)), 
-                    sqrt(mean(model2$residuals^2)))
+RMSEvalues <- rbind(mean(model1$residuals^2), 
+                    mean(model2$residuals^2))
 
 modelfitvalues <- cbind(AICvalues, BICvalues, RMSEvalues)
 rownames(modelfitvalues) <- c("model1", "model2")
@@ -216,7 +265,7 @@ anova(model1, model2)
 
 ---
 
-# Residuals: observed vs. predicted
+# *OPTIONAL* - Residuals: observed vs. predicted
 
 When fitting a regression line, the predicted values have some error in comparison to the observed values. The sum of the squared values of these errors is the sum of squares. A regression analysis finds the line such that the lowest sum of squares possible is obtained.
 
@@ -263,7 +312,96 @@ grid.arrange(obspred1, obspred2, ncol = 2)
 # Above, the observed vs. predicted plots for both model 1 (1 predictor) and model 2 (an additional predictor) are shown. In the second plot, it can be seen that all the red lines are shorter, indicating less error, a lower sum of squares, and thus a better fit.
 ```
 
+---
+
+# Calculating new predicted values with a regression equation
+
+A regression model can be used to predict values for new cases that were not used to built the model.
+The regression equation always consists of coefficients ($\beta$s) and observed variables ($X$):
+
+<br>
+
+$$\hat{y} = \beta_0 + \beta_1 * X_{a}* + \beta_2 * X_b +  \ldots  + \beta_n * X_n$$
+
+<br>
+
+All terms can be made specific for the regression equation of the created model. For example, if we have a model where 'happiness' is predicted by age and income (scored from 1-50), the equation could look like:
+
+<br>
+
+$$\hat{y}_{happiness} = \beta_{intercept} + \beta_{age} * X_{age} + \beta_{income} * X_{income}$$
+
+<br>
+
+Then, we could impute the coefficients obtained through the model.
+Given $\beta_{intercept} = 10.2$, $\beta_{age} = 0.7$, and $\beta_{income} = 1.3$, the equation would become:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income}$$
+
+<br>
+
+If we now want to predict the happiness score for someone of age 28 and with an income score of 35, the prediction would become:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * 28 + 1.3 * 35 = 75.3$$
+
+<br>
+
+15. __Given this regression equation, calculate the predicted value for someone of age 44 and an income score of 27.__
+
+```{r include = params$answers}
+# Calculate score
+10.2 + .7*44 + 1.3*27 # 76.1
+```
+## Prediction with a categorical variable
+
+Adding a categorical predictor to the regression equation gives the number of contrasts as coefficient terms added. The previous regression equation for predicting happiness could be adjusted by adding 'living density' as a categorical predictor with levels 'big city', 'smaller city', 'rural', where 'big city' would be the reference category. The equation could then be:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income} + 8.4 * X_{smaller city} + 17.9 * X_{rural}$$
+
+<br>
+
+When predicting a score for an equation with a categorical predictor, you just impute a 1 for the category that the observation belongs to, and 0s for all other categories.
+
+16. __Given this equation, calculate the predicted score for someone of age 29, an income score of 21, and living in a smaller city. And what would this score be if the person would live in a big city instead?__
+
+```{r include = params$answers, eval=FALSE}
+# impute X_age with 29, X_income with 21, X_smallercity with 1, and X_rural with 0
+10.2 + .7*29 + 1.3*21 + 8.4*1 + 17.9*0 # = 66.2
+
+# If this person would live in a big city, the equation would become
+10.2 + .7*29 + 1.3*21 + 8.4*0 + 17.9*0 # = 57.8
+```
+
+## Prediction with an interaction
+
+In regression equations with an interaction, an extra coefficient is added to the equation. For example, the happiness equation with age and income as predictors could have an added interaction term. The equation could then look like:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income} + 0.01 * X_{age} * X_{income}$$
+
+<br>
+
+For a person of age 36 and income score 30, the predicted score would be:
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * 36 + 1.3 * 30 + 0.01 * 36 * 30 = 85.2$$
+
+<br>
+
+17. __Given this regression equation with interaction term, what would be the predicted happiness score for someone of age 52 and income score 26?__
+
+```{r include=params$answers}
+# Imputed equation X_age = 52, X_income = 26
+10.2 + 0.7 * 52 + 1.3 * 26 + 0.01 * 52 * 26 # 93.92
+```
+
 
 ---
 
-# 
+# End of the practical

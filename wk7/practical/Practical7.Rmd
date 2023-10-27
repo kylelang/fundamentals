@@ -319,10 +319,8 @@ You can read about the confusion matrix on [this Wikipedia page](https://en.wiki
 
 # True positives (bottom right) - correctly predicting people that survived
 # True negatives (top left) - correctly predicting people that did not survive
-# False positives (top right) - predicted people survived, when they did not
-# False negatives (bottom left) - predicting people did not survived, but they did
-
-# Note: the structure of the confusion matrix depends on the order in which you supply the outcome (i.e., if 0 and 1 were swapped, or if the predicted and true values are switched in rows and columns.
+# False positives (bottom left) - predicted people survived, when they did not
+# False negatives (top right) - predicting people did not survived, but they did
 
 cm1 <- table(pred = pred1, true = titanic$Survived)
 cm2 <- table(pred = pred2, true = titanic$Survived)
@@ -330,6 +328,15 @@ cm2 <- table(pred = pred2, true = titanic$Survived)
 cm1
 cm2
 ```
+
+```{r, include=params$answers}
+# Note: the structure of the confusion matrix depends on the order in which you supply the outcome (i.e., if 0 and 1 were swapped, or if the predicted and true values are switched in rows and columns. 
+
+# A third confusion matrix is given in which the order is changed. Always make sure that you read the confusion matrix carefully, so that you notice deviating structures. 
+
+table(true = titanic$Survived, pred = pred2)
+```
+
 
 18. __Based on the confusion matrices, which model do you think makes better predictions?__
 
@@ -349,14 +356,14 @@ cm2
 
 ```{r, include=params$answers}
 # First you need to extract the true negative, false negative, true positive, and false positive values from the confusion matrix.
-TN <- cm2[2, 2]
-FN <- cm2[2, 1]
-TP <- cm2[1, 1]
-FP <- cm2[1, 2]
+TN <- cm2[1, 1]
+FN <- cm2[1, 2]
+TP <- cm2[2, 2]
+FP <- cm2[2, 1]
 
 # Then you can use these values to calculate the metric asked for.
 tibble(
-  ACCURACY = (TP + TN) / sum(cm1),
+  ACCURACY = (TP + TN) / sum(cm2),
   SENSITIVITY = TP / (TP + FN),
   SPECIFICITY = TN / (TN + FP),
   FPR = FP / (TN + FP),
@@ -370,15 +377,15 @@ tibble(
 ```{r, include=params$answers}
 # Model accuracy is 0.79, meaning that 79% are correctly classified.
 
-# Model sensitivity is 0.92, meaning that if the passenger did not survive, there is a 92% chance the model will detect this.
+# Model sensitivity is 0.58, meaning that if the passenger did survive, there is a 58% chance the model will detect this.
 
-# Model specificity is 0.58, meaning that if the passenger did survive is an 58% chance the model will detect this.
+# Model specificity is 0.92, meaning that if the passenger did not survive is an 92% chance the model will detect this.
 
-# Model FPR is 0.42, meaning that if a passenger did truly survive, there is a 42% chance that the model predicts this passenger as not surviving.
+# Model FPR is 0.08, meaning that if a passenger in reality did not survive, there is a 8% chance that the model predicts this passenger as surviving.
 
-# Model PPV is 0.78, meaning that if a passenger is predicted as not surviving, there is a 78% chance that this passenger indeed not survived.
+# Model PPV is 0.82, meaning that if a passenger is predicted as surviving, there is a 82% chance that this passenger indeed survived.
 
-# Model NPV is 0.82, meaning that if the passenger predicted as surviving, there is a 82% chance that this passenger indeed survived.
+# Model NPV is 0.78, meaning that if the passenger predicted as not surviving, there is a 78% chance that this passenger indeed did not survive.
 ```
 
 21. __What does it mean for a model to have such low specificity, but high sensitivity?__
@@ -386,20 +393,22 @@ tibble(
 ```{r, include=params$answers}
 # Sensitivity and specificity are inversely proportioned. This means that as one increases, the other will decrease.
 
-# In our example we have moderate specificity, and very high specificity. High sensitivity means that there are few passengers predicted as surviving when in reality they did not survive. A moderate specificity means that relatively more passengers  were predicted as not surviving when in reality they survived. 
+# In our example we have moderate sensitivity, and very high specificity. High specificity means that there are few passengers predicted as not surviving when in reality they did survive. A moderate sensitivity means that relatively more passengers were predicted as surviving when in reality they did not survive. 
 
 ```
 
-The `confusionMatrix()` function from the `caret` package can do a lot of this for us. The function takes two arguments:
+The `confusionMatrix()` function from the `caret` package can do a lot of this for us. The function takes three arguments:
 
 * `data` - a vector of predicted classes (in factor form)
 * `reference` - a vector of true classes (in factor from)
+* `positive` - a character string indicating the 'positive' outcome. If not specified, the confusion matrix assumes that the first specified category is the positive outcome.
 
 You can type `??confusionMatrix` into the console to learn more. 
 
 ```{r, include=params$answers}
 confusionMatrix(as.factor(pred2), 
-                reference = titanic$Survived)
+                reference = titanic$Survived, 
+                positive = "1")
 ```
 
 

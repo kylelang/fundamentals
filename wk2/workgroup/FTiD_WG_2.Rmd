@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 2"
 author: "Fundamental Techniques in Data Science with R"
-date: "Noverber 24, 2022"
+date: "Noverber 23, 2023"
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -50,25 +50,21 @@ knitr::opts_chunk$set(warning = FALSE,
 ## This Workgroup Meeting
 
 <h3> 1\. Some examples on processing </h3>
-<h3> 2\. Continuing individual assignment </h3>
-
-<br><br>
-Make sure that you end today with a processed data set! If the original data set contained thousands of variables, then only include the relevant variables, and make sure that these variables are processed accordingly! 
+<h3> 2\. Continue with processing of the data set </h3>
 
 
-## Individual Assignment
+## Assignment 1
 
-In this assignment, you individually search for a data set that could potentially be used for assignments 1 and 2. You describe the research questions you will try to answer using this data set for the two assignment, and you apply processing steps if required.
+<h4>You perform a multiple linear regression analysis in R and report this using R markdown. The assignment will be graded on the following four elements:</h4><br>
 
-You make an R project and an R markdown file where you:
+-	<b>Context:</b> Introduction of your research questions, description and potential processing of your data. (Week 1 & 2) 
+- <b>Exploratory data analysis:</b> Inspection of potential interesting relations in the data. (Week 3)
+-	<b>Linear regression:</b> Description of the building process, the model fit, and the model comparison procedure. (Week 4)
+-	<b>Assumptions:</b> Testing of model assumptions, checking for outliers and influential cases. Act upon and reflect on violations when needed.(Week 5)
+-	<b>Interpretation:</b> Substantive interpretation of the final model. Answers to your research questions. (Week 5)
+-	<b>Layout:</b> Structure of the document, output is efficiently presented, custom functions are developed when needed. Graphs are used where fitting. (Week 3)
 
-- Load the data set
-- Explore the variables in this data set
-- Describe the research questions
-- Identify processing steps
-- Summarize processed variables
-
-<b><u><em>All assignment information can be found on the course website!</em></u></b>
+<b><u><em> Find the complete assignment description on the course web site.</em></u></b>
 
 ## Processing Examples - 1
 
@@ -104,7 +100,7 @@ Some variables need to be computed into new variables, such as scale totals in t
 
 <h3> Linking data sets </h3>
 
-When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)` for new observations, or `cbind(df1, df2)` when the columns can be put together. 
+When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)` for new observations (rows), or `cbind(df1, df2)` when new variables can be added together (same observations). 
 
 <br> If, however, only some observations are the same, you can join the two data frames (`full_join(df1, df2, by = "identification_variable")`). This could be used for the 2 data frames shown below.
 
@@ -116,19 +112,13 @@ When 2 data sets need to be combined, you can simply bind them `rbind(df1, df2)`
 
 ## Remainder of the meeting
 
-<h3> Work on your individual assignment!!</h3> 
-
-
-
-<h4>First 4 steps (previous slide) should ideally be finished at the end of this meeting (and a start should be made for summarize part).</h4>
+<h3> Continue with preprocessing your data set, this should ideally be finished at the end of this meeting. </h3> 
 
 
 ## For the next meeting
 
-<b><u><i> Hand in your individual assignment before next Wednesday, November 30th 17:00!</i></u></b>
+<h3> Keep working on Assignment 1 </h3>
 
-- Hand in your .zip file that shows all the work you did previous week and this week. Only if you hand this in, you can start the group work next week.
-- Next week in the work group, groups for the group assignment will be formed. Make sure you are present that meeting!
 
 
 

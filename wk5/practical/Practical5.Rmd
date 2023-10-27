@@ -1,7 +1,7 @@
 ---
 title: "Fundamental Techniques in Data Science with `R` Practical 5"
 params:
-  answers: false
+  answers: true
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
@@ -12,7 +12,7 @@ output:
     toc_float: true
     df_print: paged
     theme: paper
-    # pandoc_args: --output=supervised_1_answers.html
+    pandoc_args: --output=Practical5_answers.html
 ---
 
 ```{r global_options, include=FALSE}
@@ -25,8 +25,7 @@ knitr::opts_chunk$set(fig.pos = 'H')
 
 ---
 
-
-In this practical, the assumptions of the linear regression model will be discussed. You will practice with checking the different assumptions, and practice with accounting for some of the assumptions with additional steps.
+In this practical, the assumptions of the linear regression model will be discussed. You will practice with checking the different assumptions, and practice with accounting for some of the assumptions with additional steps. Please note that these assumptions can only be checked once you have selected a (final) model, as these assumptions 'need' a model that they apply to.
 
 We will use the following packages in this practical:
 
@@ -142,7 +141,7 @@ This assumption states that:
 
 The first part of this assumption is easy to check: see if the number of observations minus the number of predictors is a positive number. The second part can be checked by either obtaining correlations between the predictors, or by determining the VIF (variation inflation factor). When the VIF factor is above 10, this indicate high multicollinearity. To account for this, predictors can be excluded from the model, or a new variable can be constructed based on predictors with a high correlation. 
 
-To examine VIF scores, the function `VIF` from the `regclass` can be used on a prespecified model. If this model includes a categorical variable with multiple categories, such as 'species' in the example data, the generalized VIF is used, and we have to look at the third column (GVIF^\*(1/(2\*Df))), these values can be compared to normal VIF values. 
+To examine VIF scores, the function `VIF()` from the `regclass` can be used on a prespecified model. If this model includes a categorical variable with multiple categories, such as 'species' in the example data, the generalized VIF is used, and we have to look at the third column (GVIF^\*(1/(2\*Df))), these values can be compared to normal VIF values. 
 
 7. __Specify a linear model with `weight` as outcome variable using all other variables in the dataset as predictors. Save this model as `model_fish1`. Calculate VIF values for this model.__
 
@@ -251,7 +250,7 @@ This assumption states that error terms should have no correlation. Dependence o
 
 ---
 
-## Normaly distributed errors
+## Normally distributed errors
 
 This assumption states that errors should be roughly normally distributed. Like the assumption of homoscedasticity, this can be checked by model plots, provided by R
 

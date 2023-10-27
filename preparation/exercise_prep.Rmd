@@ -1,5 +1,5 @@
 ---
-title: "Exercise 1"
+title: "Preparation practical - Getting to know R & RStudio"
 author: "Kyle M. Lang"
 date: "Fundamental Techniques in Data Science with R"
 output: 
@@ -14,17 +14,17 @@ output:
 <style type="text/css">
 
 body{ /* Normal  */
-      font-size: 12px;
+      font-size: 13px;
   }
 td {  /* Table  */
   font-size: 12px;
 }
 h1.title {
-  font-size: 18px;
+  font-size: 30px;
   color: DarkBlue;
 }
 h1 { /* Header 1 */
-  font-size: 18px;
+  font-size: 24px;
 }
 h2 { /* Header 2 */
     font-size: 18px;
@@ -43,41 +43,36 @@ pre { /* Code block - determines code spacing between lines */
 
 ---
 
-In this exercise you will get acquainted with R and RStudio. RStudio adds many 
-convenience features to the base R that you obtained from 
-[http://r-project.org](http://r-project.org). Most of these features go beyond 
-the scope of this course, but some of them will flatten the learning curve of R 
-programming. 
+In this preparation practical you will get acquainted with R and RStudio. This practical is meant to get students that are not familiar with R or Rstudio to a level of familiarity with R so you can start the workgroups of this course with confidence. 
 
-If you have any questions, feel free to ask me or the workgroup instructor.
+Please note that RStudio adds many convenience features to the base R that you obtained from [http://r-project.org](http://r-project.org). Most of these features go beyond the scope of this course, but some of them will flatten the learning curve of R programming. 
 
-OK. Let's begin!
+<br>
+
+*If you have any questions about R or this preparation practical, feel free to contact Kyle or any of your workgroup instructors.*
+
 
 ---
 
 # Working with R and RStudio
 
----
+## Opening RStudio
 
-## 
+When opening RStudio, the following window will appear. 
+<br>
 
-**Open RStudio**
-
-The following window will appear. 
-![alt text](figures/rstudio1.png)
+![](figures/rstudio1.png)
 
 RStudio is divided into 3 panes: the console, the environment/history pane, and 
 a pane wherein you can access your files, plots, help files, etc. You can 
-rearrange the panes through RStudio's preferences.
+rearrange the panes through RStudio's preferences (*View > Panes > Pane Layout ...*).
 
 When we open an R script (i.e. a file that contains R code), a fourth pane will 
-open to show the script. 
+open to show the script. This pane is called the *source pane*.
 
 ---
 
-## 
-
-**Open a new R script**
+## Opening a new R script
 
 In the top left you will find this button: 
 ![new script](figures/fig2.png){width=5%}. Click it and select "R Script". 
@@ -99,9 +94,7 @@ efficient programmer. Remember: Efficient code runs faster!
 
 ---
 
-## 
-
-**Type the following into your new R script**
+## Code and comments in an R script
 
 ```{r}
 # Hey, Buddy! Let's assign the value 100 to the object a.
@@ -119,9 +112,7 @@ could just as well assign the value`"bar"` to the object `foo`, if you like.
 
 ---
 
-## 
-
-**Execute the commands in your script**
+## Running commands in your script
 
 Select both lines of code shown above, and execute them by pressing Ctrl-Enter 
 or Ctrl-R (Windows/Linux) or Cmd-Enter (Mac)
@@ -139,9 +130,9 @@ select the console by pressing Ctrl-2 (Windows/Linux/Mac).
 
 ---
 
-##
+## Saving scripts
 
-**Save your code file as *preparation_practical.R* in a folder named *practicals***
+Save your code file as *preparation_practical.R* in a folder named *practicals*.
 
 You can use the standard Ctrl-s (Windows/Linux) or Cmd-s (Mac) or click on the 
 ![save button](figures/fig4.png){width=3%} icon in the code pane. Your document is
@@ -150,14 +141,14 @@ RStudio project for your practicals.
 
 ---
 
-##
+## Closing files
 
 **Close the *preparation_practical.R* script in the code pane**
 
 Even though you've closed the script, your code is still saved as a permanent 
 code file.
 
-##
+## Re-open a script
 
 **Open the *preparation_practical.R* script**
 
@@ -179,9 +170,156 @@ some information about the objects.
 
 ---
 
-# R packages 
+# RStudio Projects
 
-## 
+RStudio Projects are a great way to keep all the files associated with your project together in one place. This includes data, scripts, and any output you produce. RStudio Projects are built-in to RStudio and are recommended for best practice in open science, reproducible workflows, and collaboration. One huge advantage of working with an RStudio Project is that R knows where to find the data you are working with, without the need to explicitly set your directory every time using `setwd()`. 
+
+The possibility of categorizing your work into projects is one of the benefits of using RStudio. Within a project, everything is related to the .Rproj file and the folder in which this .Rproj file is stored. So, if you share the project folder with someone else, they only have to open the .Rproj file to access and run any code from the project.
+
+---
+
+## Create a new RStudio project
+
+Creating a new project is simple. Navigate to the top of your screen and click File > New Project.
+
+![](figures/image01.png){width=50% height=50%ar}
+
+If you already made a folder which you would like to use as a directory for this project, you can click on "Existing Directory" and navigate to this folder. You will be asked to give your new project a name, once you have done this click "Create Project". It can be useful to create a new project for every practical. 
+
+Alternatively, you can click on "New Directory" and create a new folder for your project. 
+
+
+![](figures/image02.png){width=50% height=50%}
+
+You will see the file you just created appear in the RStudio files pane, as *nameofyourproject*.Rproj. 
+
+
+![](figures/image03.png){width=50% height=50%}
+
+---
+
+# RMarkdown
+
+You can watch this video on Rmarkdown. 
+
+[![WhatisRMarkdown](figures/imagevimeo.png){width=50% height=50%}](https://vimeo.com/178485416 "WhatisRMarkdown - Click to Watch!")
+
+Also, see this [R Markdown cheat sheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf).
+
+## Code chunks
+
+R Markdown files use the `rmarkdown` package which comes installed with RStudio. R Markdown is a variant of Markdown that enables us to create dynamic documents with chunks of R code embedded with plain-text. R Markdown works with `knitr` to compile these documents in different formats and has extensions that allow you to also include LaTeX equations. 
+
+A code chunk is initiated by:
+
+````r
+```{r chunk-name}`r ''`
+```{r}
+```
+````
+
+Code chunks also end with three backticks:
+
+````r
+```
+````
+
+Therefore, an entire code chunk looks like:
+
+````r
+```{r hello}`r ''`
+
+# This is a comment inside a code chunk
+
+2 + 2
+```
+````
+
+Naming your code chunks is also good practice, as it makes it easier to find errors that occur within specific chunks. For example, the first chunck above has the name `chunk-name`. Code chunks can be run in more than one way: you can run a single chunk by clicking the play icon at the top right corner of the chunk; you can also run all code chunks consecutively by clicking Run > Run all, in the top right corner of the RStudio editor pane. You will see more options in the drop-down list too.
+
+When you compile an R Markdown document the code chunks are all evaluated and their output inserted, unless you provide alternate instructions via the chunk options. Chunk options follow the chunk name and are separated by commas.
+
+**Chunk options:**
+
+To omit the results from the final document (i.e. not run the code) add `eval = FALSE` to the brackets and after `r`, like below:
+
+````r
+```{r, eval = FALSE}`r ''`
+2 + 2
+```
+````
+
+To omit the code from the final report (while including the results) add the argument `echo = FALSE` to the brackets, like below:
+
+````r
+```{r, echo = FALSE}`r ''`
+2 + 2
+```
+````
+
+*`echo = FALSE` is also very useful for embedding plots into a report, because we usually only want to see the final plot and not the code that produced it.*
+
+To run the code chunk but not include it in the final document add the argument `include = FALSE` to the brackets, like below:
+
+````r
+```{r, include = FALSE}`r ''`
+2 + 2
+```
+````
+
+*Note that for all the examples above, the default value for echo is `TRUE`.*
+
+You can read more about chunk options [here](https://rpubs.com/Lingling912/870659). 
+
+
+## Text option
+
+Rmarkdown can handle different text formats:
+
+1. **headers** - place one or more hashtags at the start of a line that will be a header (or a sub-header). For example, `# Hello Rmarkdown`.
+    + A single hashtag, `#` creates a first level header.
+    + Two hashtags, `##` create a second level header, and so on.
+    
+2. **italicized and bold text** - surround italicized text with asterisks, for example `*italicize this text*`. Surround bold text with double asterisks, for example, `**bold face this text**`.
+
+3. **lists** - bullet-point lists can be created by starting a line with an asterisk `*`(you must leave an empty line before the first bullet point).
+
+* Item 1
+* Item 2
+    + Item 2a
+    + Item 2b
+
+LaTeX equations can also be added to an RMarkdown document, using single `$` to produce an inline equation, e.g. `$equation$`, or double `$` for a display equation, e.g. `$$ equation $$`. 
+
+You can read more about using LaTeX syntax in R Markdown [here](https://bookdown.org/yihui/rmarkdown/markdown-syntax.html#math-expressions).
+
+## Creating and rendering the document
+
+To open a new R Markdown file, navigate to the top left of the RStudio editor and click on the icon for a new document (see below). Choose a title for your document and select the "HTML" format. You will primarily create HTML files in this course but it is also possible to create Microsoft Word and PDF documents. 
+
+![](figures/image04.png){width=50% height=50%} 
+
+**Compile the RMD script into an HTML file:**
+
+Click the "knit" button button and select “Knit to HTML” to compile the file into an HTML document. If necessary, install the required packages.
+
+![](figures/image05.png){width=50% height=50%}
+
+In the rest of this course, you will need to complete and submit exercises and assignments. The R Markdown functionality in RStudio is a well-polished production device to mark-up high quality documents where text and code/output are woven together.
+
+Please use R Markdown to prepare your work for this course, and submit both the RMD and HTML files whenever you need to hand in exercises or assignments.
+
+## Quarto documents
+
+Recently, Rstudio included the option to create *Quarto documents* in RStudio. These documents are an alternative to Rmarkdown documents, having the same options and some improvements (e.g. visually). You can create a Quarto document the same way as an Rmarkdown document.
+
+![](figures/quarto_docs.png){width=30%}
+
+Note that Quarto documents create extra folders with dependency files. Because of this, it is preferred to work with Rmarkdown instead of Quarto during this course.
+
+---
+
+# R packages 
 
 An `R` package is a collection of functions, data, and documentation that have been
 developed to cover a specific need or scientific method that is not implemented
@@ -206,7 +344,7 @@ language` that is very popular. We make use of its functions when possible.
 install.packages("tidyverse")
 ```
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, eval = FALSE}
 # Loading the tidyverse package
 library("tidyverse")
 
@@ -232,4 +370,6 @@ course website.
 
 
 
-End of the preparation practical
+End of the preparation practical. \
+
+Please note that this practical can be useful to get back to later in the course. If you have any questions or difficulties regarding this practical, feel free to contact any of the course instructors. 
