@@ -10,6 +10,7 @@ output:
 Define some hacky LaTeX commands to force nice spacing between lines    
 NOTE: These must be called within a math environment (e.g., $\va$)
 -->
+
 \newcommand{\va}{\\[12pt]}
 \newcommand{\vb}{\\[6pt]}
 \newcommand{\vc}{\\[3pt]}
@@ -82,8 +83,11 @@ To pass the course:
 1. Both of your assignments grades must be 5.5 or higher
 
 ### **Attendance** 
-During this course, you will attend 8 workgroup sessions and hand in 7 practical assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and hand in at least 6 out of 7 practical assignments (before the deadline). If you do not meet these requirements, you lose the right to resit the exam. 
 
+During this course, you will attend 8 workgroup sessions and hand in 7 practical
+assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and
+hand in at least 6 out of 7 practical assignments (before the deadline). If you
+do not meet these requirements, you lose the right to resit the exam. 
 
 ### **Literature**
 
@@ -105,7 +109,7 @@ These resources will also be linked in this dashboard.
 
 | Week # | Topic | `R` Exercise | Workgroup | Reading |
 |--|---|----|----|----|
-| 1 | The basics of `R` | How to work with `R` scripts; `R` projects; `R` markdown; how to import external data into `R`; functions and iterations | Form groups; Search for a dataset for the two group assignments; Formulate research questions| R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
+| 1 | The basics of `R` | How to work with `R` via scripts, projects, and markdown; How to import external data into `R`; How to write your own functions; How to iterate repetative tasks | Form groups; Search for a dataset for the two group assignments; Formulate research questions| R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), [Chapter 27](https://r4ds.had.co.nz/r-markdown.html), [Chapter 19](https://r4ds.had.co.nz/functions.html), and [Chapter 21](https://r4ds.had.co.nz/iteration.html) |
 | 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
 | 3 | Programmatic data manipulation 2 | Data visualization; Data inspection; Data cleaning | Continue with data inspection and cleaning | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html) and [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
 | 4 | Multiple linear regression | Estimating linear models in `R` using the `lm()`function; Model fit and model comparison; Categorical predictors; Moderation | Find a best fitting model; Test your hypotheses | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
@@ -136,7 +140,6 @@ tidyverse: visualize data with ggplot2 and performing basic data wrangling with
 dplyr. This course helps prepare students for an entry-level research career 
 (e.g. junior researcher or research assistant) or further education in research 
 (e.g., a [research] Master program or a PhD).
-
 
 ### **Course goals**
 
@@ -191,7 +194,6 @@ $\vb$
 basic data analytic problems, execute quantitative data analyses on real-world 
 data sets, and document the results (learning goals 6–10).
 
-
 ## Column 2 {data-width=400}
 
 ### **Course structure**
@@ -210,7 +212,11 @@ $\vb$
 analysis with a group of your peers.
 
 ### **Attendance** 
-During this course, you will attend 8 workgroup sessions and hand in 7 practical assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and hand in at least 6 out of 7 practical assignments (before the deadline). If you do not meet these requirements, you lose the right to resit the exam. 
+
+During this course, you will attend 8 workgroup sessions and hand in 7 practical
+assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and
+hand in at least 6 out of 7 practical assignments (before the deadline). If you
+do not meet these requirements, you lose the right to resit the exam. 
 
 ### **Group assignment 1: Linear regression**
 
@@ -244,7 +250,6 @@ your research question.
 $\vb$
 1. **Layout:** Structure of the document, efficiency of output presentation, use
 of custom functions (when applicable). Presentation of suitable visualizations. 
-
 
 ### **Group assignment 2: Logistic regression**
 
@@ -425,13 +430,16 @@ Furthermore, you may benefit from exploring the following shiny apps:
 
 ### Lecture
 
-This week, we'll cover the basics of `R`.
+This week, we'll cover some fundamentals of `R` programming.
 
-- Overview of `R` and `RStudio`
-- Interacting with `R` via `R` scripts, `R` markdown, and `R` projects
+- Interacting with `R` via scripts and R Markdown
 - Importing external data into `R` 
+- Writing your own `R` functions
+- Methods for iterating repetive operations in `R` scripts
 
-You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk1/lecture/lecture1.pdf). -->
 
 ### Required Reading
 
@@ -441,14 +449,16 @@ You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 ([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-import.html))
 - R4DS [Chapter 27](https://r4ds.had.co.nz/r-markdown.html)
 ([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/r-markdown.html))
+- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/functions.html))
+- R4DS [Chapter 21](https://r4ds.had.co.nz/iteration.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/iteration.html))
 
 ### Useful Information and Links
 
-- Well organized, tidy code is easier to debug, maintain, and understand. 
+Well organized, tidy code is easier to debug, maintain, and understand. 
 [The tidyverse style guide](https://style.tidyverse.org) provides a useful set
 of formatting conventions that you can apply to your own code.
-- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
-- R4DS [Chapter 21](https://r4ds.had.co.nz/iteration.html)
 
 ## Column 2
 
@@ -512,7 +522,9 @@ This week, we start looking more closely at programmatic data manipulation in `R
 - Manipulating and transforming data
 - Working with pipes
 
-You can find the lecture slides [here](wk2/lecture/lecture2.pdf).
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk2/lecture/lecture2.pdf). -->
 
 ### Required Reading
 
@@ -580,8 +592,11 @@ You can find suggested answers to the practical exercises here:
 This week, we continue with our discussion of programmatic data processing.
 
 - Data visualization using `ggplot2`
-- Data inspection and cleaning
-- Writing functions in `R`
+- Data exploration and cleaning
+
+**Once they're ready, the lecture slides will be linked here.**
+
+<!--
 
 You can find the lecture slides below.
 
@@ -650,6 +665,8 @@ You can find recordings of the data cleaning lecture below.
         data-external="1">
 </iframe>
 
+-->
+
 ### Required Reading
 
 ***These readings are exam materials.***
@@ -707,14 +724,16 @@ You can find suggested answers to the practical exercises here:
 ### Lecture
 
 This week, we move on from `R` programming and begin our discussion of linear 
-modeling. Specifically, we will cover the following topics.
+modeling.
 
 - Specifying linear models in `R` using the `lm()` function
 - Model fit and model comparison
 - Categorical predictors
 - Moderation
   
-You can find the lecture slides [here](wk4/lecture/linearModel.pdf)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk4/lecture/linearModel.pdf) -->
 
 ### Required Reading
 
@@ -777,14 +796,15 @@ You can find suggested answers to the practical here:
 ### Lecture 
 
 This week, we wrap up our discussion of the linear model by considering how we
-can check if our model results are trustworthy. Specifically, we'll cover the
-following points.
+can check if our model results are trustworthy.
 
 - Assumptions of the linear model
 - Regression diagnostics
 - Outliers, high-leverage cases, and influential observations 
   
-You can find the lecture slides [here](wk5/lecture/assumptions.pdf)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk5/lecture/assumptions.pdf) -->
   
 ### Required Reading
 
@@ -848,7 +868,7 @@ You can find suggested answers to the practical here:
 ### Lecture
 
 This week's lecture covers the generalized linear model and the basics of 
-logistic regression. Specifically, we'll cover the following.
+logistic regression.
 
 - Overview of the GLM
 - Probabilities, odds, and odds-ratios
@@ -856,7 +876,9 @@ logistic regression. Specifically, we'll cover the following.
 - Interpreting logistic regression estimates
 - Classification using logistic regression
 
-You can find the lecture slides [here](wk6/lecture/glm.pdf)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk6/lecture/glm.pdf) -->
 
 ### Required Reading
 
@@ -909,11 +931,12 @@ You can find suggested answers to the practical here:
 
 ### Lecture 
 
-This week, we have a guest lecturer! [Mingyang Cai](https://www.uu.nl/medewerkers/MCai) 
-will cover the assumptions of logistic regression and evaluating classification 
-performance via confusion matrices. 
+This week, will cover the assumptions of logistic regression and evaluating
+classification performance via confusion matrices. 
 
-You can find the lecture slides [here](wk7/lecture/logistic_regression.pdf)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk7/lecture/logistic_regression.pdf) -->
 
 ### Required Reading
 
@@ -966,7 +989,9 @@ You can find suggested answers to the practical here:
 In this week's lecture, we will wrap up the course, and I'll give an overview of 
 the main points we've covered. 
 
-- You can find the lecture slides [here](wk8/lecture/summary.pdf)
+**Once they're ready, the lecture slides will be linked here.**
+
+<!-- You can find the lecture slides [here](wk8/lecture/summary.pdf) -->
 
 ## Column 2
 
