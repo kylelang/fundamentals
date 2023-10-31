@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 1: R Basics
 %%% Author:   Kyle M. Lang
 %%% Created:  2016-01-28
-%%% Modified: 2022-11-10
+%%% Modified: 2023-10-31
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -19,10 +19,8 @@
 \usepackage{hyperref}
 
 \hypersetup{
-  colorlinks = true,
-  linkcolor = blue,
   filecolor = blue,
-  citecolor = black,      
+  citecolor = black,
   urlcolor = blue
 }
  
@@ -139,7 +137,11 @@ You can see Gerko's version of the course on his personal website:
 
 %------------------------------------------------------------------------------%
 
-\sectionslide{Open-Source Software}
+\section{The R Statistical Programming Language}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Open-Source Software}
 
 %------------------------------------------------------------------------------%
 
@@ -169,124 +171,6 @@ You can see Gerko's version of the course on his personal website:
   \end{itemize}
 
 \end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Strengths of Open-Source Software}
-
-  \rmsc{Freedom}
-  \vb
-  \begin{itemize}
-  \item If the software you are using is broken (or just limited in capability),
-    you can modify it in any way you like.
-    \vb
-  \item If you are unsure of what the software you are using is doing, you can
-    dig into the source code and confirm its procedures.
-    \vb
-  \item If you create some software, you can easily, and independently,
-    distribute it to the world.
-    \vb
-    \begin{itemize}
-    \item There is a global community of potential users that are all linked via
-      a common infrastructure that facilitates open-source software development
-      and distribution.
-    \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Strengths of Open-Source Software}
-
-  \rmsc{Peer Review}
-  \vb
-  \begin{itemize}
-  \item Every user of open-source software is a reviewer of that software.
-    \vb
-  \item What ``bedroom programmers'' lack in term of quality control procedures
-    is overcome by the scrutiny of a large and empowered user-base.
-    \vc
-    \begin{itemize}
-    \item When we use closed source software, we are forced to trust the honesty
-      of the developing company.
-      \vb
-    \item We have no way of checking the actual implementation.
-    \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Strengths of Open-Source Software}
-
-  \rmsc{Accessibility}
-  \vb
-  \begin{itemize}
-  \item Many open-source programs (like R) can be downloaded, for free, from the
-    internet.
-    \begin{itemize}
-      \vb
-    \item You can have R installed on all of you computers (and your mobile
-      phone, your car's info-tainment system, your microwave, your clock-radio,
-      ...).
-      \vb
-    \item No need to beg, borrow, or steal funds to get yourself up-and-running
-      with a cutting-edge data analysis suite.
-    \end{itemize}
-    \vb
-  \item Licensing legality is very simple---no worries about being sued for
-    installing open-source software on ``too many'' computers.
-    \vb
-  \item Open-source software tends to run on more platforms than closed-source
-    software will.
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\subsection{Open-Source Licensing}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{A Note on Licensing}
-
-  Some popular open-source licenses:
-  \vb
-  \begin{itemize}
-  \item The GNU General Public License (GPL)
-    \begin{itemize}
-    \item \url{http://www.gnu.org/licenses/gpl-3.0.en.html}
-    \end{itemize}
-    \vc
-  \item The GNU Lesser General Public License (L-GPL)
-    \begin{itemize}
-    \item \url{http://www.gnu.org/licenses/lgpl-3.0.en.html}
-    \end{itemize}
-    \vc
-  \item The Apache License
-    \begin{itemize}
-    \item \url{http://www.apache.org/licenses/}
-    \end{itemize}
-    \vc
-  \item The BSD 2-Clause License (FreeBSD License)
-    \begin{itemize}
-    \item \url{http://opensource.org/licenses/BSD-2-Clause}
-    \end{itemize}
-    \vc
-  \item The MIT License
-    \begin{itemize}
-    \item \url{https://opensource.org/licenses/MIT}
-    \end{itemize}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\sectionslide{The R Statistical Programming Language}
 
 %------------------------------------------------------------------------------%
 
@@ -843,6 +727,296 @@ write.xlsx(list(titanic = titanic, diabetes = diabetes, mtcars = mtcars),
            paste0(dataDir, "example_data.xlsx"),
            overwrite = TRUE)
 @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Functions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{R Functions}
+
+  Functions are the foundation of R programming.
+  \vc
+  \begin{itemize}
+  \item Other than data objects, almost everything else that you interact with
+    when using R is a function.
+    \vc
+  \item Any R command written as a word followed by parentheses, \src{()}, is a
+    function.
+    \vc
+    \begin{itemize}
+    \item \src{mean()}
+    \item \src{library()}
+    \item \src{mutate()}
+    \end{itemize}
+    \vc
+  \item Infix operators are aliased functions.
+    \vc
+    \begin{itemize}
+    \item \src{<-}
+    \item \src{+}, \src{-}, \src{*}
+    \item \src{>}, \src{<}, \src{==}
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+  
+  We can define our own functions using the \src{function()} function.
+
+  <<>>=
+  square <- function(x) {
+      out <- x^2
+      out
+  }
+  @
+
+  After defining a function, we call it in the usual way.
+
+  <<>>=
+  square(5)
+  @
+
+  One-line functions don't need braces.
+
+  <<>>=
+  square <- function(x) x^2
+  square(5)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+
+  Function arguments are not strictly typed.
+
+  <<>>=
+  square(1:5)
+  square(pi)
+  square(TRUE)
+  @
+
+  But there are limits.
+
+  <<>>=
+  square("bob") # But one can only try so hard
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{User-Defined Functions}
+ 
+  Functions can take multiple arguments.
+  
+  <<>>=
+  mod <- function(x, y) x %% y
+  mod(10, 3)
+  @
+  
+  Sometimes it's useful to specify a list of arguments.
+
+  <<>>=
+  getLsBeta <- function(datList) {
+      X <- datList$X
+      y <- datList$y
+      
+      solve(crossprod(X)) %*% t(X) %*% y
+  }
+  @
+
+  \pagebreak
+
+  <<>>=
+  X       <- matrix(runif(500), ncol = 5)
+  datList <- list(y = X %*% rep(0.5, 5), X = X)
+  
+  getLsBeta(datList = datList)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{User-Defined Functions}
+
+  Functions are first-class objects in R.
+  \begin{itemize}
+  \item We can treat functions like any other R object.
+  \end{itemize}
+
+  \vb
+  
+  R views an unevaluated function as an object with type "closure".
+
+  <<>>=
+  class(getLsBeta)
+  typeof(getLsBeta)
+  @
+
+  An evaluated functions is equivalent to the objects it returns.
+
+  <<>>=
+  class(getLsBeta(datList))
+  typeof(getLsBeta(datList))
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{User-Defined Functions}
+
+We can use functions as arguments to other operations and functions.
+
+<<>>=
+fun1 <- function(x, y) x + y
+
+## What will this command return?
+fun1(1, fun1(1, 1))
+@
+
+Why would we care?
+
+<<>>=
+s2 <- var(runif(100))
+x  <- rnorm(100, 0, sqrt(s2))
+@
+
+\pagebreak
+
+<<>>=
+X[1:8, ]
+
+c(1, 3, 6:9, 12)
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Iteration}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Loops}
+
+  There are three types of loops in R: \emph{for}, \emph{while}, and \emph{until}.
+  \vc
+  \begin{itemize}
+    \item You'll rarely use anything but the for loop.
+    \vc
+    \item So, we won't discuss while or until loops.
+  \end{itemize}
+
+  \va
+
+  A \emph{for loop} is defined as follows
+
+<<eval = FALSE>>=
+for(INDEX in RANGE) {
+     Stuff To Do with the Current INDEX Value
+}
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Loops}
+
+  For example, the following loop will sum the numbers from 1 to 100.
+
+<<>>=
+val <- 0
+for(i in 1:100) {
+    val <- val + i
+}
+
+val
+@
+
+\pagebreak
+
+This loop will compute the mean of every column in the 'mtcars' data.
+
+<<>>=
+means <- rep(0, ncol(mtcars))
+for(j in 1:ncol(mtcars)) {
+    means[j] <- mean(mtcars[ , j])
+}
+
+means
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Loops}
+
+Loops are often one of the least efficient solutions in R
+
+<<>>=
+n <- 1e8
+
+t0 <- system.time({
+    val0 <- 0
+    for(i in 1:n) val0 <- val0 + i
+})
+
+t1 <- system.time(
+    val1 <- sum(1:n)
+)
+@
+
+\pagebreak
+
+Both approaches produce the same answer.
+
+<<>>=
+val0 - val1
+@
+
+But the loop is many times slower.
+
+<<>>=
+t0
+t1
+@
+
+\pagebreak
+
+There is often a built in routine for what you are trying to accomplish with
+the loop.
+
+<<>>=
+## The appropriate way to get variable means:
+colMeans(mtcars)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Apply Statements}
+
+In R, we're usually working with lists and data frames, not vectors and
+matrices. So, some flavor of apply statement is often preferred to a loop.
+
+\va
+
+There are many flavors of apply statement in R, but the three most common are:
+  \src{apply()}, \src{lapply()}, and \src{sapply()}.
 
 \end{frame}
 
