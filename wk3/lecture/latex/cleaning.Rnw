@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 3b: Data Cleaning
 %%% Author:   Kyle M. Lang
 %%% Created:  2015-11-06
-%%% Modified: 2022-11-28
+%%% Modified: 2023-11-09
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -20,10 +20,7 @@
 
 \hypersetup{
   colorlinks = false,
-  linkcolor = blue,
-  filecolor = blue,
-  citecolor = black,
-  urlcolor = blue
+  allcolors = uured
 }
 
 \definecolor{codebackground}{RGB}{224,234,238}
@@ -120,49 +117,6 @@ knit_theme$set('edit-kwrite')
 \end{frame}
 
 %------------------------------------------------------------------------------%
-
-\sectionslide{Data Analytic Lifecycle}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}{Research Cycle}
-
-  The following is a representation of the \emph{Research Cycle} used for 
-  empirical research in most of the sciences.
-  
-  \begin{figure}
-    \includegraphics[width = 0.7\textwidth]{figures/research_cycle.pdf}
-  \end{figure}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{CRISP-DM}
-
-  The \emph{Cross-industry Standard Process for Data Mining} was developed to 
-  standardized the process of data mining in industry applications.
-  
-  \begin{figure}
-    \includegraphics[width = 0.7\textwidth]{figures/crisp-dm.pdf}
-  \end{figure}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Data Science Cycle}
-  
-  The \emph{Data Science Cycle} represented here was adapted from 
-  \citet{o'neilSchutt:2014}.
-  
-  \begin{figure}
-    \includegraphics[width = 0.7\textwidth]{figures/data_science_cycle.pdf}
-  \end{figure}
-  
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Data Cleaning}
   
@@ -287,14 +241,6 @@ print(patTab2, booktabs = TRUE)
   \begin{itemize}
   \item The proportion of participants that drop-out of a study at each 
     measurement occasion
-  \end{itemize}
-  
-  \vb
-  
-  \textsc{Percent/Proportion of Complete Cases}
-  \begin{itemize}
-  \item The proportion of observations with no missing data
-  \item Often reported but nearly useless quantity
   \end{itemize}
   
   \vb
@@ -435,13 +381,9 @@ print(patTab2, booktabs = TRUE)
 
 %------------------------------------------------------------------------------%
 
-\subsection{Univariate Outliers}
-
-%------------------------------------------------------------------------------%
-
 \begin{frame}[allowframebreaks]{What is an outlier?}
   
-  For the time being, we're considering \emph{univariate outliers}.
+  We're only considering \emph{univariate outliers}.
   \vb
   \begin{itemize}
   \item Extreme values with respect to the distribution of a variable's other 
@@ -482,14 +424,12 @@ print(patTab2, booktabs = TRUE)
   We have many methods available to diagnose potential outliers.
   \vb
   \begin{itemize}
-  \item Today, we'll only discuss three of the simplest:
+  \item Today, we'll only discuss two of the simplest:
     \vc
     \begin{enumerate}
     \item Z-score method
       \vc
     \item Tukey's boxplot method
-      \vc
-    \item Adjusted boxplot method
     \end{enumerate}
   \end{itemize}
   
@@ -652,333 +592,6 @@ print(patTab2, booktabs = TRUE)
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Adjusted Boxplot Method}
-  
-  The original boxplot method uses symmetric fences, so it will tend to flag too
-  many outliers when the true distribution is skewed.
-  \vc
-  \begin{itemize}
-  \item \citet{hubert_vandervieren:2008} developed an adjusted boxplot method
-    that accounts for skewness when estimating the fences.
-  \end{itemize}
-
-  \vb
-
-  The adjusted boxplot incorporates a robust estimate of skewness (the
-  \emph{medcouple}, $MC$) when defining the fences:
-  \begin{align*}
-    F = \{Q_1 - C \times e^{(a \times MC)} IQR, Q_3 + C \times e^{(b \times MC)}
-    IQR\}
-  \end{align*}
-  
-  The adjusted boxplot usually performs quite well.
-  \vc
-  \begin{itemize}
-  \item When the true distribution is skewed, the adjusted boxplot will flag
-    an ``appropriate'' proportion of outliers.
-    \vc
-  \item If the true distribution is symmetric, $\hat{MC} \approx 0$, and the
-    adjusted boxplot reduces to the normal boxplot.
-  \end{itemize}
-  
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}{Boxplot: Original vs. Adjusted}
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      
-      <<echo = FALSE>>=      
-      boys %$% boxplot(bmi,
-                       ylab = "BMI",
-                       main = "Original")
-      @
-      
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      
-      <<echo = FALSE>>=
-      boys %$% robustbase::adjbox(bmi,
-                                  ylab = "BMI",
-                                  main = "Adjusted",
-                                  col = "lightgray")
-      @
-      
-    \end{column}
-  \end{columns}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Example}
-
-  We can implement the adjusted boxplot method via the \src{adjboxStats()}
-  function from the \pkg{robustbase} package.
-  
-  <<>>=
-  library(robustbase)
-  
-  ## Find potentially outlying cases: 
-  (out <- boys %$% adjboxStats(bmi, coef = 2)$out)
-
-  ## Which observations are potential outliers?
-  boys %$% which(bmi %in% out)
-  
-  ## View the potentially outlying cases:
-  boys %>% filter(bmi %in% out)
-  @
-  
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\subsection{Multivariate Outliers}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Multivariate Outliers}
-  
-  Sometimes, the combinations of values in an observation are very unlikely, 
-  even when no individual value is an outlier.
-  \vc
-  \begin{itemize}
-  \item These observations are \emph{multivariate outliers}.
-    \vc
-    \begin{itemize}
-    \item A person in the 95\emph{th} percentile for height and the 5\emph{th} 
-      percentile for weight
-      \vc
-    \item A person who simultaneously scores highly on scales of depression and 
-      positive affect
-    \end{itemize}
-  \end{itemize}
-  \vb
-  To detect multivariate outliers, we use \emph{distance metrics}.
-  \vc
-  \begin{itemize}
-  \item Distance metrics quantify the similarity of two vectors.
-    \vc
-    \begin{itemize}
-    \item Similarity between two observations
-      \vc
-    \item Similarity between an observation and the mean vector
-    \end{itemize}
-  \end{itemize}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Mahalanobis Distance}
-  
-  One of the most common distance metrics is the \emph{Mahalanobis Distance}.
-  \vc
-  \begin{itemize}
-  \item The Mahalanobis distance, $\Delta$, is a multivariate generalization of 
-    the z-score method:
-  \end{itemize}
-  \begin{align*}
-    \Delta_n = \sqrt{\left( \mathbf{x}_n - \hat{\mu}_{\mathbf{X}} \right) 
-      \hat{\Sigma}_{\mathbf{X}}^{-1} \left( \mathbf{x}_n - \hat{\mu}_{\mathbf{X}} 
-      \right)^T}
-  \end{align*}
-  As with z-scores, if $\Delta_n > C$, we label $\mathbf{x}_n$ as a potential
-  outlier.
-  \vc
-  \begin{itemize}
-  \item When $\mathbf{X}$ is $K$-variate normally distributed, $\Delta_n^2$ 
-    follows a $\chi^2$ distribution with $df = K$.
-    \vc
-  \item We take $C$ to be the square-root of a suitably conservative quantile 
-    (e.g., $q \in \{99\%, 99.9\%\}$) of the $\chi_K^2$ distribution: 
-    $C = \sqrt{\chi_{K, q}^2}$.
-  \end{itemize}
-  
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{Example}
-
-  We can compute Mahalanobis distances with \src{mahalanobis()}.
-  
-  <<>>=
-  ## Compute the squared Mahalanobis distances for height and weight:
-  md <- boys %>%
-      select(hgt, wgt) %>%
-      mahalanobis(center = colMeans(., na.rm = TRUE),
-                  cov = cov(., use = "pairwise")
-                  )
-
-  ## Check the first few values:
-  head(md)
-  @
-
-  \pagebreak
-
-  We compare to some critical $\chi^2$ value to flag potential outliers.
-
-  <<>>=
-  out <- md > qchisq(0.999, df = 2)
-
-  which(out)
-  boys %>% filter(out)
-  @
-  
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Problems with Mahalanobis Distance}
-  
-  Like the z-score method it generalizes, Mahalanobis distance is highly
-  sensitive to outliers.
-  \vc
-  \begin{itemize}
-  \item The underlying estimates of central tendency, $\hat{\mu}_{\mathbf{X}}$, 
-    and dispersion, $\hat{\Sigma}_{\mathbf{X}}$, are computed using all 
-    observations.
-  \end{itemize}
-  \vb
-  \pause
-  We want robust analogues of $\hat{\mu}_{\mathbf{X}}$ and 
-  $\hat{\Sigma}_{\mathbf{X}}$.
-  \vc
-  \begin{itemize}
-  \item We have several options for robust estimation of $\hat{\mu}_{\mathbf{X}}$ 
-    and $\hat{\Sigma}_{\mathbf{X}}$. E.g.:
-    \begin{itemize}
-    \item Minimum covariance determinant method \citep[MCD; ][]{rousseeuw:1985}
-      \vc
-    \item Minimum volume ellipsoid method \citep[MVE; ][]{rousseeuw:1985}
-      \vc
-    \item M-estimation \citep{maronna:1976}
-    \end{itemize}
-    \vc
-  \item Conceptually, robust methods operate by either:
-    \begin{itemize}
-    \item Using only a ``good'' subset of data to estimate $\hat{\mu}_{\mathbf{X}}$ 
-      and $\hat{\Sigma}_{\mathbf{X}}$.
-      \vc
-    \item Downweighting outlying observations when estimating 
-      $\hat{\mu}_{\mathbf{X}}$ and $\hat{\Sigma}_{\mathbf{X}}$.
-    \end{itemize}
-  \end{itemize}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Robust Mahalanobis Distance}
-  
-  Equipped with robust estimates of central tendency, $\hat{\mu}_{R,\mathbf{X}}$, 
-  and dispersion, $\hat{\Sigma}_{R,\mathbf{X}}$, we define the robust Mahalanobis 
-  distance in the natural way:
-  \begin{align*}
-    \Delta_{R,n} = \sqrt{\left( \mathbf{x}_n - \hat{\mu}_{R,\mathbf{X}} \right) 
-      \hat{\Sigma}_{R,\mathbf{X}}^{-1} \left( \mathbf{x}_n - \hat{\mu}_{R,\mathbf{X}} 
-      \right)^T}
-  \end{align*}
-  We use $\Delta_{R,n}$ in the same way as $\Delta_n$.
-  \vc
-  \begin{itemize}
-  \item If $\Delta_{R,n} > C$, we label $\mathbf{x}_n$ as an outlier.
-    \vc
-  \item Again, we take $C$ to be the square-root of some quantile of the 
-    $\chi_K^2$ distribution: $C = \sqrt{\chi_{K, q}^2}$.
-  \end{itemize}
-  
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{Example}
-
-  We can get robust estimates of the sufficient statistics from the
-  \src{cov.mcd()} function provided by the \pkg{MASS} package.
-  \vb
-  <<>>=
-  ## The MCD method is stochastic, so we should set a seed:
-  set.seed(235711)
-  
-  ## Compute robust, MCD estimates of the sufficient stats:
-  stats <- boys %>%
-      select(hgt, wgt) %>%
-      na.omit() %>% # cov.mcd() won't accept missing values
-      MASS::cov.mcd(quantile.used = floor(0.9 * nrow(.)))
-  @
-
-  \pagebreak
-
-  Now, we can use the robust estimates of location and scale to estimate the
-  Mahalanobis distances.
-  \vb
-  <<>>=
-  ## Compute the robust squared Mahalanobis distances:
-  md <- boys %>%
-      select(hgt, wgt) %>%
-      mahalanobis(center = stats$center, cov = stats$cov)
-
-  ## Check the first few values:
-  head(md)
-  @
-
-  \pagebreak
-
-  We flag potential outliers using the usual method.
-
-  <<>>=
-  out <- md > qchisq(0.999, df = 2)
-
-  which(out)
-  boys %>% filter(out) %>% slice_head(n = 6)
-  @
-
-  \pagebreak
-
-  <<>>=
-  boys %>% filter(out) %>% slice_head(n = -6)
-  @
-  
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Practicalities: Univariate vs. Multivariate}
-
-  Univariate outlier checks are safe for most variables.\\ 
-  \vb
-  \pause
-  \textsc{\underline{Don't}} include too many variables in multivariate outlier 
-  checks.
-  \begin{itemize}
-  \item More variables increases the chances of false positives.
-  \item E.g., don't run a multivariate outlier test on your entire dataset.
-  \end{itemize}
-  \vb
-  \pause
-  \textsc{\underline{Do}} use multivariate outlier checks for scales.
-  \begin{itemize}
-  \item E.g., if you have a psychometric scale measuring depression, you should
-    check the items of that scale for multivariate outliers.
-  \end{itemize}
-  \vb 
-  \pause
-  \textsc{\underline{Maybe}} check the variables in a single model for
-  multivariate outliers.
-  \begin{itemize}
-  \item E.g., if you have a small set of items that you will include in a
-    regression model, it could make sense to check these variables for
-    multivariate outliers.
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
 
 \begin{frame}{Practicalities: Outliers for Categorical Data}
 
