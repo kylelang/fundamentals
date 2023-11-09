@@ -437,9 +437,7 @@ This week, we'll cover some fundamentals of `R` programming.
 - Writing your own `R` functions
 - Methods for iterating repetive operations in `R` scripts
 
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk1/lecture/lecture1.pdf). -->
+You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
 
 ### Required Reading
 
