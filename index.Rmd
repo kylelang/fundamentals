@@ -520,9 +520,7 @@ This week, we start looking more closely at programmatic data manipulation in `R
 - Manipulating and transforming data
 - Working with pipes
 
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk2/lecture/lecture2.pdf). -->
+You can find the lecture slides [here](wk2/lecture/lecture2.pdf).
 
 ### Required Reading
 
