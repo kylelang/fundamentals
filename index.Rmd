@@ -25,7 +25,7 @@ This dashboard covers the course materials for the course
 
 Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
 Lecturer: [Kyle Lang](https://www.uu.nl/medewerkers/KMLang) <br>
-WG Instructor: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+WG Instructor: [Thijs Carrière](https://www.uu.nl/staff/TCCarriere) <br>
 WG Instructor: [Anastasia Giachanou](https://www.uu.nl/medewerkers/AGiachanou/) <br>
 WG Instructor: [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero/) <br>
 Study load: 7.5 ECTS <br>
@@ -1011,7 +1011,7 @@ You must submit Assignment 2 by ***Thursday January 19, 17:00***.
 There is no R practical this week. Use your time to finish the second assignment 
 and prepare for the exam.
 
-<!----------------------------------------------------------------------------->
+<!-----------------------------------------------------------------------------
 
 # Exam Material
 
@@ -1091,7 +1091,7 @@ If any of the course materials confuse you, feel free to ask about it during the
 lecture or one of the weekly Q&A sessions (even if your concerns relate to 
 content from earlier weeks). 
 
-**We will devote part (most?) of the final lecture to a dedicated Q&A session**
+**We well devote part (most?) of the final lecture to a dedicated Q&A session**
 
 <!----------------------------------------------------------------------------->
 
