@@ -30,7 +30,6 @@ WG Instructor: [Anastasia Giachanou](https://www.uu.nl/medewerkers/AGiachanou/) 
 WG Instructor: [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero/) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam 
-<!--[Course SurfDrive folder][sd]-->
 
 ---
 
@@ -1096,5 +1095,4 @@ content from earlier weeks).
 <!----------------------------------------------------------------------------->
 
 [ftds]: https://osiris.uu.nl/osiris_student_uuprd/SetTaal.do?taal=en&bronUrl=/osiris_student_uuprd/OnderwijsCatalogusToonCursus.do&event=setTaal&requestToken=8d93024d5cc8f2a4ac3549ab7cded9443934f980
-[sd]: https://surfdrive.surf.nl/files/index.php/s/IQ517X5UitVOayk
 [isl]: https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf
