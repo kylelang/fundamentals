@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 3b: Data Cleaning
 %%% Author:   Kyle M. Lang
 %%% Created:  2015-11-06
-%%% Modified: 2023-11-09
+%%% Modified: 2023-11-21
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -416,104 +416,10 @@ print(patTab2, booktabs = TRUE)
   population than the one to which we want to generalize our findings.
   
 \end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Finding Univariate Outliers}
-
-  We have many methods available to diagnose potential outliers.
-  \vb
-  \begin{itemize}
-  \item Today, we'll only discuss two of the simplest:
-    \vc
-    \begin{enumerate}
-    \item Z-score method
-      \vc
-    \item Tukey's boxplot method
-    \end{enumerate}
-  \end{itemize}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Z-Score Method}
-
-  For each observation, $X_n$, we compute the following quantity:
-  \begin{align*}
-    Z_n = \frac{X_n - \bigbar{X}}{SD_X}
-  \end{align*}
-  \vx{-12}
-  \begin{itemize}
-  \item $Z_n$ represents the distance between $X_n$ and the sample mean in
-    standard deviation units.
-  \item Assuming a large sample, if $T_n > C$ (where $C$ is usually 3), we label
-    $X_n$ as an outlier.
-  \end{itemize}
-  
-  \vb
-  \pause
-  
-  Although simple (and popular), this method has some substantial limitations.
-  \begin{itemize}
-  \item The logic of the filtering rule assumes a normally distributed
-    variable.
-  \item Both $\bigbar{X}$ and $SD_X$ are highly sensitive to outliers.
-  \end{itemize}
-  
-\end{frame}
-
+ 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile]{Example}
-
-  We can implement the z-score method via the \src{scale()} function.
-  
-  <<>>=
-  ## Compute the absolute standardized residuals:
-  z <- boys %$% scale(bmi) %>% abs()
-
-  ## Which observations are potential outliers?
-  which(z > 3)
-
-  ## View the potentially outlying cases:
-  boys %>% filter(z > 3)
-  @
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}{Breakdown Point}
-  
-  To compare robust statistics, we consider their \emph{breakdown points}.
-  \begin{itemize}
-  \item The breakdown point is the minimum proportion of cases that must be 
-    replaced by $\infty$ to cause the value of the statistic to go to $\infty$.
-  \end{itemize}
-  \vc
-  The mean has a breakdown point of $1 / N$.
-  \begin{itemize}
-  \item Replacing a single value with $\infty$ will produce an infinite mean.
-  \end{itemize}
-  \vc
-  The deletion mean has a breakdown point of $2 / N$.
-  \begin{itemize}
-  \item We can replace, at most, 1 value with $\infty$ without producing an 
-    infinite mean.
-  \end{itemize}
-  \vc
-  The median has breakdown point of 50\%.
-  \begin{itemize}
-    \item We can replace $n < N / 2$ of the observations with $\infty$ without 
-      producing an infinite median.
-  \end{itemize}
-  
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}{Boxplot Method}
+\begin{frame}{Finding Outliers: Boxplot Method}
   
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -531,10 +437,15 @@ print(patTab2, booktabs = TRUE)
       <<echo = FALSE>>=
       data(Salaries, package = "carData")
       
-      boxplot(salary ~ sex,
-              data = Salaries,
-              ylab = "Salary",
-              main = "9-Month Salaries of Professors")
+      ggplot(Salaries, aes(sex, salary)) +
+      geom_boxplot() +
+      ggtitle("9-Month Salaries of Professors") +
+      theme_classic() +
+      theme(plot.title = element_text(hjust = 0.5))
+      #boxplot(salary ~ sex,
+      #        data = Salaries,
+      #        ylab = "Salary",
+      #        main = "9-Month Salaries of Professors")
       @
       
     \end{column}
@@ -593,7 +504,32 @@ print(patTab2, booktabs = TRUE)
 
 \watermarkon %-----------------------------------------------------------------%
 
-\begin{frame}{Practicalities: Outliers for Categorical Data}
+\begin{frame}{Breakdown Point}
+  
+  To compare robust statistics, we consider their \emph{breakdown points}.
+  \begin{itemize}
+  \item The breakdown point is the minimum proportion of cases that must be 
+    replaced by $\infty$ to cause the value of the statistic to go to $\infty$.
+  \end{itemize}
+  \vb
+  The mean has a breakdown point of $1 / N$.
+  \begin{itemize}
+  \item Replacing a single value with $\infty$ will produce an infinite mean.
+  \item This low breakdown point is why we shouldn't use basic z-scores to find
+    outliers.
+  \end{itemize}
+  \vb
+  The median has breakdown point of 50\%.
+  \begin{itemize}
+    \item We can replace $n < N / 2$ of the observations with $\infty$ without 
+      producing an infinite median.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outliers for Categorical Data}
 
   Nominal, ordinal, and binary items \emph{can} have outliers.
   \begin{itemize}
