@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 3a: Functions & Data Visualization
 %%% Author:   Kyle M. Lang
 %%% Created:  2015-11-06
-%%% Modified: 2022-11-28
+%%% Modified: 2023-11-24
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -121,182 +121,6 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\sectionslide{Functions}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{R Functions}
-
-  Functions are the foundation of R programming.
-  \vc
-  \begin{itemize}
-  \item Other than data objects, almost everything else that you interact with
-    when using R is a function.
-    \vc
-  \item Any R command written as a word followed by parentheses, \src{()}, is a
-    function.
-    \vc
-    \begin{itemize}
-    \item \src{mean()}
-    \item \src{library()}
-    \item \src{mutate()}
-    \end{itemize}
-    \vc
-  \item Infix operators are aliased functions.
-    \vc
-    \begin{itemize}
-    \item \src{<-}
-    \item \src{+}, \src{-}, \src{*}
-    \item \src{>}, \src{<}, \src{==}
-    \end{itemize}
-  \end{itemize}
-  
-\end{frame}
-
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[fragile]{User-Defined Functions}
-  
-  We can define our own functions using the \src{function()} function.
-
-  <<>>=
-  square <- function(x) {
-      out <- x^2
-      out
-  }
-  @
-
-  After defining a function, we call it in the usual way.
-
-  <<>>=
-  square(5)
-  @
-
-  One-line functions don't need braces.
-
-  <<>>=
-  square <- function(x) x^2
-  square(5)
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{User-Defined Functions}
-
-  Function arguments are not strictly typed.
-
-  <<>>=
-  square(1:5)
-  square(pi)
-  square(TRUE)
-  @
-
-  But there are limits.
-
-  <<>>=
-  square("bob") # But one can only try so hard
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{User-Defined Functions}
- 
-  Functions can take multiple arguments.
-  
-  <<>>=
-  mod <- function(x, y) x %% y
-  mod(10, 3)
-  @
-  
-  Sometimes it's useful to specify a list of arguments.
-
-  <<>>=
-  getLsBeta <- function(datList) {
-      X <- datList$X
-      y <- datList$y
-      
-      solve(crossprod(X)) %*% t(X) %*% y
-  }
-  @
-
-  \pagebreak
-
-  <<>>=
-  X       <- matrix(runif(500), ncol = 5)
-  datList <- list(y = X %*% rep(0.5, 5), X = X)
-  
-  getLsBeta(datList = datList)
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{User-Defined Functions}
-
-  Functions are first-class objects in R.
-  \begin{itemize}
-  \item We can treat functions like any other R object.
-  \end{itemize}
-
-  \vb
-  
-  R views an unevaluated function as an object with type "closure".
-
-  <<>>=
-  class(getLsBeta)
-  typeof(getLsBeta)
-  @
-
-  An evaluated functions is equivalent to the objects it returns.
-
-  <<>>=
-  class(getLsBeta(datList))
-  typeof(getLsBeta(datList))
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{User-Defined Functions}
-
-We can use functions as arguments to other operations and functions.
-
-<<>>=
-fun1 <- function(x, y) x + y
-
-## What will this command return?
-fun1(1, fun1(1, 1))
-@
-
-Why would we care?
-
-<<>>=
-s2 <- var(runif(100))
-x  <- rnorm(100, 0, sqrt(s2))
-@
-
-\pagebreak
-
-<<>>=
-X[1:8, ]
-
-c(1, 3, 6:9, 12)
-@
-
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\sectionslide{Data Visualization}
-
-%------------------------------------------------------------------------------%
-
 \begin{frame}[fragile]{Setup}
 
   <<>>=
@@ -315,7 +139,7 @@ c(1, 3, 6:9, 12)
 
 %------------------------------------------------------------------------------%
 
-\subsection{Base R Graphics}
+\section{Base R Graphics}
 
 %------------------------------------------------------------------------------%
 
@@ -357,7 +181,7 @@ c(1, 3, 6:9, 12)
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Histograms}
+\begin{frame}[fragile]{Base R Graphics: Histograms}
 
   We can create a simple histogram with the \src{hist()} function.
 
@@ -365,193 +189,134 @@ c(1, 3, 6:9, 12)
   hist(diabetes$glu)
   @
 
-  \pagebreak
+\end{frame}
 
-  <<out.width = "50%">>=
-  hist(diabetes$glu, breaks = 5)
-  @
+\watermarkoff %----------------------------------------------------------------%
 
-  \pagebreak
+\begin{frame}[fragile]{Base R Graphics: Histograms}
 
-  <<out.width = "50%">>=
-  hist(diabetes$glu, breaks = 50)
-  @
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
-  \pagebreak
+      <<>>=
+      hist(diabetes$glu, breaks = 5)
+      @
 
-  <<out.width = "50%">>=
-  hist(diabetes$glu, col = "pink", border = "blue", probability = TRUE)
-  @
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<>>=
+      hist(diabetes$glu, breaks = 50)
+      @
+
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Boxplots}
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
 
   We can create simple boxplots via the \src{boxplot()} function.
 
-  <<out.width = "50%">>=
-  boxplot(diabetes$progress)
-  @
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
-  \pagebreak
+      <<>>=
+      boxplot(diabetes$bmi)
+      @
 
-  <<eval = FALSE>>=
-  boxplot(diabetes$progress,
-          horizontal = TRUE,
-          range = 3,
-          xlab = "Disease Progression")
-  @
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<>>=
+      boxplot(bmi ~ sex, data = diabetes)
+      @
 
-  \pagebreak
-
-  <<echo = FALSE, out.width = "65%">>=
-  boxplot(diabetes$progress,
-          horizontal = TRUE,
-          range = 3,
-          xlab = "Disease Progression")
-  @
-
-  \pagebreak
-
-  <<out.width = "50%">>=
-  boxplot(progress ~ sex, data = diabetes, col = "violet")
-  @
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
-\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Fancy Things}
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
 
-  Plotting an entire data frame produces a scatterplot matrix.
- 
-  <<out.width = "50%">>=
-  diabetes %>% select(age, bmi, tc, glu, progress) %>% plot()
-  @
-
-  \pagebreak
-
-  The \src{density()} function estimates the density of a variable.
-  \begin{itemize}
-  \item If we plot a density object, we get a kernel density plot.
-  \end{itemize}
-    
-  <<out.width = "40%">>=
-  density(diabetes$bmi) %>% plot()
-  @
-
-  \pagebreak
-
-  <<>>=
-  d <- density(diabetes$bmi)
-  ls(d)
-  @
-
-  \pagebreak
-
-  <<out.width = "50%">>=
-  d %$% plot(y = y, x = x, type = "l")
+  <<eval = FALSE>>=
+  boxplot(bmi ~ sex,
+          data = diabetes,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Disease Progression",
+          ylab = "Sex")
   @
 
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Workflow}
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
 
-  Base R graphics work by building up figures in layers.
-
-  <<eval = FALSE>>=
-  ## Start with a simple scatterplot:
-  diabetes %$% plot(y = tc, x = bmi, pch = 20, xlab = "", ylab = "")
-  
-  ## Use the abline() function to add lines representing the means of x and y:
-  abline(h = mean(diabetes$tc), v = mean(diabetes$bmi), lty = 2)
-
-  ## Add the best fit line from a linear regression of 'tc' onto 'bmi':
-  diabetes %$%
-      lm(tc ~ bmi) %>%
-      coef() %>%
-      abline(coef = ., col = "blue", lwd = 2)
-  
-  ## Add titles:
-  title(main = "Total Cholesterol by Body Mass Index",
-        ylab = "Total Cholesterol",
-        xlab = "Body Mass Index")
-  @
-  
-  \pagebreak
-  
   <<echo = FALSE, out.width = "65%">>=
-  diabetes %$% plot(y = tc, x = bmi, pch = 20, xlab = "", ylab = "")
-  
-  abline(h = mean(diabetes$tc), v = mean(diabetes$bmi), lty = 2)
-
-  diabetes %$%
-      lm(tc ~ bmi) %>%
-      coef() %>%
-      abline(coef = ., col = "blue", lwd = 2)
-  
-  title(main = "Total Cholesterol by Body Mass Index",
-        ylab = "Total Cholesterol",
-        xlab = "Body Mass Index")
-  @
-
-\end{frame}
-
-% ------------------------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Workflow}
-  
-  Add a kernel density plot on top of a histogram.
-
-  <<eval = FALSE>>=
-  diabetes %$%
-      hist(age,
-           probability = TRUE,
-           xlab = "Age",
-           main = "Distribution of Age")
-
-  diabetes %$%
-      density(age) %>%
-      lines(col = "red", lwd = 2)
-  @
-
-  \pagebreak
-  
-  <<echo = FALSE, out.width = "65%">>=
-  diabetes %$%
-      hist(age,
-           probability = TRUE,
-           xlab = "Age",
-           main = "Distribution of Age")
-
-  diabetes %$%
-      density(age) %>%
-      lines(col = "red", lwd = 2)
+  boxplot(bmi ~ sex,
+          data = diabetes,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Disease Progression",
+          ylab = "Sex")
   @
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\subsection{GGPlot}
+\begin{frame}[fragile]{Base R Graphics: Kernel Density Plots}
 
-%------------------------------------------------------------------------------%
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      The \src{density()} function estimates the density of a variable.
+      \vc
+      \begin{itemize}
+        \item If we plot a density object, we get a kernel density plot.
+      \end{itemize}
+
+      <<eval = FALSE>>=
+      density(diabetes$bmi) %>% 
+        plot(main = "Estimated Density of BMI")
+      @
+
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<echo = FALSE>>=
+      density(diabetes$bmi) %>%
+        plot(main = "Estimated Density of BMI")
+      @
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{GGPlot}
+
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}{GGPlot}
 
-  Base R graphics are fine for quick-and-dirty visualizations (e.g., EDA,
-  checking assumptions), but for publication quality graphics, you should
-  probably use GGPlot.
-  \vc
+  Base R graphics are fine for quick-and-dirty visualizations, but for 
+  publication quality graphics, you should probably use GGPlot.
+  \vb
   \begin{itemize}
   \item GGPlot uses the "grammar of graphics" and "tidy data" to build up a
     figure from modular components.
   \end{itemize}
-
+  \vx{-12}
   \begin{center}
     \includegraphics[width = 0.8\textwidth]{images/grammar.jpg}
   \end{center}
@@ -562,9 +327,10 @@ c(1, 3, 6:9, 12)
 
 \begin{frame}[fragile, allowframebreaks]{GGPlot: Basic Setup}
 
-  We start by calling the \src{ggplot()} function.
+  We start by calling the \src{ggplot()} function to initialize the object that
+  will define our plot.
   \begin{itemize}
-  \item We must define a data source.
+  \item We must specify a data source.
   \item We must also give some aesthetic via the \src{aes()} function.
   \end{itemize}
   
@@ -601,16 +367,10 @@ c(1, 3, 6:9, 12)
 
   \pagebreak
 
-  <<out.width = "50%">>=
-  p1 + geom_rug()
-  @
-
-  \pagebreak
-  
   We can also combine different geometries into a single figure
 
   <<out.width = "50%">>=
-  p1 + geom_point() + geom_line() + geom_rug()
+  p1 + geom_point() + geom_line()
   @
 
   \pagebreak
@@ -637,27 +397,8 @@ c(1, 3, 6:9, 12)
   \pagebreak
 
   <<out.width = "50%">>=
-  p3 <- ggplot(diabetes, aes(sex, bmi))
+  p3 <- ggplot(diabetes, aes(sex, progress))
   p3 + geom_boxplot()
-  @
-  
-  \pagebreak
-
-  <<out.width = "50%">>=
-  p3 + geom_violin()
-  @
-
-  \pagebreak
-
-  <<out.width = "50%">>=
-  p4 <- ggplot(bfi, aes(education, age))
-  p4 + geom_point()
-  @
-
-  \pagebreak
-
-  <<out.width = "50%">>=
-  p4 + geom_jitter()
   @
   
 \end{frame}
@@ -689,7 +430,7 @@ c(1, 3, 6:9, 12)
 
   <<out.width = "50%", fig.asp = 0.8>>=
   p5 <- ggplot(titanic, aes(age, survived))
-  p5 + geom_jitter(color = "blue", size = 3, height = 0.1)
+  p5 + geom_jitter(color = "blue", size = 2, height = 0.1)
   @
   
   \pagebreak
@@ -699,45 +440,31 @@ c(1, 3, 6:9, 12)
 
   <<out.width = "50%", fig.asp = 0.8>>=
   p6.1 <- ggplot(titanic, aes(age, survived, color = sex))
-  p6.1 + geom_jitter(size = 3, height = 0.1) + geom_smooth()
+  p6.1 + geom_jitter(size = 2, height = 0.1) + geom_smooth()
   @
 
   \pagebreak
 
   <<out.width = "50%", fig.asp = 0.8>>=
   p6.2 <- ggplot(titanic, aes(age, survived))
-  p6.2 + geom_jitter(aes(color = sex), size = 3, height = 0.1) +
+  p6.2 + geom_jitter(aes(color = sex), size = 2, height = 0.1) +
       geom_smooth()
   @
 
   \pagebreak
 
   <<out.width = "50%", fig.asp = 0.8>>=
-  p6.2 + geom_jitter(size = 3, height = 0.1) +
+  p6.2 + geom_jitter(size = 2, height = 0.1) +
       geom_smooth(aes(color = sex))
   @
 
   \pagebreak
 
   <<out.width = "50%", fig.asp = 0.8>>=
-  p6.2 + geom_jitter(aes(color = class), size = 3, height = 0.1) +
-      geom_smooth(aes(color = sex))
+  p6.2 + geom_jitter(aes(color = class), size = 2, height = 0.1) +
+    geom_smooth(aes(linetype = sex))
   @
 
-  \pagebreak
-
-  <<out.width = "50%", fig.asp = 0.8>>=
-  p6.2 + geom_jitter(aes(shape = class), size = 3, height = 0.1) +
-    geom_smooth(aes(color = sex))
-  @
-
-  \pagebreak
-
-  <<out.width = "50%", fig.asp = 0.8>>=
-  p6.1 + geom_jitter(aes(shape = class), size = 3, height = 0.1) +
-    geom_smooth()
-  @
-  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -884,7 +611,7 @@ c(1, 3, 6:9, 12)
   
   grid.arrange(p1 + geom_point(),
                p3 + geom_boxplot(),
-               p4 + geom_jitter(),
+               p1 + geom_line(),
                p8 + facet_grid(vars(sex), vars(class)),
                ncol = 2)
   @
@@ -896,65 +623,9 @@ c(1, 3, 6:9, 12)
   
   grid.arrange(p1 + geom_point(),
                p3 + geom_boxplot(),
-               p4 + geom_jitter(),
-               p8 + facet_grid(vars(sex), vars(class)),
+               p1 + geom_line(),
+               p8 + facet_wrap(vars(sex)),
                ncol = 2)
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\subsection{Saving Graphics}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile, allowframebreaks]{Saving Graphics}
-
-  To save a graphic that we've created in R, we simply redirect the graphical
-  output to a file using an appropriate function.
-
-  <<>>=
-  figDir <- "figures/"
-  
-  ## Save as PDF
-  pdf(paste0(figDir, "example_plot.pdf"))
-
-  p7 + facet_wrap(vars(sex))
-  
-  dev.off()
-  @
-
-  \pagebreak
-
-  <<>>=
-  ## Save as JPEG
-  jpeg(paste0(figDir, "example_plot.jpg"))
-  
-  p7 + facet_wrap(vars(sex))
-  
-  dev.off()
- 
-  ## Save as PNG
-  png(paste0(figDir, "example_plot.png"))
-  
-  p7 + facet_wrap(vars(sex))
-  
-  dev.off()
-  @
-
-  \pagebreak
-  
-  With PDF documents, we can save multiple figures to a single file.
-
-  <<>>=
-  pdf(paste0(figDir, "example_plot2.pdf"))
-  
-  p6.1 + geom_jitter(size = 3, height = 0.1) + geom_smooth()
-  p7 + facet_wrap(vars(sex))
-  p8 + facet_grid(vars(sex), vars(class))
-  
-  dev.off()
   @
 
 \end{frame}

@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 3b: Data Cleaning
 %%% Author:   Kyle M. Lang
 %%% Created:  2015-11-06
-%%% Modified: 2023-11-21
+%%% Modified: 2023-11-24
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -225,6 +225,53 @@ print(patTab2, booktabs = TRUE)
 
 \captionsetup{labelformat = default}
 
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<eval = FALSE>>=
+      ## Load the mice library:
+      library(mice)
+
+      ## Compute missing data patterns:
+      pats <- md.pattern(boys)
+      @
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+      <<echo = FALSE>>=
+      library(mice)
+
+      ## Compute missing data patterns:
+      pats <- md.pattern(boys)
+      @
+
+    \end{column}
+  \end{columns}
+
+  \pagebreak
+
+  <<>>=
+  pats
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## How many unique response patterns?
+  nrow(pats) - 1
+
+  ## What is the most common response patterns?
+  maxPat <- rownames(pats) %>% as.numeric() %>% which.max()
+  pats[maxPat, ]
+  @
+
+\end{frame}
+
 \watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[allowframebreaks]{Nonresponse Rates}
@@ -266,7 +313,7 @@ print(patTab2, booktabs = TRUE)
   data(boys, package = "mice")
 
   ## Compute variable-wise proportions missing:
-  mMat  <- is.na(boys)
+  mMat <- is.na(boys)
   mMat %>% colMeans() %>% round(3)
   @
 
@@ -278,7 +325,7 @@ print(patTab2, booktabs = TRUE)
 
   ## Summarize the above:
   range(pmRow)
-  range(pmRow[pmRow > 0])
+  pmRow[pmRow > 0] %>% range()
   median(pmRow)
 
   ## Compute the proportion of complete cases:
@@ -296,7 +343,7 @@ print(patTab2, booktabs = TRUE)
 
   <<>>=
   ## Compute the covariance coverage:
-  cc <- mice::md.pairs(boys)$rr / nrow(boys)
+  cc <- md.pairs(boys)$rr / nrow(boys)
 
   ## Check the result:
   round(cc, 2)
@@ -307,36 +354,12 @@ print(patTab2, booktabs = TRUE)
   <<>>=
   ## Range of coverages:
   range(cc)
-  range(cc[cc < 1])
+  cc[cc < 1] %>% range()
 
   ## How many coverages fall below some threshold?
-  (cc[lower.tri(cc)] < 0.7) %>% sum()
+  {cc[lower.tri(cc)] < 0.7} %>% sum()
   @
 
-  \pagebreak
-
-  <<out.width = "50%">>=
-  ## Compute missing data patterns:
-  pats <- mice::md.pattern(boys)
-  @
-
-  \pagebreak
-
-  <<>>=
-  pats
-  @
-
-  \pagebreak
-
-  <<>>=
-  ## How many unique response patterns?
-  nrow(pats) - 1
-
-  ## What is the most commond response patterns?
-  maxPat <- rownames(pats) %>% as.numeric() %>% which.max()
-  pats[maxPat, ]
-  @
-  
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -442,10 +465,6 @@ print(patTab2, booktabs = TRUE)
       ggtitle("9-Month Salaries of Professors") +
       theme_classic() +
       theme(plot.title = element_text(hjust = 0.5))
-      #boxplot(salary ~ sex,
-      #        data = Salaries,
-      #        ylab = "Salary",
-      #        main = "9-Month Salaries of Professors")
       @
       
     \end{column}
@@ -515,8 +534,7 @@ print(patTab2, booktabs = TRUE)
   The mean has a breakdown point of $1 / N$.
   \begin{itemize}
   \item Replacing a single value with $\infty$ will produce an infinite mean.
-  \item This low breakdown point is why we shouldn't use basic z-scores to find
-    outliers.
+  \item This is why we shouldn't use basic z-scores to find outliers.
   \end{itemize}
   \vb
   The median has breakdown point of 50\%.
@@ -595,19 +613,19 @@ print(patTab2, booktabs = TRUE)
 \begin{frame}{Treating Outliers}
   
   For univariate outliers, we can use less extreme types of deletion.
+  \vc
   \begin{itemize}
   \item Delete outlying values (but not the entire observation).
+    \vc
   \item These empty cells then become missing data.
-  \end{itemize}
-  \vb
-  Winsorization:
-  \begin{itemize}
-  \item Replace the missing values with the nearest non-outlying value.
-  \end{itemize}
-  \vb
-  Missing data analysis:
-  \begin{itemize}
+    \vc
   \item Treat the missing values along with any naturally-occurring nonresponse.
+  \end{itemize}
+  \va
+  Winsorization:
+  \vc
+  \begin{itemize}
+  \item Replace the outliers with the nearest non-outlying value.
   \end{itemize}
   
 \end{frame}

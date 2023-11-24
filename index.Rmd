@@ -589,78 +589,10 @@ This week, we continue with our discussion of programmatic data processing.
 - Data visualization using `ggplot2`
 - Data exploration and cleaning
 
-**Once they're ready, the lecture slides will be linked here.**
-
-<!--
-
 You can find the lecture slides below.
 
-- [Functions and Data visualization](wk3/lecture/functions_visualization.pdf)
+- [Data visualization](wk3/lecture/visualization.pdf)
 - [Data cleaning](wk3/lecture/cleaning.pdf)
-
-You can find recordings of the data cleaning lecture below.
-
-<iframe width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/TKx146AMjo8" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; 
-               autoplay; 
-               clipboard-write; 
-               encrypted-media; 
-               gyroscope; 
-               picture-in-picture" 
-        allowfullscreen
-        data-external="1">
-</iframe>
-
-<iframe width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/O5Np9uwsPPI" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; 
-               autoplay; 
-               clipboard-write; 
-               encrypted-media; 
-               gyroscope; 
-               picture-in-picture" 
-        allowfullscreen
-        data-external="1">
-</iframe>
-
-<iframe width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/3iQ1JtSEMXA" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; 
-               autoplay; 
-               clipboard-write; 
-               encrypted-media; 
-               gyroscope; 
-               picture-in-picture" 
-        allowfullscreen
-        data-external="1">
-</iframe>
-
-<iframe width="560" 
-        height="315" 
-        src="https://www.youtube.com/embed/cxVB24Meb08" 
-        title="YouTube video player" 
-        frameborder="0" 
-        allow="accelerometer; 
-               autoplay; 
-               clipboard-write; 
-               encrypted-media; 
-               gyroscope; 
-               picture-in-picture" 
-        allowfullscreen
-        data-external="1">
-</iframe>
-
--->
 
 ### Required Reading
 
