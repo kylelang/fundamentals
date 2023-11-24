@@ -79,7 +79,7 @@
 \newcommand{\apipe}{\texttt{\%<>\%}}
 \newcommand{\rpipe}{\texttt{|>}}
 
-\title{Functions \& Data Visualization}
+\title{Data Visualization}
 \subtitle{Fundamental Techniques in Data Science}
 \author{Kyle M. Lang}
 \institute{Department of Methodology \& Statistics\\Utrecht University}
@@ -103,6 +103,16 @@ opts_chunk$set(size = "footnotesize",
                warning = FALSE,
                comment = "")
 knit_theme$set('edit-kwrite')
+
+dataDir  <- "../../../data/"
+
+## Load some data:
+diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
+titanic  <- readRDS(paste0(dataDir, "titanic.rds"))
+bfi      <- readRDS(paste0(dataDir, "bfi.rds"))
+  
+## Convert survival indicator to a numeric dummy code:
+titanic <- titanic %>% mutate(survived = as.numeric(survived) - 1)
 @
 
 \begin{document}
@@ -117,24 +127,6 @@ knit_theme$set('edit-kwrite')
 
 \begin{frame}{Outline}
   \tableofcontents
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Setup}
-
-  <<>>=
-  dataDir  <- "../../../data/"
-
-  ## Load some data:
-  diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
-  titanic  <- readRDS(paste0(dataDir, "titanic.rds"))
-  bfi      <- readRDS(paste0(dataDir, "bfi.rds"))
-  
-  ## Convert survival indicator to a numeric dummy code:
-  titanic <- titanic %>% mutate(survived = as.numeric(survived) - 1)
-  @
-
 \end{frame}
 
 %------------------------------------------------------------------------------%
@@ -248,7 +240,7 @@ knit_theme$set('edit-kwrite')
           data = diabetes,
           horizontal = TRUE,
           range = 3,
-          xlab = "Disease Progression",
+          xlab = "Body Mass Index",
           ylab = "Sex")
   @
 
@@ -263,7 +255,7 @@ knit_theme$set('edit-kwrite')
           data = diabetes,
           horizontal = TRUE,
           range = 3,
-          xlab = "Disease Progression",
+          xlab = "Body Mass Index",
           ylab = "Sex")
   @
 
@@ -284,7 +276,7 @@ knit_theme$set('edit-kwrite')
 
       <<eval = FALSE>>=
       density(diabetes$bmi) %>% 
-        plot(main = "Estimated Density of BMI")
+        plot(main = "Density of BMI")
       @
 
 
@@ -293,7 +285,7 @@ knit_theme$set('edit-kwrite')
     
       <<echo = FALSE>>=
       density(diabetes$bmi) %>%
-        plot(main = "Estimated Density of BMI")
+        plot(main = "Density of BMI")
       @
 
     \end{column}
@@ -397,7 +389,7 @@ knit_theme$set('edit-kwrite')
   \pagebreak
 
   <<out.width = "50%">>=
-  p3 <- ggplot(diabetes, aes(sex, progress))
+  p3 <- ggplot(diabetes, aes(sex, bmi))
   p3 + geom_boxplot()
   @
   
