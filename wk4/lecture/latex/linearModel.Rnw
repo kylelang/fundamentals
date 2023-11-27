@@ -1,7 +1,7 @@
 %%% Title:    Overview of Linear Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2022-12-04
+%%% Modified: 2023-11-27
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -560,36 +560,16 @@ knit_theme$set('edit-kwrite')
   out1 <- lm(bp ~ age, data = dDat)
   @
   
-  \va
-  
-  \textsc{Asking}: What is the effect of age on average blood pressure?
-  
-\end{frame}
+  \rmsc{Asking}: What is the effect of age on average blood pressure?
 
-\watermarkoff %----------------------------------------------------------------%
-
-\begin{frame}[allowframebreaks, fragile]{Example}
-  
-  <<cache = TRUE>>=
-  partSummary(out1, -1)
-  @
-  
-\end{frame}
-
-\watermarkon %-----------------------------------------------------------------%
-
-\begin{frame}[fragile]{Example}
-  
   <<cache = TRUE>>=
   ## Add in another predictor:
   out2 <- lm(bp ~ age + bmi, data = dDat)
   @
   
-  \va
-  
-  \textsc{Asking}: What is the effect of BMI on average blood pressure,
+  \rmsc{Asking}: What is the effect of BMI on average blood pressure,
   \emph{after controlling for age?}
-  \vb
+  \vc
   \begin{itemize}
   \item We're partialing age out of the effect of BMI on blood pressure.
   \end{itemize}
@@ -952,8 +932,8 @@ partSummary(out4, -c(1, 2))
   significance by evaluating the significance of a single dummy code.
 
 <<>>=
-out2 <- lm(Price ~ Man.trans.avail, data = Cars93)
-partSummary(out2, -c(1, 2))
+out <- lm(Price ~ Man.trans.avail, data = Cars93)
+partSummary(out, -c(1, 2))
 @
 
 \end{frame}
@@ -976,8 +956,8 @@ partSummary(out4, -c(1, 2))
 \begin{frame}[fragile]{Significance Testing}
 
 <<>>=
-summary(out4)$r.squared - summary(out2)$r.squared
-anova(out2, out4)
+summary(out4)$r.squared - summary(out)$r.squared
+anova(out, out4)
 @
 
 \end{frame}
@@ -1416,45 +1396,16 @@ p2 +
 
 \begin{frame}[fragile]{Example}
 
-<<echo = FALSE>>=
-dDat <- readRDS("../data/diabetes.rds")
-@
-
 <<>>=
-## Focal Effect:
-out0 <- lm(bp ~ bmi, data = dDat)
-partSummary(out0, -c(1, 2))
+out <- lm(bp ~ bmi * ldl, data = dDat)
+partSummary(out, -c(1, 2))
 @
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Example}
-
-<<>>=
-## Additive Model:
-out1 <- lm(bp ~ bmi + ldl, data = dDat)
-partSummary(out1, -c(1, 2))
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Example}
-
-<<>>=
-## Moderated Model:
-out2 <- lm(bp ~ bmi * ldl, data = dDat)
-partSummary(out2, -c(1, 2))
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Visualizing the Interaction}
+\begin{frame}<0>[fragile, noframenumbering]{Visualizing the Interaction}
   
   \begin{columns}
     \begin{column}{0.5\textwidth}
@@ -1526,9 +1477,12 @@ partSummary(out2, -c(1, 2))
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
+      We can get a better idea of the patterns of moderation by plotting the
+      focal effect at conditional values of the moderator.
+
       <<eval = FALSE>>=
       library(rockchalk)
-      plotSlopes(out2,
+      plotSlopes(out,
                  plotx = "bmi",
                  modx = "ldl",
                  modxVals = "std.dev")
@@ -1540,7 +1494,7 @@ partSummary(out2, -c(1, 2))
       
       <<echo = FALSE>>=
       library(rockchalk)
-      plotSlopes(out2,
+      plotSlopes(out,
                  plotx = "bmi",
                  modx = "ldl",
                  modxVals = "std.dev")
@@ -1587,21 +1541,9 @@ partSummary(out2, -c(1, 2))
 ## Load data:
 socSup <- readRDS(paste0(dataDir, "social_support.rds"))
 
-## Focal effect:
-out3 <- lm(bdi ~ tanSat, data = socSup)
-partSummary(out3, -c(1, 2))
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Example}
-
-<<>>=
-## Estimate the interaction:
-out4 <- lm(bdi ~ tanSat * sex, data = socSup)
-partSummary(out4, -c(1, 2))
+## Estimate the moderated regression model:
+out <- lm(bdi ~ tanSat * sex, data = socSup)
+partSummary(out, -c(1, 2))
 @
 
 \end{frame}
@@ -1615,10 +1557,10 @@ partSummary(out4, -c(1, 2))
       {\scriptsize
         \vx{-12}
         \begin{align*}
-          \hat{Y}_{BDI} &= \Sexpr{sprintf('%.2f', round(coef(out4)[1], 2))}
-            \Sexpr{sprintf('%.2f', round(coef(out4)[2], 2))} X_{tsat} +
-              \Sexpr{sprintf('%.2f', round(coef(out4)[3], 2))} Z_{male}\\
-                &\Sexpr{sprintf('%.2f', round(coef(out4)[4], 2))}
+          \hat{Y}_{BDI} &= \Sexpr{sprintf('%.2f', round(coef(out)[1], 2))}
+            \Sexpr{sprintf('%.2f', round(coef(out)[2], 2))} X_{tsat} +
+              \Sexpr{sprintf('%.2f', round(coef(out)[3], 2))} Z_{male}\\
+                &\Sexpr{sprintf('%.2f', round(coef(out)[4], 2))}
                   X_{tsat} Z_{male}
         \end{align*}
         \vx{-12}
@@ -1637,8 +1579,8 @@ p3 <- ggplot(data    = socsupport,
 p4 <- p3 + geom_jitter(na.rm = TRUE) +
     scale_colour_manual(values = c("red", "blue"))
 
-p4 + geom_abline(slope     = coef(out4)["tanSat"],
-                 intercept = coef(out4)[1],
+p4 + geom_abline(slope     = coef(out)["tanSat"],
+                 intercept = coef(out)[1],
                  colour    = "red",
                  linewidth = 1.5) +
     geom_abline(slope     = coef(out5)["tanSat"],
