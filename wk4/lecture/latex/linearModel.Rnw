@@ -13,6 +13,8 @@
 \usepackage{booktabs}
 \usepackage{relsize}
 
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+
 \title{Introduction to Linear Modeling}
 \subtitle{Fundamental Techniques in Data Science with R}
 \author{Kyle M. Lang}

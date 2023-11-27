@@ -42,7 +42,7 @@ Assessment: Assignments and Exam
 | WG2         | Thursday<br>11:00   | Ruppert<br>011          |
 | WG3         | Thursday<br>09:00   | BOL<br>1.051            |
 | WG4         | Thursday<br>11:00   | BOL<br>1.051            |
-| Exam        | 2023-01-25<br>13:30 | Educatorium<br>ALFA     |
+| Exam        | 2024-01-24<br>19:00 | Ruppert<br>Blauw        |
 
 Check [MyTimetable](https://mytimetable.uu.nl/schedule) for changes in the schedule!
 
@@ -658,9 +658,7 @@ modeling.
 - Categorical predictors
 - Moderation
   
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk4/lecture/linearModel.pdf) -->
+You can find the lecture slides [here](wk4/lecture/linearModel.pdf)
 
 ### Required Reading
 
