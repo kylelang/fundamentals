@@ -499,7 +499,7 @@ ggplot(mpg) +
 
 It is possible to facet on a combination of two variables using `facet_grid()`. Like before, the first argument is a formula, but containing two variable names separated by `~`. Below is an example of how this can work. 
 
-```{r, include = params$answers}
+```{r}
 ggplot(mpg) + 
   geom_point(aes(x = displ, 
                  y = hwy)) + 
