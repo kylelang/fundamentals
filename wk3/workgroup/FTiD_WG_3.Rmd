@@ -70,7 +70,11 @@ knitr::opts_chunk$set(warning = FALSE,
 <h3> 1\. Work on Assignment 1: Exploratory analysis </h3>
 
 
-## General comments - Individual Assignment
+## General comments for Assignment 1
+
+<h3> based on practicals: </h3>
+
+<br>
 
 <h3> - Annotate code </h3>
 <h3> - Write text to explain your steps </h3>
