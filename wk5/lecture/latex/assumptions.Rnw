@@ -1,7 +1,13 @@
 %%% Title:    Regression Assumptions & Diagnostics
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2022-12-09
+%%% Modified: 2023-11-28
+
+% TODO:
+% - Add partial regression plots to model specification section
+% - Add ICC to clustering section
+% - Add vcovCL() example to clustering section
+% - Streamline influence measures section
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -67,7 +73,7 @@
 <<setup, include = FALSE, cache = FALSE>>=
 set.seed(235711)
 
-dataDir <- "../data/"
+dataDir <- "../../../data/"
 codeDir <- "../../../code/"
 
 library(knitr)
@@ -305,6 +311,35 @@ p0 + geom_hline(yintercept = 0, colour = "gray") +
 
 %------------------------------------------------------------------------------%
 
+\begin{frame}[fragile]{Residual Plots}
+
+  We can easily generate a simple plot of residuals vs. fitted values by
+  plotting the fitted \texttt{lm()} object in R.
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<eval = FALSE>>=
+      out1 <- lm(Price ~ Horsepower, data = Cars93)
+
+      plot(out1, 1)
+      @
+
+\end{column}
+\begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+plot(out1, 1)
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+
+%------------------------------------------------------------------------------%
+
 \begin{frame}{Heteroscedasticity}
 
   One commonly encountered problem is non-constant error variance (i.e.,
@@ -332,35 +367,6 @@ p1 <- gg0(x = predict(out1), y = resid(out1))
 p1 + geom_hline(yintercept = 0, colour = "gray") +
     xlab("Predicted Price") +
     ylab("Residual Price")
-@
-
-\end{column}
-\end{columns}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Heteroscedasticity}
-
-  We can easily generate a simple plot of residuals vs. fitted values by
-  plotting the fitted \texttt{lm()} object in R.
-
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-<<eval = FALSE>>=
-out1 <- lm(Price ~ Horsepower,
-           data = Cars93)
-
-plot(out1, 1)
-@
-
-\end{column}
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-plot(out1, 1)
 @
 
 \end{column}
@@ -529,6 +535,38 @@ defTest
 \end{frame}
 
 \watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+<<warning = FALSE>>=
+## Read in some data:
+LeeBryk <- readRDS(paste0(dataDir, "lee_bryk.rds"))
+
+## Check the data:
+str(LeeBryk, vec.len = 3)
+
+## Estimate a linear regression model:
+fit <- lm(math ~ ses + sector, data = LeeBryk)
+
+## Calculate the residual ICC:
+ICC::ICCbare(x = LeeBryk$schoolid, y = resid(fit))
+@
+
+\pagebreak
+
+<<>>=
+library(lmtest)
+library(sandwich)
+## Robust tests:
+coeftest(fit, vcov = vcovCL(fit, ~ schoolid))
+
+## Raw tests:
+summary(fit)$coefficients
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
 
 \begin{frame}{Model Specification}
 
@@ -1075,44 +1113,20 @@ qqline(resid(out1))
 
 \begin{frame}{Measures of Influence}
 
-  Measures of influence come in two flavors.
-  \vb
-  \begin{enumerate}
-  \item Global measures of influence
-    \vc
-    \begin{itemize}
-    \item Cook's Distance
-    \end{itemize}
-    \vb
-  \item Coefficient-specific measures of influence
-    \vc
-    \begin{itemize}
-    \item DFBETAS
-    \end{itemize}
-  \end{enumerate}
-  \vb
   All measures of influence use the same logic as the deleted residual.
   \vc
   \begin{itemize}
   \item Compare models estimated from the whole sample to models estimated from
     samples excluding individual observations.
   \end{itemize}
-\end{frame}
 
-%------------------------------------------------------------------------------%
+  \va
 
-\begin{frame}{Global Measures of Influence}
+ One of the most common measures of influence is \emph{Cook's Distance}.
 
-  Each observation gets a Cook's Distance value.
   \begin{align*}
     \textrm{Cook's} ~ D_n &= \frac{\sum_{n = 1}^N \left( \hat{Y}_n - \hat{Y}_{(n)} \right)^2}{\left(P + 1\right) \hat{\sigma}^2}\\[6pt]
                           &= (P + 1)^{-1} t_n^2 \frac{h_n}{1 - h_n}
-  \end{align*}
-
-  Each regression coefficient (including the intercept) gets a DFBETAS value for
-  each observation.
-  \begin{align*}
-    \textrm{DFBETAS}_{np} = \frac{\hat{\beta}_p - \hat{\beta}_{p(n)}}{\textrm{SE}_{\hat{\beta}_{p(n)}}}
   \end{align*}
 
 \end{frame}
@@ -1146,54 +1160,6 @@ qqline(resid(out1))
       <<>>=
       cd <- cooks.distance(out1)
       plot(cd)
-      @
-      
-    \end{column}
-  \end{columns}
-  
-\end{frame}
-
-% ------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Plots of DFBETAS}
-  
-  <<eval = FALSE>>=
-  dfb <- dfbetas(out1)
-  plot(dfb[ , 1], main = "Intercept")
-  plot(dfb[ , 2], main = "Slope")
-  @
-  
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-      
-      <<echo = FALSE>>=
-      dfb <- dfbetas(out1)
-      plot(dfb[ , 1], main = "Intercept")
-      @
-      
-      <<echo = FALSE, eval = FALSE>>=
-      dfb <- dfbetas(out1)
-      
-      p1 <- gg0(x = c(1 : n), y = dfb[ , 1])
-      
-      p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
-          xlab("Index") +
-          ylab("DFBETAS for Intercept")
-      @
-      
-    \end{column}
-    \begin{column}{0.5\textwidth}
-      
-      <<echo = FALSE>>=
-      plot(dfb[ , 2], main = "Slope")
-      @
-      
-      <<echo = FALSE, eval = FALSE>>=
-      p1 <- gg0(x = c(1 : n), y = dfb[ , 2])
-      
-      p1 + geom_hline(yintercept = c(-2 / sqrt(n), 2 / sqrt(n)), colour = "red") +
-          xlab("Index") +
-          ylab("DFBETAS for Slope")
       @
       
     \end{column}
