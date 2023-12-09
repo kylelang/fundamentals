@@ -1,13 +1,7 @@
 %%% Title:    Regression Assumptions & Diagnostics
 %%% Author:   Kyle M. Lang
 %%% Created:  2018-04-12
-%%% Modified: 2023-11-28
-
-% TODO:
-% - Add partial regression plots to model specification section
-% - Add ICC to clustering section
-% - Add vcovCL() example to clustering section
-% - Streamline influence measures section
+%%% Modified: 2023-12-09
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -279,10 +273,10 @@ knit_theme$set('edit-kwrite')
   One of the most useful diagnostic graphics is the plot of residuals vs.
   predicted values.
 
-\vb
+  \vb
 
-\begin{columns}
-\begin{column}{0.5\textwidth}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE, message = FALSE>>=
 data(anscombe)
@@ -293,9 +287,9 @@ p0 + geom_smooth(method = "lm", se = FALSE) +
     xlab("X") +
     ylab("Y")
 @
-\end{column}
 
-\begin{column}{0.5\textwidth}
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE>>=
 p0 <- gg0(x = predict(out1), y = resid(out1))
@@ -304,8 +298,8 @@ p0 + geom_hline(yintercept = 0, colour = "gray") +
     ylab("Residual Y")
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -320,57 +314,48 @@ p0 + geom_hline(yintercept = 0, colour = "gray") +
     \begin{column}{0.5\textwidth}
 
       <<eval = FALSE>>=
-      out1 <- lm(Price ~ Horsepower, data = Cars93)
+      out1 <- lm(Price ~ Horsepower,
+                 data = Cars93)
 
       plot(out1, 1)
       @
 
-\end{column}
-\begin{column}{0.5\textwidth}
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE>>=
+out1 <- lm(Price ~ Horsepower, data = Cars93)
 plot(out1, 1)
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
-
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}{Heteroscedasticity}
 
-  One commonly encountered problem is non-constant error variance (i.e.,
-  \emph{heteroscedasticity}) which violates Assumption \ref{constVar}.
-
-  \vb
+  Non-constant error variance (\emph{heteroscedasticity}) violates
+  Assumption \ref{constVar}.
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-<<echo = FALSE, message = FALSE>>=
-data(Cars93)
-out1 <- lm(Price ~ Horsepower, data = Cars93)
-
-p1 <- gg0(x = Cars93$Horsepower, y = Cars93$Price)
-p1 + geom_smooth(method = "lm", se = FALSE) +
-    xlab("Horsepower") +
-    ylab("Price")
-@
-\end{column}
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE>>=
-p1 <- gg0(x = predict(out1), y = resid(out1))
-p1 + geom_hline(yintercept = 0, colour = "gray") +
-    xlab("Predicted Price") +
-    ylab("Residual Price")
+<<>>=
+plot(out1, 1)
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<>>=
+plot(out1, 3)
+@
+
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -555,8 +540,6 @@ ICC::ICCbare(x = LeeBryk$schoolid, y = resid(fit))
 \pagebreak
 
 <<>>=
-library(lmtest)
-library(sandwich)
 ## Robust tests:
 coeftest(fit, vcov = vcovCL(fit, ~ schoolid))
 
@@ -568,50 +551,25 @@ summary(fit)$coefficients
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Model Specification}
+\begin{frame}{Linearity}
 
-  Our assumptions mostly focus on the errors, so incorrect model specification
-  can lead to violations of many assumptions.
+ Each modeled $X$ must exhibit a linear relation with $Y$.
+  \begin{itemize}
+    \item We can define $X$ via nonlinear transformations of the orgininal data.
+  \end{itemize}
+  
   \vb
+
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-<<echo = FALSE>>=
+<<echo = FALSE, message = FALSE>>=
 out2 <- lm(MPG.highway ~ Horsepower, data = Cars93)
 
 p2 <- gg0(x = predict(out2), y = resid(out2))
 p3 <- p2 + geom_hline(yintercept = 0, colour = "gray") +
     xlab("Predicted MPG") +
     ylab("Residual MPG")
-p3
-@
-
-\end{column}
-
-\begin{column}{0.5\textwidth}
-
-<<echo = FALSE, message = FALSE>>=
-p3 + geom_smooth(method = "loess", se = FALSE)
-@
-
-\end{column}
-\end{columns}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Nonlinear Trends in Residual Plots}
-
-  Clearly, the linear trend fits these data poorly.
-  \begin{itemize}
-    \item We should probably add some polynomial terms
-  \end{itemize}
-  \vb
-  \begin{columns}
-    \begin{column}{0.5\textwidth}
-
-<<echo = FALSE, message = FALSE>>=
 p4 <- gg0(x = Cars93$Horsepower, y = Cars93$MPG.highway)
 p5 <- p4 + geom_smooth(method = "lm", se = FALSE) +
     xlab("Horsepower") +
@@ -619,16 +577,15 @@ p5 <- p4 + geom_smooth(method = "lm", se = FALSE) +
 p5
 @
 
-\end{column}
-
-\begin{column}{0.5\textwidth}
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE, message = FALSE>>=
 p3 + geom_smooth(method = "loess", se = FALSE)
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -658,77 +615,58 @@ p3 + geom_smooth(method = "loess", se = FALSE)
 
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}{Residual Plots}
+\begin{frame}[fragile]{Limitations of Residual Plots}
 
-  Certainly looks better, but not ideal.
-  \vb
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-<<echo = FALSE, message = FALSE>>=
-out3 <- lm(MPG.highway ~ Horsepower + I(Horsepower^2), data = Cars93)
+      In multiple regression models, basic residual plots won't tell us which 
+      predictors exhibit nonlinear associations.
 
-p6 <- gg0(x = Cars93$Horsepower, y = Cars93$MPG.highway)
-p7 <- p6 + geom_smooth(method = "lm", formula = y ~ x + I(x^2), se = FALSE) +
-    xlab("Horsepower") +
-    ylab("MPG")
-p7
+      \vb
+
+<<>>=
+out3 <- 
+  lm(MPG.highway ~ Horsepower + RPM, 
+     data = Cars93)
 @
 
-\end{column}
-
-\begin{column}{0.5\textwidth}
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE, message = FALSE>>=
-p8 <- gg0(x = predict(out3), y = resid(out3)) +
-    geom_hline(yintercept = 0) +
-    geom_smooth(method = "loess", se = FALSE) +
-    xlab("Predicted MPG") +
-    ylab("Residual MPG")
-p8
+plot(out3, 1)
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{Residual Plots}
+\begin{frame}[fragile]{Component + Residual Plots}
 
-  Further improvement (perhaps).
-  \vb
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-<<echo = FALSE, message = FALSE>>=
-out4 <- lm(MPG.highway ~ Horsepower + I(Horsepower^2) + I(Horsepower^3),
-           data = Cars93)
+  We can use \emph{Component + Residual Plots} (AKA, partial residual plots) to
+  visualize the unique effects of each $X$ variable.
 
-p9  <- gg0(x = Cars93$Horsepower, y = Cars93$MPG.highway)
-p10 <- p9 + geom_smooth(method = "lm", formula = y ~ x + I(x^2) + I(x^3),
-                        se = FALSE) +
-    xlab("Horsepower") +
-    ylab("MPG")
-p10
+<<eval = FALSE, message = FALSE>>=
+library(car)
+crPlots(out3)
 @
 
-\end{column}
-
-\begin{column}{0.5\textwidth}
+    \end{column}
+    \begin{column}{0.5\textwidth}
 
 <<echo = FALSE, message = FALSE>>=
-p11 <- gg0(x = predict(out4), y = resid(out4)) +
-    geom_hline(yintercept = 0) +
-    geom_smooth(method = "loess", se = FALSE) +
-    xlab("Predicted MPG") +
-    ylab("Residual MPG")
-p11
+car::crPlots(out3, layout = c(2, 1))
 @
 
-\end{column}
-\end{columns}
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -841,6 +779,14 @@ qqline(resid(out1))
   \begin{itemize}
   \item Confidence intervals for predictions share the same normality
     requirements as the coefficients' sampling distributions.
+  \end{itemize}
+  \va
+  \pause
+  Parameter estimates will not be fully efficient.
+  \vc
+  \begin{itemize}
+    \item Standard errors will be larger than they would have been with normally
+      distributed errors.
   \end{itemize}
 
 \end{frame}

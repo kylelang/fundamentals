@@ -355,7 +355,7 @@ identify the console:
 When you are asked the following:
 
 ```{r eval = FALSE, echo = TRUE}
-Do you want to install from sources the package which needs 
+Do you want to install from sources the package which needs
 compilation? (Yes/no/cancel)
 ```
 
@@ -727,9 +727,7 @@ can check if our model results are trustworthy.
 - Regression diagnostics
 - Outliers, high-leverage cases, and influential observations 
   
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk5/lecture/assumptions.pdf) -->
+You can find the lecture slides [here](wk5/lecture/assumptions.pdf).
   
 ### Required Reading
 
