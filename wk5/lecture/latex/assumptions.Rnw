@@ -246,6 +246,8 @@ knit_theme$set('edit-kwrite')
 
 \subsection{Regression Diagnostics}
 
+%------------------------------------------------------------------------------%
+
 \begin{frame}{Regression Diagnostics}
 
   If some of the assumptions are (grossly) violated, the inferences we make
@@ -555,7 +557,7 @@ summary(fit)$coefficients
 
  Each modeled $X$ must exhibit a linear relation with $Y$.
   \begin{itemize}
-    \item We can define $X$ via nonlinear transformations of the orgininal data.
+    \item We can define $X$ via nonlinear transformations of the original data.
   \end{itemize}
   
   \vb
@@ -742,7 +744,6 @@ car::crPlots(out3, layout = c(2, 1))
       \end{itemize}
 
     \end{column}
-
     \begin{column}{0.5\textwidth}
 
 <<>>=
@@ -951,7 +952,6 @@ qqline(resid(out1))
       \end{itemize}
       
     \end{column}
-    
     \begin{column}{0.5\textwidth}
       
       <<>>=
@@ -1009,7 +1009,6 @@ qqline(resid(out1))
       \end{itemize}
 
     \end{column}
-
     \begin{column}{0.5\textwidth}
       
       <<>>=
@@ -1140,7 +1139,6 @@ qqline(resid(out1))
       \end{itemize}
 
     \end{column}
-
     \begin{column}{0.5\textwidth}
       
       <<echo = FALSE, message = FALSE>>=
@@ -1229,7 +1227,6 @@ qqline(resid(out1))
       \end{itemize}
       
     \end{column}
-    
     \begin{column}{0.5\textwidth}
       
       <<echo = FALSE, message = FALSE>>=
