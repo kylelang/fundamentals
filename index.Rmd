@@ -799,9 +799,7 @@ logistic regression.
 - Interpreting logistic regression estimates
 - Classification using logistic regression
 
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk6/lecture/glm.pdf) -->
+You can find the lecture slides [here](wk6/lecture/glm.pdf)
 
 ### Required Reading
 
