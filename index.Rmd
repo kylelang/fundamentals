@@ -92,7 +92,7 @@ do not meet these requirements, you lose the right to resit the exam.
 
 We will use two open-source books in this course:
 
-1. [*R for Data Science*](https://r4ds.had.co.nz) (R4DS) 
+1. [*R for Data Science*](https://r4ds.hadley.nz) (R4DS) 
    - You can find solutions for the R4DS exercises
    [here](https://jrnold.github.io/r4ds-exercise-solutions/).
 1. [*Applied Statistics with R*](https://book.stat420.org) (ASWR)
