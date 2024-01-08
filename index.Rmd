@@ -855,9 +855,7 @@ You can find suggested answers to the practical here:
 This week, will cover the assumptions of logistic regression and evaluating
 classification performance via confusion matrices. 
 
-**Once they're ready, the lecture slides will be linked here.**
-
-<!-- You can find the lecture slides [here](wk7/lecture/logistic_regression.pdf) -->
+You can find the lecture slides [here](wk7/lecture/logistic_regression_diagnostics.pdf)
 
 ### Required Reading
 

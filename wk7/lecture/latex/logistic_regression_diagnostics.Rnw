@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 7: Logistic Regression Diagnostics
 %%% Author:   Kyle M. Lang & Mingyang Cai
 %%% Created:  2022-12-03
-%%% Modified: 2024-01-05
+%%% Modified: 2024-01-08
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -143,21 +143,63 @@ knit_theme$set('edit-kwrite')
 
 %------------------------------------------------------------------------------%
 
-\section{Assumptions}
+\begin{frame}{Recap: Model Definition}
+
+  We define the logistic regression model as:
+  \begin{align*}
+    Y &\sim \mathrm{Bin}(\pi, 1)\\
+    \mathrm{logit}(\pi) &= \beta_0 + \sum_{p = 1}^P \beta_p X_p
+  \end{align*}
+  We denote the untransformed linear predictor as $\eta$:
+  \begin{align*}
+    \eta = \beta_0 + \sum_{p = 1}^P \beta_p X_p
+  \end{align*}
+  The logit link represents the natural log of the odds of success:
+  \begin{align*}
+    \mathrm{logit}(\pi) = \ln \left( \frac{\pi}{1 - \pi} \right)
+  \end{align*}
+
+\end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[allowframebreaks]{Assumptions of MLR}
+\begin{frame}{Recap: Inverse Link Function}
 
-  The assumptions of the linear model can be stated as follows:
+  In logistic regression, the inverse link function, $g^{-1}(\cdot)$, is the
+  \emph{logistic function}:
+  \begin{align*}
+    \mathrm{logistic}(X) = \frac{e^X}{1 + e^X}
+  \end{align*}
+  So, we convert $\eta$ to $\pi$ by:
+  \begin{align*}
+    \pi &= \frac{e^{\eta}}{1 + e^{\eta}} = \frac{\exp \left(
+      \beta_0 + \sum_{p = 1}^P \beta_p X_p \right) }{1 + \exp \left(
+      \beta_0 + \sum_{p = 1}^P \beta_p X_p \right) }
+  \end{align*}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Assumptions \& Diagnostics}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Statistical Assumptions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Assumptions of Logistic Regression}
+
+  The first two assumptions of logistic regression are shared with linear regression.
   \vb
   \begin{enumerate}
   \item The model is linear in the parameters.
     \vc
     \begin{itemize}
-    \item This is OK: $Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3XZ + \beta_4X^2 + \beta_5X^3 + \varepsilon$
+    \item This is OK: $logit(\pi) = \beta_0 + \beta_1X + \beta_2Z + \beta_3XZ + \beta_4X^2 + \beta_5X^3$
       \vc
-    \item This is not: $Y = \beta_0 X^{\beta_1} + \varepsilon$
+    \item This is not: $logit(\pi) = \beta_0 X^{\beta_1}$
     \end{itemize}
     \vb
   \item The predictor matrix is \emph{full rank}.
@@ -168,75 +210,108 @@ knit_theme$set('edit-kwrite')
     \item No $X_p$ can be a linear combination of other predictors.
     \end{itemize}
 
-    \pagebreak
-
-  \item The predictors are strictly exogenous.\label{exo}
-    \vc
-    \begin{itemize}
-    \item The predictors do not correlated with the errors.
-      \vc
-    \item $\textrm{Cov}(\hat{Y}, \varepsilon) = 0$
-      \vc
-    \item $\textrm{E}[\varepsilon_n] = 0$
-    \end{itemize}
-    \vb
-  \item The errors have constant, finite variance.\label{constVar}
-    \vc
-    \begin{itemize}
-    \item $\textrm{Var}(\varepsilon_n) = \sigma^2 < \infty$
-    \end{itemize}
-    \vb
-  \item The errors are uncorrelated.\label{indErr}
-    \vc
-    \begin{itemize}
-    \item $\textrm{Cov}(\varepsilon_i, \varepsilon_j) = 0, ~ i \neq j$
-    \end{itemize}
-    \vb
-  \item The errors are normally distributed.\label{normErr}
-    \vc
-    \begin{itemize}
-    \item $\varepsilon \sim \textrm{N}(0, \sigma^2)$
-    \end{itemize}
   \end{enumerate}
 
-  \pagebreak
+\end{frame}
 
-  The assumption of \emph{spherical errors} combines Assumptions \ref{constVar}
-  and \ref{indErr}.
-  \begin{align*}
-    \textrm{Var}(\varepsilon) =
-    \begin{bmatrix}
-      \sigma^2 & 0 & \cdots & 0\\
-      0 & \sigma^2 & \cdots & 0\\
-      0 & 0 & \ddots & 0\\
-      0 & 0 & \cdots & \sigma^2
-    \end{bmatrix} =
-    \sigma^2\mathbf{I}_N
-  \end{align*}
-  We can combine Assumptions \ref{exo}, \ref{constVar}, \ref{indErr}, and
-  \ref{normErr} by assuming independent and identically distributed normal
-  errors:
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Assumptions of Logistic Regression}
+
+  The distributional assumptions of logistic regression are not framed in terms
+  of residuals.
+
+  \vb
+
   \begin{itemize}
-  \item $\varepsilon \overset{iid}{\sim} \textrm{N}(0, \sigma^2)$
+    \item Linear regression
+      \begin{align*}
+        Y &\sim \mathrm{N}\left(\hat{Y}, \hat{\sigma}^2\right)\\
+        Y &= \hat{Y} + \hat{\varepsilon}\\
+        \varepsilon &\sim \mathrm{N}\left(0, \sigma^2\right)
+      \end{align*}
+    \item Logistic regression
+      \begin{align*}
+        Y \sim \text{Bin}\left(\hat{\pi}, 1\right)
+      \end{align*}
   \end{itemize}
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
+\begin{frame}{Assumptions of Logistic Regression}
+
+  The variance of the binomial distribution is a function of it's mean.
+  \vb
+  \begin{itemize}
+    \item Linear regression
+      \begin{align*}
+        \bar{Y} = \hat{Y}, ~ \mathrm{var}(Y) = \hat{\sigma}^2
+      \end{align*}
+    \item Logistic regression
+      \begin{align*}
+        \bar{Y} = \hat{\pi}, ~ \mathrm{var}(Y) = \hat{\pi}\left(1 - \hat{\pi}\right)
+      \end{align*}
+  \end{itemize}
+
+  So, we consider the entire outcome distribution in logistic regression.
+  \vc
+  \begin{itemize}
+    \item We can succinctly summarize the distributional assumptions of logistic
+      regression as: 
+  \end{itemize}
+  \begin{align*}
+    Y_i \overset{iid}{\sim} \textrm{Bin}\left(\hat{\pi}_i, 1\right)
+  \end{align*}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Assumptions of Logistic Regression}
+
+  We end up with three assumptions where the third assumption fills the role
+  played by all residual-related assumptions in linear regression.
+  \vb
+  \begin{enumerate}
+  \item The model is linear in the parameters.
+    \vb
+  \item The predictor matrix is \emph{full rank}.
+    \vb
+  \item The outcome is independently and identically binomially distributed.
+    \begin{align*}
+      Y_n &\overset{iid}{\sim} \textrm{Bin}\left(\hat{\pi}_n, 1\right)\\
+      \hat{\pi}_n &= \textrm{logistic}\left(\hat{\beta}_0 + \sum_{p = 1}^P\hat{\beta}_pX_{np}\right)
+    \end{align*}
+
+  \end{enumerate}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Residuals}
+
+\watermarkoff %----------------------------------------------------------------%
+
 \begin{frame}[fragile, allowframebreaks]{Example}
 
-  We'll start by using logistic regression to predict the chances that Titanic
-  passengers survived the sinking based on their age, sex, and ticket class.
+  To demonstrate these ideas, we'll fit a logistic regression model that 
+  predicts the chances of Titanic passengers surviving based on their age, sex, 
+  and ticket price
   
 <<>>=
 ## Read the data:
 titanic <- readRDS(paste0(dataDir, "titanic.rds"))
 
 ## Estimate the logistic regression model:
-glmFit <- glm(survived ~ age + sex + class,
+glmFit <- glm(survived ~ age + sex + fare,
               data = titanic,
               family = "binomial")
+
+## Save the linear predictor estimates:
+titanic$etaHat <- predict(glmFit, type = "link")
 @
 
   \pagebreak
@@ -248,28 +323,70 @@ partSummary(glmFit, -1)
 \end{frame}
 
 %------------------------------------------------------------------------------%
+
+\begin{frame}{Raw Residuals}
+
+  In logistic regression the outcome is binary, $Y \in \{0, 1\}$, but the
+  parameter that we're trying to model is continuous, $\pi \in (0, 1)$.
+  \vc
+  \begin{itemize}
+    \item Due to this mismatch in measurement levels, we don't have a natural
+      definition of a "residual" in logistic regression.
+      \vc
+    \item We have a few potential operationalizations.
+  \end{itemize}
   
-\begin{frame}[fragile]{Binary response variable} 
+  \vb
+
+  The most basic residual is the \emph{raw residual}, $e_n$.
+  \vc
+  \begin{itemize}
+    \item The difference between the observed outcome value and the predicted 
+      probability.
+  \end{itemize}
+  \begin{align*}
+    e_n = Y_n - \hat{\pi}_n
+  \end{align*}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Raw Residuals}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
-      Logistic regression assumes that the response variable only has two possible outcomes.   
-      \va
+<<eval = FALSE>>=
+library(ggplot)
 
-      For example, ``survived" describes the passenger's survival status where 0 indicates did not survive and 1 indicates survived.
+## Calculate the raw residuals:
+titanic$e <- 
+  resid(glmFit, type = "response")
+
+## Plot raw residuals vs. fitted
+## linear predictor values:
+ggplot(titanic, aes(etaHat, e)) + 
+  geom_point() + 
+  geom_smooth() +
+  theme_classic() +
+  xlab("Linear Predictor") +
+  ylab("Raw Residual")
+
+@
 
     \end{column}
     \begin{column}{0.5\textwidth}
 
 <<echo = FALSE>>=
-titanic %>% 
-  ggplot(aes(x = survived, fill = survived)) +
-  geom_bar(width = 0.3, fill = "#FF6666") +
-  labs(x = "Survival",
-       y = "Count",
-       title = "Distribution of the outcome variable") +
-  theme_bw()
+titanic$e <- resid(glmFit, type = "response")
+
+ggplot(titanic, aes(etaHat, e)) + 
+  geom_point() + 
+  geom_smooth() +
+  theme_classic() +
+  xlab("Linear Predictor") +
+  ylab("Raw Residual")
 @
 
     \end{column}
@@ -279,204 +396,36 @@ titanic %>%
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Binary response variable}
-
-We can also check the levels of the response variable.
-
-<<>>=
-titanic$survived %>% unique()
-titanic$survived %>% factor() %>% levels()
-@
-
-The assumption is violated when the outcome is
-\begin{itemize}
-\item a multiclass categorical variable. (multinomial logistic regression \src{mnet::mutinom()})
-\item an ordinal categorical variable. (ordered logistic regression \src{MASS::polr()})
-\end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Balanced outomes}
-
-The logistic regression may not perform well when there is an imbalance in the classes of the binary response. A possible consequence is the inaccurate classification.
-
-\va
-
-A certain amount of imbalance is normal and can be handled well by the logistic model in most cases. However, we should care about the severe imbalance, for instance, 1000 cases in the majority class and 1 case in the minority class.
-
-<<>>=
-titanic$survived %>% table() %>% prop.table() %>% round(3)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Balanced outomes}
-
-<<echo = FALSE, fig.width = 8, fig.height = 5>>=
-ggplot(titanic, aes(x = survived)) +
-  geom_bar(aes(y = after_stat(prop), group = 1), width = 0.3) +
-  labs(x = "Survived", y = "Proportion")
-@ 
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Balanced outomes}
-  
-Some solutions:
-
-\begin{itemize}
-  \item down-sampling the majority class
-  \item up-sampling the minority class
-  \item adding weights to logistic regression (\src{weights} argument in \src{glm()})
-\end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sufficiently large sample size}
-
-  Sample size in logistic regression is a complex issue. It depends on:
-  \begin{itemize}
-    \item the number of predictors
-    \item the sample space of predictors
-    \item the distribution of the binary response variable
-    \item the scientific interests
-  \end{itemize}
-
-  \va
-
-  Some suggestions for the sample size
-
-  \begin{itemize}
-    \item 10 cases for each predictor in the model \citep{agresti:2018}
-    \item $N = \frac{10*k} {p}$, where
-      \begin{itemize}
-        \item $k$ is the number of predictors
-        \item $p$ is the proportion of the minority class \citep{peduzziEtAl:1996}
-      \end{itemize}
-    \item $N = 100 + 50*k$, where $k$ is the number of predictors \citep{bujangEtAl:2018}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Issue : perfect prediction}
-
-  Imbalanced outcomes and a small sample size may cause perfect prediction. The \src{glm()} may show warnings messages:
-  \begin{itemize}
-    \item glm.fit: algorithm did not converge
-    \item fitted probabilities numerically 0 or 1 occurred
-  \end{itemize}
-
-  \va
-
-  One possible solution is to fit the logistic regression with regularization (\src{glmnet::glmnet}).
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{No multicollinearity}
-
-The same assumption as in linear regression is that is no multicollinearity among the linear predictors.  
-
-<<>>=
-VIF(glmFit)
-@
-
-A VIF value larger than 10 indicates high multicollinearity.
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Linearity}
-
-Logistic regression assumes a linear relationship between continuous predictors and \emph{the logit of the response variable}. 
-
-<<>>=
-library(car)
-
-crPlot(glmFit, "age")
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{No influential values or outliers}
-
-Influential values or outliers can seriously influence the fit of the logistic regression. 
-
-<<fig.width = 8, fig.height = 4>>=
-cooks.distance(glmFit) %>% plot()
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{No influential values or outliers}
-
-<<fig.width = 8, fig.height = 4>>=
-plot(glmFit, 4)
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\subsection{Residuals}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Raw Residuals}
-
-The most basic residual is the \emph{raw residual}, which is the difference between the observed value and the predicted probability:
-
-\begin{align*}
-  e_i = y_i - \hat{p_i}
-\end{align*}
-
-<<>>=
-titanic$r0 <- resid(glmFit, type = "response")
-
-ggplot(titanic, aes(etaHat, r0)) + geom_point() + geom_smooth()
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
 \begin{frame}[fragile]{Pearson Residuals}
 
-  The Pearson residual is a scaled version of the raw residual. 
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
-  \begin{align*}
-    r_i = \frac{e_i}{\sqrt{\hat{p_i}(1-\hat{p_i})}}
-  \end{align*}
-
-<<>>=
-titanic$r1 <- resid(glmFit, type = "pearson")
-ggplot(titanic, aes(etaHat, r1)) + geom_point() + geom_smooth()
-@
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Pearson Residual}
+      \emph{Pearson residuals}, $r_n$, are scaled raw residuals. 
+      \begin{align*}
+        r_n = \frac{e_n}{\sqrt{\hat{\pi}_n(1 - \hat{\pi}_n)}}
+      \end{align*}
 
 <<>>=
-plot(glmFit, 1)
+## Calculate the Pearson residuals:
+titanic$r <- 
+  resid(glmFit, type = "pearson")
 @
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(titanic, aes(etaHat, r)) + 
+  geom_point() + 
+  geom_smooth() +
+  theme_classic() +
+  xlab("Linear Predictor") +
+  ylab("Pearson Residual")
+@
+
+    \end{column}
+  \end{columns}
 
 \end{frame}
 
@@ -484,60 +433,387 @@ plot(glmFit, 1)
 
 \begin{frame}[fragile]{Deviance Residuals}
 
-  Deviance residuals can be approximated with a standard normal distribution if the model fits well.
+  \emph{Deviance residuals}, $d_n$, are derived directly from the objective
+  function used to estimate the model. 
 
   \begin{align*}
-    d_i = sign(e_i) \sqrt{-2 [ y_i \ln(\hat{p}_i) + (1 - y_i) ln(1 - \hat{p}_i)]}
+    d_n = \mathrm{sign}(e_n) \sqrt{-2 \left[ Y_n \ln \left( \hat{\pi}_n \right) + (1 - Y_n) \ln \left( 1 - \hat{\pi}_n \right) \right]}
   \end{align*}
 
-<<>>=
-titanic$r2 <- resid(glmFit, type = "deviance")
-ggplot(titanic, aes(etaHat, r2)) + geom_point() + geom_smooth()
-@
+  \va
+
+  The \emph{residual deviance}, $D$, is the sum of squared deviance residuals.
+
+  \begin{align*}
+    D = \sum_{n = 1}^{N}d_n^2
+  \end{align*}
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Residual Deviance}
+\begin{frame}[fragile]{Deviance Residuals}
 
-  The residual deviance is the sum of squared deviance residuals.
-
-  \begin{align*}
-    D = \sum_{i = 1}^{N}d_{i}^2
-  \end{align*}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
 
 <<>>=
-titanic$r2^2 %>% sum()
+## Calculate the deviance residuals:
+titanic$d <- 
+  resid(glmFit, type = "deviance")
+
+## Calculate the residual deviance:
+titanic$d^2 %>% sum()
 summary(glmFit)$deviance
 @
 
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(titanic, aes(etaHat, d)) + 
+  geom_point() + 
+  geom_smooth() +
+  theme_classic() +
+  xlab("Linear Predictor") +
+  ylab("Deviance Residual")
+@
+
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
 \begin{frame}[fragile]{Residual Deviance}
 
-  The residual deviance is used to measure how well the model fits the data. It is similar to the sum of squared errors in linear regression. 
+  The residual deviance quantifies how well the model fits the data.
 
 <<>>=
-s    <- summary(glmFit)
-dev0 <- s$null.deviance
-dev1 <- s$deviance
-df0  <- s$df.null
-df1  <- s$df.residual
+## Estimate a null model:
+nullFit <- glm(survived ~ 1, family = binomial, data = titanic)
 
-d0 - d1
-df0 - df1
-
-anova(glmFit, test = "Chisq")
+## Test the fit of our example model:
+anova(nullFit, glmFit, test = "Chisq")
 @
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\subsection{Confusion matrix}
+\subsection{Diagnostics}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{A1: Linearity}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      Assumption 1 implies a linear relation between continuous predictors and the
+      \emph{logit of the success probability}. 
+      \vc
+      \begin{itemize}
+        \item We can basically evaluate the linearity assumption using the same
+          methods we applied with linear regression.
+          \vc
+        \item $\hat{Y} \rightarrow \hat{\eta} = \mathrm{logit}\left(\hat{\pi}\right)$
+      \end{itemize}
+ 
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<>>=
+plot(glmFit, 1)
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{A1: Linearity}
+ 
+<<fig.asp = 0.6>>=
+car::crPlots(glmFit, terms = ~ age + fare)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{A2: Predictor Matrix Rank}
+
+  Assumption 2 implies two conditions:
+  \vc
+  \begin{enumerate}
+    \item $P > N$
+    \item No severe (multi)collinearity among the predictors
+  \end{enumerate}
+
+  \vb
+
+  We can quantify multicollinearity with the \emph{variance inflation factor} (VIF).
+
+<<>>=
+car::vif(glmFit)
+@
+
+  VIF $>$ 10 indicates severe multicollinearity.
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{A3: IID Binomial} 
+
+  Assumption 3 implies several conditions.
+  \vc
+  \begin{enumerate}
+    \item The outcome, $Y$, is binary.
+      \vc
+    \item The linear predictor, $\eta$, can explain all the systematic trends
+      in $\pi$.
+      \vc
+      \begin{itemize}
+        \item No residual clustering after accounting for $\mathbf{X}$.
+          \vc
+        \item No important variables omitted from $\mathbf{X}$.
+      \end{itemize}
+  \end{enumerate}
+
+  \vb
+
+  We can easily check the first condition with summary statistics.
+
+<<>>=
+levels(titanic$survived)
+table(titanic$survived)
+@
+
+ 
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Alternative Modeling Schemes}
+
+  If we have a non-binary, categorical outcome, we can use a different type of
+  model.
+  \vc
+  \begin{itemize}
+    \item Multiclass nominal variables: Multinomial logistic regression
+      \begin{itemize}
+        \item \src{nnet::multinom()}
+      \end{itemize}
+      \vc
+    \item Ordinal variables: Proportional odds logistic regression
+      \begin{itemize}
+        \item \src{MASS::polr()}
+      \end{itemize}
+      \vc
+    \item Counts: Poisson regression
+      \begin{itemize}
+        \item \src{glm()} with \src{family = "poisson"}
+      \end{itemize}
+  \end{itemize}
+
+  \vb
+
+  The binomial distribution (and logistic regression) is also appropriate for
+  modeling the proportion of successes in $N$ trials.
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{A3: Clustering}
+
+  We can check for residual clustering by calculating the ICC using deviance 
+  residuals.
+
+<<>>=
+## Check for residual dependence induced by 'class':
+ICC::ICCbare(x = titanic$class, y = resid(glmFit, type = "deviance"))
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Computational Considerations}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Computational Considerations}
+
+  In addition to the preceding statistical assumptions, we must satisfy three
+  computational requirements that were not necessary in linear regression.
+  \vb
+  \begin{enumerate}
+    \item The sample size is large enough to support the necessary numerical 
+      estimation.
+      \vc
+    \item The outcome classes are sufficiently balanced.
+      \vc
+    \item There is no perfect prediction.
+  \end{enumerate}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+
+\begin{frame}[fragile]{Sufficient Sample Size}
+
+  Logistic regression models are estimated with numerical methods, so we need
+  larger samples than we would for linear regression models.
+  \vc
+  \begin{itemize}
+    \item The sample size requirements increase with model complexity.
+  \end{itemize}
+
+  \vb
+
+  Some suggested rules of thumb:
+  \vc
+  \begin{itemize}
+    \item 10 cases for each predictor \citep{agresti:2018}
+      \vc
+    \item $N = 10P / \pi_0$ \citep{peduzziEtAl:1996}
+      \begin{itemize}
+        \item $P$: Number of predictors
+        \item $\pi_0$: Proportion of the minority class 
+      \end{itemize}
+      \vc
+    \item $N = 100 + 50P$ \citep{bujangEtAl:2018}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Balanced Outcomes}
+
+  The logistic regression may not perform well when the outcome classes are
+  severely imbalanced.
+
+<<>>=
+with(titanic, table(survived) / length(survived))
+@
+
+We have a few possible solutions for problematic imbalance:
+\vc
+\begin{itemize}
+  \item Down-sampling the majority class
+    \vc
+  \item Up-sampling the minority class
+    \vc
+  \item Use weights when estimating the logistic regression model 
+    \begin{itemize}
+      \item \src{weights} argument in \src{glm()}
+    \end{itemize}
+\end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Perfect Prediction}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      We don't actually want to perfectly predict class membership.
+      \vc
+      \begin{itemize}
+        \item The model cannot estimate with perfectly separable classes.
+      \end{itemize}
+      \vb
+      Model regularization (e.g., ridge or LASSO penalty) may help.
+      \vc
+      \begin{itemize}
+        \item \src{glmnet::glmnet()}
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+beta <- c(-5.5, 1)
+x    <- runif(100, 0, 12)
+eta  <- beta[1] + beta[2] * x
+pi   <- exp(eta) / (1 + exp(eta))
+y    <- rbinom(100, 1, pi)
+
+dat1 <- data.frame(x, y)
+
+gg0(x = dat1$x, y = dat1$y) +
+  xlab("Hours of Study") +
+  ylab("Probability of Passing") +
+  geom_smooth(method = "glm", 
+              se = FALSE, 
+              method.args = list(family = "binomial")
+  )
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Influential Cases}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Influential Cases}
+
+  As with linear regression, we need to deal with any overly influential cases. 
+  \vc
+  \begin{itemize}
+    \item We can use the linear predictor values to calculate Cook's Distances.
+      \vc
+    \item Any cases that exerts undue influence on the linear predictor will
+      have the same effect of the predicted success probabilities.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Influential Cases}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+<<>>=
+cooks.distance(glmFit) %>% plot()
+@
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<>>=
+plot(glmFit, 4)
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Classification Performance}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Confusion Matrix}
 
 %------------------------------------------------------------------------------%
 
@@ -547,9 +823,9 @@ anova(glmFit, test = "Chisq")
   \emph{confusion matrix}.
 
 <<>>=
+## Add predictions to the dataset:
 titanic %<>%
-  mutate(etaHat = predict(glmFit, type = "link"),
-         piHat = predict(glmFit, type = "response"),
+  mutate(piHat = predict(glmFit, type = "response"),
          yHat = as.factor(ifelse(piHat <= 0.5, "no", "yes"))
         )
 @
@@ -574,13 +850,17 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 \begin{frame}[fragile]{Confusion Matrix}
 
-  Each cell in the confusion matrix represents a certain classification outcome.
+  Each cell in the confusion matrix represents a certain classification result.
 
 <<echo = FALSE, results = "asis">>=
 xTab <- titanic %$% 
   matrix(c("True Negative", "False Negative", 
-           "False Positive", "True Positive"), 2, 2) %>%
-  xtable(caption ="Confusion Matrix of passengers' survival on the Titanic", 
+           "False Positive", "True Positive"), 2, 2,
+         dimnames = list(c("Died", "Survived"),
+                         c("Died", "Survived")
+                         )
+         ) %>%
+  xtable(caption ="Confusion Matrix of Predicted Survival", 
          digits = 0)
 
 adds <- list(pos = list(0, 0),
@@ -591,20 +871,11 @@ adds <- list(pos = list(0, 0),
 print(xTab, add.to.row = adds, include.colnames = FALSE)
 @
 
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-
-\begin{frame}[fragile]{Confusion matrix}
-
-  In the titanic example,
-
   \begin{itemize}
-    \item \textbf{TP}: correctly predict people that survived
-    \item \textbf{TN}: correctly predict people that did not survive
-    \item \textbf{FP}: predict people survived, when they did not 
-    \item \textbf{FN}: predict people did not survive, but they did
+    \item \textbf{TP}: Correctly predict survival
+    \item \textbf{TN}: Correctly predict death
+    \item \textbf{FP}: Predict survival for dead people 
+    \item \textbf{FN}: Predict death for survivors
   \end{itemize}
 
 \end{frame}
@@ -614,136 +885,152 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 \begin{frame}[fragile]{Confusion Matrix}
 
 <<>>=
-(cMat <- titanic %$% confusionMatrix(data = yHat, reference = survived))
+library(caret)
+
+cMat <- titanic %$% confusionMatrix(data = yHat, reference = survived)
+
+cMat$table
+cMat$overall
 @
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Summary of the confusion matrix}
+\begin{frame}[fragile]{Confusion Matrix}
 
-  \emph{Accuracy}:
-  \begin{itemize}
-    \item accuracy = (TP + TN) / (P + N)
-    \item In titanic example, accuracy = 0.79, meaning that 79\% are correctly classified.
-  \end{itemize}
-
-  \va
-
-  \emph{Error rate}:
-  \begin{itemize}
-    \item error rate = (FP + FN) / (P + N) = 1 - accuracy
-    \item In titanic example, error rate = 0.21, meaning that 21\% are not correctly classified.
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Summary of the confusion matrix}
-
-  \emph{Sensitivity}:
-  \begin{itemize}
-    \item sensitivity = TP / (TP + FN)
-    \item In titanic example, sensitivity = 0.58, meaning that if the passenger did survive, there is a 58\% chance the model will detect this.
-  \end{itemize}
-
-  \va
-
-  \emph{Specificity}:
-  \begin{itemize}
-    \item specificity = TN / (TN + FP)
-    \item In titanic example, specificity = 0.92, meaning that if the passenger did not survive, there is a 92\% chance the model will detect this. 
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Summary of the confusion matrix}
-
-  \emph{False positive rate}:
-  \begin{itemize}
-    \item false positive rate (FPR) = FP / (TN + FP) = 1 - specificity
-    \item In titanic example, FPR = 0.08, meaning that if a passenger did not survive, there is an 8\% chance that the model predicts this passenger as surviving. 
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Summary of the confusion matrix}
-
-  \emph{Positive predictive value}:
-  \begin{itemize}
-    \item positive predictive value (PPV) = TP / (TP + FP)
-    \item In titanic example, PPV = 0.83, meaning that if the passenger is predicted as surviving, there is an 83\% chance that this passenger indeed survived. 
-  \end{itemize}
-
-  \va
-
-  \emph{Negative predictive value}:
-  \begin{itemize}
-    \item negative predictive value (NPV) = TN / (TN + FN)
-    \item In titanic example, NPV = 0.78, meaning that if a passenger is predicted as not surviving, there is a 78\% chance that this passenger indeed does not survive.  
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{ROC curve}
-
-  A receiver operating characteristic curve (ROC curve) is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. The ROC curve is created by plotting sensitivity against FPR (1 - specificity) at various threshold values. 
-
-  \va
-
-  ROC curve is mainly used for:
-
-  \begin{itemize}
-    \item evaluating the classification performance
-    \item selecting discrimination threshold
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{ROC curve}
-  
 <<>>=
-rocData <- titanic %$% roc(response = survived, predictor = piHat)
+cMat$byClass
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Summaries of the Confusion Matrix}
+
+  \emph{Accuracy = (TP + TN) / (P + N)}
+  \begin{itemize}
+    \item In our example, Accuracy = 0.78
+    \item 78\% are correctly classified
+  \end{itemize}
+
+  \vb
+
+  \emph{Error Rate = (FP + FN) / (P + N) = 1 - Accuracy}
+  \begin{itemize}
+    \item In our example, Error Rate = 0.22
+    \item 22\% are incorrectly classified
+  \end{itemize}
+
+  \vb
+
+  \emph{Sensitivity = TP / (TP + FN)}
+  \begin{itemize}
+    \item In our example, Sensitivity = 0.84
+    \item 84\% of survivors are correctly classified
+  \end{itemize}
+
+  \vb
+
+  \emph{Specificity = TN / (TN + FP)}
+  \begin{itemize}
+    \item In our example, Specificity = 0.69
+    \item 69\% of deaths are correctly classified 
+  \end{itemize}
+
+  \pagebreak
+
+  \emph{False Positive Rate (FPR) = FP / (TN + FP) = 1 - Specificity}
+  \begin{itemize}
+    \item In our example, FPR = 0.31
+    \item 31\% of deaths are incorrectly classified as survivors
+  \end{itemize}
+
+  \vb
+
+  \emph{Positive Predictive Value (PPV) = TP / (TP + FP)}
+  \begin{itemize}
+    \item In our example, PPV = 0.81
+    \item There is an 81\% chance that a passenger classified as a survivor was
+      classified correctly
+  \end{itemize}
+
+  \vb
+
+  \emph{Negative Predictive Value (NPV) = TN / (TN + FN)}
+  \begin{itemize}
+    \item In our example, NPV = 0.73
+    \item There is a 73\% chance that a passenger classified as dying was 
+      classified correctly
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{ROC Curve}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{ROC Curve}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      A \emph{receiver operating characteristic} (ROC) curve illustrates the
+      diagnostic ability of a binary classifier for all possible values of the
+      classification threshold. 
+      \vc
+      \begin{itemize}
+        \item The ROC curve plots sensitivity against specificity at different
+          threshold values. 
+      \end{itemize}
+
+   \end{column}
+    \begin{column}{0.5\textwidth}
+      
+<<>>=
+rocData <- titanic %$% 
+  pROC::roc(survived, piHat)
 plot(rocData)
 @
 
+    \end{column}
+  \end{columns}
+
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{ROC curve}
+\begin{frame}[fragile]{ROC Curve}
 
-The Area Under the ROC Curve (AUC) summarizes the performance of the classification.
-  
+  The \emph{area under the ROC curve} (AUC) is a one-number summary of the 
+  potential performance of the classifier.
+  \vc
+  \begin{itemize}
+    \item The AUC does not depend on the classification threshold.
+  \end{itemize}
+
 <<>>=
-auc(rocData)
+pROC::auc(rocData)
 @
 
   According to \citet{mandrekar:2010}:
 
   \begin{itemize}
-    \item AUC value from 0.7-0.8: acceptable
-    \item AUC value from 0.8-0.9: excellent
-    \item AUC value over 0.9: outstanding
+    \item AUC value from 0.7 -- 0.8: Acceptable
+    \item AUC value from 0.8 -- 0.9: Excellent
+    \item AUC value over 0.9: Outstanding
   \end{itemize}
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}[fragile]{Threshold Selection}
+\begin{frame}[fragile, allowframebreaks]{Threshold Selection}
 
-  Sometimes, we do not want to use $\hat{pi} = 0.5$ as the threshold. 
+  We can use numerical methods to estimate an optimal threshold value.
 
 <<>>=
 library(OptimalCutpoints)
@@ -752,28 +1039,28 @@ ocOut <- optimal.cutpoints(X = "piHat",
                            status = "survived",
                            tag.healthy = "no",
                            data = titanic,
-                           method = c("ROC01", "MaxEfficiency")
+                           method = "ROC01"
                            )
-
-summary(ocOut)
 @
 
-\end{frame}
+\pagebreak
 
-%------------------------------------------------------------------------------
-
-
-\begin{frame}[fragile]{Weight sensitivity or specificity?}
-  
-Selecting a point with the smallest distance to the point (0, 1) is to maximize $sensitivity ^2 + specificity ^ 2$. This optimized function has equal weights to sensitivity and specificity. However, in some scenarios, we care more about sensitivity or specificity.  
+<<>>=
+partSummary(ocOut, -1)
+@
 
 \end{frame}
 
 %------------------------------------------------------------------------------%
 
-\begin{frame}{More Sensitive Measures}
+\subsection{Alternative Performance Measures}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Alternative Performance Measures}
   
   Measuring classification performance from a confusion matrix can be problematic.
+  \vc
   \begin{itemize}
   \item Sometimes too coarse.
   \end{itemize}
