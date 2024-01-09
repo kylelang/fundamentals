@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 7: Logistic Regression Diagnostics
 %%% Author:   Kyle M. Lang & Mingyang Cai
 %%% Created:  2022-12-03
-%%% Modified: 2024-01-08
+%%% Modified: 2024-01-09
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -322,7 +322,7 @@ partSummary(glmFit, -1)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Raw Residuals}
 
@@ -350,7 +350,7 @@ partSummary(glmFit, -1)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Raw Residuals}
 
@@ -429,7 +429,7 @@ ggplot(titanic, aes(etaHat, r)) +
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Deviance Residuals}
 
@@ -450,7 +450,7 @@ ggplot(titanic, aes(etaHat, r)) +
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Deviance Residuals}
 
@@ -597,7 +597,7 @@ table(titanic$survived)
  
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}{Alternative Modeling Schemes}
 
@@ -720,7 +720,7 @@ We have a few possible solutions for problematic imbalance:
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Perfect Prediction}
 
@@ -765,7 +765,7 @@ gg0(x = dat1$x, y = dat1$y) +
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \subsection{Influential Cases}
 
@@ -784,7 +784,7 @@ gg0(x = dat1$x, y = dat1$y) +
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Influential Cases}
 
@@ -807,7 +807,7 @@ plot(glmFit, 4)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \sectionslide{Classification Performance}
 
@@ -833,7 +833,7 @@ titanic %<>%
 <<echo = FALSE, results = "asis">>=
 xTab <- titanic %$% 
   table(Predicted = yHat, True = survived) %>% 
-  xtable(caption ="Confusion Matrix of passengers' survival on the Titanic", 
+  xtable(caption ="Confusion Matrix of Predicted Survival", 
          digits = 0)
 
 adds <- list(pos = list(0, 0),
@@ -854,8 +854,8 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 <<echo = FALSE, results = "asis">>=
 xTab <- titanic %$% 
-  matrix(c("True Negative", "False Negative", 
-           "False Positive", "True Positive"), 2, 2,
+  matrix(c("True Negative", "False Positive", 
+           "False Negative", "True Positive"), 2, 2,
          dimnames = list(c("Died", "Survived"),
                          c("Died", "Survived")
                          )
@@ -880,7 +880,7 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile]{Confusion Matrix}
 
@@ -905,69 +905,81 @@ cMat$byClass
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Summaries of the Confusion Matrix}
 
+<<include = FALSE>>=
+acc <- cMat$overall["Accuracy"]
+err <- round(1 - acc, 2)
+acc <- round(acc, 2)
+sen <- round(cMat$byClass["Sensitivity"], 2)
+spe <- cMat$byClass["Specificity"]
+fpr <- round(1 - spe, 2)
+spe <- round(spe, 2)
+ppv <- round(cMat$byClass["Pos Pred Value"], 2)
+npv <- round(cMat$byClass["Neg Pred Value"], 2)
+@
+
   \emph{Accuracy = (TP + TN) / (P + N)}
   \begin{itemize}
-    \item In our example, Accuracy = 0.78
-    \item 78\% are correctly classified
+    \item In our example, Accuracy = \Sexpr{acc}
+    \item \Sexpr{100 * acc}\% are correctly classified
   \end{itemize}
 
   \vb
 
   \emph{Error Rate = (FP + FN) / (P + N) = 1 - Accuracy}
   \begin{itemize}
-    \item In our example, Error Rate = 0.22
-    \item 22\% are incorrectly classified
+    \item In our example, Error Rate = \Sexpr{err}
+    \item \Sexpr{100 * err}\% are incorrectly classified
   \end{itemize}
 
   \vb
 
   \emph{Sensitivity = TP / (TP + FN)}
   \begin{itemize}
-    \item In our example, Sensitivity = 0.84
-    \item 84\% of survivors are correctly classified
+    \item In our example, Sensitivity = \Sexpr{sen}
+    \item \Sexpr{100 * sen}\% of survivors are correctly classified
   \end{itemize}
 
   \vb
 
   \emph{Specificity = TN / (TN + FP)}
   \begin{itemize}
-    \item In our example, Specificity = 0.69
-    \item 69\% of deaths are correctly classified 
+    \item In our example, Specificity = \Sexpr{spe}
+    \item \Sexpr{100 * spe}\% of deaths are correctly classified
   \end{itemize}
 
   \pagebreak
 
   \emph{False Positive Rate (FPR) = FP / (TN + FP) = 1 - Specificity}
   \begin{itemize}
-    \item In our example, FPR = 0.31
-    \item 31\% of deaths are incorrectly classified as survivors
+    \item In our example, FPR = \Sexpr{fpr}
+    \item \Sexpr{100 * fpr}\% of deaths are incorrectly classified as survivors
   \end{itemize}
 
   \vb
 
   \emph{Positive Predictive Value (PPV) = TP / (TP + FP)}
   \begin{itemize}
-    \item In our example, PPV = 0.81
-    \item There is an 81\% chance that a passenger classified as a survivor was
-      classified correctly
+    \item In our example, PPV = \Sexpr{ppv}
+    \item There is an \Sexpr{100 * ppv}\% chance that a passenger classified as
+      a survivor was classified correctly
   \end{itemize}
 
   \vb
 
   \emph{Negative Predictive Value (NPV) = TN / (TN + FN)}
   \begin{itemize}
-    \item In our example, NPV = 0.73
-    \item There is a 73\% chance that a passenger classified as dying was 
-      classified correctly
+    \item In our example, NPV = \Sexpr{npv}
+    \item There is a \Sexpr{100 * npv}\% chance that a passenger classified as
+      dying was classified correctly
   \end{itemize}
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \subsection{ROC Curve}
 
@@ -1001,7 +1013,7 @@ plot(rocData)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \begin{frame}[fragile]{ROC Curve}
 
@@ -1026,7 +1038,7 @@ pROC::auc(rocData)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkoff %----------------------------------------------------------------%
 
 \begin{frame}[fragile, allowframebreaks]{Threshold Selection}
 
@@ -1051,7 +1063,7 @@ partSummary(ocOut, -1)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
+\watermarkon %-----------------------------------------------------------------%
 
 \subsection{Alternative Performance Measures}
 
@@ -1070,8 +1082,7 @@ partSummary(ocOut, -1)
   We can also base our error measure on the residual deviance with the 
   \emph{Cross-Entropy Error}:
   \begin{align*}
-    CEE &= -N^{-1} \sum_{n = 1}^N Y_n \ln(\hat{\pi}_n) + (1 - Y_n)\ln(1 - \hat{\pi}_n)\\
-    CEE &= -N^{-1} \sum_{n = 1}^N \sum_{l = 1}^L \textbf{I}(Y_n = l) \ln(\hat{\pi}_{nl})
+    CEE = -N^{-1} \sum_{n = 1}^N Y_n \ln(\hat{\pi}_n) + (1 - Y_n)\ln(1 - \hat{\pi}_n)
   \end{align*}
   \vx{-6}
   \begin{itemize}
