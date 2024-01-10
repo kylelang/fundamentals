@@ -42,7 +42,7 @@ Assessment: Assignments and Exam
 | WG2         | Thursday<br>11:00   | Ruppert<br>011          |
 | WG3         | Thursday<br>09:00   | BOL<br>1.051            |
 | WG4         | Thursday<br>11:00   | BOL<br>1.051            |
-| Exam        | 2024-01-24<br>19:00 | Ruppert<br>Blauw        |
+| Exam        | 2024-01-24<br>19:00 | Educatorium<br>ALFA     |
 
 Check [MyTimetable](https://mytimetable.uu.nl/schedule) for changes in the schedule!
 
@@ -92,7 +92,7 @@ do not meet these requirements, you lose the right to resit the exam.
 
 We will use two open-source books in this course:
 
-1. [*R for Data Science*](https://r4ds.hadley.nz) (R4DS) 
+1. [*R for Data Science*](https://r4ds.had.co.nz) (R4DS) 
    - You can find solutions for the R4DS exercises
    [here](https://jrnold.github.io/r4ds-exercise-solutions/).
 1. [*Applied Statistics with R*](https://book.stat420.org) (ASWR)
