@@ -934,7 +934,7 @@ You must submit Assignment 2 by ***Thursday January 19, 17:00***.
 There is no R practical this week. Use your time to finish the second assignment 
 and prepare for the exam.
 
-<!-----------------------------------------------------------------------------
+<!----------------------------------------------------------------------------->
 
 # Exam Material
 
@@ -961,13 +961,14 @@ lectures are most likely to appear on the exam.
 
 | Week # | Topic | Reading |
 |--|---|----|
-| 1 | The basics of `R` | R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html) and [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) |
+| 1 | The basics of `R` | R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), [Chapter 27](https://r4ds.had.co.nz/r-markdown.html), [Chapter 19](https://r4ds.had.co.nz/functions.html), and [Chapter 21](https://r4ds.had.co.nz/iteration.html) |
 | 2 | Programmatic data manipulation 1 | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
-| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html), [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html) and [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
 | 4 | Multiple linear regression | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
 | 5 | Model assumptions and diagnostics | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
 | 6 | Generalized linear model and logistic regression | ASWR: [Chapter 17 (only 17.1--17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
 | 7 | Logistic regression assumptions and classification | ASWR: [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) | 
+
 
 ### **What about equations?**
 
@@ -1011,8 +1012,7 @@ interactions.
 ### **What if you're still unsure?**
 
 If any of the course materials confuse you, feel free to ask about it during the 
-lecture or one of the weekly Q&A sessions (even if your concerns relate to 
-content from earlier weeks). 
+final lecture meeting (even if your concerns relate to content from earlier weeks). 
 
 **We well devote part (most?) of the final lecture to a dedicated Q&A session**
 
