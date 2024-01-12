@@ -1,7 +1,7 @@
 %%% Title:    Course Summary
 %%% Author:   Kyle M. Lang
 %%% Created:  2022-01-17
-%%% Modified: 2023-01-16
+%%% Modified: 2024-01-12
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -77,6 +77,8 @@ source("../../../code/supportFunctions.R")
 
 data(Cars93, package = "MASS")
 
+dataDir <- "../../../data/"
+
 opts_chunk$set(size = "footnotesize",
                fig.align = "center",
                fig.path = "figure/summary-",
@@ -109,9 +111,9 @@ knit_theme$set('edit-kwrite')
   Dates
   \vc
   \begin{itemize}
-  \item Exam: Wednesday 25 January
+  \item Exam: Wednesday 24 January
     \vc
-  \item Resit: Monday 27 February
+  \item Resit: Monday 26 February
   \end{itemize}
   \vb
   Structure
@@ -325,7 +327,7 @@ knit_theme$set('edit-kwrite')
   
 \end{frame}
 
-% ------------------------------------------------------------------------------%
+%------------------------------------------------------------------------------%
 
 \begin{frame}{Residuals as the Basis of Estimation}
   
@@ -352,123 +354,6 @@ knit_theme$set('edit-kwrite')
       
     \end{column}
   \end{columns}
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-
-  Fit a simple linear regression model to some toy data.
-
-  <<>>=
-  library(mvtnorm)
-  library(magrittr)
-
-  set.seed(235711)
-
-  s <- matrix(c(1.0, 0.5,
-                0.5, 1.0),
-              ncol = 2)
-  
-  fit <- rmvnorm(n = 1000, mean = c(0, 0), sigma = s) %>%
-      data.frame() %$%
-      lm(X1 ~ X2)
-  @
-    
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-
-  <<>>=
-  summary(fit)
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-  
-  Calculate the residual variance.
-
-  <<>>=
-  ## Extract residuals:
-  res <- resid(fit)
-
-  ## Compute the residual sum of squares:
-  ssr <- {res - mean(res)}^2 %>% sum()
-
-  ## Compute the residual variance:
-  ssr / fit$df.residual
-  summary(fit)$sigma^2
-  @
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-
-  Repeat the above analysis many times.
-  
-  <<cache = TRUE>>=
-  set.seed(235711)
-
-  nReps <- 50000
-  betas <- rep(NA, nReps)
-
-  for(i in 1:nReps) 
-      betas[i] <- rmvnorm(n = 1000, mean = c(0, 0), sigma = s) %>%
-          data.frame() %$%
-          lm(X1 ~ X2) %>%
-          coef() %>%
-          purrr::pluck(2)
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-  
-  Visualize the slope's sampling distribution.
-
-  <<out.width = "50%">>=
-  ggplot(data.frame(beta = betas), aes(beta)) + geom_density()
-  @
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Sampling Distributions \& Standard Errors}
-
-  Estimate the slope's standard error.
-
-  <<>>=
-  ## The Monte Carlo approximation:
-  sd(betas)
-
-  ## The asymptotic estimate:
-  summary(fit)$coefficients[2, "Std. Error"]
-  @
-  
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}[fragile]{Example}
-  
-  <<cache = TRUE>>=
-  ## Read in the 'diabetes' dataset:
-  diabetes <- readRDS("../data/diabetes.rds")
-  
-  ## Estimate and summarize a regression model:
-  lm(bp ~ age + ldl + hdl + sex, data = diabetes) %>% partSummary(-1)
-  @
   
 \end{frame}
 
@@ -581,6 +466,9 @@ knit_theme$set('edit-kwrite')
 \begin{frame}[fragile]{Continuous Moderators}
 
   <<>>=
+  ## Load data:
+  diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
+
   ## Moderated Model:
   out2 <- lm(bp ~ bmi * ldl, data = diabetes)
   partSummary(out2, -c(1, 2))
@@ -1074,10 +962,9 @@ knit_theme$set('edit-kwrite')
   We can state the assumptions of logistic regression as follows:
 
   \begin{enumerate}
-  \item The outcome follows a binomial distribution.
-  \item The predictor matrix is full-rank.
   \item The predictors are linearly related to $logit(\pi)$.
-  \item The observations are independent after accounting for the predictors.
+  \item The predictor matrix is full-rank.
+  \item The outcome is iid binomial with mean $\pi_n = \mathrm{logistic}\left(\eta_n\right)$.
   \end{enumerate}
   
   \vb
@@ -1094,9 +981,9 @@ knit_theme$set('edit-kwrite')
   For computational reasons, we also need the following:
   
   \begin{itemize}
-  \item Large sample
+  \item Large (enough) sample
   \item Relatively well-balance outcome
-  \item No highly influential cases
+  \item No perfect prediction 
   \end{itemize}
   
 \end{frame}
