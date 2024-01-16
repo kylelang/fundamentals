@@ -73,11 +73,16 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## Exam
 
-<h3> Wednesday January 25th, 13:30, Olympos Hall 2 </h3> <br>
+<h3> Wednesday January 24th, 19:00, <br> EDUC: ALFA ~ / ~ Ruppert Blauw (extra time) </h3> <br>
 
-<h4> If you are entitled to extra time, you will receive your location in an email! </h4> <br>
 
 <h4> Check your Remindo access beforehand! </h4> 
+
+## Course evaluation
+
+<h4> Please fill in the course evaluation on: </h4>
+
+<h3> https://caracal.uu.nl </h3>
 
 
 
