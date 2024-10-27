@@ -25,26 +25,23 @@ This dashboard covers the course materials for the course
 
 Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
 Lecturer: [Kyle Lang](https://www.uu.nl/medewerkers/KMLang) <br>
-WG Instructor: [Thijs Carrière](https://www.uu.nl/staff/TCCarriere) <br>
 WG Instructor: [Anastasia Giachanou](https://www.uu.nl/medewerkers/AGiachanou/) <br>
-WG Instructor: [Pablo Mosteiro Romero](https://www.uu.nl/medewerkers/PJMosteiroRomero/) <br>
 Study load: 7.5 ECTS <br>
 Assessment: Assignments and Exam 
 
 ---
 
-| What?       | When?               | Where?                  | 
-|-------------|---------------------|-------------------------|
-|             |                     |                         |
-| Lecture     | Monday<br>17:15     | Ruppert<br>040          | 
-| Practical   | Tuesday <br>13:15   | Ruppert<br>040          |
-| WG1         | Thursday<br>09:00   | Ruppert<br>011          |
-| WG2         | Thursday<br>11:00   | Ruppert<br>011          |
-| WG3         | Thursday<br>09:00   | BOL<br>1.051            |
-| WG4         | Thursday<br>11:00   | BOL<br>1.051            |
-| Exam        | 2024-01-24<br>19:00 | Educatorium<br>ALFA     |
+| What?       | When?               | 
+|-------------|---------------------|
+|             |                     |
+| Lecture     | Monday<br>17:15     | 
+| Practical   | Tuesday <br>13:15   | 
+| WG1         | Thursday<br>09:00   | 
+| WG2         | Thursday<br>11:00   | 
+| WG3         | Thursday<br>09:00   | 
+| Exam        | 2024-01-22<br>19:00 | 
 
-Check [MyTimetable](https://mytimetable.uu.nl/schedule) for changes in the schedule!
+Check [MyTimetable](https://mytimetable.uu.nl/schedule) for the locations!
 
 ---
 
@@ -213,7 +210,7 @@ analysis with a group of your peers.
 ### **Attendance** 
 
 During this course, you will attend 8 workgroup sessions and hand in 7 practical
-assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and
+assignments. We expect you to attend at least 7 out of 8 workgroup sessions, and
 hand in at least 6 out of 7 practical assignments (before the deadline). If you
 do not meet these requirements, you lose the right to resit the exam. 
 
@@ -223,7 +220,7 @@ do not meet these requirements, you lose the right to resit the exam.
 
 **Grading:** 25% of your final grade 
 
-**Deadline:** Monday December 18, 17:00 
+**Deadline:** Monday December 16, 17:00 
 
 **What to submit:** A ZIP archive containing the complete R project (dataset, 
 RMD, HTML) 
@@ -256,7 +253,7 @@ of custom functions (when applicable). Presentation of suitable visualizations.
 
 **Grading:** 25% of your final grade 
 
-**Deadline:** Thursday January 18, 17:00 
+**Deadline:** Thursday January 16, 17:00 
 
 **What to submit:** A ZIP archive containing the complete R project (dataset, 
 RMD, HTML) 

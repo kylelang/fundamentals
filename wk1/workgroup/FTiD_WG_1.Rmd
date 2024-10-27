@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 1"
 author: "Fundamental Techniques in Data Science with R"
-date: "Noverber 16, 2023"
+date: ""
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -117,7 +117,7 @@ Applying the lecture topics to own (real) data sets.
 - Group assignment
 - Groups with max. 4 members
 - Linear regression
-- <b><u>Deadline: Monday 18th of December, 17:00</u></b>
+- <b><u>Deadline: Monday 16th of December, 17:00</u></b>
 
 <p class="forceBreak"></p>
 
@@ -125,7 +125,7 @@ Applying the lecture topics to own (real) data sets.
 - Group assignment
 - Same groups as Assignment 1
 - Logistic regression
-- <b><u>Deadline: Thursday 18th of January, 17:00 </u></b>
+- <b><u>Deadline: Thursday 16th of January, 17:00 </u></b>
 
 ## Assignments - General Comments
 
@@ -194,6 +194,7 @@ There are a lot of online places that offer good data sets for these assignments
 ## Remainder of the meeting
 
 <h4> 1\. Make groups of (max.) 4 students </h4> <br>
+- How do you work together as a group? See [this](https://www.vu.edu.au/sites/default/files/Groupwork%20Charter%20Template.pdf) example.
 
 <h4> 2\. Start looking for a data set:</h3>
 - Look for something you find interesting
@@ -208,11 +209,22 @@ There are a lot of online places that offer good data sets for these assignments
 - Is recoding of variables needed?
 - Is any processing needed? (If you want to use factor analysis or PCA, you are free to do so)
 
+## Use of generative AI
+
+<h1> You are allowed to </h1>
+- gain inspiration
+- ask for help on how to tackle an assignment
+
+<h1> You are not allowed to </h1>
+- submit generated text or code as if it was written by you
+- have text or code revised 
+
 
 ## Before the end of the meeting:
 
 <h3> As group, send email to WG instructor: </h3>
 - Names of group members;
+- How you agreed to collaborate;
 - Selected data set (topic and link);
 - Research questions you want to answer in your assignments.
 
