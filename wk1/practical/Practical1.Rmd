@@ -111,7 +111,7 @@ b == a + a # this line checks if b equals a + a and returns TRUE or FALSE
 b^2 # see question 3
 ```
 
-7. __Multiply the answer of question 6 by a over b__
+7. __Multiply the answer of question 6 by *a over b*__
 ```{r, include = params$answer}
 b^2 * (a / b) # brackets and spaces can clarify code
 ```
@@ -126,7 +126,7 @@ c <- b^2 * (a / b) # C should be 2
 sqrt(c^b) # should still be 2
 ```
 
-10. __Multiply the answer of question 9 by a over (b to the power 6)__
+10. __Multiply the answer of question 9 by *a over (b to the power 6)*__
 ```{r, include = params$answer}
 sqrt(c^b) * (a / b^6)
 ```
@@ -185,7 +185,7 @@ R has lots of built-in functions or functions in packages, such as `seq()`, `mea
 
 12. __Perform the following operations by using built-in R functions:__
 
-- __Create a sequence of numbers from 12 to 24, by using the function `sec()`.__
+- __Create a sequence of numbers from 12 to 24, by using the function `seq()`.__
 ```{r, include = params$answer}
 seq(12, 24)
 ```
@@ -209,7 +209,7 @@ There are several of ways to read data into R. One option is to use the `readr` 
 
 Download the file "flightdata.csv" from the course page and store it in your project folder. This file contains a sample from the "flights" dataset from the `nycflights13` package. This contains airline data for all flight departing from NYC in 2013. Note that you have to assign the desired data to an object when reading the data into R.
 
-13. __Read the `flightdata.csv` file into R with the `readr` package` using the code below__
+13. __Read the `flightdata.csv` file into R with the `readr` package using the code below__
 
 ```{r message=FALSE, warning=FALSE}
 flight_data <- read_csv("flightdata.csv") # Imports the data
@@ -327,7 +327,7 @@ for(i in 1:12){
 
 As an alternative to loops, `apply` statements can be used to apply the same function to a list or vector of elements. For example, you can compute the mean of every column in your data set by using an apply statement.
 
-The apply statements are several similar statements that are useful in different situations. Some examples are `apply()`, `sapply()`, `lapply()`, and 'mapply()'. To learn the exact differences between the statements, please read the function-documentation (e.g. `?apply()`).
+The apply statements are several similar statements that are useful in different situations. Some examples are `apply()`, `sapply()`, `lapply()`, and `mapply()`. To learn the exact differences between the statements, please read the function-documentation (e.g. `?apply()`).
 
 The standard `apply()` function has the input arguments
 

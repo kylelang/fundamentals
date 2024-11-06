@@ -2881,7 +2881,8 @@ b == a + a # this line checks if b equals a + a and returns TRUE or FALSE</code>
 <pre class="r"><code>b^2 # see question 3</code></pre>
 <pre><code>## [1] 4</code></pre>
 <ol start="7" style="list-style-type: decimal">
-<li><strong>Multiply the answer of question 6 by a over b</strong></li>
+<li><strong>Multiply the answer of question 6 by <em>a over
+b</em></strong></li>
 </ol>
 <pre class="r"><code>b^2 * (a / b) # brackets and spaces can clarify code</code></pre>
 <pre><code>## [1] 2</code></pre>
@@ -2896,8 +2897,8 @@ power b</strong></li>
 <pre class="r"><code>sqrt(c^b) # should still be 2</code></pre>
 <pre><code>## [1] 2</code></pre>
 <ol start="10" style="list-style-type: decimal">
-<li><strong>Multiply the answer of question 9 by a over (b to the power
-6)</strong></li>
+<li><strong>Multiply the answer of question 9 by <em>a over (b to the
+power 6)</em></strong></li>
 </ol>
 <pre class="r"><code>sqrt(c^b) * (a / b^6)</code></pre>
 <pre><code>## [1] 0.03125</code></pre>
@@ -2963,7 +2964,7 @@ functions:</strong></li>
 </ol>
 <ul>
 <li><strong>Create a sequence of numbers from 12 to 24, by using the
-function <code>sec()</code>.</strong></li>
+function <code>seq()</code>.</strong></li>
 </ul>
 <pre class="r"><code>seq(12, 24)</code></pre>
 <pre><code>##  [1] 12 13 14 15 16 17 18 19 20 21 22 23 24</code></pre>
@@ -2995,7 +2996,7 @@ have to assign the desired data to an object when reading the data into
 R.</p>
 <ol start="13" style="list-style-type: decimal">
 <li><strong>Read the <code>flightdata.csv</code> file into R with the
-<code>readr</code> package` using the code below</strong></li>
+<code>readr</code> package using the code below</strong></li>
 </ol>
 <pre class="r"><code>flight_data &lt;- read_csv(&quot;flightdata.csv&quot;) # Imports the data
 flight_data # View the data</code></pre>
@@ -3177,8 +3178,8 @@ you can compute the mean of every column in your data set by using an
 apply statement.</p>
 <p>The apply statements are several similar statements that are useful
 in different situations. Some examples are <code>apply()</code>,
-<code>sapply()</code>, <code>lapply()</code>, and ‘mapply()’. To learn
-the exact differences between the statements, please read the
+<code>sapply()</code>, <code>lapply()</code>, and <code>mapply()</code>.
+To learn the exact differences between the statements, please read the
 function-documentation (e.g. <code>?apply()</code>).</p>
 <p>The standard <code>apply()</code> function has the input
 arguments</p>
