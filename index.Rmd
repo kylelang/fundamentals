@@ -39,7 +39,7 @@ Assessment: Assignments and Exam
 |-------------|---------------------|
 |             |                     |
 | Lecture     | Monday<br>17:15     | 
-| Practical   | Tuesday <br>13:15   | 
+| Practical   | Tuesday <br>13:15  (online)  | 
 | WG1         | Thursday<br>09:00   | 
 | WG2         | Thursday<br>11:00   | 
 | WG3         | Thursday<br>09:00   | 
