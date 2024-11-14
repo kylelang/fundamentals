@@ -66,7 +66,7 @@ Welcome to the second practical of Fundamental Techniques in Data Science with R
 
 Start by creating a new R Project and open a new R Markdown file within it. If you can't remember how to do this, you can find more instructions in the preparation practical. 
 
-You should by now have `tidyverse` installed, which we need for this practical. Within the `tidyverse` we will use the `dplyr` and `magrittr` packaged which have useful functions for data manipulation and working with factors. We will also use `kableExtra` to create nicely formatted tables. 
+You should by now have `tidyverse` installed, which we need for this practical. Within the `tidyverse` we will use the `dplyr` and `magrittr` packages which have useful functions for data manipulation and working with factors. We will also use `kableExtra` to create nicely formatted tables. 
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -76,9 +76,10 @@ library(kableExtra)
 We are going to use the General Social Survey, which is a long-running [US survey](https://gss.norc.org/) conducted by the NORC at the University of Chicago. The survey monitors changes in social characteristics and attitudes. The survey is quite large, so we can access a smaller version in the `forcats` package. It has the following variables:
 
 * **year**: year of the survey from 2000-2014
-* **age**: max age is truncated to 89
 * **marital**: marital status
+* **age**: max age is truncated to 89
 * **race**
+* **rincome**: reported income
 * **partyid**: political affiliation
 * **relig**: religion
 * **denom**: denomination 
@@ -112,7 +113,7 @@ Tibbles are modern re-workings of a `data.frame`. Tibbles keep the most importan
 In addition, there are two main differences when using tibbles vs. `data.frame`:
 
 * Printing: tibbles only print the first 10 rows and only columns that fit on screen to avoid overwhelming your environment
-* Subsetting: when extracting a single variable from a tibble you must use the `.` placeholder (e.g., `df %>% .x` instead of `df$x` or `df[["x]])`)
+* Subsetting: when extracting a single variable from a tibble you must use the `.` placeholder (e.g., `df %>% .x` instead of `df$x` or `df[["x"]])`)
 
 Because tibble is a part of the core `tidyverse` any function also connected to it will produce tibbles. However, sometimes you need to coerce R data frames to tibbles using `as_tibble()', like so:
 
@@ -453,7 +454,7 @@ x <- c("apple pie", "apple", "apple cake")
 str_view(x, "^apple$")
 ```
 
-This is only the beginning of what you can do with the stringr package. You can read the [Strings](https://r4ds.had.co.nz/strings.html) chapter in the R4DS book if you are keen to learn more. 
+This is only the beginning of what you can do with the `stringr` package. You can read the [Strings](https://r4ds.had.co.nz/strings.html) chapter in the R4DS book if you are keen to learn more. 
 
 ---
 
@@ -599,7 +600,7 @@ rincome_summary %>%
 # `fct_relevel()` is a related function that allows us to specify if we want to move a particular level to the front, for example. In the example below, we use `fct_relevel()` to bring forward those who responded to the salary question as "Not applicable". This makes these responses easier to see, as they are not embedded between the other ordered salary ranges.* 
 ```
 
-What if you want to create a different kind of plot, such as a bar plot? Barplots can be reordered using `fct_infreq()` to order factor levels in increasing frequency. As you can see in the example below, `fct_infreq()` works in a similar way to `fct_reorder()` and `fct_releval()` (i.e. with `mutate()`). 
+What if you want to create a different kind of plot, such as a bar plot? Bar plots can be reordered using `fct_infreq()` to order factor levels in increasing frequency. As you can see in the example below, `fct_infreq()` works in a similar way to `fct_reorder()` and `fct_releval()` (i.e. with `mutate()`). 
 
 ```{r, echo = TRUE, include = TRUE}
 gss_cat %>%
@@ -616,7 +617,7 @@ gss_cat %>%
 ```{r, include = params$answers}
 gss_cat %>%
   mutate(race = fct_infreq(race)) %>% 
-  ggplot(aes(marital)) +
+  ggplot(aes(race)) +
     geom_bar(col = "lightblue", fill = "lightblue") +
     theme_minimal()
 ```
