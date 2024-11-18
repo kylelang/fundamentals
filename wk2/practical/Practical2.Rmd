@@ -237,11 +237,7 @@ gss_cat %>%
 
  # There are numerous ways to quantify missing values in R, but sticking to the very simple method using `count()` we can inspect each factor variable in turn. Almost all of the factor variables have some responses that could be considered to be missing data.
 
-# There are more advanced methods to find missing values that involve less code and a bit less manual work. We won't go into this in detail today, but for those interested the operation below summarises NAs across an entire data set. Following this method, NAs can be found quicker. This isn't a solution for non-standard missing responses, which always involve more manual work.* 
-
-gss_cat %>% 
-  select(everything()) %>% 
-  summarise_all(funs(sum(is.na(.))))
+# There are more advanced methods to find missing values that involve less code and a bit less manual work. We won't go into this in detail today.
 ```
 
 ---
