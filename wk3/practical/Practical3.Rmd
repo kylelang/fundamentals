@@ -71,9 +71,9 @@ You will work with the `mpg` dataset from the `ggplot2` package. `mpg` contains 
 * **model:** model name
 * **displ:** engine displacement in litres
 * **year:** year of manufacture
-* **cyl:** number of cyclinders
+* **cyl:** number of cylinders
 * **trans:** type of transmission
-* **drv:** type of drive tran (f = front-wheel drive; r = rear-wheel drive; 4 = four-wheel drive)
+* **drv:** type of drive train (f = front-wheel drive; r = rear-wheel drive; 4 = four-wheel drive)
 * **cty:** city miles per gallon
 * **hw:** highway miles per gallon
 * **fl:** fuel type
@@ -126,7 +126,7 @@ EDA is very flexible and iterative process and gives the researcher a lot of fre
 
 ## Variation
 
-**Variation** describes how the values of a variable change each time you measure it. A continuous variable that is measured on one occassion will have different values to that same variable measured on another occasion. This variation between measurement occasions are what we call "error". Categorical variables also vary across measurement occasions or across individuals. Visualizing variation is a very intuitive way to understand trends or patterns within a variable. 
+**Variation** describes how the values of a variable change each time you measure it. A continuous variable that is measured on one occasion will have different values to that same variable measured on another occasion. This variation between measurement occasions are what we call "error". Categorical variables also vary across measurement occasions or across individuals. Visualising variation is a very intuitive way to understand trends or patterns within a variable. 
 
 ---
 
@@ -164,10 +164,11 @@ mpg %>%
 mpg %>% 
   group_by(year) %>%                    # by year
   summarise(min = min(displ),           # minimum of engine displacement
-            Q1 = quantile(displ, 0.25), # first quantile
+            Q1 = quantile(displ, 0.25), # first quartile
             median = median(displ),     # median
-            Q3 = quantile(displ, 0.75), # third quantile
-            max = max(displ)) %>%       # maximum
+            Q3 = quantile(displ, 0.75), # third quartile
+            max = max(displ),           # maximum
+            IQR = Q3 - Q1) %>%          # inter quartile range
   kbl() %>%  
   kable_styling(latex_options = c("striped", "hover"), full_width = F)          
 ```
@@ -192,7 +193,7 @@ plot(x = mpg$displ, y = mpg$hwy,
      ylab = "Engine displacement (L)")
 ```
 
-These plots are quick to produce and are useful for an initial understanding of the data, but the syntax used to create them is specific to the type of plot. In contrast, `ggplot` has a streamlined approach to plotting involving largely the same steps regardless of plot type. Specifically, in `ggplot` we build up visualizations layer by layer using the `+` operator (which is similar to the ` %>% ` operator we are already familiar with). 
+These plots are quick to produce and are useful for an initial understanding of the data, but the syntax used to create them is specific to the type of plot. In contrast, `ggplot` has a streamlined approach to plotting involving largely the same steps regardless of plot type. Specifically, in `ggplot` we build up visualisations layer by layer using the `+` operator (which is similar to the ` %>% ` operator we are already familiar with). 
 
 The main, important, layers in `ggplot` are:
 
@@ -265,7 +266,7 @@ ggplot(mpg) +
   geom_bar(aes(x = class)) +
   theme_bw() # Here we add the theme
 
-# There are different `ggplot` themes and the one you choose is largely down to personal preference, but you also want one that enhances your data visualization. Here I choose `+ theme_bw()` but other examples include `+ theme_minimal()` and `+ theme_light()`.
+# There are different `ggplot` themes and the one you choose is largely down to personal preference, but you also want one that enhances your data visualisation. Here I choose `+ theme_bw()` but other examples include `+ theme_minimal()` and `+ theme_light()`.
 ```
 
 ---
@@ -390,7 +391,7 @@ ggplot(mpg, aes(x = displ,
 
 ### Continuous - Categorical
 
-**Boxplots** are often used to explore the distribution of a continuous variable broken down by a categorical variable. below is an example of `hwy` broken down by `drv`. 
+**Boxplots** are often used to explore the distribution of a continuous variable broken down by a categorical variable. Below is an example of `hwy` broken down by `drv`. 
 
 `geom_boxplot` transforms the data to show summary statistics that are represented by the different visual features of the boxplot. 
 
@@ -431,7 +432,7 @@ ggplot(mpg) +
 13. __What can you conclude about the highway miles per gallon of each type of drive train from the boxplot above?__
 
 ```{r, include = params$answers}
-# There are many outliers (points beyond the whiskers) for drive traint type "f", which represents a front-wheel drive. There are no outliers beyond the IQR for the other types of drive train, 4-wheel drive and rear-wheel drive.
+# There are many outliers (points beyond the whiskers) for drive train type "f", which represents a front-wheel drive. There are no outliers beyond the IQR for the other types of drive train, 4-wheel drive and rear-wheel drive.
 ```
 
 The variable `trans` contains 10 different transmissions types. These 10 categories can be assumed under 2 broader categories: **manual** and **auto**. 
@@ -455,7 +456,7 @@ mpg <- mpg %>%
 15. __Use the previous example to create a boxplot mapping `cty` on the y-axis and `drv` on the x-axis, this time adding the argument `colour = trans` to `aes()`. What has changed?__
 
 ```{r, include = params$answers}
-  ggplot(mpg) +
+ggplot(mpg) +
   geom_boxplot(aes(x = drv, 
                    y = cty, 
                    colour = trans))
