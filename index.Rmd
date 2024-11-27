@@ -595,6 +595,38 @@ You can find the lecture slides below.
 - [Data visualization](wk3/lecture/visualization.pdf)
 - [Data cleaning](wk3/lecture/cleaning.pdf)
 
+#### Recordings
+
+##### Data Cleaning 1: Missing Data
+
+*Note:* In the live lecture, we covered the first 15 minutes of the following video.
+
+<iframe
+  width="560"
+  height="315" 
+  src="https://www.youtube.com/embed/71b0V9ZBtRI?si=DVGXLFnH5X3bY2HZ"
+  title="Data Cleaning 1: Missing Data"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  data-external="1"
+  allowfullscreen>
+</iframe>
+
+##### Data Cleaning 2: Outliers
+
+<iframe
+  width="560"
+  height="315" 
+  src="https://www.youtube.com/embed/Zbp2MsJmxj8?si=sOa5iLfzaZjF9jrl"
+  title="Data Cleaning 2: Outliers"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  data-external="1"
+  allowfullscreen>
+</iframe>
+
 ### Required Reading
 
 ***These readings are exam materials.***
