@@ -1,0 +1,1074 @@
+---
+title: "Fundamental Techniques"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: scroll
+---
+<style>
+  .hidden { 
+      display: none; 
+  }
+</style>
+<!-- 
+Define some hacky LaTeX commands to force nice spacing between lines    
+NOTE: These must be called within a math environment (e.g., $\va$)
+-->
+
+\newcommand{\va}{\\[12pt]}
+\newcommand{\vb}{\\[6pt]}
+\newcommand{\vc}{\\[3pt]}
+\newcommand{\vx}[1]{\\[#1pt]}
+
+# Intro {.sidebar data-width=300}
+
+This dashboard covers the course materials for the course 
+[***Fundamental Techniques in Data Science with R***][ftds]
+
+---
+
+Course Coordinator: [Laura Boeschoten](https://www.uu.nl/medewerkers/LBoeschoten) <br>
+Lecturer: [Kyle Lang](https://www.uu.nl/medewerkers/KMLang) <br>
+WG Instructor: [Anastasia Giachanou](https://www.uu.nl/medewerkers/AGiachanou/) <br>
+Study load: 7.5 ECTS <br>
+Assessment: Assignments and Exam 
+
+---
+
+| What?       | When?               | 
+|-------------|---------------------|
+|             |                     |
+| Lecture     | Monday<br>17:15     | 
+| Practical   | Tuesday <br>13:15  (online)  | 
+| WG1         | Thursday<br>09:00   | 
+| WG2         | Thursday<br>11:00   | 
+| WG3         | Thursday<br>09:00   | 
+| Exam        | 2024-01-22<br>19:00 | 
+
+Check [MyTimetable](https://mytimetable.uu.nl/schedule) for the locations!
+
+---
+
+# Quick Overview
+
+## Column 1 {data-width=400}
+
+### 
+
+In nine weeks, you will learn the basics of data handling with R and details 
+about regression techniques in the context of statistical inference. We will 
+also cover the connection between these concepts and research philosophy. During 
+every lecture, we will cover a different theoretical topic. In addition to the 
+lectures, there will also be a weekly computer lab exercise that connects the 
+statistical theory to practice. You will also attend weekly workgroup meetings 
+wherein you will work on solving motivating, real-world case studies. 
+
+### **Assignment and Grading**
+
+The final grade is computed as follows
+
+| Grade Component | Weight |
+|:-------|:------|
+| Group assignment 1: Linear regression | 25% |
+| Group assignment 2: Logistic Regression | 25% |
+| Written Exam | 50% |
+
+In addition to the grade components listed above, you will also do `R` exercises 
+for the first 7 weeks of the course. These exercises will develop the skills 
+needed to successfully complete the assignments. 
+
+To pass the course:
+
+1. Your final exam grade must be 5.5 or higher
+1. Both of your assignments grades must be 5.5 or higher
+
+### **Attendance** 
+
+During this course, you will attend 8 workgroup sessions and hand in 7 practical
+assignments. We expect to you attend at least 7 out of 8 workgroup sessions, and
+hand in at least 6 out of 7 practical assignments (before the deadline). If you
+do not meet these requirements, you lose the right to resit the exam. 
+
+### **Literature**
+
+We will use two open-source books in this course:
+
+1. [*R for Data Science*](https://r4ds.had.co.nz) (R4DS) 
+   - You can find solutions for the R4DS exercises
+   [here](https://jrnold.github.io/r4ds-exercise-solutions/).
+1. [*Applied Statistics with R*](https://book.stat420.org) (ASWR)
+
+There is no need to purchase these books. The freely available online versions 
+are sufficient. The relevant chapters will be linked in this dashboard where the 
+reading is assigned. We will also use several external webpages and web apps. 
+These resources will also be linked in this dashboard.
+
+## Column 2 {data-width=400}
+
+### **Schedule**
+
+| Week # | Topic | `R` Exercise | Workgroup | Reading |
+|--|---|----|----|----|
+| 1 | The basics of `R` | How to work with `R` via scripts, projects, and markdown; How to import external data into `R`; How to write your own functions; How to iterate repetative tasks | Form groups; Search for a dataset for the two group assignments; Formulate research questions| R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), [Chapter 27](https://r4ds.had.co.nz/r-markdown.html), [Chapter 19](https://r4ds.had.co.nz/functions.html), and [Chapter 21](https://r4ds.had.co.nz/iteration.html) |
+| 2 | Programmatic data manipulation 1 | Data types and objects in `R`; Data transformation; Working with pipes | Perform data transformations on your found dataset | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
+| 3 | Programmatic data manipulation 2 | Data visualization; Data inspection; Data cleaning | Continue with data inspection and cleaning | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html) and [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 4 | Multiple linear regression | Estimating linear models in `R` using the `lm()`function; Model fit and model comparison; Categorical predictors; Moderation | Find a best fitting model; Test your hypotheses | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
+| 5 | Model assumptions and diagnostics | Assumptions of the linear model; Leverage, outliers, and influential cases | Check assumptions of your model and inspect for unusual observations; Make adjustments if necessary; Draw conclusions; **Submit Assignment 1** | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
+| 6 | Generalized linear model and logistic regression | Estimating generalized linear models using the `glm()` function in `R `; Definition, estimation, and interpretation of logistic regression models | Perform data inspection and cleaning for the second assignment; Formulate hypothesis; Find a best fitting model and test your hypotheses | ASWR: [Chapter 17 (only 17.1--17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
+| 7 | Logistic regression assumptions and classification | Logistic regression assumptions; Classification; Confusion matrix | Check the assumptions of your model and make adjustments if necessary; Make classifications | ASWR: [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) | 
+| 8 | Summary, catch-up, and questions | - | Interpret your final model as well as the confusion matrix; Draw conclusions; **Submit Assignment 2** | - | 
+
+<!----------------------------------------------------------------------------->
+
+# Course Manual
+
+## Column 1 {data-width=400}
+
+### **Course Content**
+
+Regression techniques are widely used to quantify the relationship between two 
+or more variables. In data science, linear and logistic regression are common 
+and powerful techniques for evaluating such relations. These techniques are only 
+useful, however, once you understand when and how to apply them. In this course, 
+students will learn how to apply linear and logistic regression with the `R` 
+statistical software package.
+ 
+This course will introduce students to the principles of analytical data science, 
+linear and logistic regression, and the basics of statistical learning. Students
+will develop fundamental `R` programming skills and will gain experience with 
+tidyverse: visualize data with ggplot2 and performing basic data wrangling with 
+dplyr. This course helps prepare students for an entry-level research career 
+(e.g. junior researcher or research assistant) or further education in research 
+(e.g., a [research] Master program or a PhD).
+
+### **Course goals**
+
+At the end of this course, students are able to:
+
+1. Identify key statistical concepts such as:
+    *	(Conditional) probability
+    *	Inference
+    * Estimation
+    *	Prediction
+    *	Classification
+    *	Sampling variability
+    *	Statistical modeling
+    *	Residuals
+    *	Fitted values
+$\vb$
+1. Choose an appropriate regression model for a given research scenario.
+$\vb$
+1. Explain the differences/similarities between statistical inference and 
+model-based prediction/classification; give examples of each type of problem.
+$\vb$
+1. Identify the assumptions of linear and logistic regression; describe the 
+consequences of violating these assumptions.
+$\vb$
+1. Describe the three components of a generalized linear model and how these 
+components are specified in logistic regression.
+$\vb$
+1. Interpret the estimates from linear and logistic regression models, and use 
+these estimates to answer research questions.
+$\vb$
+1. Use the `R` statistical software platform to perform basic statistical 
+programming, data manipulation, data visualization, and basic data wrangling.
+$\vb$
+1. Use the `R` statistical software platform to perform, interpret, and evaluate 
+linear and logistic regression analyses on real-world data.
+$\vb$
+1. Interpret `R` output and use the results to answer research questions.
+$\vb$
+1. Use `R` Markdown to document the results of a statistical analysis.
+
+### **Relation between assessment and objective**
+
+In this course, skills and knowledge are evaluated with two types of assignment.
+
+1. The exam evaluates knowledge and understanding of statistical concepts 
+(Learning goal 1), the ability to critically evaluate research problems and 
+statistical methods (Learning goals 2–5), and the ability to interpret 
+statistical results and software output and apply these interpretations 
+(Learning goals 6 & 9).
+$\vb$
+1. The group assignments evaluate the student’s ability to work with data, solve 
+basic data analytic problems, execute quantitative data analyses on real-world 
+data sets, and document the results (learning goals 6–10).
+
+## Column 2 {data-width=400}
+
+### **Course structure**
+
+In eight weeks, you will learn the basics of data handling and statistical 
+programming with R and details about regression techniques in the context of 
+statistical inference, prediction, and classification. Each week will comprise 
+three class activities:
+
+1. During the weekly lectures, we will cover the theoretical content.
+$\vb$
+1. Weekly practical exercises connect the statistical theory to practice by 
+applying the lecture content in the R statistical programming language.
+$\vb$
+1. During the weekly workgroup meetings, you will work on real-world data 
+analysis with a group of your peers.
+
+### **Attendance** 
+
+During this course, you will attend 8 workgroup sessions and hand in 7 practical
+assignments. We expect you to attend at least 7 out of 8 workgroup sessions, and
+hand in at least 6 out of 7 practical assignments (before the deadline). If you
+do not meet these requirements, you lose the right to resit the exam. 
+
+### **Group assignment 1: Linear regression**
+
+**Type of assignment:** Group (4 students) 
+
+**Grading:** 25% of your final grade 
+
+**Deadline:** Monday December 16, 17:00 
+
+**What to submit:** A ZIP archive containing the complete R project (dataset, 
+RMD, HTML) 
+
+**Where to submit:** [This Surfdrive folder](https://surfdrive.surf.nl/files/index.php/s/vDu5h9LNlwE6KhN) 
+
+**Description:**
+For this assignment, you perform and report a  multiple *linear* regression 
+analysis in an R markdown document. The assignment will be graded on the 
+following five dimensions: 
+
+1. **Preliminaries:** Introduction of your research questions, description and 
+potential processing of your data. 
+$\vb$
+1. **Model estimation:** Description of the model estimates, model fit, and 
+model comparison procedure.
+$\vb$
+1. **Assumptions:** Testing of model assumptions, checking for influential cases. 
+Act upon and/or reflect on violations when needed.
+$\vb$
+1. **Interpretation:** Substantive interpretation of the final model. Answering
+your research question.
+$\vb$
+1. **Layout:** Structure of the document, efficiency of output presentation, use
+of custom functions (when applicable). Presentation of suitable visualizations. 
+
+### **Group assignment 2: Logistic regression**
+
+**Type of assignment:** Group (4 students) 
+
+**Grading:** 25% of your final grade 
+
+**Deadline:** Thursday January 16, 17:00 
+
+**What to submit:** A ZIP archive containing the complete R project (dataset, 
+RMD, HTML) 
+
+**Where to submit:**: [This Surfdrive folder](https://surfdrive.surf.nl/files/index.php/s/fsgbaBK1q1f1WeP)
+
+**Description:**
+For this assignment, you perform and report a  multiple *logistic* regression 
+analysis in an R markdown document. The assignment will be graded on the 
+following five dimensions: 
+
+1. **Preliminaries:** Introduction of your research questions, description and 
+potential processing of your data. 
+$\vb$
+1. **Model estimation:** Description of the model estimates, model fit, and 
+model comparison procedure.
+$\vb$
+1. **Assumptions:** Testing of model assumptions, checking for influential cases. 
+Act upon and/or reflect on violations when needed.
+$\vb$
+1. **Interpretation:** Substantive interpretation of the final model (including 
+the confusion matrix). Answering your research question.
+$\vb$
+1. **Layout:** Structure of the document, efficiency of output presentation, use
+of custom functions (when applicable). Presentation of suitable visualizations. 
+
+<!----------------------------------------------------------------------------->
+
+# Preparation
+
+## Column 1
+
+###
+
+This semester, you will participate in the **Fundamental Techniques in Data 
+Science with `R`** course at Utrecht University. In this course, you will use 
+both `R` and `RStudio`. The steps below will guide you through installing both 
+`R` and `RStudio`. Please do so before the first meeting. 
+
+### **System requirements**
+
+Bring a laptop computer to the course, and make sure that you have full write 
+access and administrator rights on the machine. We will explore programming and 
+compiling in this course, so you will need full access to your machine. Some 
+corporate laptops come with limited access for their users, I therefore advise 
+you to bring a personal laptop to the workgroup meetings. 
+
+### **1. Install `R`**
+
+You can obtain a copy of `R` [here](https://cran.r-project.org). We won't use 
+`R` directly in the course. Rather, we'll call `R` through `RStudio`. Therefore, 
+you also need to install `RStudio`. 
+
+### **2. Install `RStudio` Desktop**
+
+`RStudio` is an Integrated Development Environment (IDE) for `R`. You can 
+download `RStudio` as stand-alone software [here](https://posit.co/download/rstudio-desktop/#download). 
+The free and open-source `RStudio Desktop` version is sufficient.
+
+### **3. Start RStudio and install the following packages. **
+
+Open `RStudio`, and copy-paste the following lines of code into the console 
+window to execute them.
+
+- If nothing happens after you paste the code, try hitting the "Enter/Return" 
+key.
+
+```{r eval = FALSE, echo = TRUE}
+install.packages(c("ggplot2", 
+                   "tidyverse", 
+                   "magrittr", 
+                   "micemd", 
+                   "jomo", 
+                   "pan", 
+                   "lme4", 
+                   "knitr", 
+                   "rmarkdown", 
+                   "plotly", 
+                   "ggplot2", 
+                   "devtools", 
+                   "class", 
+                   "car", 
+                   "MASS", 
+                   "ISLR",  
+                   "mice"), 
+                 dependencies = TRUE)
+```
+
+If you are not sure where to paste the code, use the following figure to 
+identify the console:
+
+<center>
+  <img src="images/console.png" alt="HTML5 Icon" width = 70%>
+</center>
+
+When you are asked the following:
+
+```{r eval = FALSE, echo = TRUE}
+Do you want to install from sources the package which needs
+compilation? (Yes/no/cancel)
+```
+
+Type `Yes` in the console, and press the "Enter/Return" key (or click the 
+corresponding button if the question presents as a dialog box). 
+
+### **What if the steps do not work for me?**
+
+If the suggested steps fail, or you have insufficient rights on your machine, 
+you can use the following web-based solutions. 
+
+1. Open a free account on [posit.cloud](https://posit.cloud/). 
+
+   - You can run your own cloud-based `RStudio` environment there.
+$\va$
+2. Use Utrecht University's [MyWorkPlace](https://myworkplace.uu.nl/). 
+
+   - You will have access to `R` and `RStudio` there. When you start a new 
+   MyWorkPlace session, you may need to (re)install packages. 
+
+Naturally, you will need internet access to use these services. 
+
+## Column 2
+
+### Get acquainted with `R`
+
+To familiarize yourself with basic `R` usage, complete the following 
+[exercise](preparation/exercise_prep.html) before the first lecture. This 
+exercise will get you started with `R` and `RStudio`. You can always also have 
+a look at the [posit website](https://docs.posit.co/ide/user/ide/get-started/) 
+for more detailed tutorials. 
+
+Suggested reading:
+
+- R4DS [Chapter 4](https://r4ds.had.co.nz/workflow-basics.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-basics.html))
+- R4DS [Chapter 6](https://r4ds.had.co.nz/workflow-scripts.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/workflow-scripts.html))
+- R4DS [Chapter 8](https://r4ds.had.co.nz/workflow-projects.html)
+
+### Basic statistical concepts
+
+We expect you to be familiar with some basic statistical concepts such as:
+
+* Descriptive statistics
+* Sampling
+* Correlation
+* T-test
+* P-values 
+
+To refresh your memory, you can have a look at the material below. Note that
+these topics are background knowledge for this course. The course material
+builds on this knowledge.
+
+From ASWR: [Chapter 5 (only 5.1 and 5.2)](https://book.stat420.org/probability-and-statistics-in-r.html) and [Chapter 7 (only 7.1 and 7.2)](https://book.stat420.org/simple-linear-regression.html).
+
+Furthermore, you may benefit from exploring the following shiny apps:
+
+* [Descriptive statistics](https://utrecht-university.shinyapps.io/Descriptives/)
+* [Sampling](https://utrecht-university.shinyapps.io/sampling/)
+* [Correlation](https://utrecht-university.shinyapps.io/correlation/) 
+* [Correlation and sampling](https://utrecht-university.shinyapps.io/samplingcorrelations/)
+* [T-test](https://utrecht-university.shinyapps.io/t_test/)
+* [P-values](https://utrecht-university.shinyapps.io/Randomization_p-values/)
+
+<!----------------------------------------------------------------------------->
+
+# Week 1
+
+## Column 1
+
+### Lecture
+
+This week, we'll cover some fundamentals of `R` programming.
+
+- Interacting with `R` via scripts and R Markdown
+- Importing external data into `R` 
+- Writing your own `R` functions
+- Methods for iterating repetive operations in `R` scripts
+
+You can find the lecture slides [here](wk1/lecture/lecture1.pdf).
+
+### Required Reading
+
+***These readings are exam materials.***
+
+- R4DS [Chapter 11](https://r4ds.had.co.nz/data-import.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-import.html))
+- R4DS [Chapter 27](https://r4ds.had.co.nz/r-markdown.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/r-markdown.html))
+- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/functions.html))
+- R4DS [Chapter 21](https://r4ds.had.co.nz/iteration.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/iteration.html))
+
+### Useful Information and Links
+
+Well organized, tidy code is easier to debug, maintain, and understand. 
+[The tidyverse style guide](https://style.tidyverse.org) provides a useful set
+of formatting conventions that you can apply to your own code.
+
+## Column 2
+
+### Workgroup
+
+In this week's workgroup meeting, we discuss the assignments and expectations 
+for your work in this course. You will form groups and decide which research questions
+you will answer for Assignments 1 and 2. You will search for a dataset to use in 
+the two group assignments and thinking of possible research questions.
+
+You can find the slides for this workgroup meeting [here](wk1/workgroup/FTiD_WG_1.html).
+
+**Deadline:**
+
+Email the following information to your workgroup instructor **before the end 
+of the workgroup meeting**.
+
+- The names of your group members 
+- The research questions your group will use for Assignments 1 and 2
+
+### `R` Practical
+
+***NOTE:*** Please read the *Preparation* page before starting with these 
+practical exercises. 
+
+* Download the dataset for this exercise from the 
+[Surfdrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+* Complete [Practical 1](wk1/practical/Practical1.html).
+* Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder ](https://surfdrive.surf.nl/files/index.php/s/6jLjkBJzXH5eMpw)
+for this practical **before the next lecture**. 
+    * Name the files `your_name_1.Rmd` and `your_name_1.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `1` 
+    indicates Practical 1. 
+
+**Answers**
+
+You can find suggested answers to the practical below. We provide these answer 
+files for two reasons:
+
+1. So you won't ever get intractably stuck on a question.
+1. So you can check your answers after you attempt a problem.
+
+Even though you have the solutions available, we strongly encourage you to 
+seriously attempt answering each question in the exercises before checking the 
+solutions. 
+
+* [Practical 1 answers](wk1/practical/Practical1_answers.html)
+
+<!----------------------------------------------------------------------------->
+
+# Week 2
+
+## Column 1
+
+### Lecture
+
+This week, we start looking more closely at programmatic data manipulation in `R`.
+
+- `R` objects and data types
+- Manipulating and transforming data
+- Working with pipes
+
+You can find the lecture slides [here](wk2/lecture/lecture2.pdf).
+
+### Required Reading
+
+***These readings are exam materials.***
+
+- R4DS [Chapter 5](https://r4ds.had.co.nz/transform.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/transform.html))
+- R4DS [Chapter 10](https://r4ds.had.co.nz/tibbles.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/tibbles.html))
+- R4DS [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/strings.html))
+- R4DS [Chapter 15](https://r4ds.had.co.nz/factors.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/factors.html))
+- R4DS [Chapter 18](https://r4ds.had.co.nz/pipes.html)
+- R4DS [Chapter 20](https://r4ds.had.co.nz/vectors.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/vectors.html))
+
+### Useful Information and Links
+
+You can find some useful information via the following links:
+
+- More information about the very useful `magrittr` package 
+[here](https://magrittr.tidyverse.org).
+- More information about the `dplyr` package 
+[here](https://dplyr.tidyverse.org).
+- A cheatsheet for common `dplyr` operations
+[here](https://github.com/rstudio/cheatsheets/blob/main/data-transformation.pdf).
+
+## Column 2
+
+### Workgroup
+
+In this week's meeting, you refine your research questions and 
+perform any necessary manipulations to the variables in your dataset.
+
+You can find the slides for this workgroup meeting [here](wk2/workgroup/FTiD_WG_2.html).
+
+### `R` practical
+
+This week's `R` practical is about `R` objects and data types, performing basic 
+data manipulations, and working with pipes.
+
+- Complete [Practical 2](wk2/practical/Practical2.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/xoiSXO0uMAAKqZR)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_2.Rmd` and `your_name_2.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `2` 
+    indicates Practical 2. 
+
+**Answers**
+
+You can find suggested answers to the practical exercises here:
+
+- [Practical 2 answers](wk2/practical/Practical2_answers.html)
+
+<!----------------------------------------------------------------------------->
+
+# Week 3
+
+## Column 1
+
+### Lecture
+
+This week, we continue with our discussion of programmatic data processing.
+
+- Data visualization using `ggplot2`
+- Data exploration and cleaning
+
+You can find the lecture slides below.
+
+- [Data visualization](wk3/lecture/visualization.pdf)
+- [Data cleaning](wk3/lecture/cleaning.pdf)
+
+#### Recordings
+
+##### Data Cleaning 1: Missing Data
+
+*Note:* In the live lecture, we covered the first 15 minutes of the following video.
+
+<iframe
+  width="560"
+  height="315" 
+  src="https://www.youtube.com/embed/71b0V9ZBtRI?si=DVGXLFnH5X3bY2HZ"
+  title="Data Cleaning 1: Missing Data"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  data-external="1"
+  allowfullscreen>
+</iframe>
+
+##### Data Cleaning 2: Outliers
+
+<iframe
+  width="560"
+  height="315" 
+  src="https://www.youtube.com/embed/Zbp2MsJmxj8?si=sOa5iLfzaZjF9jrl"
+  title="Data Cleaning 2: Outliers"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerpolicy="strict-origin-when-cross-origin"
+  data-external="1"
+  allowfullscreen>
+</iframe>
+
+### Required Reading
+
+***These readings are exam materials.***
+
+- R4DS [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/data-visualisation.html))
+- R4DS [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html) 
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/exploratory-data-analysis.html))
+- R4DS [Chapter 19](https://r4ds.had.co.nz/functions.html)
+([Exercise Solutions](https://jrnold.github.io/r4ds-exercise-solutions/functions.html))
+- ASWR [Chapter 4](https://book.stat420.org/summarizing-data.html)
+
+### Useful information and links
+
+Below, you can find links to some useful resources.
+
+- [Introduction to `ggplot2`](https://www.youtube.com/watch?v=N5gYo43oLE8).
+- [Official webpage for `ggplot2`](https://ggplot2.tidyverse.org/index.html)
+- [Official webpage for `naniar`](https://naniar.njtierney.com/)
+- [Official webpage for `ggmice`](https://amices.org/ggmice/index.html)
+
+## Column 2
+
+### Workgroup
+
+In today's workgroup, you will continue with inspecting and cleaning your group's chosen dataset. 
+
+You can find the slides for this workgroup meeting [here](wk3/workgroup/FTiD_WG_3.html).
+
+### `R` practical
+
+This week's `R` practical will cover data visualization, inspection, and 
+cleaning as well as writing functions in `R`. 
+
+- Complete [Practical 3](wk3/practical/Practical3.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/6BVIf8UE5n6O828)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_3.Rmd` and `your_name_3.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `3` 
+    indicates Practical 3. 
+
+**Answers**
+
+You can find suggested answers to the practical exercises here:
+
+- [Practical 3 answers](wk3/practical/Practical3_answers.html)
+
+<!----------------------------------------------------------------------------->
+
+
+# Week 4
+
+## Column 1
+
+### Lecture
+
+This week, we move on from `R` programming and begin our discussion of linear 
+modeling.
+
+- Specifying linear models in `R` using the `lm()` function
+- Model fit and model comparison
+- Categorical predictors
+- Moderation
+  
+You can find the lecture slides [here](wk4/lecture/linearModel.pdf)
+
+### Required Reading
+
+***These readings are exam materials.*** 
+
+- ASWR [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html)
+- ASWR [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html)
+- ASWR [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html) 
+- ASWR [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html)
+
+## Column 2
+   
+### Workgroup
+
+In this week's workgroup, you will continue to work with your group on 
+Assignment 1. In particular, you will build your multiple linear regression model. 
+You start will build up your final model in steps:
+
+- Begin with a single predictor variable
+- Add additional predictors
+- Add complexity to the right hand side of your model (e.g., interaction terms
+to test for moderation)
+- Compare models using the various model fit criteria discussed in the lecture
+
+Finally, you will interpret the results of your optimal model.
+
+You can find the slides for this workgroup meeting [here](wk4/workgroup/FTiD_WG_4.html).
+
+### `R` practical
+
+This week's `R` practical is about linear regression and model comparison. The
+practical also includes more practice with data visualization. 
+
+- Complete [Practical 4](wk4/practical/Practical4.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/G3Dwam4nPKAkt16) 
+for this practical **before the next lecture**. 
+    - Name the files `your_name_4.Rmd` and `your_name_4.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `4` 
+    indicates Practical 4. 
+
+You can find an additional R code demonstration script [here](wk4/practical/demo4.html).
+
+- You don't need to submit anything related to this demonstration script.
+- This script simply provides more information on how to implement this week's 
+topics in R.
+
+**Answers**
+
+You can find suggested answers to the practical here:
+
+- [Practical 4 answers](wk4/practical/Practical4_answers.html).
+
+
+
+<!----------------------------------------------------------------------------->
+
+
+# Week 5
+
+## Column 1
+
+### Lecture 
+
+This week, we wrap up our discussion of the linear model by considering how we
+can check if our model results are trustworthy.
+
+- Assumptions of the linear model
+- Regression diagnostics
+- Outliers, high-leverage cases, and influential observations 
+  
+You can find the lecture slides [here](wk5/lecture/assumptions.pdf).
+  
+### Required Reading
+
+***These readings are exam materials.***
+  
+- ASWR [Chapter 13](https://book.stat420.org/model-diagnostics.html)
+
+### Useful information and links
+
+Below, you can find links to some useful resources.
+
+- [An introduction to robust regression in R](https://stats.oarc.ucla.edu/r/dae/robust-regression/)
+- [More information on sandwich estimators in R](https://sandwich.r-forge.r-project.org/articles/sandwich.html)
+
+## Column 2
+
+### Workgroup 
+
+In this week's workgroup, you will:
+
+- Check the assumptions of your model
+- Check for the influence of unusual observations
+- Make adjustments to your data or model, if necessary
+- Draw your final conclusions
+  
+You can find the slides for this workgroup meeting [here](wk5/workgroup/FTiD_WG_5.html).
+
+### Deadlines
+
+You must submit Assignment 1 by ***Monday December 19, 17:00***. 
+
+- See the *Course Manual* page for details.
+
+### `R` practical
+
+This week's `R` practical guides you through the various assumptions of the linear
+model as well as checks for outliers and influential cases. 
+
+- Download the dataset for this practical from the 
+[SurfDrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 5](wk5/practical/Practical5.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/BP0p0NYm8fmUOjT)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_5.Rmd` and `your_name_5.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `5` 
+    indicates Practical 5. 
+
+**Answers**
+
+You can find suggested answers to the practical here:
+
+- [Practical 5 answers](wk5/practical/Practical5_answers.html).
+
+
+<!----------------------------------------------------------------------------->
+
+<div class='hidden'>
+
+# Week 6
+
+## Column 1
+
+### Lecture
+
+This week's lecture covers the generalized linear model and the basics of 
+logistic regression.
+
+- Overview of the GLM
+- Probabilities, odds, and odds-ratios
+- Definition of the logistic regression model
+- Interpreting logistic regression estimates
+- Classification using logistic regression
+
+You can find the lecture slides [here](wk6/lecture/glm.pdf)
+
+### Required Reading
+
+***These readings are exam materials.***
+
+  * [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/)
+discussing how to interpret the estimates from a logistic regression
+  * ASWR [Chapter 17 (only 17.1 -- 17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
+
+## Column 2
+
+### Workgroup
+
+In this week's workgroup, you will start working on Assignment 2. 
+
+- You will perform final data inspection and cleaning for the dataset that you 
+chose for Assignment 2. 
+- You will formulate your research questions.
+- You will fit and interpret some logistic regression models to test your 
+research question.
+
+You can find the slides for this workgroup meeting [here](wk6/workgroup/FTiD_WG_6.html).
+
+### `R` practical
+
+This week's `R` practical guides you through the basics of logistic regression 
+analyses. 
+
+- Download the dataset for this practical from the 
+[SurfDrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 6](wk6/practical/Practical6.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/uEnCP1lduGiKlT1)
+for this practical **before the next lecture**. 
+    - Name the files `your_name_6.Rmd` and `your_name_6.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `6` 
+    indicates Practical 6. 
+
+**Answers**
+
+You can find suggested answers to the practical here:
+
+- [Practical 6 Answers](wk6/practical/Practical6_answers.html)
+
+</div>
+
+<!----------------------------------------------------------------------------->
+
+<div class='hidden'>
+
+# Week 7
+
+## Column 1
+
+### Lecture 
+
+This week, will cover the assumptions of logistic regression and evaluating
+classification performance via confusion matrices. 
+
+You can find the lecture slides [here](wk7/lecture/logistic_regression_diagnostics.pdf)
+
+### Required Reading
+
+***These readings are exam materials.***
+
+- [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) walking 
+through an example analysis using logistic regression
+- ASWR [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models)
+
+## Column 2
+
+### Workgroup
+
+In this week's workgroup, you will continue to work on Assignment 2. You will 
+check the assumptions of your model and make adjustments, if necessary. Also,
+you will interpret the confusion matrix of your model. 
+
+You can find the slides for this workgroup meeting [here](wk7/workgroup/FTiD_WG_7.html).
+
+### `R` practical
+
+This week's `R` practical guides you through the process of checking the 
+assumptions of the logistic regression model and evaluating classification 
+performance. 
+
+- Download the dataset for this practical from the 
+[Surfdrive datasets folder](https://surfdrive.surf.nl/files/index.php/s/F6FtbuU1j0eq5Qf).
+- Complete [Practical 7](wk7/practical/Practical7.html).
+- Submit your *RMD* script and the compiled *HTML* file it produces to the 
+[SurfDrive folder](https://surfdrive.surf.nl/files/index.php/s/OaYQF4jl39Z2hMO) 
+for this practical **before the next lecture**. 
+    - Name the files `your_name_7.Rmd` and `your_name_7.html`, respectively. 
+    Where `your_name` is your full name in *lower snake case*, and the `7` 
+    indicates Practical 7. 
+
+**Answers**
+
+You can find suggested answers to the practical here:
+
+- [Practical 7 Answers](wk7/practical/Practical7_answers.html)
+
+</div>
+
+<!----------------------------------------------------------------------------->
+
+<div class='hidden'>
+
+# Week 8
+
+## Column 1
+
+### Lecture
+
+In this week's lecture, we will wrap up the course, and I'll give an overview of 
+the main points we've covered. 
+
+You can find the lecture slides [here](wk8/lecture/summary.pdf)
+
+## Column 2
+
+### Workgroup
+
+In this week's workgroup, you will finalize your second group project. First,
+you will confirm that you have performed all steps as discussed last week. If 
+you have time left, you can can fine-tune the interpretation of your results and
+polish the figures and tables in your markdown document. 
+
+- You can find the slides for this workgroup meeting [here](wk8/workgroup/FTiD_WG_8.html).
+
+### Deadlines
+
+You must submit Assignment 2 by ***Thursday January 19, 17:00***. 
+
+- See the *Course Manual* page for details.
+
+### `R` practical
+
+There is no R practical this week. Use your time to finish the second assignment 
+and prepare for the exam.
+
+</div>
+
+<!----------------------------------------------------------------------------->
+
+<div class='hidden'>
+
+# Exam Material
+
+## Column 1
+
+### **Practice Exam**
+
+You can find the practice exam [here](https://kylelang.shinyapps.io/practice_exam)
+
+### **What can be tested?**
+
+Anything mentioned in the lectures may appear on the exam. 
+
+- This includes both information printed in the lecture slides and information 
+delivered verbally during a lecture itself.
+
+Anything covered in the required readings may appear on the exam. 
+
+- Obviously, this is a lot of material. To prioritize, keep in mind that topics 
+mentioned in the lectures and topics directly related to ideas covered in the 
+lectures are most likely to appear on the exam.
+
+#### Summary of Required Readings
+
+| Week # | Topic | Reading |
+|--|---|----|
+| 1 | The basics of `R` | R4DS: [Chapter 11](https://r4ds.had.co.nz/data-import.html), [Chapter 27](https://r4ds.had.co.nz/r-markdown.html), [Chapter 19](https://r4ds.had.co.nz/functions.html), and [Chapter 21](https://r4ds.had.co.nz/iteration.html) |
+| 2 | Programmatic data manipulation 1 | R4DS: [Chapter 5](https://r4ds.had.co.nz/transform.html), [Chapter 10](https://r4ds.had.co.nz/tibbles.html), [Chapter 14 (only 14.1 and 14.2)](https://r4ds.had.co.nz/strings.html), [Chapter 15](https://r4ds.had.co.nz/factors.html), [Chapter 18](https://r4ds.had.co.nz/pipes.html), and [Chapter 20](https://r4ds.had.co.nz/vectors.html) | 
+| 3 | Programmatic data manipulation 2 | R4DS: [Chapter 3](https://r4ds.had.co.nz/data-visualisation.html) and [Chapter 7](https://r4ds.had.co.nz/exploratory-data-analysis.html); ASWR: [Chapter 4](https://book.stat420.org/summarizing-data.html) | 
+| 4 | Multiple linear regression | ASWR: [Chapter 7 (only 7.1--7.4)](https://book.stat420.org/simple-linear-regression.html), [Chapter 9 (only 9.1--9.4)](https://book.stat420.org/multiple-linear-regression.html), [Chapter 11 (only 11.1--11.3)](https://book.stat420.org/categorical-predictors-and-interactions.html), and [Chapter 16 (only 16.1---not 16.1.4---and 16.2)](https://book.stat420.org/variable-selection-and-model-building.html) | 
+| 5 | Model assumptions and diagnostics | ASWR: [Chapter 13](https://book.stat420.org/model-diagnostics.html) |
+| 6 | Generalized linear model and logistic regression | ASWR: [Chapter 17 (only 17.1--17.3)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) |
+| 7 | Logistic regression assumptions and classification | ASWR: [Chapter 17 (only 17.4)](https://book.stat420.org/logistic-regression.html#generalized-linear-models); [This webpage](https://stats.idre.ucla.edu/r/dae/logit-regression/) | 
+
+
+### **What about equations?**
+
+This is not a math class; we are not trying to test your ability to do 
+calculations or manipulate equations. That being said, a certain degree of 
+mathematical literacy is crucial to statistics and data science, so you will 
+have to do some simple calculations on the exam. For example, you should be 
+comfortable with the following.
+
+- Working with the linear regression equation, $Y_i = \beta_0 + \beta_1 X_i +\varepsilon_i$, to:
+   - Calculate predicted values give certain inputs
+   - Interpret parameter estimates
+   - Evaluate hypotheses/research questions
+
+- The differences between:
+   - The full regression model: $Y_i = \hat{\beta}_0 + \hat{\beta}_1 X_i +\hat{\varepsilon}_i$
+   - The equation for the best-fit line: $\hat{Y}_i = \hat{\beta}_0 + \hat{\beta}_1 X_i$
+
+- The definition of a residual: 
+   - $\hat{\varepsilon}_i = Y_i - \hat{Y}_i$
+
+- The relationship between probabilities ($p$) and odds (for binary outcomes):
+   - $\text{odds} = \frac{p}{1-p}$
+
+- The definition of the logit function:
+   - $\ln(\text{odds}) = \ln\left(\frac{p}{1-p}\right) = \text{logit}(p)$
+
+- The definition of the logistic function, its relation to the logit function, 
+and its role in logistic regression:
+   - $\text{logistic}(\eta_i) = \text{logit}^{-1}(p_i) = \frac{\exp(\eta_i)}{1+\exp(\eta_i)} = \frac{\exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)}{1 + \exp(\hat{\beta}_0 + \hat{\beta}_1 X_i)} = \hat{p}_i$
+
+Of course, you should also be able to do basic arithmetic operations that are 
+too trivial to detail here (e.g., calculating the difference between the $R^2$ 
+statistics from two models that you are trying to compare).
+
+**Note**: Although all examples above are shown in terms of simple linear 
+regression models, you should also be able to do these calculations/interpretations 
+using multiple linear regression models and models that include dummy codes and
+interactions.
+
+### **What if you're still unsure?**
+
+If any of the course materials confuse you, feel free to ask about it during the 
+final lecture meeting (even if your concerns relate to content from earlier weeks). 
+
+**We well devote part (most?) of the final lecture to a dedicated Q&A session**
+
+</div>
+
+<!----------------------------------------------------------------------------->
+
+[ftds]: https://osiris.uu.nl/osiris_student_uuprd/SetTaal.do?taal=en&bronUrl=/osiris_student_uuprd/OnderwijsCatalogusToonCursus.do&event=setTaal&requestToken=8d93024d5cc8f2a4ac3549ab7cded9443934f980
+[isl]: https://web.stanford.edu/~hastie/ISLR2/ISLRv2_website.pdf

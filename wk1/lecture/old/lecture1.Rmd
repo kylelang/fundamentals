@@ -1,0 +1,743 @@
+---
+title: "Introduction to R"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+output:
+  ioslides_presentation:
+    smaller: yes
+    widescreen: no
+---
+
+
+```{r setup, include = FALSE}
+library(dplyr)
+library(magrittr)
+library(mice)
+library(ggplot2)
+library(reshape2)
+
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+
+knitr::opts_chunk$set(dev.args = list(bg = "transparent"), 
+                      dev = "svg",
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+
+## Attribution
+
+This course was originally developed by Gerko Vink. You can access the original
+version of these materials on Dr. Vink's GitHub page:
+<https://github.com/gerkovink/fundamentals>.
+
+Some of the materials in this repository have been modified. Any errors or
+inaccuracies introduced via these modifications are fully my own responsibility
+and shall not be taken as representing the views and/or beliefs of Dr. Vink.
+
+[www.gerkovink.com/fundamentals](https://www.gerkovink.com/fundamentals)
+
+
+# Course Goals
+
+
+## Real-World Goal
+
+We will learn to use regression: a technique for figuring out the strength of 
+the relation between an outcome and a set of predictors. 
+
+Basically, our findings will fall into one of the following three scenarios:
+```{r echo = FALSE}
+data.frame(x = 1:10) %>%
+  mutate("positive" = x, 
+         "negative" = rev(x), 
+         "no relation" = 5.5) %>%
+  melt(id = "x") %>%
+  mutate("relation" = variable) %>%
+  ggplot(aes(x = x, y = value, color = relation)) + 
+  ylab("Outcome") + 
+  xlab("Predictor") + 
+  geom_point() + 
+  geom_smooth(method = "lm")
+```
+
+
+## Example
+
+```{r echo = FALSE}
+set.seed(235711)
+data <- mvtnorm::rmvnorm(n = 100, 
+                         mean = c(20, 5.8), 
+                         sigma = matrix(c(1, .8, .8, 1), 
+                                        nrow = 2, 
+                                        ncol = 2)
+                         ) %>% as.data.frame()
+colnames(data) <- c("Hours", "Grade")
+
+data %>% 
+  ggplot(aes(x = Hours, y = Grade)) + 
+  geom_point()
+```
+
+On average, the more hours you study, the higher your grade, but this relation 
+is not perfect.
+
+
+## What is the relation?
+
+```{r echo = FALSE}
+data %>% 
+  ggplot(aes(x = Hours, y = Grade)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  ggtitle("Grade ~ Hours")
+```
+
+We will learn to identify the average relation between the outcome and the 
+predictors. 
+
+
+## Who passed?
+
+```{r echo = FALSE}
+data <- data %>% 
+  mutate(Result = cut(Grade, 
+                      breaks = c(0, 5.5, Inf), 
+                      labels = c("failed", "passed")
+                      )
+         )
+  
+data %>%
+  ggplot(aes(x = Hours, y = Grade, color = Result)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE) + 
+  ggtitle("Grade ~ Hours + pass/fail")
+```
+
+We will learn to differentiate our investigation between different groups. For 
+example, is there a difference in the relation between `Hours` and `Grade` for 
+students who passed and those who failed?
+
+
+## Who passed?
+
+```{r echo = FALSE}
+data %>% 
+  mutate(Prob = predict(glm(Result ~ Hours, family = binomial()), 
+                        type = "response")
+         ) %>%
+  ggplot(aes(x = Hours, y = Prob)) + 
+  geom_line() +
+  ylab("Probability of Passing the Exam") + 
+  geom_point(aes(x = Hours, y = as.numeric(Result) - 1, color = Result))
+```
+
+Finally, we will learn how to estimate the probability of `passing` or `failing`, 
+based on the number of `Hours` studied.
+
+
+## Example
+
+```{r echo = FALSE}
+boys %>% 
+  filter(age > 5) %>% 
+  ggplot(aes(x = age, y = bmi)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+What is the relation between `age` and `bmi`?
+
+
+## Example
+
+```{r echo = FALSE}
+boys %>% 
+  mutate(class = cut(bmi, 
+                     breaks = c(0, 18, 25, 30, Inf), 
+                     labels = c("underweight", 
+                                "healthy", 
+                                "overweight", 
+                                "obese")
+                     )
+         ) %>%
+  filter(age > 5, !is.na(bmi)) %>% 
+  ggplot(aes(x = age, y = bmi, color = class)) + 
+  geom_point() + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+Can we estimate the relation between `age` and `bmi` for different levels of 
+`bmi`?
+
+
+## Example
+
+```{r echo = FALSE}
+boys %>% 
+  filter(age > 5, !is.na(bmi)) %>%
+  mutate(class = cut(bmi, breaks = c(0, 25, Inf), 
+                     labels = c("not overweight", "overweight")),
+         Prob = predict(glm(class ~ age, family = binomial(link = "logit")), 
+                        type = "response")
+         ) %>%
+  ggplot(aes(x = age, y = Prob)) + 
+  geom_line() +
+  ylab("Probability of being overweight") + 
+  geom_point(aes(x = age, y = as.numeric(class) - 1, color = class))
+```
+
+Finally, if we develop some intervention campaign, which `age`-group(s) should 
+we target?
+
+
+# R and RStudio?
+
+
+## R
+
+R is a programming/scripting language for statistical computing and graphics
+
+- 100% free and open-source
+- Managed by the R Core Team and the R Foundation for Statistical Computing
+- Community-driven
+   - R benefits from a global development community
+
+- Based on the S language
+   - S was developed by John Chambers and colleagues at Bell Labs in the 1970s
+   - R is an implementation of S
+   - The R project was initiated by Ross Ihaka and Robert Gentleman in the 1990s
+
+
+## RStudio
+
+RStudio is an integrated development environment (IDE) for R.
+
+- Adds a bunch of window dressing to R
+- Also open-source
+- Both free and paid versions
+
+
+# Working with R
+
+
+## Using R as a Calculator
+
+You are perfectly free to use R as an overpowered calculator.
+
+- Try typing the following expressions into the R Console
+
+```{r}
+2 + 2
+sqrt(2)
+(42 - 58 + log(7)^(59.33 / 10.784)) / 777
+```
+
+
+## Assigning Values to Objects
+
+R comes into its own when we create objects and do our calculations in terms of 
+those objects.
+
+```{r}
+a <- 100
+b <- 10
+
+c <- sqrt(a^2 + b^2)
+c
+
+data(iris)
+
+lmFit <- lm(Petal.Width ~ Petal.Length*Species, data = iris)
+beta  <- coef(lmFit)
+
+beta["Petal.Length"] + beta["Petal.Length:Speciesversicolor"]
+```
+
+
+## Getting Help
+Everything published on the Comprehensive R Archive Network (CRAN), and intended 
+for R users, must be accompanied by a help file. 
+
+- If you know the name of the function (e.g., `anova()`), then execute `?anova` 
+or `help(anova)`. 
+
+- If you do not know the name of the function, type `??` followed by your search 
+criterion. For example, `??anova` returns a list of all help pages that contain 
+the word "anova". 
+
+Alternatively, the internet will tell you almost everything you'd like to know
+
+- Sites such as http://www.stackoverflow.com and http://www.stackexchange.com 
+can be very helpful. 
+
+- If you google R-related issues, include "R" somewhere in your search string
+
+
+## Survey
+
+We (the instructors) have prepared a survey to help us arrange the workgroups 
+more effectively.
+
+- You can access the survey [here](https://survey.uu.nl/jfe/form/SV_8jJ7r9p7Zkyx130).
+- You can also access the survey by scanning the following QR code.
+
+```{r echo = FALSE, fig.align = "center", out.width = "30%"}
+  knitr::include_graphics("../figures/survey_qr.png")
+```
+
+<div align = "center"> 
+***Please fill in this survey sometime today.***
+</div>
+
+
+# Types of R Objects
+
+
+## Vectors
+
+Vectors are the simplest kind of R object
+```{r}
+a <- c(1, 2, 3, 4, 5)
+a
+
+b <- 1:5
+b
+
+c <- 42
+c
+```
+
+
+## The Three Most Useful Data Types
+
+Numeric
+```{r}
+a <- 1:5
+a
+```
+
+Character
+```{r}
+b <- c("foo", "bar")
+b
+```
+
+Logical
+```{r}
+c <- c(TRUE, FALSE)
+c
+```
+
+
+## Combining Data Types in Vectors
+What happens if we try to concatenate different data types? 
+```{r}
+c(a, b)
+c(b, c)
+c(a, c)
+```
+
+
+## Subsetting Vectors
+
+If we want to extract the third element from `a`, we would evaluate
+```{r}
+a[3]
+```
+
+To get the first two elements:
+```{r}
+a[1:2]
+```
+
+To get the second and fifth elements:
+```{r}
+a[c(2, 5)]
+```
+
+
+## Matrices
+
+Matrices generalize vectors by adding a dimension attribute
+```{r}
+c <- matrix(a, nrow = 5, ncol = 2)
+c
+```
+
+```{r}
+matrix(a, nrow = 5, ncol = 2, byrow = TRUE)
+```
+
+
+## Subsetting Matrices
+
+As with vectors, we use brackets [] to subset matrices.
+
+- Extract the intersection of the first row and second column:
+```{r}
+c[1, 2]
+```
+
+
+## Subsetting Matrices
+
+Extract the first row:
+```{r}
+c[1, ]
+```
+
+Extract the second column:
+```{r}
+c[, 2]
+```
+ 
+
+## Mixing Data Types in Matrices
+
+```{r}
+cbind(c, letters[1:5])
+cbind(c, c(TRUE, TRUE, FALSE, FALSE, TRUE))
+```
+
+
+## Data Frames
+```{r}
+n <- 5
+d <- data.frame("v1" = rnorm(n),
+                "v2" = rnorm(n, mean = 5.0, sd = 2.0), 
+                "v3" = letters[1:n],
+                "v4" = sample(c(TRUE, FALSE), n, replace = TRUE)
+                )
+d
+```
+
+The columns of a data frame can contain different data types. 
+
+
+## Names
+
+You can name the columns and rows in data frames and matrices
+```{r}
+rownames(d) <- c("r1", "r2", "r3", "r4", "r5")
+d
+
+colnames(c) <- paste0("var", 1 : ncol(c))
+rownames(c) <- paste0("obs", 1 : nrow(c))
+c
+```
+
+
+## Names
+
+You can also name the elements in a vector:
+
+```{r}
+names(a) <- paste("element", 1 : length(a), sep = "_")
+a
+
+names(b) <- c("Bobby", "Suzy")
+b
+```
+
+
+## Subsetting Data Frames
+
+We can also use the brackets to subset data frames
+
+- We can use names, when they exist
+```{r}
+d["r3", ]
+```
+
+- We can also use numeric indices
+```{r}
+d[3, ]
+```
+
+```{r}
+d[2, 3]
+```
+
+
+## Subsetting Data Frames
+
+To extract columns, we can use matrix-style subsetting
+```{r}
+d[, "v2"]
+d[, 2]
+```
+
+We can also use the `$` operator to extract variables by name
+```{r}
+d$v2
+```
+
+
+## Lists
+
+Lists are very general objects. They hold any types of R objects.
+
+- You can mix and match whatever objects you want in the same list.
+
+```{r}
+f <- list(b, c)
+f
+```
+
+
+## Lists
+
+We can add names to the list elements
+```{r}
+names(f) <- c("vector", "matrix")
+f
+```
+
+
+## Subsetting Lists
+
+We have several different ways to extract the objects from a list
+```{r}
+f[[1]]
+f[["vector"]]
+f$vector
+```
+
+
+## Lists
+
+We can easily add an object to an existing list
+```{r}
+f$data_frame <- d
+f
+```
+
+
+## Lists
+
+We can overwrite an object in a list
+```{r}
+f[[2]] <- c * 2
+f
+```
+
+
+## Lists of Lists
+
+Lists can hold any type of object, so they can also contain other lists.
+```{r}
+g <- list(f, f)
+```
+
+Call the vector from the second list within g:
+```{r}
+g[[2]][[1]]
+g[[2]]$vector
+```
+
+
+# Logical Operations
+
+
+## Logical Operators
+
+Logical operators evaluate a statement and produce a logical vector
+
+- The most common logical operators are `==`, `!=`, `<`, `>`, `<=`, `>=`, `|` (OR), `&` (AND)
+- Typing `!` before a logical expression inverts the result 
+
+For example, select the elements of `c` that are larger than 3:
+```{r}
+c[c > 3]
+```
+
+
+## Logical Operators
+
+Select the elements of `c` that are smaller than 3 OR larger than 3:
+```{r}
+c[c < 3 | c > 3] # c smaller than 3 or c larger than 3
+```
+
+Alternatively:
+```{r}
+c[c != 3] # c not equal to 3
+```
+
+Also alternatively:
+```{r}
+c[!(c == 3)] # not c equal to 3
+```
+
+
+# Computational Considerations
+
+
+## Things You Cannot Do
+
+R cannot do everything you may ask it to
+
+- You cannot break math
+   - For example, the following code returns "Not a Number"
+```{r}
+0 / 0
+```
+
+- You also cannot calculate with missing values (`NA`s)
+```{r}
+mean(c(1, 2, NA, 4, 5))
+```
+
+
+## Standard "Solutions" for Missing Values
+
+There are two easy ways to perform "listwise deletion":
+```{r}
+mean(c(1, 2, NA, 4, 5), na.rm = TRUE)
+mean(na.omit(c(1, 2, NA, 4, 5)))
+```
+
+
+## Floating-Point Example
+
+Be careful with floating-point arithmetic
+```{r}
+(3 - 2.9)
+(3 - 2.9) == 0.1
+```
+
+Why does R tell us that $3 - 2.9 \neq 0.1$?
+
+```{r}
+(3 - 2.9) - 0.1
+```
+
+
+# Upping your R Game
+
+
+## Functions
+
+In R, a name followed directly by parentheses, `()`, always indicates a 
+functions. For example:
+
+ - `matrix()` is a function
+ - `c()` is a function
+ - `(1 - 2) * 5` is an expression, not a function
+
+
+## Packages
+
+Packages give R additional functionality. 
+
+By default, some packages are included when you install R. These packages allow 
+you to do common statistical analyses and data manipulation. Installing 
+additional packages allows you to perform state-of-the-art statistical analyses. 
+
+These packages are all developed by R users, so the throughput process is very 
+timely.
+
+  - Newly developed functions and software are readily available
+  - Software implementations of new methods can be quickly dissemintated
+  - This efficiency differs from other mainstream software (e.g., SPSS, SAS, 
+  MPlus) where new methodology may take years to be implemented. 
+
+A list of available packages can be found on [CRAN](https://cran.r-project.org)
+
+
+## Installing and Loading packages
+
+Install a package (e.g., `mice`):
+```{r eval = FALSE}
+install.packages("mice")
+```
+
+There are two ways to load a package into R
+```{r}
+library(stats)
+require(stats)
+```
+
+
+## Workspaces
+
+The workspace contains all changes you have made during your current R session. 
+
+- The workspace contains a snapshot of R's current working memory allocation. 
+
+If you load a saved workspace, you do not need to rerun all your code again. 
+
+- You can save the workspace and continue exactly where you left.
+
+Workspaces are compressed and require relatively little memory when stored. 
+
+- The compression is very efficient and beats reloading large datasets.
+
+
+## History
+
+R saves (part of) the code history, and RStudio extends this functionality. 
+
+- You can use the history to call up previously evaluated commands.
+
+There are multiple ways to access the code history.
+  
+1. Hit the "up-arrow" key in the console
+   - Cycle back through previous commands in reverse chronological sequence
+
+2. Use the history tab in the RStudio environment pane. 
+   - You can find and search the complete project history. 
+
+    
+## RStudio Projects
+
+RStudio projects provide a convenient way to organize all of the code and 
+supporting resources for a given research project.
+
+- Every project has its own history
+- Every research project can have its own RStudio project
+- Every project can have its own directory
+- Every project can have its own version control system
+- R-studio projects can relate to GitHub (or other online) repositories
+
+
+## Some Programming Tips
+
+- Keep your code tidy
+
+- Use comments (text preceded by `#`) to clarify what you are doing
+
+- When working with functions in RStudio, use the TAB key to quickly access the 
+documentation of the function's arguments
+
+- Give your R scripts logical names
+
+- Work with RStudio projects or a consistent directory structure
+
+- If allowed, place your project directories somewhere in the cloud
+
+
+## General Style Advice
+
+Use common sense and BE CONSISTENT.
+
+- Browse through the [tidyverse style guide](https://style.tidyverse.org)
+
+  - The point of style guidelines is to enforce a common vocabulary 
+  - You want people to concentrate on *what* you're saying, not *how* you're 
+  saying it. 
+
+- If the code you add looks drastically different from the extant code, the 
+incongruity will confuse readers and collaborators.
+
+Spacing makes your code easier to read and understand
+
+  - `a<-c(1,2,3,4,5)`
+  - `a <- c(1, 2, 3, 4, 5)`
+  - At least put spaces around assignment operators and after every comma!
+
+
+
+
+

@@ -1,0 +1,234 @@
+---
+title: "Work Group Meeting 1"
+author: "Fundamental Techniques in Data Science with R"
+date: ""
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+.horizontal {
+  display:inline-block;
+  width: 25%;
+}
+
+.horizontal2 {
+  display:inline-block;
+  width: 33%;
+}
+
+#nametext{
+font-size: 20;
+color: black;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<li> Introduction </li>
+<li> Course structure </li>
+<li> Work group structure </li>
+<li> Assignments of the course </li>
+
+<br>
+
+<h4>Break</h4> 
+
+<br>
+
+<li> Starting first assignment </li>
+
+## Introduction
+
+<h3>Introduce yourself briefly:</h3>
+
+<li> What is your background (what study)? </li>
+<li> Why chose this course/minor? </li>
+
+
+## Course Structure 
+
+<div style="float: left; width: 50%;">
+<h3>Monday 17:15:</h3>
+Lecture by Kyle Lang <br>
+On location <br><br><br>
+
+
+<h3>Thursday morning:</h3>
+Work group meeting: <br>
+
+- Work on (group) assignments
+</div>
+
+<div style="float: right; width: 50%;">
+<h3>Tuesday 13:15:</h3>
+Remainder of lectures, Q&A, <br>and discussion of practicals <br><br>
+Online, by Kyle Lang
+
+<h3>By yourself:</h3>
+- Do the required reading 
+- Work on practicals (deadline is next Monday 17:00, before the next lecture) 
+- Continue to work on group assignment 
+</div>
+
+## Workgroup Meetings
+
+<h3>Working on assignments<h3>
+Applying the lecture topics to own (real) data sets.
+
+
+## Assignments - Overview {.columns-2 .smaller}
+
+<h3> Assignment 1 </h3>
+- Group assignment
+- Groups with max. 4 members
+- Linear regression
+- <b><u>Deadline: Monday 16th of December, 17:00</u></b>
+
+<p class="forceBreak"></p>
+
+<h3> Assignment 2 </h3>
+- Group assignment
+- Same groups as Assignment 1
+- Logistic regression
+- <b><u>Deadline: Thursday 16th of January, 17:00 </u></b>
+
+## Assignments - General Comments
+
+<h3> Grading:</h3>
+- Both group assignments contribute 25% to your final grade (50% together).
+- All group members receive same grade for group assignments
+- If names are omitted from groups/assignments, we expect everyone to be aware of that.
+
+<h3> Hand-in:</h3>
+- Hand in assignments via SurfFileDrop
+- Hand in .zip folder with R project and all files (HTML, Rmarkdown, data sets)
+- Make sure all code and text are visible in the HTML files
+- HTML files are graded; supplementary files are needed when HTML seems incomplete
+- Find all relevant information for the assignments on the **course website**.
+
+## Assignment preparations
+
+<h3> Week 1: </h3>
+
+- Make groups of (maximum) 4 students.
+- Look for data set online.
+- Inspect variables
+- Come up with research questions for linear regression and logistic regression. <br>
+ \> The chosen data set should be able to answer RQs.
+ 
+<h3> Week 2: </h3>
+
+- Pre-processing of data set. 
+
+## Data set - Requirements
+
+The data set for the group assignments has a number of requirements. The data set should <b><u>at least</u></b> contain:
+
+- A continuous outcome variable
+- At least two continuous predictor variables
+- A categorical predictor variable
+- A dichotomous outcome variable
+
+## Data set - Tips
+
+There are a lot of online places that offer good data sets for these assignments. Below, some examples are listed:
+
+- Kaggle
+- Github
+- CBS / Eurostat
+- RIVM
+- Via scientific papers
+- Via large panel studies (e.g. PISA, LISS, EVS, ESS, TIMSS)
+- Previous courses?
+
+<br>
+<b><em><u>Datasets from lectures and practicals are not allowed for these assignments</u></em></b>
+
+## Example Research Questions:
+
+<h3> Linear Regression: </h3>
+
+- Can body weight predict the level of cholesterol in Dutch adults?
+- What variables are related to income in the Netherlands?
+
+<h3> Logistic Regression: </h3>
+
+- Do body weight, calorie intake, fat intake, and age have an influence on the occurrence of a heart attack?
+- What variables can be used to predict whether students pass a driving test?
+
+## Remainder of the meeting
+
+<h4> 1\. Make groups of (max.) 4 students </h4> <br>
+- How do you work together as a group? See [this](https://www.vu.edu.au/sites/default/files/Groupwork%20Charter%20Template.pdf) example.
+
+<h4> 2\. Start looking for a data set:</h3>
+- Look for something you find interesting
+- Make sure the data set meets the requirements
+- Check if you can actually obtain the data! 
+
+<h4> 3\. Start formulating research questions:</h3>
+- Based on the variables in your data set/the topic of your data set, come up with questions that you want to investigate.
+- Research questions need to be about relations between the variables
+
+<h4> 4\. Start inspecting your data set:</h3>
+- Is recoding of variables needed?
+- Is any processing needed? (If you want to use factor analysis or PCA, you are free to do so)
+
+## Use of generative AI
+
+<h1> You are allowed to </h1>
+- gain inspiration
+- ask for help on how to tackle an assignment
+
+<h1> You are not allowed to </h1>
+- submit generated text or code as if it was written by you
+- have text or code revised 
+
+
+## Before the end of the meeting:
+
+<h3> As group, send email to WG instructor: </h3>
+- Names of group members;
+- How you agreed to collaborate;
+- Selected data set (topic and link);
+- Research questions you want to answer in your assignments.
+
+<br>
+
+<i><u> Send this email before the end of the meeting! </u></i>
+

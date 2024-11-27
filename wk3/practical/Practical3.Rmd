@@ -1,0 +1,609 @@
+---
+title: "Fundamental Techniques in Data Science with `R` - Practical 3"
+params:
+  answers: false
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: paged
+    theme: paper
+    #pandoc_args: --output=Practical3_answers.html
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+  
+---
+
+# Introduction
+
+
+In this practical you will learn about exploratory data analysis (EDA). EDA involves inspecting, transforming and visualising data with the goal of finding interesting features to substantiate one or more research questions. This practical will draw on skills you learned in week 1 and week 2, while introducing you to some new material like visualisation with `ggplot()`. 
+ 
+You will need the following packages for this tutorial. 
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(ggpubr)
+library(kableExtra)
+library(weathermetrics)
+```
+
+You will work with the `mpg` dataset from the `ggplot2` package. `mpg` contains a subset of the fuel economy data that EPA makes available [here](https://fueleconomy.gov/). The data frame has 234 rows and 11 variables:
+
+* **manufacturer:** manufacturer name
+* **model:** model name
+* **displ:** engine displacement in litres
+* **year:** year of manufacture
+* **cyl:** number of cylinders
+* **trans:** type of transmission
+* **drv:** type of drive train (f = front-wheel drive; r = rear-wheel drive; 4 = four-wheel drive)
+* **cty:** city miles per gallon
+* **hw:** highway miles per gallon
+* **fl:** fuel type
+* **class"** type of car
+
+You can also type `?mpg` into the console to learn more. 
+
+Let's get an overview of the data.
+
+```{r}
+head(mpg)
+```
+
+In previous weeks we learned that `str()` can be used to get an overview of the data and the structure of a dataframe. You can also use `glimpse()` from the `tidyverse` which returns similar results in a more readable format.
+
+```{r}
+glimpse(mpg)
+```
+
+Before you begin exploring your data, you need to check that the class or mode of your variables is as expected. Remember from previous practicals, you have character/factor and numerical/integer types. 
+
+1. __Are there any variables that do not have the class you expect it to?__
+
+```{r, include = params$answers}
+# All variables that are listed as 'character' are categorical and should be listed as 'factor'.
+```
+
+2. __Make any changes you feel are necessary.__
+
+```{r, include = params$answers}
+# Here we should change all of the character variables to factor variables with levels. For now, we leave the levels as they are.
+# There are a couple of methods to do this, but the quickest way is using `mutate_if()` which performs a conditional operation. Base R is also fine.
+  
+mpg <- mpg %>% 
+  mutate_if(is.character, as.factor)
+
+# If we inspect the data gain using glimpse(), we now see that the character variables are converted into factors
+glimpse(mpg)
+```
+
+---
+
+# Exploratory data analysis
+
+**Exploratory Data Analysis** is a process whereby you examine and transform your data to extract interesting insights and understand what relationships (if any!) exist among the variables. In this way, EDA is closely related to principles of data cleaning because *tidy* data is easier to explore. Initial steps of EDA involve examining distributions, handling missings and outliers, removing redundant data and coding categorical variables properly. 
+
+EDA is very flexible and iterative process and gives the researcher a lot of freedom, but it is typically split into *graphical* and *non-graphical* analysis. Further within this framework we can also start to think about what kind of **variation** occurs *within* variables and what kind of **covariation** occurs *between* my variables. 
+
+---
+
+## Variation
+
+**Variation** describes how the values of a variable change each time you measure it. A continuous variable that is measured on one occasion will have different values to that same variable measured on another occasion. This variation between measurement occasions are what we call "error". Categorical variables also vary across measurement occasions or across individuals. Visualising variation is a very intuitive way to understand trends or patterns within a variable. 
+
+---
+
+## Covariation
+
+**Covariation** describes how the values of at least two variables vary together or are related. Again, visualising covariation is also the most intuitive way to understand patterns between variables. 
+
+---
+
+## Non-Graphical EDA
+
+If you are interested in a particular aspect of a variable you can summarise this information in a table. We have covered how to create nicely formatted tables in the previous practical, so the example below is just to refresh your memory. 
+
+---
+
+## Summary tables
+
+Below we summarise `hwy` by vehicle `class`, by asking for commonly used summary statistics. 
+
+```{r}
+mpg %>% 
+  group_by(class) %>%         # by class
+  summarise(min = min(hwy),   # minimum of hwy
+            mean = mean(hwy), # mean
+            sd = sd(hwy),     # standard deviation
+            max = max(hwy),   # maximum
+            n = n())  %>%     # nr of observations
+  kbl() %>%  
+  kable_styling(latex_options = c("striped", "hover"), full_width = F)  
+```
+
+**3. Create a summary of engine displacement by year, including the minimum, maximum, median, and inter quantile range.**
+
+```{r, include = params$answers}
+mpg %>% 
+  group_by(year) %>%                    # by year
+  summarise(min = min(displ),           # minimum of engine displacement
+            Q1 = quantile(displ, 0.25), # first quartile
+            median = median(displ),     # median
+            Q3 = quantile(displ, 0.75), # third quartile
+            max = max(displ),           # maximum
+            IQR = Q3 - Q1) %>%          # inter quartile range
+  kbl() %>%  
+  kable_styling(latex_options = c("striped", "hover"), full_width = F)          
+```
+
+---
+
+## Graphical EDA: **base R** vs **ggplot**
+
+Plots can be made using base R functions like `plot()`, `hist()`, or `barplot()`. Here are some examples of how this works on the `mpg` data. 
+
+```{r}
+hist(mpg$displ)
+```
+
+```{r}
+barplot(table(mpg$cyl))
+```
+
+```{r}
+plot(x = mpg$displ, y = mpg$hwy,
+     xlab = "Highway mpg",
+     ylab = "Engine displacement (L)")
+```
+
+These plots are quick to produce and are useful for an initial understanding of the data, but the syntax used to create them is specific to the type of plot. In contrast, `ggplot` has a streamlined approach to plotting involving largely the same steps regardless of plot type. Specifically, in `ggplot` we build up visualisations layer by layer using the `+` operator (which is similar to the ` %>% ` operator we are already familiar with). 
+
+The main, important, layers in `ggplot` are:
+
+* Pass the data to `ggplot()`
+* Choose aesthetic mappings with `aes()` 
+* Choose geometric components with `geom()`
+* Choose additional labels, themes, and visuals 
+* Choose faceting if it is applicable with `facet()`
+
+What does this layering system look like? In [*Chapter 3: Data Visualisation*](https://r4ds.had.co.nz/data-visualisation.html) of Hadley Wickham's R4DS book, there is a general ggplot template to give you an idea of how plots are layered. 
+
+````r
+```{r}`r ''`
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(
+     mapping = aes(<MAPPINGS>)) +
+  <COORDINATE_FUNCTION> +
+  <FACET_FUNCTION> +
+  <THEME> 
+```
+````
+
+Below is a real example of how this looks. Remember that you do not have to / need to use all of the `ggplot` options (and there are many many more than presented here). However, this gives you an idea of how the layers of these plots are built up. 
+
+```{r}
+ggplot(iris) + # Data
+  geom_point(mapping = aes(x = Sepal.Length, # Variable on the x-axis
+                           y = Sepal.Width, # Variable on the y-axis
+                           colour = Species)) + # Legend 
+  labs(x = "Sepal Length",
+       y = "Sepal Width", 
+       title = "Relationship between Sepal Length and Width by Species") +
+  coord_cartesian() + # Default standard for mapping x and y
+  facet_wrap(~Species) + # Splits plot by the species variable
+  theme_bw() # Sets the background theme
+```
+
+You can read about different `ggplot2` options [here](https://ggplot2.tidyverse.org/reference/). The reference guides by [RPubs](https://rpubs.com/arvindpdmn/ggplot2-basics), [STHDA](http://www.sthda.com/english/wiki/ggplot2-essentials) and [Data Novia](https://www.datanovia.com/en/blog/ggplot-examples-best-reference/#scatter-plot) will be useful once you grasp the basics and want to make more complicated visualisations.
+
+---
+
+## Visualising distributions of single variables
+
+---
+
+#### Categorical variables
+
+**Bar charts** are often used to visualise categorical variables with a finite set of values. Below is an example how to visuailse the distribution of `drv` - the type of drive train in the `mpg` dataset. 
+
+`geom_bar` transforms each value of `drv` into a count to be plotted on the y-axis. The x-axis presents the category associated with each count. 
+
+```{r}
+ggplot(mpg) +
+  geom_bar(aes(x = drv))
+```
+
+4. __Create a bar chart that shows a count for the different vehicle classes in `mpg`.__
+
+```{r, include = params$answers}
+ggplot(mpg) +              # list the dataset
+  geom_bar(aes(x = class)) # geom_bar for a barplot, and the 'class' variable on the x-axis. 
+
+# geom_bar adds counts on the y-axis by default
+```
+
+5. __Look up different `ggplot` themes, and apply one to the bar chart you just created.__
+
+```{r, include = params$answers}
+ggplot(mpg) +
+  geom_bar(aes(x = class)) +
+  theme_bw() # Here we add the theme
+
+# There are different `ggplot` themes and the one you choose is largely down to personal preference, but you also want one that enhances your data visualisation. Here I choose `+ theme_bw()` but other examples include `+ theme_minimal()` and `+ theme_light()`.
+```
+
+---
+
+#### Continuous variables
+
+**Histograms** are often used to visualise the distribution of a continuous variable. Below is an example of how to visualise the distribution of `cty` - the number of city miles per gallon in the `mpg` dataset.
+
+`geom_hist` transforms the x-axis into equally spaced "bins" and the height of each bar on the y-axis is the number of observations falling in each bin. 
+
+```{r}
+ggplot(mpg) +
+  geom_histogram(aes(x = cty), 
+                 binwidth = 3)
+```
+
+You can change the value of `binwidth` to adjust the width of the intervals. Different binwidths can reveal different patterns in the data. 
+
+6. __What happens when you change the value of `binwidth` to `1`? Does the distribution change?__
+
+```{r,include = params$answers}
+ggplot(mpg) +
+  geom_histogram(aes(x = cty), 
+                 binwidth = 1)
+
+# The general distribution does not drastically change, but it is now much easier to spot outliers. Specifically, there are two extreme values to the right of the distribution where the city miles per gallon exceed 30 in a small number of cases.
+```
+
+**Density plots** are an alternative to histograms for continuous data. Below is an example of the density of `cty` from the `mpg` data. The argument `fill = "darkseagreen"` just adds colour. You can also specify `colour = "<COLOUR NAME>"` to change the density line.
+
+`geom_density` transforms the data into smoothed kernel density estimates (basically a smooth histogram). It is useful for continuous data that come from an underlying smooth distribution. 
+
+```{r}
+ggplot(mpg, aes(x = cty)) +
+  geom_density(fill = "darkseagreen") 
+```
+You can also include raw data in a histogram in the form of "rug" marks. 
+
+7. __Add rug marks to plot above by adding the argument `+ geom_rug(size = 1, colour = "darkorange")`.__
+
+```{r,include = params$answers}
+ggplot(mpg, aes(x = cty)) +
+  geom_density(fill = "darkseagreen") +
+  geom_rug(size = 1, 
+           colour = "darkorange")
+```
+
+---
+
+## Visualing the distributions of multiple variables
+
+---
+
+### Continuous - Continuous
+
+**Scatterplots** are often used to explore how two continuous variables covary together. Below is an example of how to visualise covariation between `displ` (engine displacement) and `hwy` (highway miles per gallon) in the `mpg` data. If there is a clear pattern in how the points fall on the x- and y-axes then we can say these variables covary. 
+
+`geom_point` plots values of `displ` on the y-axis and values of `hwy` on the x-axis.
+
+```{r}
+ggplot(mpg) +
+  geom_point(aes(x = displ, 
+                 y = hwy))
+```
+
+Some of these values might be clustered together based on another characteristic. You can explore this by adding colour to the aesthetic mappings, for example. 
+
+```{r}
+ggplot(mpg) +
+  geom_point(aes(x = displ, 
+                 y = hwy, 
+                 colour = class))
+```
+
+8. __Repeat the plot above, but mapping the type of transmission to the `colour` aesthetic. Add a theme and change the titles of the x- and y-axes.__
+
+```{r, include = params$answers}
+ggplot(mpg) +
+  geom_point(aes(x = displ, 
+                 y = hwy, 
+                 colour = trans)) +
+  labs(x = "Engine Displacement (L)",
+       y = "Highway miles per gallon",) +
+  theme_bw()
+```
+
+Different aesthetic mappings can be combined in one plot. For example, you may want to add a line of best fit to a scatterplot plot, which you can do using `geom_smooth()`. 
+
+9. __Create a scatter plot showing the relationship between engine displacement and city miles, including a line of best fit.__
+
+```{r, include = params$answers}
+ggplot(mpg, aes(x = displ, 
+                y = hwy)) +
+  geom_point() +
+  geom_smooth() +
+  labs(x = "Engine Displacement (L)",
+       y = "Highway miles per gallon",) +
+  theme_bw()
+
+# `geom_smooth()` is used to add a line of best fit. The default method is "loess" with the formula x ~ y, but you can change this to any other method. For example, you can choose `method = "lm"` for a linear best fit line.
+```
+
+You can fit more than one line in the same plot. This is often useful in multilevel modelling, where different hierarchies (e.g., groups, locations, individuals) have different slopes. 
+
+**10. Recreate the previous plot, but adding `colour = class` to the aesthetic mappings. Use `method = "lm"` and set `se = FALSE` in `geom_smooth()`. What difference does this make?**
+
+```{r, include = params$answers}
+ggplot(mpg, aes(x = displ, 
+                y = hwy, 
+                colour = class)) +
+  geom_point() +
+  geom_smooth(method = lm, 
+              se = FALSE) +
+  labs(x = "Engine Displacement (L)",
+       y = "Highway miles per gallon",) +
+  theme_bw()
+
+# Adding `colour = class` to the aesthetic mappings causes `geom_smooth()` to fit a line for each class of vehicle. Using `method = "lm"` with `se = FALSE` fits a linear line without the standard error. Dropping the standard error makes the plot more readable, since they are otherwise overlapping.
+```
+
+---
+
+### Continuous - Categorical
+
+**Boxplots** are often used to explore the distribution of a continuous variable broken down by a categorical variable. Below is an example of `hwy` broken down by `drv`. 
+
+`geom_boxplot` transforms the data to show summary statistics that are represented by the different visual features of the boxplot. 
+
+```{r}
+ggplot(mpg) +
+  geom_boxplot(aes(x = drv, 
+                   y = hwy))
+```
+
+These features of the boxplot are:
+
+* Lower horizontal line
+* Thicker horizontal middle line
+* Upper horizontal line
+* Vertical whiskers
+* Points beyond the whiskers
+
+11. __What do each of these features tell us?__
+
+```{r, include = params$answers}
+# Lower horizontal line -> 25th percentile
+# Thicker horizontal middle line -> median
+# Upper horizontal line -> 75th percentile
+# Vertical whiskers -> IQR 
+# 1.5 Points beyond the whiskers ->  OUTLIERS
+```
+
+12. __Add `+ coord_flip()` to the plot above. What does this do?__
+
+```{r, include = params$answers}
+ggplot(mpg) +
+  geom_boxplot(aes(x = drv, y = hwy)) +
+  coord_flip()
+
+# coord_flip()` swaps the x- and y-axes.
+```
+
+13. __What can you conclude about the highway miles per gallon of each type of drive train from the boxplot above?__
+
+```{r, include = params$answers}
+# There are many outliers (points beyond the whiskers) for drive train type "f", which represents a front-wheel drive. There are no outliers beyond the IQR for the other types of drive train, 4-wheel drive and rear-wheel drive.
+```
+
+The variable `trans` contains 10 different transmissions types. These 10 categories can be assumed under 2 broader categories: **manual** and **auto**. 
+
+14. __Use `mutate()` and `fct_collapse()` to collapse the 10 categories of `trans` to just these 2 categories.__
+```{r, include = params$answers}
+mpg <- mpg %>% 
+  mutate(trans = fct_collapse(trans,
+                             "auto" = c("auto(av)", 
+                                        "auto(l3)", 
+                                        "auto(l4)", 
+                                        "auto(l5)", 
+                                        "auto(l6)", 
+                                        "auto(s4)", 
+                                        "auto(s5)", 
+                                        "auto(s6)"),
+                             "manual" = c("manual(m5)", 
+                                          "manual(m6)"))) 
+```
+
+15. __Use the previous example to create a boxplot mapping `cty` on the y-axis and `drv` on the x-axis, this time adding the argument `colour = trans` to `aes()`. What has changed?__
+
+```{r, include = params$answers}
+ggplot(mpg) +
+  geom_boxplot(aes(x = drv, 
+                   y = cty, 
+                   colour = trans))
+
+# Adding the argument `colour = trans` to the aesthetic mappings further splits the drive train into auto and manual.
+
+# Note that you can also perform the above operations in one piped step.
+
+mpg %>% 
+    mutate(trans = fct_collapse(trans,
+                             "auto" = c("auto(av)", 
+                                        "auto(l3)", 
+                                        "auto(l4)", 
+                                        "auto(l5)", 
+                                        "auto(l6)", 
+                                        "auto(s4)", 
+                                        "auto(s5)", 
+                                        "auto(s6)"),
+                             "manual" = c("manual(m5)", 
+                                          "manual(m6)"))) %>% 
+  ggplot() +
+  geom_boxplot(aes(x = drv, 
+                   y = cty, 
+                   colour = trans))
+```
+
+---
+
+## Facets
+
+**Facets** are a way to split your plot into many subplots according to some categorical variable. 
+
+To do this, you use the command `facet_wrap()` to facet by a single variable. The first argument to `facet_wrap()` is a formula initiated by `~` and a variable name. Below is an example of how this can work on the `mpg` data. 
+
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+
+It is possible to facet on a combination of two variables using `facet_grid()`. Like before, the first argument is a formula, but containing two variable names separated by `~`. Below is an example of how this can work. 
+
+```{r}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+16. __Notice that there are empty cells in the bottom left facets above. What do you think this means?__
+
+```{r, include = params$answers}
+# There are no rear-wheel drives that have 4 cyclinders, so there is nothing to plot here.
+```
+
+17. __Create a scatter plot of `displ` and `hwy`, faceting by the of `manufacturer` name.__
+
+```{r, include = params$answers}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
+  facet_wrap(~manufacturer, nrow = 3)
+```
+
+18. __Change the names on the axes to be more informative.__
+
+```{r, include = params$answers}
+ggplot(mpg) + 
+  geom_point(aes(x = displ, 
+                 y = hwy)) + 
+  labs(x = "Engine displacement (litres)", 
+       y = "Highway miles per gallon") +
+  facet_wrap(~manufacturer, nrow = 3) 
+```
+
+---
+
+## Arranging multiple plots
+
+If you have multiple plots that you want to arrange on the same page, you can use `ggarrange()` from the `ggpubr` package.
+
+The first step is creating some plots. For this exercise we will only use the variables `hwy`, `cty`, and `class`. 
+
+19. __Create the following three plots:__
+
+__A. A bar plot showing counts of `class`, assigning `class` to the `fill` aesthetic.__
+
+__B. A box plot of `class` by `hwy` per gallon, assigning `class` to the `colour` aesthetic.__
+
+__C. A jittered scatterplot of `hwy` and `cty` miles per gallon, assigning `class` to the `colour` aesthetic.__
+
+**Remember to save each plot as an object to be called upon later.**
+
+```{r, include = params$answers}
+# plot A
+p1 <- ggplot(data = mpg, aes(class, fill = class)) +
+        geom_bar() +
+        labs(x = "Vehicle class",
+              y = "Count") +
+        coord_flip() +  
+        theme_bw()
+
+# plot B
+p2 <- ggplot(data = mpg) + 
+        geom_boxplot(mapping = aes(x = class, y = hwy, colour = class)) +
+        labs(x = "Vehicle class",
+             y = "Highway mpg") +
+        coord_flip() +
+        theme_bw()
+# plot C
+p3 <- ggplot(data = mpg) + 
+        geom_jitter(mapping = aes(x = cty, y = hwy, colour = class)) +
+        labs(x = "Vehicle class",
+             y = "Highway mpg") +
+        theme_bw()
+
+# I create three plots names "p1", "p2", and "p3", using previous examples to guide me if necessary. For p1 and p2 I add `coord_flip()` to make the categories easier to read.
+```
+
+__D. Use `ggarrange()` to arrange the three plots in one space. `ggarrange()` takes the plots as arguments as well as `ncol` or `nrow` to customise the arrangement__
+
+```{r, include = params$answers}
+ggarrange(p1, p2, p3, 
+          ncol = 2, 
+          nrow = 2)
+
+# The only necessary arguments are the plots, but specifying `ncol` and `nrow` can improve the appearance. the repetition of the legend is usually something we want to avoid.
+```
+
+__E. Repeat the code from the previous question, adding `common.legend = TRUE` and `legend = "bottom"` to `ggarrange()`.__
+
+```{r, include = params$answers}
+ggarrange(p1, p2, p3, 
+          nrow = 2, 
+          ncol = 2, 
+          vjust = 0.5, 
+          common.legend = TRUE,
+          legend = "bottom")
+
+# Setting `common.legend = TRUE` gets rid of the repetitive legend and slightly improves the look. In this example I move the legend to the bottom position, but "top", "left", and "right" are other options.
+```
+
+
+---
+
+End of practical 
+
+---
+

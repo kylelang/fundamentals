@@ -1,0 +1,384 @@
+---
+title: "Fundamental Techniques in Data Science with `R` - Practical 1"
+params:
+  answers: true
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 1
+    number_sections: true
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=practical1_answers.html
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+
+
+# Introduction: The practicals as part of this course
+
+Welcome to this first practical of Fundamental Techniques of Data Science in `R`! Each week, the practical of that week covers (part of) the topics discussed in the lectures and the reading materials. The practicals prepare the students for the topics of the graded assignments of the workgroups.
+
+
+For each practical you are supposed to hand in an R Markdown file and the corresponding html file that shows that you followed all steps of the practical. These files won't be graded, but students are expected to make and hand in all practicals as part of meeting the course requirements. The deadline for each practical is the start of the Monday afternoon lecture of the next week. Students are allowed to not submit 1 practical. However, if a student fails to submit the practical more than once, this student loses their right to take a retake exam. Instructions on submitting practicals can be found on the course website under 'R practical'. 
+
+
+The practicals are discussed in the Tuesday afternoon lecture. Here, there is room to ask questions or help with the practicals. The answers of each practical can be found online on the course website. Note that it is strongly recommended to first try the practical yourself before checking the answers. However, you can check the answers any time, as long as you hand in your practical in time.
+
+
+# Packages for this Practical
+
+In this practical, we will make use of the following packages
+
+1. __Load the following r packages. Suppress warnings and messages in the code chunk where you load these packages.__
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(readr)
+library(knitr)
+library(kableExtra)
+
+#Note that `dplyr` and `readr` are included in the `tidyverse` distribution. If you have `tidyverse` installed you can simply load `library(tidyverse)`. You can also load packages within `tidyverse` independently (as above), which is a bit quicker. 
+```
+
+
+
+# Code exercises
+
+The following exercises are some basic (mathematical) operations to illustrate what you could code with R. Please run all exercises up to 11 in a single code chunk. Comment on half of the exercises in the code chunk (use a `#` after the code or on a different line). These comments can be helpful for others (or a later version of yourself) to understand what the code is supposed to do.
+
+
+2. __Create an object a with value 1__
+```{r, include = params$answer}
+a <- 1 # the number 1 is assigned to a
+```
+
+3. __Verify that 1 is stored in a__
+```{r, include = params$answer}
+a # a is printed, 1 is returned
+```
+
+4. __Square a__
+```{r, include = params$answer}
+a^2 # the square of a is printed, still being 1
+```
+
+5. __Assign a + a to the object b, and check if b is equal to a + a.__
+```{r, include = params$answer}
+b <- a + a # b is a new object 
+b == a + a # this line checks if b equals a + a and returns TRUE or FALSE
+```
+
+6. __Square b__
+```{r, include = params$answer}
+b^2 # see question 3
+```
+
+7. __Multiply the answer of question 6 by *a over b*__
+```{r, include = params$answer}
+b^2 * (a / b) # brackets and spaces can clarify code
+```
+
+8. __Assign the result to c__
+```{r, include = params$answer}
+c <- b^2 * (a / b) # C should be 2
+```
+
+9. __Take the square root (use `sqrt()`) of c to the power b__
+```{r, include = params$answer}
+sqrt(c^b) # should still be 2
+```
+
+10. __Multiply the answer of question 9 by *a over (b to the power 6)*__
+```{r, include = params$answer}
+sqrt(c^b) * (a / b^6)
+```
+
+11. __Round the answer from the previous question to 3 decimal places (use `round()`, and use `?round()` to find out more about how to use this code).__
+```{r, include = params$answer}
+# Method 1
+round(sqrt(c^b) * (a / b^6), 3) 
+
+# OR
+
+# Method 2
+d <- sqrt(c^b) * (a / b^6)
+round(d, 3)
+
+# Do you notice that the first solution is shorter, but the second is much more insightful? If you share your code, or plan to use it later on, clarity is very important. A little effort now, saves you hours later.
+
+```
+
+Now you know how to use `R` as a calculator and R markdown for typesetting, we can move on to some more advanced operations. 
+
+---
+
+# Functions in R
+
+A function in R is a piece of code that contains a set of statements organized to perform a specific task. For example, a function could be used to calculate the mean of a some data, or to make a barplot of some other data. In R functions in code can be recognized by the parentheses after a word (e.g. `mean()` is a function).
+
+Functions consist of:
+
+- Input argument(s);
+- Function actions;
+- Output / results of the function.
+
+For example, the function `mean()` takes a vector of numbers as *input*, then has the *actions* of summing the numbers and dividing them over the number of elements, and finishes with *returning* the obtained number.
+
+
+The code below illustrates what a function would be constructed.
+
+```{r eval = FALSE}
+# Example function
+
+# Function name and the input arguments
+function_name <- function(argument_1, argument_2, argument_3){
+  
+  # actions of the function
+  x <- (argument_1 + argument_2) / argument_3
+  
+  # returning output
+  return(x)
+}
+```
+
+
+R has lots of built-in functions or functions in packages, such as `seq()`, `mean()`, `min()`, `max()`, and `sum()`. If you want more information about a built-in function, you can always run the code `?function_name()` to retrieve documentation on the function. Functions can also be coded/created by a programmer themselves. This can for example be useful if some longer code needs to be repeated multiple times.
+
+
+12. __Perform the following operations by using built-in R functions:__
+
+- __Create a sequence of numbers from 12 to 24, by using the function `seq()`.__
+```{r, include = params$answer}
+seq(12, 24)
+```
+
+- __Sum the numbers from 28 to 63 by using the `sum()`-function.__
+```{r, include = params$answer}
+sum(28:63)
+```
+
+- __Find the mean of the numbers from 25 to 82.__
+```{r, include = params$answer}
+mean(25:82)
+```
+
+---
+
+
+# Getting data into R
+
+There are several of ways to read data into R. One option is to use the `readr` package that comes with the `tidyverse` distribution. The function `read_csv()` reads comma delimited files.
+
+Download the file "flightdata.csv" from the course page and store it in your project folder. This file contains a sample from the "flights" dataset from the `nycflights13` package. This contains airline data for all flight departing from NYC in 2013. Note that you have to assign the desired data to an object when reading the data into R.
+
+13. __Read the `flightdata.csv` file into R with the `readr` package using the code below__
+
+```{r message=FALSE, warning=FALSE}
+flight_data <- read_csv("flightdata.csv") # Imports the data
+flight_data # View the data
+
+
+```
+
+To get other types of data into R the tidyverse packages listed below are recommended.
+
+* `haven` reads SPSS, Stata, and SAS files
+* `readxl` reads excel files (.xls and .xlsx)
+
+---
+
+# Working with the data
+
+## Summarizing the data
+
+There are different functions to summarise data, but the base R function `summary()` works well too.
+
+14. __Apply the `summary()` function to the data__
+
+```{r, include = params$answer}
+summary(flight_data)
+
+# `summary()` returns various summary statistics for every numeric variable including minimum and maximum, quartiles, mean and median. Notice that for categorical variables, this function returns the length of the variable.
+```
+
+---
+
+## Adjusting data 
+
+### Creating new columns
+
+Sometimes we need to add new columns that are functions of existing columns, and `mutate()` does this. 
+
+15. __Add a column that calculates speed using the distance and air_time columns using `speed = distance / air_time * 60`. Store the adjusted `flight_data` dataset under a new name `flight_data2`.__
+
+```{r, include = params$answer}
+# Mutate requires the data set, and than the new variable and its definition
+flight_data2 <- mutate(flight_data, 
+                       speed = distance / air_time * 60)
+
+# Again check the data with the summary function.
+summary(flight_data2$speed)
+```
+
+
+### Selecting data 
+
+You might get a data set with more variables than you need. In this case, it is useful to narrow it down to just the variables you will be working with. `select()` can be used for this. 
+
+16. __Select the columns year, month, day  and speed using the `select()` function from flight_data2 and store it under flight_data3.__
+```{r, include = params$answer}
+flight_data3 <- select(flight_data2, 
+                       year, 
+                       month, 
+                       day, 
+                       speed)
+
+```
+
+---
+
+# Loops
+
+Sometimes when coding, you want to repeat the same code for multiple times for different pieces of data, or you want to repeat the same action multiple times. For example, you could have a situation where you would draw 10 random numbers and want to calculate the mean, and then want to repeat this same action multiple times.
+
+
+When repeating something multiple times (also called having iterations of something), you could use *loops* in R. Loops are pieces of code that are repeated a set number of times. In this practical, we discuss the `for` loop.
+
+## `for`-loops
+
+`for`-loops repeat the given loop for the number of elements in a provided sequence or vector. The following code shows how we loop over the numbers of 1 to 10. Running this code would provide the third power for each of the numbers from 1 to 10.
+
+```{r eval=FALSE}
+# Defining the loop
+for(i in seq(1, 10)){
+  
+  # action you want to repeat, in this case each number to the power 3.
+  print(i^3)
+}
+
+
+```
+
+Note that `for`-loops always have the form described below. When using a `for`-loop, pay attention to the parentheses and brackets.
+
+````{r eval = FALSE}
+for(<NAME_FOR_ELEMENT_IN_LOOP> in <SEQUENCE_OR_VECTOR>){
+  <WANTED ACTIONS>
+}
+
+````
+
+17. __Create a `for`-loop that iterates over the numbers 1 to 12 and for each number takes the third power and divides that number by 13. Then print the output for each number.__
+
+```{r, include=params$answer}
+# Start a for loop with elements for 1 to 12
+for(i in 1:12){
+  
+  # take third power and save it
+  x <- i^3
+  # divide new number by 13
+  y <- x/13
+  # print the output
+  print(y)
+}
+```
+
+---
+
+# Apply statements
+
+As an alternative to loops, `apply` statements can be used to apply the same function to a list or vector of elements. For example, you can compute the mean of every column in your data set by using an apply statement.
+
+The apply statements are several similar statements that are useful in different situations. Some examples are `apply()`, `sapply()`, `lapply()`, and `mapply()`. To learn the exact differences between the statements, please read the function-documentation (e.g. `?apply()`).
+
+The standard `apply()` function has the input arguments
+
+- A data frame or vector
+- The margin on which the function should be used (e.g. should we apply the function on the rows (= 1), or columns (= 2))
+- The function you want to apply 
+- Arguments the chosen function would need
+
+Below, an example is provided were we want to calculate the mean for each column of a data matrix of 9 by 9 cells.
+
+```{r eval = FALSE}
+# Create a 9 by 9 cell matrix with numbers 1 to 81
+data <- matrix(1:81, nrow = 9, ncol = 9)
+
+# apply with the input the data, margin and function
+apply(X = data, MARGIN = 2, FUN = mean)
+```
+
+18. __Now use an apply statement to calculate the variance (`var()`) of each row of an 8 by 8 matrix with numbers 1 to 64.__
+
+```{r include = params$answer}
+# Create matrix of 8 by 8
+data <- matrix(1:64, nrow = 8, ncol = 8)
+
+# apply the variance per row ( = margin 1)
+apply(X = data, MARGIN = 1, FUN = var)
+
+# The outcome should be 384 for each row.
+
+```
+
+
+---
+
+# Saving data to a file 
+
+After making changes to data frames, or after creating output in the form of a data frame, you might want to save your data in a new file. For example, after pre-processing your data for the analysis, you might want to save a pre-processed version in addition to the version with raw data.
+
+The `write_csv()` function saves a data frame as a csv file. The `write_csv()` function has two main arguments: the data frame to save, and the path to where you want the file to be located. Other options can also be specified, for example how to write missing values. Type `?write_csv` to learn more about this function. 
+
+19. __Write the data `flight_sample3` to a file using the `write_csv()` function.__
+```{r}
+write_csv(flight_data3, "flight_data3.csv")
+
+# As we work in an Rproject, the .csv file is automatically stored within the project folder
+```
+
+---
+
+# End of practical
+
+This concludes the practical for this week. Don't forget to hand in your work on this practical! Find instructions for this on the course website!
+
+---

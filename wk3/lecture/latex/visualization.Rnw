@@ -1,0 +1,627 @@
+%%% Title:    FTDS Lecture 3a: Functions & Data Visualization
+%%% Author:   Kyle M. Lang
+%%% Created:  2015-11-06
+%%% Modified: 2023-11-24
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{eurosym}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = false,
+  linkcolor = blue,
+  filecolor = blue,
+  citecolor = black,
+  urlcolor = blue
+}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+%% The following command was adapted from LaTeX Community user 'localghost':
+\newcommand*\bigbar[1]{%
+  \hbox{%
+    \vbox{%
+      \hrule height 0.65pt % The actual bar
+      \kern0.35ex%         % Distance between bar and symbol
+      \hbox{%
+        \kern-0.1em%      % Shortening on the left side
+        \ensuremath{#1}%
+        %\kern-0.1em%      % Shortening on the right side
+      }%
+    }%
+  }%
+} 
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+% \newcommand{\src}[1]{\texttt{#1}}
+
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
+
+\title{Data Visualization}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(dplyr)
+library(magrittr)
+library(xtable)
+
+                                        #source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/visualization-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+
+dataDir  <- "../../../data/"
+
+## Load some data:
+diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
+titanic  <- readRDS(paste0(dataDir, "titanic.rds"))
+bfi      <- readRDS(paste0(dataDir, "bfi.rds"))
+  
+## Convert survival indicator to a numeric dummy code:
+titanic <- titanic %>% mutate(survived = as.numeric(survived) - 1)
+@
+
+\begin{document}
+  
+%------------------------------------------------------------------------------%
+
+\begin{frame}[t,plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\section{Base R Graphics}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Base R Graphics: Scatterplots}
+
+  We can create a basic scatterplot using the \src{plot()} function.
+  
+  <<out.width = "50%">>=
+  diabetes %$% plot(y = tc, x = bmi)
+  @
+
+  \pagebreak
+
+  <<eval = FALSE>>=
+  diabetes %$% plot(y = tc,
+                    x = bmi,
+                    ylab = "Total Cholesterol",
+                    xlab = "Body Mass Index",
+                    main = "Relation between BMI and Cholesterol",
+                    ylim = c(0, 350),
+                    xlim = c(0, 50)
+                    )
+  @
+
+  \pagebreak
+
+  <<echo = FALSE, out.width = "65%">>=
+  diabetes %$% plot(y = tc,
+                    x = bmi,
+                    ylab = "Total Cholesterol",
+                    xlab = "Body Mass Index",
+                    main = "Relation between BMI and Cholesterol",
+                    ylim = c(0, 350),
+                    xlim = c(0, 50)
+                    )
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Histograms}
+
+  We can create a simple histogram with the \src{hist()} function.
+
+  <<out.width = "50%">>=
+  hist(diabetes$glu)
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Histograms}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<>>=
+      hist(diabetes$glu, breaks = 5)
+      @
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<>>=
+      hist(diabetes$glu, breaks = 50)
+      @
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
+
+  We can create simple boxplots via the \src{boxplot()} function.
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<>>=
+      boxplot(diabetes$bmi)
+      @
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<>>=
+      boxplot(bmi ~ sex, data = diabetes)
+      @
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
+
+  <<eval = FALSE>>=
+  boxplot(bmi ~ sex,
+          data = diabetes,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Body Mass Index",
+          ylab = "Sex")
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Boxplots}
+
+  <<echo = FALSE, out.width = "65%">>=
+  boxplot(bmi ~ sex,
+          data = diabetes,
+          horizontal = TRUE,
+          range = 3,
+          xlab = "Body Mass Index",
+          ylab = "Sex")
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Graphics: Kernel Density Plots}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      The \src{density()} function estimates the density of a variable.
+      \vc
+      \begin{itemize}
+        \item If we plot a density object, we get a kernel density plot.
+      \end{itemize}
+
+      <<eval = FALSE>>=
+      density(diabetes$bmi) %>% 
+        plot(main = "Density of BMI")
+      @
+
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+    
+      <<echo = FALSE>>=
+      density(diabetes$bmi) %>%
+        plot(main = "Density of BMI")
+      @
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{GGPlot}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{GGPlot}
+
+  Base R graphics are fine for quick-and-dirty visualizations, but for 
+  publication quality graphics, you should probably use GGPlot.
+  \vb
+  \begin{itemize}
+  \item GGPlot uses the "grammar of graphics" and "tidy data" to build up a
+    figure from modular components.
+  \end{itemize}
+  \vx{-12}
+  \begin{center}
+    \includegraphics[width = 0.8\textwidth]{images/grammar.jpg}
+  \end{center}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Basic Setup}
+
+  We start by calling the \src{ggplot()} function to initialize the object that
+  will define our plot.
+  \begin{itemize}
+  \item We must specify a data source.
+  \item We must also give some aesthetic via the \src{aes()} function.
+  \end{itemize}
+  
+  <<>>=
+  library(ggplot2)
+  p1 <- ggplot(data = diabetes, mapping = aes(x = bmi, y = glu))
+  @
+
+  \pagebreak
+
+  At this point, our plot is pretty boring.
+
+  <<out.width = "50%">>=
+  p1
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Geometries}
+  
+  We need to define some geometry via a \src{geom_XXX()} function.
+
+  <<out.width = "50%">>=
+  p1 + geom_point()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1 + geom_line()
+  @
+
+  \pagebreak
+
+  We can also combine different geometries into a single figure
+
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_line()
+  @
+
+  \pagebreak
+  
+  We can use different flavors of geometry for different types of data.
+
+  <<out.width = "45%">>=
+  p2 <- ggplot(diabetes, aes(tc))
+  p2 + geom_histogram()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p2 + geom_density()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p2 + geom_boxplot()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p3 <- ggplot(diabetes, aes(sex, bmi))
+  p3 + geom_boxplot()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Statistics}
+    
+  We can also add statistical summaries of the data.
+  
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1 + geom_point() + geom_smooth(method = "lm")
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Styling}
+
+  Changing style options outside of the \src{aes()} function applies the styling
+  to the entire plot.
+
+  <<out.width = "50%", fig.asp = 0.8>>=
+  p5 <- ggplot(titanic, aes(age, survived))
+  p5 + geom_jitter(color = "blue", size = 2, height = 0.1)
+  @
+  
+  \pagebreak
+  
+  We can also apply styles as a function of variables by defining the style
+  within the \src{aes()} function.
+
+  <<out.width = "50%", fig.asp = 0.8>>=
+  p6.1 <- ggplot(titanic, aes(age, survived, color = sex))
+  p6.1 + geom_jitter(size = 2, height = 0.1) + geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%", fig.asp = 0.8>>=
+  p6.2 <- ggplot(titanic, aes(age, survived))
+  p6.2 + geom_jitter(aes(color = sex), size = 2, height = 0.1) +
+      geom_smooth()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%", fig.asp = 0.8>>=
+  p6.2 + geom_jitter(size = 2, height = 0.1) +
+      geom_smooth(aes(color = sex))
+  @
+
+  \pagebreak
+
+  <<out.width = "50%", fig.asp = 0.8>>=
+  p6.2 + geom_jitter(aes(color = class), size = 2, height = 0.1) +
+    geom_smooth(aes(linetype = sex))
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Themes}
+
+  We can apply canned themes to adjust a plot's overall appearance.
+
+  <<out.width = "50%">>=
+  (p1.1 <- p1 + geom_point())
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_classic()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_minimal()
+  @
+
+  \pagebreak
+
+  <<out.width = "50%">>=
+  p1.1 + theme_bw()
+  @
+
+  \pagebreak
+  
+  We can also modify individual theme elements.
+
+  <<eval = FALSE>>=
+  p1.1 + theme_classic() +
+      theme(axis.title = element_text(size = 16,
+                                      family = "serif",
+                                      face = "bold",
+                                      color = "blue"),
+            aspect.ratio = 1)
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{GGPlot: Themes}
+
+  <<echo = FALSE, out.width = "60%">>=
+  p1.1 + theme_classic() +
+      theme(axis.title = element_text(size = 16,
+                                      family = "serif",
+                                      face = "bold",
+                                      color = "blue"),
+            aspect.ratio = 1)
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{GGPlot: Facets}
+  
+  Faceting allow us to make arrays of conditional plots.
+
+  <<eval = FALSE>>=
+  (p7 <- ggplot(titanic, aes(age, survived, color = class)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Facets}
+
+  <<echo = FALSE, out.width = "65%", fig.asp = 0.8>>=
+  (p7 <- ggplot(titanic, aes(age, survived, color = class)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+
+  <<out.width = "65%", fig.asp = 0.8>>=
+  p7 + facet_wrap(vars(sex))
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{GGPlot: Facets}
+
+  <<eval = FALSE>>=
+  (p8 <- ggplot(titanic, aes(age, survived)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Facets}
+
+  <<echo = FALSE, out.width = "60%">>=
+  (p8 <- ggplot(titanic, aes(age, survived)) +
+       geom_jitter(height = 0.05) +
+       geom_smooth(method = "glm",
+                   method.args = list(family = "binomial"),
+                   se = FALSE)
+  )
+  @
+
+  \pagebreak
+  
+  <<echo = TRUE, out.width = "65%", fig.asp = 0.8>>=
+  p8 + facet_grid(vars(sex), vars(class))
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{GGPlot: Joining Multiple Figures}
+
+  If we want to paste several different plots into a single figure (without
+  faceting), we can use the utilities in the \pkg{gridExtra} package.
+  
+  <<eval = FALSE>>=
+  library(gridExtra)
+  
+  grid.arrange(p1 + geom_point(),
+               p3 + geom_boxplot(),
+               p1 + geom_line(),
+               p8 + facet_grid(vars(sex), vars(class)),
+               ncol = 2)
+  @
+  
+  \pagebreak
+
+  <<echo = FALSE, out.width = "55%">>=
+  library(gridExtra)
+  
+  grid.arrange(p1 + geom_point(),
+               p3 + geom_boxplot(),
+               p1 + geom_line(),
+               p8 + facet_wrap(vars(sex)),
+               ncol = 2)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}

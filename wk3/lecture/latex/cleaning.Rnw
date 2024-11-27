@@ -1,0 +1,680 @@
+%%% Title:    FTDS Lecture 3b: Data Cleaning
+%%% Author:   Kyle M. Lang
+%%% Created:  2015-11-06
+%%% Modified: 2023-11-24
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{eurosym}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = false,
+  allcolors = uured
+}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+%% The following command was adapted from LaTeX Community user 'localghost':
+\newcommand*\bigbar[1]{%
+  \hbox{%
+    \vbox{%
+      \hrule height 0.65pt % The actual bar
+      \kern0.35ex%         % Distance between bar and symbol
+      \hbox{%
+        \kern-0.1em%      % Shortening on the left side
+        \ensuremath{#1}%
+        %\kern-0.1em%      % Shortening on the right side
+      }%
+    }%
+  }%
+} 
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+% \newcommand{\src}[1]{\texttt{#1}}
+
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
+
+\title{Data Cleaning}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(dplyr)
+library(magrittr)
+library(xtable)
+
+                                        #source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/cleaning-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+\begin{document}
+  
+%------------------------------------------------------------------------------%
+
+\begin{frame}[t,plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Data Cleaning}
+  
+  When we receive new data, they are generally messy and contaminated by various 
+  anomalies and errors.
+  \vb
+  \begin{itemize}
+  \item One of the first steps in processing a new set of data is 
+    \emph{cleaning}.
+    \vc
+  \item By cleaning the data, we ensure a few properties:
+    \vc
+    \begin{itemize}
+    \item The data are in an analyzable format.
+      \vc
+    \item All data take legal values.
+      \vc
+    \item Any outliers are located and treated.
+      \vc
+    \item Any missing data are located and treated.
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Missing Data}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{What are Missing Data?}
+  
+  Missing data are empty cells in a dataset where there should be observed 
+  values.
+  \vc
+  \begin{itemize}
+  \item The missing cells correspond to true population values, but we haven't 
+    observed those values.
+  \end{itemize}
+  \vb 
+  \pause
+  Not every empty cell is a missing datum.
+  \vc
+  \begin{itemize}
+  \item Quality-of-life ratings for dead patients in a mortality study
+    \vc
+  \item Firm profitability after the company goes out of business
+    \vc
+  \item Self-reported severity of menstrual cramping for men
+    \vc
+  \item Empty blocks of data following ``gateway'' items
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\captionsetup{labelformat = empty}
+
+\begin{frame}{Missing Data Pattern}
+  
+<<echo = FALSE>>=
+tmpTab <- matrix(c("x", "x", ".", ".",
+                   "y", ".", "y", "."),
+                 ncol = 2,
+                 dimnames = list(NULL, c("X", "Y"))
+                 )
+
+patTab1 <- xtable(tmpTab, align = rep("c", 3), caption = "Patterns for $P = 2$")
+
+tmpTab <- matrix(c(rep("x", 3), ".", "x", rep(".", 3),
+                   "y", "y", ".", "y", ".", ".", "y", ".",
+                   "z", ".", "z", "z", ".", "z", ".", "."),
+                 ncol = 3,
+                 dimnames = list(NULL, c("X", "Y", "Z"))
+                 )
+
+patTab2 <- xtable(tmpTab, align = rep("c", 4), caption = "Patterns for $P = 3$")
+@ 
+
+Missing data (or response) patterns represent unique combinations of observed
+and missing items.
+\begin{itemize}
+  \item $P$ items $\Rightarrow$ $2^P$ possible patterns.
+\end{itemize}
+
+\begin{columns}
+  \begin{column}{0.45\textwidth}
+    
+<<echo = FALSE, results = 'asis'>>=
+print(patTab1, booktabs = TRUE)
+@ 
+    
+  \end{column}
+  \begin{column}{0.45\textwidth}
+\vx{-12}    
+<<echo = FALSE, results = 'asis'>>=
+print(patTab2, booktabs = TRUE)
+@ 
+     
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\captionsetup{labelformat = default}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<eval = FALSE>>=
+      ## Load the mice library:
+      library(mice)
+
+      ## Compute missing data patterns:
+      pats <- md.pattern(boys)
+      @
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+      <<echo = FALSE>>=
+      library(mice)
+
+      ## Compute missing data patterns:
+      pats <- md.pattern(boys)
+      @
+
+    \end{column}
+  \end{columns}
+
+  \pagebreak
+
+  <<>>=
+  pats
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## How many unique response patterns?
+  nrow(pats) - 1
+
+  ## What is the most common response patterns?
+  maxPat <- rownames(pats) %>% as.numeric() %>% which.max()
+  pats[maxPat, ]
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{Nonresponse Rates}
+  
+  \textsc{Percent/Proportion Missing}
+  \begin{itemize}
+  \item The proportion of cells containing missing data
+  \item Should be computed for each variable, not for the entire dataset
+  \end{itemize}
+  
+  \vb
+  
+  \textsc{Attrition Rate}
+  \begin{itemize}
+  \item The proportion of participants that drop-out of a study at each 
+    measurement occasion
+  \end{itemize}
+  
+  \vb
+  
+  \textsc{Covariance Coverage}
+  \begin{itemize}
+  \item The proportion of cases available to estimate a given pairwise
+    relationship (e.g., a covariance between two variables)
+  \item Very important to have adequate coverage for the parameters you want to 
+    estimate
+  \end{itemize}
+    
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can calculate basic response rates with simple base R commands.
+
+  <<>>=
+  ## Load some example data:
+  data(boys, package = "mice")
+
+  ## Compute variable-wise proportions missing:
+  mMat <- is.na(boys)
+  mMat %>% colMeans() %>% round(3)
+  @
+
+  \pagebreak
+
+  <<>>=
+  ## Compute observation-wise proportions missing:
+  pmRow <- rowMeans(mMat)
+
+  ## Summarize the above:
+  range(pmRow)
+  pmRow[pmRow > 0] %>% range()
+  median(pmRow)
+
+  ## Compute the proportion of complete cases:
+  mean(pmRow == 0)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can use routines from the \pkg{mice} package to calculate covariance
+  coverage and response patterns.
+
+  <<>>=
+  ## Compute the covariance coverage:
+  cc <- md.pairs(boys)$rr / nrow(boys)
+
+  ## Check the result:
+  round(cc, 2)
+  @
+
+  \pagebreak
+  
+  <<>>=
+  ## Range of coverages:
+  range(cc)
+  cc[cc < 1] %>% range()
+
+  ## How many coverages fall below some threshold?
+  {cc[lower.tri(cc)] < 0.7} %>% sum()
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{ggmice} package provides some nice ways to visualize incomplete data
+  and objects created during missing data treatment.
+
+  <<out.width = "40%">>=
+  library(ggmice); library(ggplot2)
+  
+  ggmice(boys, aes(wgt, hgt)) + geom_point()
+  @
+
+  \pagebreak
+
+  We can also create a nicer version of the response pattern plot.
+
+  <<out.width = "50%">>=
+  plot_pattern(boys, rotate = TRUE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Visualizing Incomplete Data}
+
+  The \pkg{naniar} package also provides some nice visualization and numerical
+  summary routines for incomplete data.
+
+  <<out.width = "40%">>=
+  naniar::gg_miss_upset(boys)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Outliers}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{What is an outlier?}
+  
+  We're only considering \emph{univariate outliers}.
+  \vb
+  \begin{itemize}
+  \item Extreme values with respect to the distribution of a variable's other 
+    observations
+    \vc
+    \begin{itemize}
+    \item A human height measurement of 3 meters
+      \vc
+    \item A high temperature in Utrecht of $50^\circ$
+      \vc
+    \item Annual income of \euro250,000 for a student
+    \end{itemize}
+    \vb
+  \item Not accounting for any particular model (we'll get to that later)
+  \end{itemize}
+  
+  \pagebreak
+  
+  A univariate outlier may, or may not, be an illegal value.
+  \vb
+  \begin{itemize}
+  \item Data entry errors are probably the most common cause.
+    \vc
+  \item Outliers can also be legal, but extreme, values.
+  \end{itemize}
+  
+  \va
+  
+  \textsc{Key Point:} We choose to view an outlier as arising from a different 
+  population than the one to which we want to generalize our findings.
+  
+\end{frame}
+ 
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Finding Outliers: Boxplot Method}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      \citet{tukey:1977} described a procedure for flagging potential outliers 
+      based on a box-and-whiskers plot.
+      \begin{itemize}
+      \item Does not require normally distributed $X$
+      \item Not sensitive to outliers
+      \end{itemize}
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      data(Salaries, package = "carData")
+      
+      ggplot(Salaries, aes(sex, salary)) +
+      geom_boxplot() +
+      ggtitle("9-Month Salaries of Professors") +
+      theme_classic() +
+      theme(plot.title = element_text(hjust = 0.5))
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Boxplot Method}
+  
+  A \emph{fence} is an interval defined as the following function of the 
+  \emph{first quartile}, the \emph{third quartile}, and the \emph{inner quartile
+    range} ($IQR = Q_3 - Q_1$):
+  \begin{align*}
+    F = \{Q_1 - C \times IQR, Q_3 + C \times IQR\}
+  \end{align*}
+  
+  \vx{-6}
+  
+  \begin{itemize}
+  \item Taking $C = 1.5$ produces the \emph{inner fence}.
+  \item Taking $C = 3.0$ produces the \emph{outer fence}.
+  \end{itemize}
+  
+  \vb
+  
+  We can use these fences to identify potential outliers:
+  \begin{itemize}
+  \item Any value that falls outside of the inner fence is a \emph{possible 
+    outlier}.
+  \item Any value that falls outside of the outer fence is a \emph{probable 
+    outlier}.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Example}
+
+  We can implement the boxplot method via \src{boxplot.stats()}.
+  
+  <<>>=
+  ## Find potentially outlying cases: 
+  (out <- boys %$% boxplot.stats(bmi, coef = 3)$out)
+
+  ## Which observations are potential outliers?
+  boys %$% which(bmi %in% out)
+  
+  ## View the potentially outlying cases:
+  boys %>% filter(bmi %in% out)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Breakdown Point}
+  
+  To compare robust statistics, we consider their \emph{breakdown points}.
+  \begin{itemize}
+  \item The breakdown point is the minimum proportion of cases that must be 
+    replaced by $\infty$ to cause the value of the statistic to go to $\infty$.
+  \end{itemize}
+  \vb
+  The mean has a breakdown point of $1 / N$.
+  \begin{itemize}
+  \item Replacing a single value with $\infty$ will produce an infinite mean.
+  \item This is why we shouldn't use basic z-scores to find outliers.
+  \end{itemize}
+  \vb
+  The median has breakdown point of 50\%.
+  \begin{itemize}
+    \item We can replace $n < N / 2$ of the observations with $\infty$ without 
+      producing an infinite median.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outliers for Categorical Data}
+
+  Nominal, ordinal, and binary items \emph{can} have outliers.
+  \begin{itemize}
+  \item Outliers on categorical variables are often more indicative of bad
+    variables than outlying cases.
+  \end{itemize}
+  \vb
+  \pause
+  Ordinal
+  \begin{itemize}
+  \item Most participant endorse one of the lowest categories on an ordinal
+    item, but a few participants endorse the highest category.
+  \item The participants who endorse the highest category may be outliers.
+  \end{itemize}
+  \vb
+  \pause
+  Nominal
+  \begin{itemize}
+  \item Groups with very low membership may be outliers on nominal grouping
+    variables.
+  \end{itemize}
+  \vb
+  \pause
+  Binary
+  \begin{itemize}
+  \item If most endorse the item, the few who do not may be outliers.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  If we locate any outliers, they must be treated.
+  \vc
+  \begin{itemize}
+  \item Outliers cause by errors, mistakes, or malfunctions (i.e., \emph{error 
+    outliers}) should be directly corrected.
+    \vc
+  \item Labeling non-error outliers is a subjective task.
+    \begin{itemize}
+    \item A (non-error) outlier must originate from a population separate from 
+      the one we care about.
+    \item Don't blindly automate the decision process.
+    \end{itemize}
+  \end{itemize}
+  
+  \pause
+  \vb
+ 
+  The most direct solution is to delete any outlying observation.
+  \vc
+  \begin{itemize}
+  \item If you delete non-error outliers, the analysis should be reported twice: 
+    with outliers and without.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  For univariate outliers, we can use less extreme types of deletion.
+  \vc
+  \begin{itemize}
+  \item Delete outlying values (but not the entire observation).
+    \vc
+  \item These empty cells then become missing data.
+    \vc
+  \item Treat the missing values along with any naturally-occurring nonresponse.
+  \end{itemize}
+  \va
+  Winsorization:
+  \vc
+  \begin{itemize}
+  \item Replace the outliers with the nearest non-outlying value.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Treating Outliers}
+  
+  We can also use robust regression procedures to estimate the model directly in 
+  the presence of outliers.
+  \vc
+  \begin{itemize}
+  \item Weight the objective function to reduce the impact of outliers
+    \begin{itemize}
+    \item M-estimation
+    \end{itemize}
+    \vc
+  \item Trim outlying observations during estimation 
+    \begin{itemize}
+    \item Least trimmed squares, MCD, MVE
+    \end{itemize}
+    \vc
+  \item Take the median, instead of the mean, of the squared residuals
+    \begin{itemize}
+    \item Least median of squares
+    \end{itemize}
+    \vc
+  \item Model some quantile of the DV's distribution instead of the mean 
+    \begin{itemize}
+    \item Quantile regression
+    \end{itemize}
+    \vc
+  \item Model the outcome with a heavy-tailed distribution
+    \begin{itemize}
+    \item Laplacian, Student's T
+    \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliographystyle{apacite}
+  \bibliography{../../../bibtex/stat_meth_refs.bib}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}

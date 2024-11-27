@@ -1,0 +1,316 @@
+---
+title: "Practice Exam"
+author: "Kyle M. Lang"
+date: "Fundamental Techniques in Data Science with R"
+output:
+   html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    number_sections: false
+tutorial:
+  id: "Fundamentals_Practice_Exam"
+  version: 2022.1.0
+runtime: shiny_prerendered
+---
+
+<style type="text/css">
+
+body{ /* Normal */
+      font-size: 12px;
+  }
+td {  /* Table */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 18px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 18px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+---
+
+```{r setup, include = FALSE}
+library(learnr)
+library(mice)
+library(magrittr)
+library(gradethis)
+library(htmltools)
+gradethis::gradethis_setup()
+```
+
+This is a practice exam. This exam does not cover all course material, but it 
+should give you an indication of the type of questions to expect on the final 
+exam. 
+
+---
+
+# Multiple Choice Questions
+
+---
+
+## Question 1
+
+```{r q1, echo = FALSE}
+question(
+  "Which of the following is the best definition of the standard error of a regression slope?",
+  
+  answer(
+    "The standard deviation of the slope's sampling distribution", 
+    correct = TRUE
+  ),
+  answer(
+    "The standard deviation of the residual distribution", 
+    message = "This is the residual standard error."
+  ),
+  
+  answer(
+    "The variance of the slope's sampling distribution", 
+    message = "The standard error is the standard deviation of the sampling distribution, not the variance."
+  ),
+  
+  answer(
+    "The variance of the residual distribution", 
+    message = "This is the residual variance."
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
+``` 
+
+---
+
+## Question 2
+
+```{r echo = FALSE, warning = FALSE}
+data(iris)
+lm(Petal.Length ~ Petal.Width + Sepal.Length * Species, data = iris) %>% summary()
+```
+
+---
+
+```{r q2, echo = FALSE}
+question(
+  "In the above regression output, which value tells you something about how all of the predictors correlate with the outcome?",
+  
+  answer(
+    "The Residual standard error: 0.2453 on  143 degrees of freedom", 
+    message = "The residual standard error gives you an indication about the spread of the residuals. The lower the residual standard error, the more similar the residuals"
+  ),
+  answer(
+    "The regression coefficients for the Species factor", 
+    message = "The regression coefficients for these two dummy codes tell you how much the mean Petal.Length differs between Setosa and Versicolor flowers and Setosa and Virginica flowers, respectively."
+  ),
+  
+  answer("The multiple R-squared: 0.9815", 
+         correct = TRUE
+  ),
+  
+  answer(
+    "The F-statistic: 17.99 on 6 and 143 DF", 
+    message = "The F-statistic tests if the R^2 statistic is significantly greater than zero. In other words, it tests if the variance explained by the predictors is significantly more than the residual variance."
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
+```
+
+---
+
+## Question 3
+
+```{r q3, echo = FALSE}
+question(
+  "Judging from the above output, can we conclude that Species significantly moderates the relation between Sepal.Length and Petal.Length?",
+  
+  answer(
+    "Yes, because the F-statistic is significant (F[6, 143] = 1262, p < 0.001).",
+    message = "The F-statistic test the overall effect of all predictors, not the individual moderating influence of the Species factor."
+  ),
+  
+  answer(
+    "No, because the regression slope for Sepal.Length is nonsignificant (t[143] = 0.918, p = 0.36).", 
+    message = "The slope for Sepal.Length represents the conditional effect of Sepal.Length on Petal.Length for Setosa flowers (i.e., the reference group of the moderator). The significance (or lack thereof) of this slope has no bearing on the presence or absence of moderation."
+  ),
+  
+  answer(
+    "Yes, because both interaction terms are significant.", 
+    message = "The significance of the individual interaction terms only tells us that the effect of Sepal.Length on Petal.Length differs significantly between Setosa and Versicolor flowers or between Setosa and Virginica flowers, respectively. We cannot directly infer a moderating effect of the entire grouping factor from individual interaction terms."),
+  
+  answer(
+    "We cannot say. The output does not provide enough information.", 
+    message = "To assess the overall moderating effect of the Species factor, we need to do a model comparison between the model shown above and the additive model without either interaction term.",
+    correct = TRUE
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
+```
+
+---
+
+## Question 4
+
+```{r q4, echo = FALSE}
+question(
+  "Which of the following is not an assumption for logistic regression?",
+  answer("The log-odds of the outcome have a linear relation with the predictors."),
+  answer("The residuals are independent of each other."),
+  answer("The residuals have constant variance.", correct = TRUE),
+  answer("No predictor is a linear combination of other predictors."),
+  allow_retry = TRUE,
+  random_answer_order = TRUE
+)
+```
+
+---
+
+## Question 5
+
+```{r q5, echo = FALSE}
+question(
+  "Suppose you want to know if there is a difference in the probability of failing an exam between Dutch students and international students. You also want to see if the age of the students influence this relationship. Which of the following would be the most appropriate model with which to answer these questions?",
+  
+  answer(
+    "An additive linear regression model with Exam Failure predicted by Student Nationality and Student Age.", 
+    message = "The outcome is binary, so we should use logistic regression. Also, the second part of your research question implies moderation, so we should include an interaction term."
+  ),
+  
+  answer(
+    "An additive logistic regression model with Exam Failure predicted by Student Nationality and Student Age.", 
+    message = "The second part of your research question implies moderation, so we should include an interaction term."
+  ),
+  
+  answer(
+    "A moderated linear regression model with Exam Failure predicted by Student Nationality, Student Age, and the interaction between Nationality and Age.",
+    message = "The outcome is binary, so we should use logistic regression."
+  ),
+  
+  answer(
+    "A moderated logistic regression model with Exam Failure predicted by Student Nationality, Student Age, and the interaction between Nationality and Age.",
+    correct = TRUE
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
+```
+
+
+---
+
+## Question 6
+
+```{r eval = FALSE}
+# choose a subset of variables
+iris %>% XXX(Sepal.Length, Petal.Width, Species) %>%
+```
+
+```{r q6, echo = FALSE}
+question(
+  "In the code shown above, only a few of the variables of the data frame are chosen to use for further steps in the processing. Which of the following tidyverse function names should replace XXX in this case?",
+  
+  answer(
+    "filter", 
+    message = "Filter is used for observations (so the rows, not the columns)."
+  ),
+  
+  answer(
+    "group_by", 
+    message = "The group_by function would be used to do subsequent functions on aggregated level for a categorical variable."
+  ),
+  
+  answer(
+    "summarize",
+    message = "The summarize function can be used to obtain statistics from the data frame."
+  ),
+  
+    answer(
+    "select",
+    correct = TRUE
+  ),
+  
+  allow_retry = TRUE,
+  
+  random_answer_order = TRUE
+)
+```
+
+---
+
+# Open Question
+
+## Question 7
+
+**Use the output below to calculate a predicted `bmi` for a boy with the 
+following parameters:**
+
+- `age = 14` (14 years old)
+- `height = 153` (153cm tall)
+- `wgt = 55` (weighs 55kg)
+- `reg = "south"` (lives in the southern region)
+
+```{r echo = FALSE, message = FALSE}
+fit <- lm(bmi ~ age + hgt * wgt + reg, data = boys)
+coef(fit)
+```
+
+```{r q7, exercise = TRUE}
+# Type your answer here. You can either input a single number or valid R code 
+# that produces the answer as a length-one numeric vector.
+
+# Hit the "Solution" button to see a model answer.
+```
+
+```{r q7-check}
+fit <- lm(bmi ~ age + hgt * wgt + reg, data = boys)
+
+x <- c(1, 14, 153, 55, 0, 0, 1, 0, 153 * 55)
+y <- as.numeric(crossprod(x, coef(fit)))
+
+tol <- 0.01
+
+grade_this(
+  if(.result - y < tol)
+    pass("Great! The predicted value is {round(y, 5)}.")
+)
+```
+
+```{r q7-solution}
+# The predicted bmi is: 23.14209
+
+19.177830409 + (14 * -0.087653081) + (153 * -0.111429261) + 
+(55 * 0.762721904) + -0.116025646 + (153 * 55  * -0.002328413)
+
+# You have to plug-in the predictor values to the correct places in the fitted 
+# equation. For the interaction, wgt * hgt, you need to multiply wgt and hgt to 
+# get the predictor value for the interaction term.
+```
+
+---
+
+End of Practice Exam
+
+---

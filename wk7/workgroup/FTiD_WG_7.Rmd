@@ -1,0 +1,138 @@
+---
+title: "Work Group Meeting 7"
+author: "Fundamental Techniques in Data Science with R"
+date: "January 11, 2024"
+output:
+  ioslides_presentation:
+    logo: UU_logo.jpg
+    smaller: yes
+    widescreen: no
+---
+
+<style>
+h2{
+  color: black;
+}
+
+h3{
+  color: black;
+  font-family: "Rockwell";
+  text-align: left;
+}
+
+h4{
+  color: grey;
+  font-family: "Rockwell";
+  text-align: left;
+  line-height: 1.5;
+}
+
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+
+#centertext{
+color: black;
+text-align: center;
+font-size: 35px;
+line-height: 1.4;
+}
+
+#centerh3
+{
+color: black;
+font-family: "Rockwell";
+text-align: center;
+}
+
+#subtext
+{
+color: grey;
+text-align: center;
+font-size: 25px;
+line-height: 1.4;
+}
+
+</style>
+
+```{r setup, echo = FALSE, warning = FALSE}
+library(ggplot2)
+library(mvtnorm)
+set.seed(235711)
+theme_update(plot.background = element_rect(fill = "transparent", colour = NA))
+knitr::opts_chunk$set(warning = FALSE, 
+                      message = FALSE, 
+                      dev.args = list(bg = "transparent"), 
+                      fig.align = "center")
+```
+
+
+## This Workgroup Meeting
+
+<h3> General feedback Assignment 1 </h3>
+<h4> - Points relevant for multiple groups </h4>
+<br>
+
+<h3> Continue Assignment 2:</h3>
+<h4> - Assumptions </h4>
+<h4> - Influential cases </h4>
+<h4> - Classification </h4>
+
+## General feedback Assignment 1 - I
+
+<h3> Interpretation of the Model </h3>
+
+* R squared for variance
+* Coefficients (for logistic quite important)
+* Significance tests for coefficients and model 
+
+
+## General feedback Assignment 1 - I
+
+<h3> Interpretation of the Model </h3>
+
+* R squared for variance
+* Coefficients (for logistic quite important)
+* Significance tests for coefficients and model 
+
+<h3> Assumptions & Outliers </h3>
+
+* Book and Slides are complementary, check both! 
+* Show/explain why you meet the assumption 
+* Check outliers substantially when removing (or explain very clearly why removing). 
+
+## General feedback Assignment 1 - II
+
+<h3> Code in HTML </h3>
+
+* Please show all code you use.
+* Code and text together show understanding.
+* Some decisions/conclusions are mentioned, but no code is shown to check (e.g. processing steps).
+* Remember: HTML is graded in the end. 
+
+## Assignment 2
+
+<h3> Assumptions: </h3>
+- Check for all assumptions
+- Explain what actions are taken/not taken
+- Explain effect of violation or of actions
+
+<h3> Influential cases: </h3>
+- Same as for assumptions
+- Run model again after taking steps
+
+<h3> Classification: </h3>
+- Use a confusion matrix
+- Sensitivity and Specificity
+
+## For Next Meeting
+
+<br><br>
+<p id = "centertext"><b> Work on Assignment 2, deadline is next week: Thursday 18th of January, 17:00! </b></p>
+
+<h3 id = "centerh3"> Next workgroup meeting to finish up the assignment </h3>
+
+<br><br>
+
+<h3 id = "centerh3"> Note: E-mail questions for wrap-up lecture to Kyle <br> before this Friday! </h3>
+
+
+

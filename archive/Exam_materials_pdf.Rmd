@@ -1,0 +1,64 @@
+---
+title: "The exam"
+author: "Gerko Vink"
+date: "Fundamental Techniques in Data Science with `R`"
+output: pdf_document
+---
+
+---
+
+## **What can be tested**
+
+The information in the lecture slides:
+
+- [An archive of all lecture slides](Archive/Lectures_FTiD.zip). Or as seperate lectures:
+
+  - [Lecture 1](Wk1/Lecture_1_FTID.html)
+  - [Lecture 2](Wk2/Lecture_2_FTID.html)
+  - [Lecture 3](Wk3/Lecture_3_FTID.html)
+  - [Lecture 4](Wk4/Lecture_4_FTID.html)
+  - [Lecture 5](Wk5/Lecture_5_FTID.html)
+  - [Lecture 6](Wk6/Lecture_6_FTID.html)
+  - [Lecture 7](Wk7/Lecture_7_FTID.html)
+  - [Lecture 8](Wk8/)
+
+and the information in the following sources these lecture slides are based on:
+
+- [Introduction to Statistical Learning](http://faculty.marshall.usc.edu/gareth-james/ISL/)
+  - Chapter 2: up to and including 2.2.2
+  - Chapter 3: up to and including 3.4
+  - Chapter 4: up to and including 4.3.4
+  - Chapter 5: up to and including 5.1
+  
+- [These lecture notes](http://www.mit.edu/~6.s085/notes/lecture3.pdf).
+- [This document](Wk5/Exercise/Example_CVlm.pdf) I prepared about interpreting cross validation results
+- [This online page](https://www.dummies.com/education/math/statistics/using-linear-regression-to-predict-an-outcome/) that details the relation between correlation and prediction
+- [This blog post by Jonathan Barlett](https://thestatsgeek.com/2014/01/25/r-squared-and-goodness-of-fit-in-linear-regression/) that details $R^2$ and explains how it is useless on a wrongly specified model
+- [This other blog post by Jonathan](https://thestatsgeek.com/2013/10/28/r-squared-and-adjusted-r-squared/) about adjusted $R^2$
+- [This page](https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faq-how-do-i-interpret-odds-ratios-in-logistic-regression/) on interpreting logistic regression
+- [This page](https://stats.idre.ucla.edu/r/dae/logit-regression/) on inspecting logistic regression
+
+---
+
+## **What about equations and formulae?**
+
+Your knowledge of matrix algebra will not be tested. So, there is no need to memorize that the regression estimates $\beta$ can be estimated as $\hat{\beta} = ({\bf X}^T{\bf X})^{-1}{\bf X}^Ty$. However, you will need to know, understand and apply equations such as: 
+
+- $y = \beta_0 + \beta_1X+\epsilon$ and any more complicated version of this. 
+- $\epsilon = y - \hat{y}$
+- $\mathbb{E}[y] = \alpha + \beta x.$
+- $\log(\text{odds}) = \log(\frac{p}{1-p}) = \log(p) - \log(1-p) = \text{logit}(p)$
+- $p_i = \frac{\text{exp}(\eta)}{1+\text{exp}(\eta)} = \frac{\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}{1+\text{exp}(\beta_0 + \beta_1x_{1,i} + \dots + \beta_nx_{n,i})}$
+- etcetera
+
+---
+
+## **What if you are in doubt?**
+
+If any of the course materials confuse you, [drop me a line](mailto:G.Vink@uu.nl?subject=Question About Exam Materials) and I'd be more than happy to explain. 
+
+**The second half of the last lecture is dedicated to a Q&A**
+
+---
+
+End of document

@@ -1,0 +1,1638 @@
+%%% Title:    Overview of Linear Regression
+%%% Author:   Kyle M. Lang
+%%% Created:  2018-04-12
+%%% Modified: 2023-11-27
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{fancybox}
+\usepackage{booktabs}
+\usepackage{relsize}
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+
+\title{Introduction to Linear Modeling}
+\subtitle{Fundamental Techniques in Data Science with R}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+\begin{document}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(ggplot2)
+library(MASS)
+library(DAAG)
+library(xtable)
+library(MLmetrics)
+library(dplyr)
+
+dataDir <- "../data/"
+
+source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/linearModel-",
+               message = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+% ------------------------------------------------------------------------------%
+
+\begin{frame}[t,plain]
+  \titlepage
+\end{frame}
+
+% ------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\section{Simple Linear Regression}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Visualizations of Simple Linear Regression}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      data(Cars93, package = "MASS")
+      
+      out1 <- lm(Horsepower ~ Price, data = Cars93)
+      Cars93$yHat  <- fitted(out1)
+      Cars93$yMean <- mean(Cars93$Horsepower)
+      
+      p <- ggplot(data = Cars93, aes(x = Price, y = Horsepower)) +
+          coord_cartesian() +
+          theme_classic() +
+          theme(text = element_text(size = 16, family = "Courier"))
+      p1 <- p + geom_point()
+      p1 + geom_smooth(method = 'lm', color = "blue", se = FALSE)
+      @
+      
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      \begin{figure}
+        \includegraphics[width = \textwidth]{%
+          figures/conditional_density_figure.png%
+        }\\
+        \va
+        \tiny{Image retrieved from:
+          \url{http://www.seaturtle.org/mtn/archives/mtn122/mtn122p1.shtml}
+        }
+      \end{figure}
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Simple Linear Regression Equation}
+
+  The best fit line is defined by a simple equation:
+  \begin{align*}
+    \hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X
+  \end{align*}
+  The above should look very familiar:
+  \begin{align*}
+    Y &= m X + b\\
+      &= \hat{\beta}_1 X + \hat{\beta}_0
+  \end{align*}
+  $\hat{\beta}_0$ is the \emph{intercept}.
+  \begin{itemize}
+  \item The $\hat{Y}$ value when $X = 0$.
+  \item The expected value of $Y$ when $X = 0$.
+  \end{itemize}
+  \vb
+  $\hat{\beta}_1$ is the \emph{slope}.
+  \begin{itemize}
+  \item The change in $\hat{Y}$ for a unit change in $X$.
+  \item The expected change in $Y$ for a unit change in $X$.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Thinking about Error}
+
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      The equation $\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X$ only describes
+      the best fit line.
+      \begin{itemize}
+      \item It does not fully quantify the relationship between $Y$ and $X$.\\
+      \end{itemize}
+      \vb
+      \only<2>{
+        We still need to account for the estimation error.
+        \begin{align*}
+          Y = {\color{blue}\hat{\beta}_0 + \hat{\beta}_1 X} + {\color{red}\hat{\varepsilon}}
+        \end{align*}
+      }
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \only<1>{
+        <<echo = FALSE, cache = TRUE>>=
+        p1 + geom_smooth(method = 'lm', color = "blue", se = FALSE)
+        @
+      }
+      \only<2>{
+        <<echo = FALSE, cache = TRUE>>=
+        p2 <- p + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                         color = "red") +
+            geom_point()
+        p2
+        @
+      }
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Estimating the Regression Coefficients}
+
+  The purpose of regression analysis is to use a sample of $N$ observed $\{Y_n,
+  X_n\}$ pairs to find the best fit line defined by $\hat{\beta}_0$ and
+  $\hat{\beta}_1$.
+  \vb
+  \begin{itemize}
+  \item The most popular method of finding the best fit line involves minimizing
+    the sum of the squared residuals.
+    \vb
+  \item $RSS = \sum_{n = 1}^N \hat{\varepsilon}_n^2$
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Residuals as the Basis of Estimation}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      The $\hat{\varepsilon}_n$ are defined in terms of deviations between each
+      observed $Y_n$ value and the corresponding $\hat{Y}_n$.
+      \begin{align*}
+        \hat{\varepsilon}_n = Y_n - \hat{Y}_n =
+        Y_n - \left(\hat{\beta}_0 + \hat{\beta}_1 X_n\right)
+      \end{align*}
+      Each $\hat{\varepsilon}_n$ is squared before summing to remove negative
+      values.
+      \begin{align*}
+        RSS &= \sum_{n = 1}^N \hat{\varepsilon}_n^2 =
+              \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
+            &= \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 - \hat{\beta}_1
+              X_n\right)^2
+      \end{align*}
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      <<echo = FALSE, cache = TRUE>>=
+      p + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+          geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                       color = "red") +
+          geom_point()
+      @
+      
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Least Squares Example}
+
+  Estimate the least squares coefficients for our example data:
+
+  <<cache = TRUE>>=
+  data(Cars93, package = "MASS")
+
+  out1 <- lm(Horsepower ~ Price, data = Cars93)
+  coef(out1)
+  @
+  
+  <<echo = FALSE, cache = TRUE>>=
+  Cars93$yMean <- mean(Cars93$Horsepower)
+  Cars93$yHat <- fitted(out1)
+  
+  b0 <- round(coef(out1)[1], 2)
+  b1 <- round(coef(out1)[2], 2)
+  @
+  
+  The estimated intercept is $\hat{\beta}_0 = \Sexpr{b0}$.
+  \begin{itemize}
+  \item A free car is expected to have \Sexpr{b0} horsepower.
+  \end{itemize}
+  \vb
+  The estimated slope is: $\hat{\beta}_1 = \Sexpr{b1}$.
+  \begin{itemize}
+  \item For every additional \$1000 in price, a car is expected to gain
+    \Sexpr{b1} horsepower.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Model Fit}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Model Fit}
+  We may also want to know how well our model explains the outcome.
+  \begin{itemize}
+  \item Our model explains some proportion of the outcome's variability.
+  \item The residual variance $\hat{\sigma}^2 = \textrm{Var}(\hat{\varepsilon})$
+    will be less than $\textrm{Var}(Y)$.
+  \end{itemize}
+
+  \begin{columns}
+    \begin{column}{0.4\textwidth}
+
+      \only<1>{
+        <<echo = FALSE>>=
+        dat3 <- data.frame(y = Cars93$Horsepower, r = resid(out1))
+        
+        p10 <- ggplot(data = dat3, aes(x = y)) +
+            coord_cartesian() + theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p10 + geom_density() + xlim(0, 350) + labs(x = "Original Outcome")
+        @
+      }
+      \only<2>{
+        <<echo = FALSE>>=
+        p5 <- ggplot(data = Cars93, aes(x = Price, y = Horsepower)) +
+            coord_cartesian() +
+            theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p5 + geom_smooth(method = "lm", formula = y ~ 1, color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yMean),
+                         color = "red") +
+            geom_point()
+        @
+      }
+      
+    \end{column}
+    \begin{column}{0.1\textwidth}
+
+      \Huge{$\rightarrow$}
+
+    \end{column}
+    \begin{column}{0.4\textwidth}
+
+      \only<1>{
+        <<echo = FALSE>>=
+        p11 <- ggplot(data = dat3, aes(x = r)) +
+            coord_cartesian() + theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        
+        p11 + geom_density() + xlim(-140, 150) + labs(x = "Residuals")
+        @
+      }
+      \only<2>{
+        <<echo = FALSE>>=
+        p7 <- p5 + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                         color = "red") +
+            geom_point()
+        p7
+        @
+      }
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[shrink = 5]{Model Fit}
+
+  We quantify the proportion of the outcome's variance that is explained by our
+  model using the $R^2$ statistic:
+  \begin{align*}
+    R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS}
+  \end{align*}
+  where
+  \begin{align*}
+    TSS = \sum_{n = 1}^N \left(Y_n - \bar{Y}\right)^2 =
+    \textrm{Var}(Y)\times (N - 1)
+  \end{align*}
+
+  <<echo = FALSE, cache = TRUE>>=
+  ssr <- resid(out1) %>% crossprod() %>% round()
+  sst <- scale(Cars93$Horsepower, scale = FALSE) %>% crossprod() %>% round()
+  r2 <- round(1 - (ssr / sst), 2)
+  @
+  
+  For our example problem, we get:
+  \begin{align*}
+    R^2 = 1 - \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{as.integer(sst)}} \approx
+    \Sexpr{r2}
+  \end{align*}
+  Indicating that car price explains \Sexpr{r2 * 100}\% of the variability in
+  horsepower.
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Model Fit for Prediction}
+
+  When assessing predictive performance, we will most often use the \emph{mean
+    squared error} (MSE) as our criterion.
+  \vb
+  \begin{align*}
+    MSE &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
+        &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 -
+          \sum_{p = 1}^P \hat{\beta}_p X_{np} \right)^2\\
+        &= \frac{RSS}{N}
+  \end{align*}
+  
+  <<echo = FALSE, cache = TRUE>>=
+  mse <- round(ssr / nrow(Cars93), 2)
+  @
+  
+  For our example problem, we get:
+  \begin{align*}
+    MSE = \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}} \approx \Sexpr{mse}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interpreting MSE}
+  
+  <<echo = FALSE>>=
+  rmse <- round(sqrt(ssr/nrow(Cars93)), 2)
+  @
+  
+  The MSE quantifies the average squared prediction error.
+  \begin{itemize}
+  \item Taking the square root improves interpretation.
+  \end{itemize}
+  \begin{align*}
+    RMSE = \sqrt{MSE}
+  \end{align*}
+  The RMSE estimates the magnitude of the expected prediction error.
+  \begin{itemize}
+  \item For our example problem, we get:
+  \end{itemize}
+  \begin{align*}
+    RMSE = \sqrt{\frac{\Sexpr{as.integer(ssr)}}{\Sexpr{nrow(Cars93)}}} \approx
+    \Sexpr{rmse}
+  \end{align*}
+  \vx{-8}
+  \begin{itemize}
+  \item When using price as the only predictor of horsepower, we expect
+    prediction errors with magnitudes of \Sexpr{rmse} horsepower.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Information Criteria}
+  
+  We can use \emph{information criteria} to quickly compare \emph{non-nested}
+  models while accounting for model complexity.\\
+
+  \vb
+  
+  \begin{itemize}
+  \item Akaike's Information Criterion (AIC)
+    \only<1>{
+      \begin{align*}
+        AIC = 2K - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \item Bayesian Information Criterion (BIC)
+    \only<1>{
+      \begin{align*}
+        BIC = K\ln(N) - 2\hat{\ell}(\theta|X)
+      \end{align*}
+    }
+    \only<2>{
+      \begin{align*}
+        BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+      \end{align*}
+    }
+  \end{itemize}
+  \onslide<2>{
+    Information criteria balance two competing forces.
+    \vc
+    \begin{itemize}
+    \item \blue{The optimized loglikelihood quantifies fit to the data.}
+      \vc
+    \item \red{The penalty term corrects for model complexity}.
+    \end{itemize}
+  }
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Information Criteria}
+  
+  <<include = FALSE>>=
+  ll1 <- logLik(out1)
+  
+  6 - 2 * ll1
+  AIC(out1)
+  
+  k <- 3
+  n <- nrow(Cars93)
+  @
+  
+  For our example, we get the following estimates of AIC and BIC:
+  \begin{align*}
+    AIC &= 2(\Sexpr{k}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(AIC(out1), 2)}\\[8pt]
+    BIC &= \Sexpr{k}\ln(\Sexpr{n}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(BIC(out1), 2)}
+  \end{align*}
+  
+  To compute the AIC/BIC from a fitted \texttt{lm()} object in R:
+  <<>>=
+  AIC(out1)
+  BIC(out1)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Multiple Linear Regression}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Graphical Representations}
+
+  Adding an additional predictor to a simple linear regression problem leads to
+  a 3D point cloud.
+  \vb
+  \begin{itemize}
+  \item A regression model with two IVs implies a 2D plane in 3D space.
+  \end{itemize}
+
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+
+      \includegraphics[width = 1.2\textwidth]{figures/3d_data_plot}
+
+    \end{column}
+
+    \begin{column}{0.1\textwidth}
+
+      \begin{center}\huge{$~~~~\rightarrow$}\end{center}
+
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
+
+      \includegraphics[width = 1.2\textwidth]{figures/response_surface_plot0}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Partial Effects}
+
+  In MLR, we want to examine the \emph{partial effects} of the predictors.
+  \vb
+  \begin{itemize}
+  \item What is the effect of a predictor after controlling for some other set
+    of variables?
+  \end{itemize}
+  \va
+  This approach is crucial to controlling confounds and adequately modeling
+  real-world phenomena.
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+  
+  <<cache = TRUE>>=
+  ## Read in the 'diabetes' dataset:
+  dDat <- readRDS("../data/diabetes.rds")
+  
+  ## Simple regression with which we're familiar:
+  out1 <- lm(bp ~ age, data = dDat)
+  @
+  
+  \rmsc{Asking}: What is the effect of age on average blood pressure?
+
+  <<cache = TRUE>>=
+  ## Add in another predictor:
+  out2 <- lm(bp ~ age + bmi, data = dDat)
+  @
+  
+  \rmsc{Asking}: What is the effect of BMI on average blood pressure,
+  \emph{after controlling for age?}
+  \vc
+  \begin{itemize}
+  \item We're partialing age out of the effect of BMI on blood pressure.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks, fragile]{Example}
+  
+  <<cache = TRUE>>=
+  partSummary(out2, -1)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Interpretation}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      \begin{itemize}
+      \item The expected average blood pressure for an unborn patient with a
+        negligible extent is \Sexpr{round(coef(out2)[1], 2)}.
+        \vb
+      \item For each year older, average blood pressure is expected to increase
+        by \Sexpr{round(coef(out2)['age'], 2)} points, after controlling for
+        BMI.
+        \vb
+      \item For each additional point of BMI, average blood pressure is
+        expected to increase by \Sexpr{round(coef(out2)['bmi'], 2)} points,
+        after controlling for age.
+      \end{itemize}
+
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+
+      \includegraphics[width = 1.1\textwidth]{figures/response_surface_plot2}
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Model Comparison}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Multiple $R^2$}
+  
+  How much variation in blood pressure is explained by the two models?
+  \begin{itemize}
+  \item Check the $R^2$ values.
+  \end{itemize}
+  
+  <<cache = TRUE>>=
+  ## Extract R^2 values:
+  r2.1 <- summary(out1)$r.squared
+  r2.2 <- summary(out2)$r.squared
+  
+  r2.1
+  r2.2
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{F-Statistic}
+
+  How do we know if the $R^2$ values are significantly greater than zero?
+  \begin{itemize}
+  \item We use the F-statistic to test $H_0: R^2 = 0$ vs. $H_1: R^2 > 0$.
+  \end{itemize}
+  
+  <<>>=
+  f1 <- summary(out1)$fstatistic
+  f1
+  pf(q = f1[1], df1 = f1[2], df2 = f1[3], lower.tail = FALSE)
+  @
+  
+  \pagebreak
+  
+  <<>>=
+  f2 <- summary(out2)$fstatistic
+  f2
+  pf(f2[1], f2[2], f2[3], lower.tail = FALSE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Comparing Models}
+
+  How do we quantify the additional variation explained by BMI, above and beyond
+  age?
+  \begin{itemize}
+  \item Compute the $\Delta R^2$
+  \end{itemize}
+  
+  <<cache = TRUE>>=
+  ## Compute change in R^2:
+  r2.2 - r2.1
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Significance Testing}
+  
+  How do we know if $\Delta R^2$ represents a significantly greater degree of
+  explained variation?
+  \begin{itemize}
+  \item Use an $F$-test for $H_0: \Delta R^2 = 0$ vs. $H_1: \Delta R^2 > 0$
+  \end{itemize}
+  
+  <<>>=
+  ## Is that increase significantly greater than zero?
+  anova(out1, out2)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Comparing Models}
+  
+  We can also compare models based on their prediction errors.
+  \begin{itemize}
+  \item For OLS regression, we usually compare MSE values.
+  \end{itemize}
+  \vx{-6}
+  <<>>=
+  mse1 <- MSE(y_pred = predict(out1), y_true = dDat$bp)
+  mse2 <- MSE(y_pred = predict(out2), y_true = dDat$bp)
+  
+  mse1
+  mse2
+  @
+  
+  In this case, the MSE for the model with $BMI$ included is smaller.
+  \begin{itemize}
+  \item We should prefer the the larger model.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Comparing Models}
+
+  Finally, we can compare models based on information criteria.
+  
+  <<>>=
+  AIC(out1, out2)
+  BIC(out1, out2)
+  @
+  
+  In this case, both the AIC and the BIC for the model with $BMI$ included are
+  smaller.
+  \begin{itemize}
+  \item We should prefer the the larger model.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Categorical Predictors}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Dummy Coding}
+
+  The most common way to code categorical predictors is \emph{dummy coding}.
+  \vb
+  \begin{itemize}
+  \item A $G$-level factor must be converted into a set of $G - 1$ dummy codes.
+    \vb
+  \item Each code is a variable on the dataset that equals 1 for observations
+    corresponding to the code's group and equals 0, otherwise.
+    \vb
+  \item The group without a code is called the \emph{reference group}.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Example Dummy Code}
+
+  Let's look at the simple example of coding biological sex:
+
+  <<echo = FALSE, results = "asis">>=
+  sex  <- factor(sample(c("male", "female"), 10, TRUE))
+  male <- as.numeric(model.matrix(~sex)[ , -1])
+  
+  xTab2 <- xtable(data.frame(sex, male), digits = 0)
+  print(xTab2, booktabs = TRUE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Example Dummy Codes}
+
+  Now, a slightly more complex  example:
+
+  <<echo = FALSE, results = "asis">>=
+  drink <- factor(sample(c("coffee", "tea", "juice"), 10, TRUE))
+  
+  codes           <- model.matrix(~drink)[ , -1]
+  colnames(codes) <- c("juice", "tea")
+  
+  xTab3 <- xtable(data.frame(drink, codes), digits = 0)
+  print(xTab3, booktabs = TRUE)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Using Dummy Codes}
+
+  To use the dummy codes, we simply include the $G - 1$ codes as $G - 1$
+  predictor variables in our regression model.
+  \begin{align*}
+    Y &= \beta_0 + \beta_1 X_{male} + \varepsilon\\
+    Y &= \beta_0 + \beta_1 X_{juice} + \beta_2 X_{tea} + \varepsilon
+  \end{align*}
+  \vx{-18}
+  \begin{itemize}
+  \item The intercept corresponds to the mean of $Y$ for the reference group.
+    \vc
+  \item Each slope represents the difference between the mean of $Y$ in the
+    coded group and the mean of $Y$ in the reference group.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+  <<>>=
+  ## Load some data:
+  data(Cars93, package = "MASS")
+
+  ## Use a nominal predictor:
+  out3 <- lm(Price ~ DriveTrain, data = Cars93)
+  partSummary(out3, -1)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Interpretations}
+
+  \begin{itemize}
+  \item The average price of a four-wheel-drive car is $\hat{\beta}_0 =
+    \Sexpr{round(coef(out3)[1], 2)}$ thousand dollars.
+    \vb
+  \item The average difference in price between front-wheel-drive cars and
+    four-wheel-drive cars is $\hat{\beta}_1 = \Sexpr{round(coef(out3)[2], 2)}$
+    thousand dollars.
+   \vb
+  \item The average difference in price between rear-wheel-drive cars and
+    four-wheel-drive cars is $\hat{\beta}_2 = \Sexpr{round(coef(out3)[3], 2)}$
+    thousand dollars.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+  Include two sets of dummy codes:
+
+<<>>=
+out4 <- lm(Price ~ Man.trans.avail + DriveTrain, data = Cars93)
+partSummary(out4, -c(1, 2))
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Interpretations}
+
+  \begin{itemize}
+  \item The average price of a four-wheel-drive car that does not have a manual
+    transmission option is $\hat{\beta}_0 = \Sexpr{round(coef(out4)[1], 2)}$
+    thousand dollars.
+    \vb
+  \item After controlling for drive type, the average difference in price
+    between cars that have manual transmissions as an option and those that do
+    not is $\hat{\beta}_1 = \Sexpr{round(coef(out4)[2], 2)}$ thousand dollars.
+    \vb
+  \item After controlling for transmission options, the average difference in
+    price between front-wheel-drive cars and four-wheel-drive cars is
+    $\hat{\beta}_2 = \Sexpr{round(coef(out4)[3], 2)}$ thousand dollars.
+   \vb
+  \item After controlling for transmission options, the average difference in
+    price between rear-wheel-drive cars and four-wheel-drive cars is
+    $\hat{\beta}_3 = \Sexpr{round(coef(out4)[4], 2)}$ thousand dollars.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Contrasts}
+  
+  All R factors have an associated \emph{contrasts} attribute.
+  \vc
+  \begin{itemize}
+  \item The contrasts define a coding to represent the grouping information.
+    \vc
+  \item Modeling functions code the factors using the rules defined by the contrasts.
+  \end{itemize}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      contrasts(Cars93$Man.trans.avail)
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      contrasts(Cars93$DriveTrain)
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Significance Testing for Dummy Codes}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Significance Testing}
+
+  For variables with only two levels, we can test the overall factor's
+  significance by evaluating the significance of a single dummy code.
+
+<<>>=
+out <- lm(Price ~ Man.trans.avail, data = Cars93)
+partSummary(out, -c(1, 2))
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Significance Testing}
+
+  For variables with more than two levels, we need to simultaneously evaluate
+  the significance of each of the variable's dummy codes.
+
+<<>>=
+partSummary(out4, -c(1, 2))
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Significance Testing}
+
+<<>>=
+summary(out4)$r.squared - summary(out)$r.squared
+anova(out, out4)
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Significance Testing}
+
+  For models with a single nominal factor is the only predictor, we use the
+  omnibus F-test.
+
+<<>>=
+partSummary(out3, -c(1, 2))
+@
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Model-Based Prediction}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Prediction Example}
+
+  To fix ideas, let's reconsider the \emph{diabetes} data and the following
+  model:
+  \begin{align*}
+    Y_{LDL} = \beta_0 + \beta_1 X_{BP} + \beta_2 X_{gluc} + \beta_3 X_{BMI} +
+    \varepsilon
+  \end{align*}
+
+<<echo = FALSE>>=
+trainDat <- dDat[1 : 400, ]
+testDat  <- dDat[401 : 442, ]
+
+out1 <- lm(ldl ~ bp + glu + bmi, data = trainDat)
+b0 <- round(coef(out1)[1], 3)
+b1 <- round(coef(out1)[2], 3)
+b2 <- round(coef(out1)[3], 3)
+b3 <- round(coef(out1)[4], 3)
+
+x1 <- testDat[1, "bp"]
+x2 <- testDat[1, "glu"]
+x3 <- testDat[1, "bmi"]
+
+confInt <- round(
+    predict(out1, newdat = testDat, interval = "confidence")[1, 2 : 3], 2
+)
+predInt <- round(
+    predict(out1, newdat = testDat, interval = "prediction")[1, 2 : 3], 2
+)
+@
+
+Training this model on the first $N = 400$ patients' data produces the following
+fitted model:
+\begin{align*}
+  \hat{Y}_{LDL} = \Sexpr{b0} + \Sexpr{b1} X_{BP} + \Sexpr{b2} X_{gluc} +
+  \Sexpr{b3} X_{BMI}
+\end{align*}
+\pause
+Suppose a new patient presents with $BP = \Sexpr{x1}$, $gluc = \Sexpr{x2}$, and
+$BMI = \Sexpr{x3}$. We can predict their $LDL$ score by:
+\begin{align*}
+  \hat{Y}_{LDL} &= \Sexpr{b0} + \Sexpr{b1} (\Sexpr{x1}) + \Sexpr{b2}
+  (\Sexpr{x2}) + \Sexpr{b3} (\Sexpr{x3})\\
+  &= \Sexpr{round(predict(out1, testDat[1 : 2, ])[1], 3)}
+\end{align*}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Interval Estimates for Prediction}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interval Estimates for Prediction}
+
+  To quantify uncertainty in our predictions, we want to use an appropriate
+  interval estimate.
+  \vb
+  \begin{itemize}
+  \item Two flavors of interval are applicable to predictions:
+    \begin{enumerate}
+    \item Confidence intervals for $\hat{Y}_m$
+      \vc
+    \item Prediction intervals for a specific observation, $Y_m$
+    \end{enumerate}
+    \vb
+  \item The CI for $\hat{Y}_m$ gives a likely range (in the sense of coverage
+    probability and ``confidence'') for the \emph{m}th value of the true conditional
+    mean.
+    \begin{itemize}
+    \item CIs only account for uncertainty in the estimated regression
+      coefficients, $\{\hat{\beta}_0, \hat{\beta}_p\}$.
+    \end{itemize}
+    \vb
+  \item The prediction interval for $Y_m$ gives a likely range (in the same
+    sense as CIs) for the \emph{m}th outcome value.
+    \begin{itemize}
+    \item Prediction intervals also account for the regression errors,
+      $\varepsilon$.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Confidence vs. Prediction Intervals}
+
+ \begin{columns}
+   \begin{column}{0.5\textwidth}
+
+     Let's visualize the predictions from a simple model:
+     \begin{align*}
+       Y_{BP} = {\color{blue} \hat{\beta}_0 + \hat{\beta}_1 X_{BMI}} +
+       {\color{red} \hat{\varepsilon}}
+     \end{align*}
+     \vx{-12}
+     \begin{itemize}
+     \item<2-3> CIs for $\hat{Y}$ ignore the errors, ${\color{red}\varepsilon}$.
+       \begin{itemize}
+       \item They only care about the best-fit line,
+         ${\color{blue} \beta_0 + \beta_1 X_{BMI}}$.
+       \end{itemize}
+       \vb
+     \item<3> Prediction intervals are wider than CIs.
+       \begin{itemize}
+       \item They account for the additional uncertainty contributed by
+         ${\color{red}\varepsilon}$.
+       \end{itemize}
+     \end{itemize}
+
+   \end{column}
+   \begin{column}{0.5\textwidth}
+
+<<echo = FALSE, cache = TRUE>>=
+out1 <- lm(bp ~ bmi, data = trainDat)
+
+testDat$preds <- predict(out1, newdata = testDat)
+
+ci <- predict(out1, newdata = testDat, interval = "confidence")[ , -1]
+pi <- predict(out1, newdata = testDat, interval = "prediction")[ , -1]
+
+colnames(ci) <- c("ciLo", "ciHi")
+colnames(pi) <- c("piLo", "piHi")
+
+testDat <- data.frame(testDat, ci, pi)
+
+p1 <- ggplot(data = testDat, aes(x = bmi, y = bp)) +
+    theme_classic() +
+    theme(text = element_text(size = 16, family = "Courier")) +
+    geom_segment(aes(x = bmi, y = bp, xend = bmi, yend = preds),
+                 color = "red") +
+    geom_line(mapping = aes(x = bmi, y = preds),
+              color = "blue",
+              linewidth = 1) +
+    geom_point() +
+    ylim(range(pi))
+@
+\only<1>{
+<<echo = FALSE, cache = TRUE>>=
+print(p1)
+@
+}
+\only<2>{
+<<echo = FALSE, cache = TRUE>>=
+p2 <- p1 +
+    geom_line(mapping = aes(x = bmi, y = ciLo),
+              linewidth = 1,
+              linetype = "solid") +
+    geom_line(mapping = aes(x = bmi, y = ciHi),
+              linewidth = 1,
+              linetype = "solid")
+p2
+@
+}
+\only<3>{
+<<echo = FALSE, cache = TRUE, warning = FALSE>>=
+p2 +
+    geom_line(mapping = aes(x = bmi, y = piLo),
+              linewidth = 1,
+              linetype = "dashed") +
+    geom_line(mapping = aes(x = bmi, y = piHi),
+              linewidth = 1,
+              linetype = "dashed")
+@
+}
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Interval Estimates Example}
+
+  Going back to our hypothetical ``new'' patient, we get the following $95\%$
+  interval estimates:
+  \begin{align*}
+    95\% ~ CI_{\hat{Y}} &= [\Sexpr{confInt[1]}; \Sexpr{confInt[2]}]\\[6pt]
+    95\% ~ PI &= [\Sexpr{predInt[1]}; \Sexpr{predInt[2]}]
+  \end{align*}
+  \vx{-16}
+  \begin{itemize}
+  \item We can be 95\% confident that the \underline{average \emph{LDL}} of
+    patients with \emph{Glucose} = 89, \emph{BP} = 121, and \emph{BMI} = 30.6
+    will be somewhere between \Sexpr{confInt[1]} and \Sexpr{confInt[2]}.
+    \vb
+  \item We can be 95\% confident that the \underline{\emph{LDL} of a specific
+    patient} with \emph{Glucose} = 89, \emph{BP} = 121, and \emph{BMI} = 30.6
+    will be somewhere between \Sexpr{predInt[1]} and \Sexpr{predInt[2]}.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Moderation}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Moderation}
+
+  So far we've been discussing \emph{additive models}.
+  \vb
+  \begin{itemize}
+  \item Additive models allow us to examine the partial effects of several
+    predictors on some outcome.
+    \vc
+    \begin{itemize}
+    \item The effect of one predictor does not change based on the values of
+      other predictors.
+    \end{itemize}
+  \end{itemize}
+  \va
+  Now, we'll discuss \emph{moderation}.
+  \vb
+  \begin{itemize}
+  \item Moderation allows us to ask \emph{when} one variable, $X$, affects
+    another variable, $Y$.
+    \vc
+    \begin{itemize}
+    \item We're considering the conditional effects of $X$ on $Y$ given certain
+      levels of a third variable $Z$.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Equations}
+
+  In additive MLR, we might have the following equation:
+  \begin{align*}
+    Y = \beta_0 + \beta_1X + \beta_2Z + \varepsilon
+  \end{align*}
+  This equation assumes that $X$ and $Z$ are independent predictors of $Y$.\\
+  \va
+  When $X$ and $Z$ are independent predictors, the following are true:
+  \vb
+  \begin{itemize}
+  \item $X$ and $Z$ \emph{can} be correlated.
+    \vb
+  \item $\beta_1$ and $\beta_2$ are \emph{partial} regression
+    coefficients.
+    \vb
+  \item \red{The effect of $X$ on $Y$ is the same at \textbf{all levels} of
+    $Z$, and the effect of $Z$ on $Y$ is the same at \textbf{all
+      levels} of $X$.}
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Additive Regression}
+
+  The effect of $X$ on $Y$ is the same at \textbf{all levels} of $Z$.
+
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/3d_data_plot}
+    \end{column}
+
+    \begin{column}{0.1\textwidth}
+      \begin{center}\Huge{$\rightarrow$}\end{center}
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/response_surface_plot0}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Moderated Regression}
+
+  The effect of $X$ on $Y$ varies \textbf{as a function} of $Z$.
+
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/3d_data_plot}
+    \end{column}
+
+    \begin{column}{0.1\textwidth}
+      \begin{center}\Huge{$\rightarrow$}\end{center}
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/response_surface_plot}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Equations}
+
+  The following derivation is adapted from \citet{hayes:2017}.
+  \vb
+  \begin{itemize}
+  \item When testing moderation, we hypothesize that the effect of $X$ on $Y$
+    varies as a function of $Z$.
+    \vb
+  \item We can represent this concept with the following equation:
+    \begin{align}
+      Y = \beta_0 + f(Z)X + \beta_2Z + \varepsilon \label{fEq}
+    \end{align}
+    \vx{-8}
+    \pause
+  \item If we assume that $Z$ linearly (and deterministically) affects the
+    relationship between $X$ and $Y$, then we can take:
+    \begin{align}
+      f(Z) = \beta_1 + \beta_3Z \label{ssEq}
+    \end{align}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Equations}
+
+  \begin{itemize}
+  \item Substituting Equation \ref{ssEq} into Equation \ref{fEq} leads to:
+    \begin{align*}
+      Y = \beta_0 + (\beta_1 + \beta_3Z)X + \beta_2Z + \varepsilon
+    \end{align*}
+    \pause
+  \item Which, after distributing $X$ and reordering terms, becomes:
+    \begin{align*}
+      Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3XZ + \varepsilon
+    \end{align*}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Testing Moderation}
+  Now, we have an estimable regression model that quantifies the linear
+  moderation we hypothesized.
+  \vb
+  \begin{center}\ovalbox{$Y = \beta_0 + \beta_1X + \beta_2Z + \beta_3XZ +
+      \varepsilon$}\end{center}
+  \vc
+  \begin{itemize}
+  \item To test for significant moderation, we simply need to test the
+    significance of the interaction term, $XZ$.
+    \begin{itemize}
+    \item Check if $\hat{\beta}_3$ is significantly different from zero.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interpretation}
+
+  Given the following equation:
+  \begin{align*}
+    Y = \hat{\beta}_0 + \hat{\beta}_1X + \hat{\beta}_2Z + \hat{\beta}_3XZ +
+    \hat{\varepsilon}
+  \end{align*}
+  \vx{-16}
+  \begin{itemize}
+  \item $\hat{\beta}_3$ quantifies the effect of $Z$ on the focal effect (the $X
+    \rightarrow Y$ effect).
+    \vc
+    \begin{itemize}
+    \item For a unit change in $Z$, $\hat{\beta}_3$ is the expected change in
+      the effect of $X$ on $Y$.
+    \end{itemize}
+    \vb
+  \item $\hat{\beta}_1$ and $\hat{\beta}_2$ are \emph{conditional effects}.
+    \vc
+    \begin{itemize}
+      \item Interpreted where the other predictor is zero.
+        \vc
+      \item For a unit change in $X$, $\hat{\beta}_1$ is the expected change in
+        $Y$, when $Z = 0$.
+        \vc
+      \item For a unit change in $Z$, $\hat{\beta}_2$ is the expected change in
+        $Y$, when $X = 0$.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Example}
+
+  Still looking at the \emph{diabetes} dataset.
+  \va
+  \begin{itemize}
+  \item We suspect that patients' BMIs are predictive of their average blood
+    pressure.
+    \va
+  \item We further suspect that this effect may be differentially expressed
+    depending on the patients' LDL levels.
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff%-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+<<>>=
+out <- lm(bp ~ bmi * ldl, data = dDat)
+partSummary(out, -c(1, 2))
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}<0>[fragile, noframenumbering]{Visualizing the Interaction}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      We can get a better idea of the patterns of moderation by plotting the
+      focal effect at conditional values of the moderator.
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      m1 <- mean(dDat$ldl)
+      s1 <- sd(dDat$ldl)
+      
+      dDat$ldlLo  <- dDat$ldl - (m1 - s1)
+      dDat$ldlMid <- dDat$ldl - m1
+      dDat$ldlHi  <- dDat$ldl - (m1 + s1)
+      
+      outLo  <- lm(bp ~ bmi*ldlLo, data = dDat)
+      outMid <- lm(bp ~ bmi*ldlMid, data = dDat)
+      outHi  <- lm(bp ~ bmi*ldlHi, data = dDat)
+      
+      b0Lo <- coef(outLo)[1]
+      b1Lo <- coef(outLo)["bmi"]
+      
+      b0Mid <- coef(outMid)[1]
+      b1Mid <- coef(outMid)["bmi"]
+      
+      b0Hi <- coef(outHi)[1]
+      b1Hi <- coef(outHi)["bmi"]
+      
+      x    <- seq(min(dDat$bmi), max(dDat$bmi), 0.1)
+      dat1 <- data.frame(x    = x,
+                         yLo  = b0Lo + b1Lo * x,
+                         yMid = b0Mid + b1Mid * x,
+                         yHi  = b0Hi + b1Hi * x)
+      
+      p1 <- ggplot(data = dDat, aes(x = bmi, y = bp)) +
+          theme_classic() +
+          theme(text = element_text(family = "Courier", size = 16))
+      p2 <- p1 + geom_point(colour = "gray") +
+          geom_line(mapping   = aes(x = x, y = yLo, colour = "Mean LDL - 1 SD"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          geom_line(mapping   = aes(x = x, y = yMid, colour = "Mean LDL"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          geom_line(mapping   = aes(x = x, y = yHi, colour = "Mean LDL + 1 SD"),
+                    data      = dat1,
+                    linewidth = 1.5) +
+          xlab("BMI") +
+          ylab("BP")
+      
+      p2 + scale_colour_manual(name = "", values = c("Mean LDL" = "black",
+                                                     "Mean LDL - 1 SD" = "red",
+                                                     "Mean LDL + 1 SD" = "blue")
+                               ) +
+          theme(legend.justification = c(1, 0), legend.position = c(0.975, 0.025))
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Visualizing the Interaction}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      We can get a better idea of the patterns of moderation by plotting the
+      focal effect at conditional values of the moderator.
+
+      <<eval = FALSE>>=
+      library(rockchalk)
+      plotSlopes(out,
+                 plotx = "bmi",
+                 modx = "ldl",
+                 modxVals = "std.dev")
+      @
+      
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      library(rockchalk)
+      plotSlopes(out,
+                 plotx = "bmi",
+                 modx = "ldl",
+                 modxVals = "std.dev")
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\subsection{Categorical Moderators}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Categorical Moderators}
+
+  Categorical moderators encode \emph{group-specific} effects.
+  \vb
+  \begin{itemize}
+  \item E.g., if we include \emph{sex} as a moderator, we are modeling separate
+    focal effects for males and females.
+  \end{itemize}
+  \va
+  Given a set of codes representing our moderator, we specify the
+  interactions as before:
+  \begin{align*}
+    Y_{total} &= \beta_0 + \beta_1 X_{inten} + \beta_2 Z_{male} +
+    \beta_3 X_{inten}Z_{male} + \varepsilon\\\\
+    Y_{total} &= \beta_0 + \beta_1 X_{inten} + \beta_2 Z_{lo} + \beta_3 Z_{mid} +
+    \beta_4 Z_{hi}\\
+    &+ \beta_5 X_{inten}Z_{lo} + \beta_6 X_{inten}Z_{mid} + \beta_7 X_{inten}Z_{hi} +
+    \varepsilon
+  \end{align*}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Example}
+
+<<>>=
+## Load data:
+socSup <- readRDS(paste0(dataDir, "social_support.rds"))
+
+## Estimate the moderated regression model:
+out <- lm(bdi ~ tanSat * sex, data = socSup)
+partSummary(out, -c(1, 2))
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Visualizing Categorical Moderation}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      {\scriptsize
+        \vx{-12}
+        \begin{align*}
+          \hat{Y}_{BDI} &= \Sexpr{sprintf('%.2f', round(coef(out)[1], 2))}
+            \Sexpr{sprintf('%.2f', round(coef(out)[2], 2))} X_{tsat} +
+              \Sexpr{sprintf('%.2f', round(coef(out)[3], 2))} Z_{male}\\
+                &\Sexpr{sprintf('%.2f', round(coef(out)[4], 2))}
+                  X_{tsat} Z_{male}
+        \end{align*}
+        \vx{-12}
+      }
+<<echo = FALSE, warning = FALSE>>=
+socSup$sex2 <- relevel(socSup$sex, ref = "male")
+
+out5  <- lm(bdi ~ tanSat * sex2, data = socSup)
+out66 <- lm(BDI ~ tangiblesat + gender, data = socsupport)
+
+p3 <- ggplot(data    = socsupport,
+             mapping = aes(x = tangiblesat, y = BDI, colour = gender)) +
+    theme_classic() +
+    theme(text = element_text(family = "Courier", size = 16))
+
+p4 <- p3 + geom_jitter(na.rm = TRUE) +
+    scale_colour_manual(values = c("red", "blue"))
+
+p4 + geom_abline(slope     = coef(out)["tanSat"],
+                 intercept = coef(out)[1],
+                 colour    = "red",
+                 linewidth = 1.5) +
+    geom_abline(slope     = coef(out5)["tanSat"],
+                intercept = coef(out5)[1],
+                colour    = "blue",
+                linewidth = 1.5) +
+    ggtitle("Moderation by Gender") +
+    xlab("Tangible Satisfaction") +
+    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+@
+
+\end{column}
+
+\begin{column}{0.5\textwidth}
+  {\scriptsize
+    \begin{align*}
+      \hat{Y}_{BDI} = \Sexpr{sprintf('%.2f', round(coef(out66)[1], 2))}
+      \Sexpr{sprintf('%.2f', round(coef(out66)[2], 2))} X_{tsat}
+      \Sexpr{sprintf('%.2f', round(coef(out66)[3], 2))} Z_{male}
+    \end{align*}
+    \vx{-6}
+  }
+<<echo = FALSE>>=
+p4 + geom_abline(slope     = coef(out66)["tangiblesat"],
+                 intercept = coef(out66)[1],
+                 colour    = "red",
+                 linewidth = 1.5) +
+    geom_abline(slope     = coef(out66)["tangiblesat"],
+                intercept = (coef(out66)[1] + coef(out66)["gendermale"]),
+                colour    = "blue",
+                linewidth = 1.5) +
+    ggtitle("Additive Gender Effect") +
+    xlab("Tangible Satisfaction") +
+    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+@
+
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{References}
+
+  \bibliographystyle{apacite}
+  \bibliography{../../../bibtex/stat_meth_refs.bib}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}

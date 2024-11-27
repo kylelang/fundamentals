@@ -1,0 +1,64 @@
+# R: Assigning elements to objects
+
+
+```{r 'check_ps', include=FALSE}
+
+user.name = '' # set to your user name
+
+# To check your problem set, save your file (Ctrl-S) and then run the RStudio Addin 'Check Problemset'
+
+# Alternatively run the following lines 
+library(RTutor)
+ps.dir = getwd() # directory of this file
+ps.file = 'FTID_1.Rmd' # name of this file
+check.problem.set('FTID_1', ps.dir, ps.file, user.name=user.name, reset=FALSE)
+```
+
+
+Author:  Gerko Vink
+
+
+In this exercise set we will get acquainted with `R`. If you have no experience with `R`, you will learn the most from following this document by looking at the solutions. If you have some experience with `R` already, I suggest you try solving the exercises without looking at the solutions. You can then refer to the solutions at any time, if needed. 
+
+If you have any questions or if you feel that some code should be elaborated, feel free to ask during the workgroup or drop me a line at [G.Vink@uu.nl](mailto::G.Vink@uu.nl).
+
+Have fun at finishing the exercises.
+
+## Exercise content
+
+1. Basic operations in R
+
+  1.1 Assigning elements to objects
+
+  1.2 Simple calculations with elements and objects
+
+2. Objects with more than one element
+
+  2.1 Vectors
+
+  2.2 Matrices
+
+  2.3 Data Frames
+
+  2.4 Arrays
+
+  2.5 Lists
+
+## Exercise 1 -- Assigning elements to objects
+
+---
+
+We start with the very basics and will move towards more advanced operations in `R`. First we will get acquainted with the language (which is called `S` - to keep it simple) and the environment we work in. 
+
+---
+
+## Exercises 1.1 -- Simple assigning
+
+`R` is an object oriented language. This means that elements, such as numbers or characters, are assigned to objects. The below code block assigns the value `1` to object `a`. 
+
+```{r "1",optional=TRUE, eval=FALSE}
+```
+
+The `#` tells `R` that everything that follows in that specific line is not to be considered as code. In other words, you can use `#` to comment in your own `R`-scripts. I used `#` here to elaborate that the following line is the code from exercise 1. 
+
+The line `a <- 1` assigns the value `1` to object `a`. When you run your code, it will be saved. The value 1 and the letter `a` are chosen to illustrate assigning in `R`. You might as well assign `123` to `banana` if you like. Really, anything goes. 

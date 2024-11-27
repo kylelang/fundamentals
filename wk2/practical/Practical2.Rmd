@@ -1,0 +1,820 @@
+---
+title: "Fundamental Techniques in Data Science with `R` - Practical 2"
+params:
+  answers: false
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: paged
+    theme: paper
+    #pandoc_args: --output=practical2_answers.html
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+  
+---
+
+# Introduction
+
+Welcome to the second practical of Fundamental Techniques in Data Science with R! The aim of this practical is to learn a bit more about different data types and objects in R, how to transform data and create new variables, and how to work with pipes. 
+
+* Tibbles and data frames
+* Data transformation
+* Strings
+* Factors
+* Pipes
+
+---
+
+# Preparation 
+
+Start by creating a new R Project and open a new R Markdown file within it. If you can't remember how to do this, you can find more instructions in the preparation practical. 
+
+You should by now have `tidyverse` installed, which we need for this practical. Within the `tidyverse` we will use the `dplyr` and `magrittr` packages which have useful functions for data manipulation and working with factors. We will also use `kableExtra` to create nicely formatted tables. 
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+```
+
+We are going to use the General Social Survey, which is a long-running [US survey](https://gss.norc.org/) conducted by the NORC at the University of Chicago. The survey monitors changes in social characteristics and attitudes. The survey is quite large, so we can access a smaller version in the `forcats` package. It has the following variables:
+
+* **year**: year of the survey from 2000-2014
+* **marital**: marital status
+* **age**: max age is truncated to 89
+* **race**
+* **rincome**: reported income
+* **partyid**: political affiliation
+* **relig**: religion
+* **denom**: denomination 
+* **tvhours**: hours per day watching tv
+
+If you want more information on the survey you can type `?gss_cat` into the console. 
+Let's load the data. 
+
+```{r}
+gss_cat <- forcats::gss_cat
+```
+
+We can take a look at the data using `head()`, which shows us the first 6 rows of the data frame. 
+
+```{r}
+head(gss_cat)
+```
+
+The `str()` function tells us what the class of each variable is. You will notice that most variables in the gss_cat data are factors with different levels. In this tutorial we will work mainly with these variables to learn techniques for working with factors. 
+
+```{r}
+str(gss_cat)
+```
+
+---
+
+# Tibbles 
+
+Tibbles are modern re-workings of a `data.frame`. Tibbles keep the most important features of a traditional `data.frame` while introducing small tweaks to improve functionality. For instance, tibbles never change variable names or types, and won't create rownames. Another useful feature of tibbles is that they warn you if do something they don't like, such as use a variable that does not exist. 
+
+In addition, there are two main differences when using tibbles vs. `data.frame`:
+
+* Printing: tibbles only print the first 10 rows and only columns that fit on screen to avoid overwhelming your environment
+* Subsetting: when extracting a single variable from a tibble you must use the `.` placeholder (e.g., `df %>% .x` instead of `df$x` or `df[["x"]])`)
+
+Because tibble is a part of the core `tidyverse` any function also connected to it will produce tibbles. However, sometimes you need to coerce R data frames to tibbles using `as_tibble()', like so:
+
+```{r}
+as_tibble(gss_cat)
+```
+
+---
+
+# Working with pipes
+
+Pipes are a useful tool that make it easier to express a sequence of multiple operations in R. Pipes ` %>% ` come from the `magrittr` package, so they are automatically loaded when you use the `tidyverse`. Pipes make code more intuitive and easier to understand - which is good for practicing open science! 
+
+Let's compare code written with - and without - pipes. 
+
+Below you see how the ` %>% ` is used to pass information from one line to the next. It's easy to follow along and see exactly what is being done to the data, line by line. 
+
+```{r}
+gss_cat %>%
+  filter(relig == "Protestant") %>%
+  group_by(year, relig) %>%
+  summarize(tvhours = mean(tvhours, na.rm = TRUE))
+```
+
+In contrast, the following code performs the same operations but without piping. To understand what is happening you need to read the code from the inside out - which is much more difficult. 
+
+```{r, warning = FALSE}
+# Using base R
+summarize(group_by(filter(gss_cat, 
+                          relig == "Protestant"), 
+                   year, 
+                   relig), 
+          tvhours = mean(tvhours, 
+                         na.rm = TRUE)
+          )
+```
+
+Pipes don't (automatically) assign a new object as a result of the operations you make. You need to specify `<-`  at the beginning if you wish to save the results. There is a special variation of the pipe that allows assignments, ` %<>%`  but it is less obvious than `<-`. 
+
+Pipes are not appropriate for every situation. You should consider not using pipes when:
+
+* The sequence of operations is longer than 10 steps. In this situation, it is useful to break up the code into intermediate steps and assign them to objects. This will be helpful if you need to identify any problems. 
+* You have multiple inputs and outputs. If you are transforming more than one object it is better not to use pipes. 
+
+*Note: `Cmd + Shift + M` (Mac) and `Ctrl + Shift + M` is a useful shorthand for the ` %>% `.*
+
+---
+
+# Missing values
+
+Let's take another look at the gss_data. Below is an overview of the data. There are several character variables will inconsistent and somewhat messy categories. 
+
+```{r}
+gss_cat[1:10,] %>% 
+  kable() %>% 
+  kable_styling(latex_options = "striped")
+```
+
+You will also notice that there are some missing values in the data. In R, missing values can be presented in different ways.
+
+* Standard format: the correct way to represent a missing value is *NA* which is a logical class
+* Non-standard formats: these are usually character strings such as "No answer" or "Don't know"
+
+---
+
+## Standard missing values
+
+You can easily search an entire data for missing values using `anyNA()`. If missing values are present this will return "TRUE", else "FALSE" if there are no missing values. 
+
+```{r}
+anyNA(gss_cat)
+```
+
+So we know there is at least one missing value in gss_cat, but we don't know where. You can find the position of missing values in the data using `is.na()`. This returns a "TRUE" or "FALSE" response rowwise and columwise. 
+
+---
+
+1. __Using `is.na()` can you tell which variable has only standard missing values (NAs)?__
+
+
+```{r, include = params$answers, results = FALSE, }
+is.na(gss_cat)
+
+# Only `tvhours` has NA values, indiated by "TRUE" in the output.
+```
+
+
+Both `anyNA()` and `is.na()` are generic methods of detecting *standard* missing values, and the output is not very informative. Non-standard missing values are more difficult to find because R doesn't know that they are missing. Depending on your research question, you may want to convert non-standard missing data responses to *NA* for smoother data manipulation. You may also decided that these types of responses are informative and that you want to keep them as they are.
+
+---
+
+## Non-standard missing values
+
+Let's take a look at the non-standard missing responses in **rincome** from the `gss_cat` data.
+
+A very basic search can be done using `count()` on the column of interest. 
+
+Below we see responses that can be considered as missing values, such as "No answer", "Don't know", "Refused", and "Not applicable". Some of these responses have the same meaning, like "No answer" and "Refused", whereas others might have additional meaning, like "Not applicable". Unemployed people might respond with the latter, whereas people who wish to keep their income private refuse to answer or say "Don't know". as a researcher, it is up to you how you handle these responses.  
+
+```{r}
+gss_cat %>% 
+  count(rincome)
+```
+
+2. __Are there similar responses in the other factor variables? Which ones?__
+
+**Hint: You may use count() like in the example.**
+
+```{r, include = params$answers}
+gss_cat %>% 
+  count(marital)
+
+gss_cat %>% 
+  count(partyid)
+
+gss_cat %>% 
+  count(relig)
+
+gss_cat %>% 
+  count(denom)
+
+ # There are numerous ways to quantify missing values in R, but sticking to the very simple method using `count()` we can inspect each factor variable in turn. Almost all of the factor variables have some responses that could be considered to be missing data.
+
+# There are more advanced methods to find missing values that involve less code and a bit less manual work. We won't go into this in detail today.
+```
+
+---
+
+# Data transformation
+
+In this section we will practice data transformation using functions from the `dplyr` package in the core tidyverse. You should be familiar with some of these functions already, but today we will go a little further.
+
+Remember to use the ` %>% ` operator!
+
+---
+
+## Filtering data
+
+The `filter()` function allows you to subset observations based on their values. The first argument is the name of the data frame. The second and subsequent arguments are the expressions that filter the data frame.
+
+R provides the following options for filtering: `>`, `>=`, `<`, `<=`, `!=` (not equal), and `==` (equal). You can also combine these with the following logical operators: `&` meaning "and", `|` meaning "or", and `!` meaning "not". 
+
+3. __Use the `filter()` function to display only married people in the gss_cat data set.__
+
+```{r, include = params$answers}
+gss_cat %>% 
+  filter(marital == "Married")
+
+# Since we only want to find married people we will use the equal operator, ==, and encase the observations we want in quotes.*
+```
+
+4. __Use the `filter()` function to display divorced AND widowed people in the gss_cat data set.__
+```{r, include = params$answers}
+gss_cat %>% 
+  filter(marital == "Divorced" | marital == "Widowed")
+
+# In this case we need to combine logical operators. The or operator is appropriate here since we are looking for two kinds of matches in the same variable (& would not work since people cannot be both divorced and widowed). We combine this with the equal operator.
+```
+
+---
+
+## Arranging data
+
+5. __Use the `arrange()` function to reorder the information in the data frame by the number of tv hours.__
+
+```{r, include = params$answers}
+gss_cat %>% 
+  arrange(tvhours)
+
+# Arrange only needs one argument, the variable you wish to reorder. Arrange orders the rows of a gss_cat by the tvhours column. The default here is to arrange in ascending order.
+```
+
+6. __You can combine arrange() with functions like `desc()` to re-order a column in descending order. Try doing this.__
+
+```{r, include = params$answers}
+gss_cat %>%
+  arrange(desc(tvhours))
+
+# When combining these functions you need to wrap arrange around the operation you want to do.
+```
+
+7. __How would you filter only married people and arrange them by how much tv they watch?__
+
+**Hint: You need to combine filter and arrange using the %>%**
+
+```{r, include = params$answers}
+gss_cat %>% 
+  filter(marital == "Married") %>% 
+  arrange(tvhours)
+
+# Using the pipe we can perform multiple operations at once without needing to save each interim step as an object.
+```
+
+8. __How would you use `arrange()` and `count()` to find what the most common religion is?__
+
+```{r, include = params$answers}
+gss_cat %>%
+  count(relig) %>%
+  arrange(desc(n))
+
+# In this case, we are not passing a variable to arrange but a logical, n. This tells R to count all the categories in relig and subsequently order these categories in descending order.*
+```
+
+--- 
+
+## Summarizing data
+
+9. __How many hours of tv on average are watched by people of different religions?__
+
+**Hint: `select()`, `group_by()`, and `summarize()` are useful functions for this**
+
+```{r, include = params$answers}
+gss_cat %>%
+  select(relig, tvhours) %>% # also works without using select
+  group_by(relig) %>% 
+  summarise(tvhours = mean(tvhours, na.rm = TRUE))
+
+# Combining several operations can seem complex, but once you understand what is happening you can apply to most other cases. In this example we tell R to take the `gss_data`, select only `relig` and `tvhours`, group the different categories of `relig` and perform a summarising function on these groups in respect to tvhours. Inside the `summarise()` function we tell it to take an average and to remove missing values.* 
+```
+
+---
+
+# Strings
+
+Anything written within single ` '' ` or double ` "" ` quotes in R is treated as a string. R internally stores any string within double quotes, even if you created it with single quotes. Strings usually contain unstructured or semi-structured data and we can use regular expressions (regexps) to describe patterns within strings. The `stringr` package is used for string manipulation and is part of the core tidyverse. 
+There are some rules around string creation:
+
+* Double quotes can be inserted into a string starting and ending with single quote
+* Single quote can be inserted into a string starting and ending with double quotes
+* Double quotes can not be inserted into a string starting and ending with double quotes
+* Single quote can not be inserted into a string starting and ending with single quote
+
+The following examples are valid ways to create strings:
+
+```{r}
+string1 <- "This is a string in double quotes"
+
+string2 <- 'This is a string in single quotes'
+
+string3 <- 'If I want to include a "double quote" inside a string, I use single quotes'
+
+string4 <- "If i want to include a 'single quote' inside a string, I use double quotes"
+```
+
+---
+
+## String concatenation 
+
+Multiple strings can be stored in a character vector, which you can create with `c()`. 
+
+```{r}
+c("one", "two", "three")
+```
+
+You can combine strings using `str_c()`, which can take additional arguments like `sep` to dictate how the strings are separated. 
+
+10. __Run the code below. Can you tell the difference between the two commands?__
+
+```{r, results = 'hide'}
+str_c("x", "y", "z") 
+
+str_c("x", "y", "z", sep = ", ") 
+
+# Using the `sep` argument separates each letter in the string by a comma, but other character separators are possible (including blank space).
+```
+
+The opposite operation can also be performed with `str_collapse()`.
+
+```{r}
+str_c(c("x", "y", "z"), collapse = "")
+```
+
+---
+
+## Subsetting strings
+
+You can extract parts of a string using `str_sub()` which takes the string as an argument, in addition to `start` and `end` arguments. 
+
+For example, the code below extracts the 1st and 3rd character. 
+```{r}
+x <- c("Apple", "Banana", "Pear")
+
+str_sub(x, 1, 3)
+```
+
+---
+
+## Regular expressions
+
+Regular expressions (regexps) are a language to to describe string patterns. You can use `str_view()` and `str_view_all()` which take a character vector and a regular expression to match patterns in a string. 
+
+Consider a very simple case of pattern matching. Using `str_view()` we get one pattern match - b**an**anas. 
+
+```{r}
+x <- c("apple", "banana", "pear")
+
+str_view(x, "an")
+```
+
+The next example uses `.` to match anything either side of a specified character. Using the string vector created previously, we get two matches - **ban**ana and p**ear**. 
+
+```{r}
+str_view(x, ".a.")
+```
+
+---
+
+## Anchors
+
+Regexps match any part of a string, but you can provide an *anchor* so that it matches to the start or end of the string by providing:
+
+* `^` to match the start of the string
+* `$` to match the end of the string
+
+The code below finds one match where a string starts with a - **a**pple. 
+
+```{r}
+x <- c("apple", "banana", "pear")
+
+str_view(x, "^a")
+```
+
+The code below finds one match where a string ends in a - banan**a**. 
+
+```{r}
+str_view(x, "a$")
+```
+
+You can further combine `^` and `$` to match a complete string. For example, the code below only finds one exact match - **apple**.
+
+```{r}
+x <- c("apple pie", "apple", "apple cake")
+
+str_view(x, "^apple$")
+```
+
+This is only the beginning of what you can do with the `stringr` package. You can read the [Strings](https://r4ds.had.co.nz/strings.html) chapter in the R4DS book if you are keen to learn more. 
+
+---
+
+# Factors
+
+Factors are used to to store categorical data with levels. Levels are fixed and known sets of values for that variable. Factors can store both strings and integers and are useful when you want to display character vectors in a non-alphabetical format. 
+
+Some base R functions convert characters to factors automatically, meaning factors can pop up unexpectedly. However, this isn't a problem in the tidyverse. The `forcats` package lets us work with factors and is part of the core tidyverse. 
+
+---
+
+## Creating factors
+
+Storing categorical character information in a vector can lead to problems, such as typos and data ordered in a non-meaningful way. For instance, we create a character vector below with a typo in "Jam". Notice that sorting this vector does not provide a meaningful order. 
+
+```{r}
+x <- c("Dec", "Apr", "Jam", "Mar")
+
+sort(x)
+```
+
+Factors can fix help us to stop these problems. To create a factor, start by providing a list of valid levels. For example, below we create a vector `month_levels` containing abbreviated months of the year. 
+
+```{r}
+month_levels <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+)
+```
+
+Next you can create the factor and provide the levels to `factor()`. Any values not in the set will be converted to *NA*. For instance, "Jam" does not appear in `y` because there is no matching level. This helps us to spot our mistake and trace it back to where we created `x`,
+
+```{r}
+y <- factor(x, levels = month_levels)
+
+print(y)
+```
+
+In addition, we can now sort `y` in a meaningful way according to the structure and order we created in `month_levels`. 
+
+```{r}
+sort(y)
+```
+
+## General Social Survey
+
+To practice using factors we will return to the `gss_cat` data set. This data set has many categorical variables with assigned levels. For example, the variable **marital** has the following levels. 
+
+```{r, echo = FALSE}
+library(kableExtra)
+gss_cat %>% 
+  group_by(marital) %>%
+  summarise(n=n()) %>% 
+  kbl() %>% 
+  kable_paper(bootstrap_options = "striped", full_width = F)
+```
+
+Factor levels can be hard to spot in tibbles, but you can use `count()` to view them.
+
+```{r}
+gss_cat %>%
+  count(race)
+```
+
+Factors are suited well to bar plots.
+
+```{r, echo = FALSE}
+ggplot(gss_cat, aes(race)) +
+  geom_bar(colour = "lightblue", fill = "lightblue") +
+  theme_minimal()
+```
+
+*Note: `ggplot2` drops levels with no values. You can force them to display by adding the argument ` + scale_x_discrete(drop = FALSE)`.*
+
+---
+
+### Modifying factor order
+
+Modifying the order of levels is one of the most common operations performed on factors. It can be really helpful in visualisations. For example, using our earlier example we can reorder the number of tv hours watched per religion from most to least. It is easier to see the trend this way. 
+
+The levels of `relig` can be reordered using `fct_reorder()`, which takes three arguments:
+
+* `f`: the factor whose levels you want to modify
+* `x`: a numeric vector that you want to use to reorder the levels
+* `fun`: an optional argument that is used if there are multiple values of `x` for each value of `f`
+
+First we need to create a summary of the information. The code below groups the data by **relig** and applies a summary function that produces a mean for **age** and **tvhours** with the corresponding count (number) of individuals. 
+
+```{r}
+relig_summary <- gss_cat %>% # Assign the results to object so we can use it later
+  group_by(relig) %>% # Group by religion
+  summarise(
+    age = mean(age, na.rm = TRUE), # Create a mean for age
+    tvhours = mean(tvhours, na.rm = TRUE), # Create a mean for tv hours
+    n = n()) # Add a count per category of religion
+```
+Next, we can use this summary information to create a plot of the average tv hours watched across religions. We use `fct_reorder()` inside `mutate` and pass this to `ggplot()`. 
+
+```{r}
+relig_summary %>%
+  mutate(relig = fct_reorder(relig, tvhours)) %>%
+  ggplot(aes(tvhours, relig)) +
+    geom_point() +
+    xlab("Number of TV hours watched") +
+    ylab("Religion") +
+    theme_minimal()
+```
+
+11. __Can you create a similar plot looking at the average age across income levels? You can use the code from the previous example.__
+
+```{r, include = params$answers}
+rincome_summary <- gss_cat %>%
+  group_by(rincome) %>%
+  summarise(
+    age = mean(age, na.rm = TRUE),
+    n = n())
+
+rincome_summary %>% 
+  mutate(rincome = fct_reorder(rincome, age)) %>% 
+  ggplot(aes(age, rincome)) +
+    geom_point() +
+    xlab("Average age") +
+    ylab("Income") +
+    theme_minimal()
+
+# We can recycle the code from the previous example and substitute the relevant variable names. We group by the factor variable, rincome, calculating the mean age (and count) per category. Like before, we use `fct_reorder()` within `mutate()` and pass this to ggplot.* 
+
+# Notice that as average age increases, so do the number of people refusing to disclose income.*
+```
+
+12. __Do you think using fct_reorder makes sense here? Why/why not?__
+
+```{r, include = params$answers}
+rincome_summary %>% 
+  ggplot(aes(age, fct_relevel(rincome, "Not applicable"))) +
+  geom_point() +
+    xlab("Average age") +
+    ylab("Income") +
+    theme_minimal()
+
+# Since `rincome` already has a principled order (increasing salary), it doesn't make sense to change this. Typically, we only use `fct_reorder()` to rearrange factors that are arbitrarily ordered to something we prefer or that is more intuitive.* 
+
+# `fct_relevel()` is a related function that allows us to specify if we want to move a particular level to the front, for example. In the example below, we use `fct_relevel()` to bring forward those who responded to the salary question as "Not applicable". This makes these responses easier to see, as they are not embedded between the other ordered salary ranges.* 
+```
+
+What if you want to create a different kind of plot, such as a bar plot? Bar plots can be reordered using `fct_infreq()` to order factor levels in increasing frequency. As you can see in the example below, `fct_infreq()` works in a similar way to `fct_reorder()` and `fct_releval()` (i.e. with `mutate()`). 
+
+```{r, echo = TRUE, include = TRUE}
+gss_cat %>%
+  mutate(marital = fct_infreq(marital)) %>% 
+  ggplot(aes(marital)) +
+    geom_bar(col = "lightblue", fill = "lightblue") +
+    theme_minimal()
+
+# Note that you do not need to create an interim summary this example.
+```
+
+13. __Can you create a bar plot using `fct_infreq` to reorder levels of the race variable? You can use the code from the previous example.__
+
+```{r, include = params$answers}
+gss_cat %>%
+  mutate(race = fct_infreq(race)) %>% 
+  ggplot(aes(race)) +
+    geom_bar(col = "lightblue", fill = "lightblue") +
+    theme_minimal()
+```
+
+14. __In the exercises we learned that it is not sensible to reorder factor variables that have a principled order, such as income. Are the remaining categorical variables in `gss_cat` in a principled order?__
+
+```{r, include = params$answers}
+# The remaining categorical variables are `race`, `partyid`, `relig`, and `denom.` These categories have no natural hierarchy or ordering, so it is up to you how you wish to present them in a graph (e.g., most to least common).
+```
+
+---
+
+### Modifying factor levels 
+
+Sometimes it might be useful to change factor levels, which you can do using `fct_recode()`. You might want to do this when there are several levels that come under the same broader category, or to make factor levels easier to understand. 
+
+For example, if we examine the **partyid** variable we notice there are several inconsistent levels. 
+
+```{r, echo = FALSE}
+gss_cat %>% 
+  group_by(partyid) %>%
+  summarise(n=n()) %>% 
+  kbl() %>% 
+  kable_paper(bootstrap_options = "striped", full_width = F)
+```
+
+Several of the levels can be assumed under a smaller number of categories, such as "Republican", "Democrat", and "Independent". Similarly to other factor manipulations, we use `fct_recode()` within mutate and provide the new values. 
+
+Notice that the recoded value falls on the left of the `=` and the old value is on the right. Any values that you don't explicitly mention (e.g., "No answer", "Don't know", "Other party") will remain the same. 
+
+```{r}
+gss_cat %>%
+  mutate(partyid = fct_recode(partyid,
+                              "Republican" = "Strong republican", 
+                              "Republican" = "Not str republican",
+                              "Democrat" = "Strong democrat",
+                              "Democrat" = "Not str democrat",
+                              "Independent" = "Ind,near rep",
+                              "Independent" = "Ind,near dem"
+                              )) %>% 
+  count(partyid)
+```
+
+As you can see, `fct_recode()` not only allows us to recode each factor level but it allows us to assign several levels to the same new factor. This can be very helpful if we want to recode some responses to *NA* so that R can recognise this as a missing value. In this case the function takes the format `fct_recode(x, NULL = "Old value")`. 
+
+15. __Use 'fct_recode()` to recode "Don't know" and "No answer" to NA.__
+
+```{r, include = params$answers}
+gss_cat %>%
+  mutate(partyid = fct_recode(partyid,
+    NULL = "No answer",
+    NULL = "Don't know"
+    )) %>%
+  count(partyid)
+```
+
+If you are collapsing a lot of levels it can be more efficient to use `fct_collapse()`, which takes a vector of values as an argument.
+
+```{r}
+gss_cat %>%
+  mutate(partyid = fct_collapse(partyid,
+    NULL = c("No answer", "Don't know"),
+    Other = c("Other party"),
+    Republican = c("Strong republican", "Not str republican"),
+    Independent = c("Ind,near rep", "Independent", "Ind,near dem"),
+    Democrat = c("Not str democrat", "Strong democrat")
+  )) %>%
+  count(partyid)
+```
+
+16. __Can you use fct_collapse() to create three levels for income: "0 to $10,000", "$10,000 to $20,000", and NA for the remaining levels?__
+
+```{r, include = params$answers}
+gss_cat %>%
+  mutate(rincome = fct_collapse(rincome,
+    "0 to $10,000" = c("Lt $1000","$1000 to 2999","$3000 to 3999","$4000 to 4999","$5000 to 5999","$6000 to 6999","$7000 to 7999","$8000 to 9999"),
+    "$10,000 to $20,000" = c("$10000 - 14999","$15000 - 19999","$20000 - 24999","$25000 or more"),
+    NULL = c("Don't know","No answer", "Not applicable","Refused")
+    )) %>%  
+  count(rincome)
+```
+
+Sometimes you want to lump all the smallest categories together to make a quick and simple plot. You can do this with `fct_lump()`, which works inside `mutate()` too. 
+
+For example, we can lump together the groups in **relig**. 
+
+```{r}
+gss_cat %>%
+  mutate(relig = fct_lump(relig)) %>%
+  count(relig)
+```
+
+In this case the default of `fct_lump` is not very helpful. The resulting groups are similar in size (although it is correct that Protestant is the largest religion in this survey). This is called over-collapsing. You can change the default number of groups by adding an `n` parameter. 
+
+```{r}
+gss_cat %>%
+  mutate(relig = fct_lump(relig, n = 10)) %>%
+  count(relig, sort = TRUE)
+```
+
+You can provide a positive `n` to preserve the most common factors, and a negative `n` to preserve the least common factors.
+
+17. __Can you use `fct_lump()` to collapse the marital variable?__
+
+```{r, include = params$answers}
+gss_cat %>%
+  mutate(marital = fct_lump(marital)) %>%
+  count(marital, sort = TRUE)
+```
+
+---
+
+# Creating tables 
+
+In the next set of exercises we are going to learn how to present data in nicely formatted tables in R markdown. We will continue to work with `gss_cat`.
+
+```{r}
+gss_sample <- gss_cat[sample(nrow(gss_cat), 10),] # Takes a random sample of 10 observations from the data
+```
+
+The `kable()` function is part of the `knitr` package and generates nicely formatted tables from matrices or data frames in R Markdown. In this exercise we will use the built-in mtcars data set to learn about `kable()`. 
+
+18. __Create a formatted summary table using the `kable` package__
+
+**Hint: `kable()` is a simple function that can work with just one argument - the data frame.**
+
+```{r, include = params$answers}
+kable(gss_sample) # A very simple table
+
+# Notice that the output from `kable()` is very difficult to read. This is because the`kable()` function offers very limited formatting options and is not optimised for html. Within `kable()` you can align data/text by running `kable(mtcars, align = "l")`, for instance.  For more advanced formatting we need another package. More on that soon.
+```
+
+19. __Try using `select()` alongside `kable()` to display only the variables "year", "age", "race" and "rincome".__
+
+**Hint: `kable()` can also be combined with the `dplyr` functions we used before.There are two ways to do this: You can wrap the `kable()` function around `select()`; you can also pipe the results from `select()` to `kable()`**
+
+```{r, include = params$answers}
+select(gss_sample, year, age, race, rincome) %>%
+  kable() # Method 2
+
+# Again, the output is very difficult to read. Let's learn how to improve this in the next exercise.
+```
+
+The `kableExtra` package extends the basic functionality of `kable()`. A nice thing about `kableExtra` is that its features work well with HTML and PDF outputs. You can install this package from CRAN as usual. 
+
+You can use the pipe operator, ` %>% ` to push `kable()` output to `kableExtra` styling options. For example, you can create a striped table using the code below.  
+
+
+```{r}
+kable(gss_sample) %>% kable_styling(latex_options = "striped")
+```
+
+20. __Try changing the font size of the table.__
+```{r, include = params$answers}
+kable(gss_sample) %>%
+  kable_styling(latex_options = "striped",
+                font_size = 8)              # Change the font size here
+```
+
+
+The `kableExtra` package also comes with different themes:__
+
+* `kable_paper`
+* `kable_classic`
+* `kable_classic_2`
+* `kable_minimal`
+* `kable_material`
+* `kable_material_dark`
+
+21. __Try out using one or more of these themes.__
+```{r, include = params$answers}
+kable(gss_sample) %>%
+  kable_classic %>%                          # Add your theme here
+  kable_styling(latex_options = "striped",
+                font_size =12)
+```
+
+You can also combine `kableExtra()` with other `dplyr` functions like `fct_recode` and `summarise()`. The example below uses `fct_recode()` to make the **partyid** variables easier to follow, then groups this information to pass to `kbl()` and some styling options.
+
+```{r}
+gss_cat %>% 
+  mutate(partyid = fct_recode(partyid,
+                              "Republican" = "Strong republican", 
+                              "Republican" = "Not str republican",
+                              "Democrat" = "Strong democrat",
+                              "Democrat" = "Not str democrat",
+                              "Independent" = "Ind,near rep",
+                              "Independent" = "Ind,near dem"
+                              )) %>% 
+  group_by(partyid) %>%
+  summarise(n=n()) %>% 
+  kbl() %>% 
+  kable_paper(bootstrap_options = "striped", full_width = F)
+
+```
+
+There are many other styling options included in `kableExtra`. I recommend you try them out yourself.
+
+Other packages for creating nice tables in R Markdown exist too, such as `xtable`, `stargazer`, and `pander`.
+
+---
+
+# End of practical 
+

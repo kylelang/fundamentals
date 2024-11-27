@@ -1,0 +1,1241 @@
+%%% Title:    FTDS Lecture 2: Programmatic Data Manipulation 1
+%%% Author:   Kyle M. Lang
+%%% Created:  2022-11-19
+%%% Modified: 2023-11-09
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+
+\hypersetup{
+  colorlinks = false,
+  linkcolor = uured,
+  citecolor = uured,
+  urlcolor = uured
+}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+% \DeclareTotalTCBox{\src}
+% { s v }
+% {verbatim, colupper = white, colback = black!75!white, colframe = black}
+% {%
+% \IfBooleanT{#1}{\textcolor{red}{\ttfamily\bfseries >}}%
+% \lstinline[language = command.com, keywordstyle = \color{blue!35!white}\bfseries]^#2^%
+% }
+
+%   \newtcbinputlisting[]{\src}[1][]{
+%   listing only,
+%   nobeforeafter,
+%   after={\xspace},
+%   hbox,
+%   tcbox raise base,
+%   fontupper=\ttfamily,
+%   colback=lightgray,
+%   colframe=lightgray,
+%   size=fbox
+% }{#1}
+
+%   \newcommand{\src}[1]{%
+%   \begin{tcbwritetemp} \tcboxverb[beamer]{#1} \end{tcbwritetemp}%
+%   \tcbusetemp%
+% }
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+% \newcommand{\src}[1]{\texttt{#1}}
+
+\newcommand{\pipe}{\texttt{\%>\%}}
+\newcommand{\expipe}{\texttt{\%\$\%}}
+\newcommand{\apipe}{\texttt{\%<>\%}}
+\newcommand{\rpipe}{\texttt{|>}}
+
+\title{R Objects \& Programmatic Data Manipulation}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+<<setup, include = FALSE, cache = FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(dplyr)
+library(magrittr)
+
+source("../../../code/supportFunctions.R")
+
+options(width = 60)
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/r_basics-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+%------------------------------------------------------------------------------%
+
+\begin{document}
+
+\begin{frame}[t, plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{R Objects \& Data Types}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Vectors \& Matrices}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Vectors}
+
+  Vectors are the simplest kind of R object.
+  \begin{itemize}
+  \item There is no concept of a ``scalar'' in R.
+  \end{itemize}
+  \va
+  Vectors come in one of six ``atomic modes'':
+  \begin{itemize}
+  \item numeric/double
+  \item logical
+  \item character
+  \item integer
+  \item complex
+  \item raw
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Vectors}
+
+  <<>>=
+  (v1 <- vector("numeric", 3))
+  (v2 <- vector("logical", 3))
+  (v3 <- vector("character", 3))
+  (v4 <- vector("integer", 3))
+  (v5 <- vector("complex", 3))
+  (v6 <- vector("raw", 3))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Generating Vectors}
+
+  We have many ways of generating vectors.
+
+  <<>>=
+  (y1 <- c(1, 2, 3))
+  (y2 <- c(TRUE, FALSE, TRUE, TRUE))
+  (y3 <- c("bob", "suzy", "danny"))
+
+  1:5
+  1.2:5.3
+  @
+  
+  \pagebreak
+
+  <<>>=
+  rep(33, 4)
+  rep(1:3, 3)
+  rep(y3, each = 2)
+
+  seq(0, 1, 0.25)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{The Three Most Useful Data Types}
+
+  Numeric
+  <<>>=
+  (a <- 1:5)
+  @
+  
+  Character
+  <<>>=
+  (b <- c("foo", "bar"))
+  @
+  
+  Logical
+  <<>>=
+  (c <- c(TRUE, FALSE))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Combining Data Types in Vectors}
+
+  What happens if we try to concatenate different data types?
+  <<>>=
+  c(a, b)
+  c(b, c)
+  c(a, c)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Matrices}
+
+  Matrices generalize vectors by adding a dimension attribute.
+
+  <<>>=
+  (m1 <- matrix(a, nrow = 5, ncol = 2))
+
+  attributes(v1)
+  attributes(m1)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Matrices}
+
+  Matrices are populated in column-major order, by default.
+
+  <<>>=
+  (m2 <- matrix(1:9, 3, 3))
+  @
+  
+  The \src{byrow = TRUE} option allows us to fill by row-major order.
+
+  <<>>=
+  (m3 <- matrix(1:9, 3, 3, byrow = TRUE))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Mixing Data Types in Matrices}
+
+  Like vectors, matrices can only hold one type of data.
+
+  <<>>=
+  cbind(c, letters[1:5])
+  cbind(c, c(TRUE, TRUE, FALSE, FALSE, TRUE))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Lists \& Data Frames}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Lists}
+
+  Lists are the workhorse of R data objects.
+  \begin{itemize}
+  \item An R list can hold an arbitrary set of other R objects.
+  \end{itemize}
+
+  \vb
+
+  We create lists using the \src{list()} function.
+
+  <<>>=
+  (l1 <- list(1, 2, 3))
+  @
+  
+  \pagebreak
+
+  <<>>=
+  (l2 <- list("bob", TRUE, 33, 42+3i))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Lists}
+
+  List elements have no default names, but we can define our own.
+
+  <<>>=
+  (l3 <- list(name = "bob",
+              alive = TRUE,
+              age = 33,
+              relationshipStatus = 42+3i)
+  )
+  @
+  
+  \pagebreak
+
+  We can also assign post hoc names via the \src{names()} function.
+
+  <<>>=
+  names(l1) <- c("first", "second", "third")
+  l1
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Lists}
+
+  We can append new elements onto an existing list.
+
+  <<>>=
+  (l4 <- list())
+  l4$people <- c("Bob", "Alice", "Suzy")
+  l4$money <- 0
+  l4$logical <- FALSE
+  l4
+  @
+  
+  \pagebreak
+
+  The elements inside a list don't really know that they live in a list;
+  they'll pretty much behave as normal.
+
+  <<>>=
+  l4$money + 42
+
+  paste0("Hello, ", l4$people, "!\n") %>% cat()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Data Frames}
+
+  Data frames are R's way of storing rectangular data sets.
+  \begin{itemize}
+  \item Each column of a data frame is a vector.
+  \item Each of these vectors can have a different type.
+  \end{itemize}
+
+  \vb
+
+  We create data frames using the \src{data.frame()} function.
+
+  <<>>=
+  (d1 <- data.frame(1:6, c(-1, 1), seq(0.1, 0.6, 0.1)))
+  @
+  
+  \pagebreak
+
+  <<>>=
+  (d2 <- data.frame(x = 1:6, y = c(-1, 1), z = seq(0.1, 0.6, 0.1)))
+  @
+  
+  \pagebreak
+
+  <<>>=
+  (d3 <- data.frame(a = sample(c(TRUE, FALSE), 8, replace = TRUE),
+                    b = sample(c("foo", "bar"), 8, replace = TRUE),
+                    c = runif(8)
+                    )
+  )
+  @
+  
+  \pagebreak
+
+  <<>>=
+  (d4 <- data.frame(matrix(NA, 10, 3)))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Data Frames}
+
+  Data frames are actually lists of vectors (representing the columns).
+
+  <<>>=
+  is.data.frame(d3)
+  is.list(d3)
+  @
+  
+  Although they look like rectangular "matrices", from R's perspective a data
+  frame IS NOT a matrix.
+
+  <<>>=
+  is.matrix(d3)
+  @
+  
+  \pagebreak
+
+  We cannot treat a data frame like a matrix. E.g., matrix algebra doesn't work
+  with data frames.
+
+  <<>>=
+  d1 %*% t(d2)
+  as.matrix(d1) %*% t(as.matrix(d2))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Factors}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Factors}
+
+  Factors are R's way of repesenting nominal variables.
+  \begin{itemize}
+  \item We can create a factor using the \src{factor()} function.
+  \end{itemize}
+
+  <<>>=
+  (f1 <- factor(sample(1:3, 15, TRUE), labels = c("red", "yellow", "blue")))
+  @
+  
+  \pagebreak
+
+  Factors are integer vectors with a \emph{levels} attribute and a \emph{factor}
+  class.
+
+  <<>>=
+  typeof(f1)
+  attributes(f1)
+  @
+  
+  The levels are just group labels.
+
+  <<>>=
+  levels(f1)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Factors}
+
+  Even though a factor's data are represented by an integer vector, R does not
+  consider factors to be interger/numeric data.
+
+  <<>>=
+  is.numeric(f1)
+  is.integer(f1)
+  @
+  
+  Factors represent nominal variables, so we cannot do math with factors.
+
+  <<error = TRUE>>=
+  f1 + 1
+  mean(f1)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Data Manipulation}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Subsetting}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Base R Subsetting}
+
+  In Base R, we typically use three operators to subset objects:
+  \vc
+  \begin{itemize}
+  \item \src{[]}
+  \item \src{[[]]}
+  \item \src{\$}
+  \end{itemize}
+
+  \va
+
+  Which of these operators we choose to use (and how we implement the chosen
+  operator) will depend on two criteria:
+  \vc
+  \begin{itemize}
+  \item What type of object are we trying to subset?
+  \item How much of the original typing do we want to keep in the subset?
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Atomic Data Objects}
+
+  To subset vectors and matrices, we can use either \src{[]} or \src{[[]]}.
+
+  <<>>=
+  (x <- rnorm(8))
+  x[1:3]
+  x[2]
+  x[c(2, 5, 7)]
+  x[c(TRUE, FALSE)]
+  @
+  
+  \pagebreak
+
+  The \src{[[]]} operator can only select a single element.
+
+  <<error = TRUE>>=
+  x[[2]]
+  x[[1:3]]
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Atomic Data Objects}
+
+  To subset matrices, we need to differentiate the dimensions.
+
+  <<>>=
+  (y <- matrix(x, 6, 4))
+
+  y[2, 2]
+  y[1:3, 1]
+  @
+  
+  \pagebreak
+
+  We can select sub-matrices and mix different indexing styles.
+
+  <<>>=
+  y[1:2, c(2, 4)]
+  y[c(1:3, 5), c(FALSE, TRUE, TRUE, FALSE)]
+  @
+  
+  \pagebreak
+
+  Leaving the rows or columns section empty will return all rows or columns,
+  respectively.
+
+  <<>>=
+  y[ , 2]
+  y[2:5, ]
+  @
+  
+  \pagebreak
+
+  The \src{[[]]} operator can still select only a single element.
+
+  <<error = TRUE>>=
+  y[[2, 2]]
+  y[[1:3, 2]]
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Lists}
+
+  We can use all three operators to subset lists.
+  
+  <<>>=
+  l4$people
+  l4[1]
+  l4[["people"]]
+  @
+  
+  \pagebreak
+
+  As expected, we cannot select multiple list elements with \src{[[]]}.
+  
+  <<error = TRUE>>=
+  l4[1:2]
+  l4[[1:2]]
+  @ 
+  
+  \pagebreak
+  
+  The relative behavior of \src{[]} and \src{[[]]} is more important for lists.
+
+  <<>>=
+  (tmp1 <- l4[1])
+  class(tmp1)
+  
+  (tmp2 <- l4[[1]])
+  class(tmp2)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Data Frames}
+
+  We can subset the columns of a data frame using list semantics.
+
+  <<>>=
+  d3$a
+  d3[1]
+  @
+  
+  \pagebreak
+
+  <<>>=
+  d3["a"]
+  d3[["a"]]
+  @
+  
+  \pagebreak
+
+  We can also use matrix-style subsetting.
+  
+  <<error = TRUE>>=
+  d3[1:5, 1:2]
+  d3[c(1, 3, 5, 7), letters[2:3]]
+  @ 
+  
+  \pagebreak
+  
+  The list-style subsetting can have advantages.
+
+  <<>>=
+  (tmp1 <- d3[ , 2])
+  (tmp2 <- d3[2])
+  @
+  
+  \pagebreak
+
+  Single columns are returned as $N \times 1$ data frames, rather than
+  $N$-element vectors.
+  
+  <<>>=
+  class(tmp1)
+  class(tmp2)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Overwriting Values}
+
+  We also use subsetting syntax to overwrite values in an R object.
+
+  <<>>=
+  x[2:3] <- NA
+  x
+  l4$people <- "None"
+  l4
+  @
+  
+  \pagebreak
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      y[1:3, 2:4] <- -1
+      print(y, digits = 3)
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      d4      <- d3
+      d4[1:2] <- rgamma(nrow(d4) * 2, 10)
+      print(d4, digits = 3)
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Subsetting}
+
+  The \pkg{dplyr} package provides many ways to subset data, but two functions
+  are most frequently useful.
+  \vc
+  \begin{itemize}
+  \item \src{select()}: subset columns
+    \vc
+  \item \src{filter()}: subset rows
+  \end{itemize}
+
+  \va
+  
+  <<>>=
+  library(dplyr)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Subsetting Columns: \src{select()}}
+
+  The \src{dplyr::select()} function provides a very intuitive syntax for
+  variable selection and column-wise subsetting.
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      select(d3, a, b)
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      select(d3, -a)
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Subsetting Rows}
+
+  The \src{dplyr::filter()} function provides easy row subsetting:
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      filter(d3, c > 0.5)
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      filter(d3, c > 0.15, b == "foo")
+      @
+      
+    \end{column}
+  \end{columns}
+
+  \va
+  
+  We can achieve the same effect via logical indexing in Base R:
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<>>=
+      d3[d3$c > 0.5, ]
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      d3[d3$c > 0.15 & d3$b == "foo", ]
+      @
+      
+    \end{column}
+  \end{columns}
+  
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Transforming \& Rearranging}
+
+%------------------------------------------------------------------------------%
+
+
+\begin{frame}[fragile]{Base R Variable Transformations}
+
+  There is nothing very special about the process of transforming variables in
+  Base R.
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<>>=
+      d4   <- d3
+      d4$d <- scale(d4$c)
+      d4$e <- !d4$a
+      d4
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      d4   <- d3
+      d4$c <- scale(d4$c, scale = FALSE)
+      d4$a <- as.numeric(d4$a)
+      d4
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Variable Transformations}
+
+  The \src{mutate()} function from \pkg{dplyr} is the workhorse of Tidyverse
+  transformation functions.
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      <<>>=
+      mutate(d3, d = rbinom(nrow(d3), 1, c))
+      @
+      
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      
+      <<>>=
+      mutate(d3,
+             d = rbinom(nrow(d3), 1, c),
+             e = d * c
+             )
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Sorting \& Ordering}
+
+  To sort a single vector, the best option is the Base R \src{sort()} function.
+
+  <<>>=
+  sort(d3$c)
+  sort(d3$c, decreasing = TRUE)
+  @
+  \vb
+  To sort the rows of a data frame according to the order of one of its columns,
+  the \src{dplyr::arrange()} works best.
+  \vc
+  \begin{itemize}
+  \item You can use the Base R \src{order()} function to achieve similar
+    results.
+    \vc
+  \item The behavior of \src{order()} is (extremely) unintuitive.
+  \end{itemize}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Ordering}
+
+  Using \src{dplyr::arrange()} could not be simpler.
+  
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+
+      <<>>=
+      arrange(d3, a)
+      @
+      
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      
+      <<>>=
+      arrange(d3, -c)
+      @
+      
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      
+      <<>>=
+      arrange(d3, -a, c)
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Pipes}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\subsection{The Basic Tidyverse Pipe: \pipe}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{What are pipes?}
+
+  The \pipe$~$symbol represents the \emph{pipe} operator.
+  \vc
+  \begin{itemize}
+  \item We use the pipe operator to compose functions into a \emph{pipeline}.
+  \end{itemize}
+
+  \vb
+
+  The following code represents a pipeline.
+
+  <<eval = FALSE>>=
+  firstBoys <-
+      readRDS("boys.rds") %>%
+      head()
+  @
+  
+  This pipeline replaces the following code.
+
+  <<eval = FALSE>>=
+  firstBoys <- head(readRDS("boys.rds"))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Why are pipes useful?}
+
+  Let's assume that we want to:
+  \vc
+  \begin{enumerate}
+  \item Load data
+    \vc
+  \item Transform a variable
+    \vc
+  \item Filter cases
+    \vc
+  \item Select columns
+  \end{enumerate}
+
+  \vb
+
+  Without a pipe, we may do something like this:
+
+  <<>>=
+  library(dplyr)
+
+  boys <- readRDS("../../../data/boys.rds")
+  boys <- transform(boys, hgt = hgt / 100)
+  boys <- filter(boys, age > 15)
+  boys <- subset(boys, select = c(hgt, wgt, bmi))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Why are pipes useful?}
+
+  With the pipe, we could do something like this:
+
+  <<>>=
+  boys <-
+      readRDS("../../../data/boys.rds") %>%
+      transform(hgt = hgt / 100) %>%
+      filter(age > 15) %>%
+      subset(select = c(hgt, wgt, bmi))
+  @
+  
+  \vb
+
+  With a pipeline, our code more clearly represents the sequence of steps in our
+  analysis.
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Benefits of Pipes}
+
+  When you use pipes, your code becomes more readable.
+  \vc
+  \begin{itemize}
+  \item Operations are structured from left to right instead of in to out.
+    \vc
+  \item You can avoid many nested function calls.
+    \vc
+  \item You don't have to keep track of intermediate objects.
+    \vc
+  \item It's easy to add steps to the sequence.
+  \end{itemize}
+
+  \va
+
+  In RStudio, you can use a keyboard shortcut to insert the \pipe$~$symbol.
+  \vc
+  \begin{itemize}
+  \item  Windows/Linux: \emph{ctrl} + \emph{shift} + \emph{m}
+    \vc
+  \item Mac: \emph{cmd} + \emph{shift} + \emph{m}
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{What do pipes do?}
+
+  Pipes compose R functions without nesting.
+  \vc
+  \begin{itemize}
+  \item \src{f(x)} becomes \src{x} \pipe$~~$\src{f()}
+  \end{itemize}
+
+  <<>>=
+  mean(rnorm(10))
+  rnorm(10) %>% mean()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{What do pipes do?}
+
+  Multiple function arguments are fine.
+  \vc
+  \begin{itemize}
+  \item \src{f(x, y)} becomes \src{x} \pipe$~~$\src{f(y)}
+  \end{itemize}
+
+  <<>>=
+  cor(boys, use = "pairwise.complete.obs")
+  boys %>% cor(use = "pairwise.complete.obs")
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{What do pipes do?}
+
+  Composing more than two functions is easy, too.
+  \vc
+  \begin{itemize}
+  \item \src{h(g(f(x)))} becomes \src{x} \pipe$~~$\src{f} \pipe$~~$\src{g}
+    \pipe$~~$\src{h}
+  \end{itemize}
+
+  <<>>=
+  max(na.omit(subset(boys, select = wgt)))
+  boys %>%
+      subset(select = wgt) %>%
+      na.omit() %>%
+      max()
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Other Flavors of Pipe}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{The Role of \src{.} in a Pipeline}
+
+  In the expression \src{a} \pipe$~~$\src{f(arg1, arg2, arg3)}, \src{a} will be
+  "piped into" \src{f()} as \src{arg1}.
+
+  <<error = TRUE, fig.show = "hide">>=
+  data(cats, package = "MASS")
+  cats %>% plot(Hwt ~ Bwt)
+  @
+  
+  Clearly, we have a problem if we pipe our data into the wrong argument.
+  \vc
+  \begin{itemize}
+  \item We can change this behavior with the \src{.} symbol.
+    \vc
+  \item The \src{.} symbol acts as a placeholder for the data in a pipeline.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{The Role of \src{.} in a Pipeline}
+
+  <<out.width = "50%">>=
+  cats %>% plot(Hwt ~ Bwt, data = .)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Exposition Pipe: \expipe}
+
+  There are several different flavors of pipe. The \emph{exposition pipe},
+  \expipe, is a particularly useful variant.
+  \vc
+  \begin{itemize}
+  \item The exposition pipe \emph{exposes} the contents of an object to
+    the next function in the pipeline.
+  \end{itemize}
+
+  \vc
+
+  <<out.width = "40%">>=
+  cats %$% plot(Hwt ~ Bwt)
+  @
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Performing a T-Test in a Pipeline}
+
+  <<eval = FALSE>>=
+  cats %$% t.test(Hwt ~ Sex)
+  @
+
+  $$\vx{-40}$$
+
+  <<echo = FALSE>>=
+  cats %$% t.test(Hwt ~ Sex) %>% wrap(w = 80)
+  @
+  
+  The above is equivalent to either of the following.
+
+  <<eval = FALSE>>=
+  cats %>% t.test(Hwt ~ Sex, data = .)
+  t.test(Hwt ~ Sex, data = cats)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}
+
+%------------------------------------------------------------------------------%
+
+
+
+
+\begin{frame}[fragile]{Storing the Results}
+
+  We can use normal assignment to save the result of a pipeline.
+  
+  <<>>=
+  tomcatSummary <- cats %>%
+      filter(Sex == "M") %>%
+      select(-Sex) %>%
+      summary()
+  
+  tomcatSummary
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Assignment Pipe: \apipe}
+
+  We can use normal assignment to overwrite an object with the result of a
+  pipeline originating from that object.
+  
+  <<>>=
+  summary(cats)
+  @
+  
+  \pagebreak
+
+  <<>>=
+  cats <- cats %>%
+      filter(Sex == "M") %>%
+      select(-Sex)
+
+  summary(cats)
+  @
+  
+  \pagebreak
+  
+  The \emph{assignment pipe}, \apipe,  provides a more elegant syntax.
+
+  <<>>=
+  data(cats, package = "MASS")
+  
+  cats %<>% filter(Sex == "M") %>% select(-Sex)
+
+  summary(cats)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+% \begin{frame}[allowframebreaks]{References}
+%   \bibliographystyle{apacite}
+%   \bibliography{../../../bibtex/ftds_refs.bib}
+% \end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}

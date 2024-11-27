@@ -1,0 +1,86 @@
+
+---
+title: Problem Set FTID_1
+output: 
+  html_document: 
+    keep_md: yes
+    toc: yes
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+# Load libraries and source extra code
+library(magrittr)
+library(dplyr)
+library(ggplot2)
+library(RTutor)
+
+
+# Options for rendering data frames
+# If you knit to a Word docx file, try
+# 
+# data.frame.theme="word" 
+# 
+# (needs RStudio > 1.2.1)
+# 
+# You can also set the options like
+# table.max.cols as chunk options
+# Makes sense if there are too many, too wide
+# columns in some chunks
+
+RTutor::set.knit.print.opts(data.frame.theme="code", table.max.rows=25, table.max.cols=NULL, round.digits=5, signif.digits=8)
+
+
+# continue knitting even if there is an error
+knitr::opts_chunk$set(error = TRUE) 
+```
+
+# R: Assigning elements to objects
+
+Author:  Gerko Vink
+
+
+In this exercise set we will get acquainted with `R`. If you have no experience with `R`, you will learn the most from following this document by looking at the solutions. If you have some experience with `R` already, I suggest you try solving the exercises without looking at the solutions. You can then refer to the solutions at any time, if needed. 
+
+If you have any questions or if you feel that some code should be elaborated, feel free to ask during the workgroup or drop me a line at [G.Vink@uu.nl](mailto::G.Vink@uu.nl).
+
+Have fun at finishing the exercises.
+
+## Exercise content
+
+1. Basic operations in R
+
+  1.1 Assigning elements to objects
+
+  1.2 Simple calculations with elements and objects
+
+2. Objects with more than one element
+
+  2.1 Vectors
+
+  2.2 Matrices
+
+  2.3 Data Frames
+
+  2.4 Arrays
+
+  2.5 Lists
+
+## Exercise 1 -- Assigning elements to objects
+
+---
+
+We start with the very basics and will move towards more advanced operations in `R`. First we will get acquainted with the language (which is called `S` - to keep it simple) and the environment we work in. 
+
+---
+
+## Exercises 1.1 -- Simple assigning
+
+`R` is an object oriented language. This means that elements, such as numbers or characters, are assigned to objects. The below code block assigns the value `1` to object `a`. 
+
+```{r "1",optional=TRUE, eval=FALSE}
+a <- 1
+```
+
+The `#` tells `R` that everything that follows in that specific line is not to be considered as code. In other words, you can use `#` to comment in your own `R`-scripts. I used `#` here to elaborate that the following line is the code from exercise 1. 
+
+The line `a <- 1` assigns the value `1` to object `a`. When you run your code, it will be saved. The value 1 and the letter `a` are chosen to illustrate assigning in `R`. You might as well assign `123` to `banana` if you like. Really, anything goes. 

@@ -1,0 +1,1091 @@
+%%% Title:    Course Summary
+%%% Author:   Kyle M. Lang
+%%% Created:  2022-01-17
+%%% Modified: 2024-01-12
+
+\documentclass[10pt]{beamer}
+\usetheme{Utrecht}
+
+\usepackage{graphicx}
+\usepackage[natbibapa]{apacite}
+\usepackage[libertine]{newtxmath}
+\usepackage{booktabs}
+\usepackage{fancybox}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{xspace}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings}
+\usepackage{hyperref}
+
+\definecolor{codebackground}{RGB}{224,234,238}
+\definecolor{codestring}{RGB}{191,3,3}
+\definecolor{codekeyword}{RGB}{1,1,129}
+\definecolor{codecomment}{RGB}{131,129,131}
+
+\newcommand{\src}[1]{%
+  \tcbox[%
+  on line,
+  colback = codebackground,
+  colframe = codebackground,
+  left = 0pt,
+  right = 0pt,
+  top = 0pt,
+  bottom = 0pt%
+  ]{%
+    \lstinline[%
+    language = R,
+    basicstyle = \ttfamily,
+    keywordstyle = \color{codekeyword},
+    commentstyle = \color{codecomment}\itshape,
+    stringstyle = \color{codestring},
+    deletekeywords = {_}
+    % frame = single,
+    % frameround = tttt,
+    % fillcolor = \color{blue}%
+    ]{#1}%
+  }
+}
+
+\newcommand{\rmsc}[1]{\textrm{\textsc{#1}}}
+\newcommand{\pkg}[1]{\textbf{#1}}
+
+\captionsetup[table]{labelformat = empty}
+
+\title{Course Summary}
+\subtitle{Fundamental Techniques in Data Science}
+\author{Kyle M. Lang}
+\institute{Department of Methodology \& Statistics\\Utrecht University}
+\date{}
+
+\begin{document}
+
+<<setup, include=FALSE>>=
+set.seed(235711)
+
+library(knitr)
+library(ggplot2)
+library(xtable)
+library(MLmetrics)
+                                        #library(caret)
+library(pROC)
+library(dplyr)
+library(DAAG)
+library(magrittr)
+
+source("../../../code/supportFunctions.R")
+
+data(Cars93, package = "MASS")
+
+dataDir <- "../../../data/"
+
+opts_chunk$set(size = "footnotesize",
+               fig.align = "center",
+               fig.path = "figure/summary-",
+               message = FALSE,
+               warning = FALSE,
+               comment = "")
+knit_theme$set('edit-kwrite')
+@
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[t,plain]
+  \titlepage
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\section{Exam Information}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Exam Information}
+
+  Dates
+  \vc
+  \begin{itemize}
+  \item Exam: Wednesday 24 January
+    \vc
+  \item Resit: Monday 26 February
+  \end{itemize}
+  \vb
+  Structure
+  \vc
+  \begin{itemize}
+  \item Approximately 25 questions
+    \vc
+  \item Mixture of multiple-choice and short-answer questions
+    \vc
+  \item Closed-book
+    \vc
+  \item Remindo, computer-based exam
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{R Topics}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{R Fundamentals}
+  
+  Objects and assignment
+
+  <<>>=
+  1:3
+  x <- 1:3
+  x
+  x + 4
+  @
+
+  Data types
+  \vc
+  \begin{itemize}
+  \item Vectors, Matrices
+    \vc
+  \item Lists, Data frames
+    \vc
+  \item Factors
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{R Fundamentals}
+ 
+  User-defined functions
+
+  <<>>=
+  helloWorld <- function() cat("Hello World!")
+  helloWorld()
+
+  add <- function(x, y) x + y
+  add(2, 3)
+  add(add(1, 2), 3)
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Fundamentals}
+
+  Working with pipes
+
+  <<>>=
+  library(magrittr)
+  
+  iris %$% table(Species)
+
+  add(1, 2) %>% add(3)
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Fundamentals}
+  
+  Working with \pkg{dplyr} and \pkg{ggplot}
+  
+  <<eval = FALSE>>=
+  library(dplyr)
+  library(ggplot2)
+  
+  iris %>%
+      filter(Species != "virginica") %>%
+      mutate(petal_ratio = Petal.Length / Petal.Width) %>%
+      ggplot(aes(Species, petal_ratio)) +
+      geom_boxplot() +
+      ylab("Petal Length to Width Ratio")
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Tidyverse Fundamentals}
+
+  <<echo = FALSE, out.width = "65%">>=
+  iris %>%
+      filter(Species != "virginica") %>%
+      mutate(petal_ratio = Petal.Length / Petal.Width) %>%
+      ggplot(aes(Species, petal_ratio)) +
+      geom_boxplot() +
+      ylab("Petal Length to Width Ratio")
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Manipulating Model Objects}
+
+  <<>>=
+  fit1 <- lm(Petal.Length ~ Sepal.Length + Species, data = iris)
+  fit2 <- lm(Petal.Length ~ Sepal.Length*Species, data = iris)
+
+  coef(fit1)
+  summary(fit2)$fstatistic
+  @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Manipulating Model Objects}
+
+  <<>>=
+  anova(fit2, fit1)
+  @
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Manipulating Model Objects}
+
+  <<out.width = "50%">>=
+  fit1 %>% rstudent() %>% plot() 
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Linear Regression}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Simple Linear Regression}
+  
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      In linear regression, we want to find the best fit line:
+      \begin{align*}
+        {\color{blue}\hat{Y} = \hat{\beta}_0 + \hat{\beta}_1 X}
+      \end{align*}
+      \vx{-18}
+      \begin{itemize}
+      \item For any $X_n$, the corresponding $\hat{Y}_n$ represents the 
+        model-implied, conditional mean of $Y$.
+      \end{itemize}
+      \vb
+      \only<2>{
+        After accounting for the estimation error, we get the full regression 
+        equation:
+        \begin{align*}
+          Y = {\color{blue}\hat{\beta}_0 + \hat{\beta}_1 X} + {\color{red}\hat{\varepsilon}}
+        \end{align*}
+      }
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      \only<1>{
+        
+        <<echo = FALSE, cache = TRUE>>=
+        out1 <- lm(Horsepower ~ Price, data = Cars93)
+        
+        Cars93$yHat  <- fitted(out1)
+        Cars93$yMean <- mean(Cars93$Horsepower)
+        
+        p <- ggplot(data = Cars93, aes(x = Price, y = Horsepower)) +
+            coord_cartesian() +
+            theme_classic() +
+            theme(text = element_text(size = 16, family = "Courier"))
+        p1 <- p + geom_point()
+        
+        p1 + geom_smooth(method = 'lm', color = "blue", se = FALSE)
+        @
+        
+      }
+      \only<2>{
+        
+        <<echo = FALSE, cache = TRUE>>=
+        p2 <- p + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+            geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                         color = "red") +
+            geom_point()
+        p2
+	@
+        
+      }
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Residuals as the Basis of Estimation}
+  
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      
+      We use the residuals, $\hat{\varepsilon}_n$, to estimate the model.
+      \begin{align*}
+        RSS &= \sum_{n = 1}^N \hat{\varepsilon}_n^2 =
+              \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
+            &= \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 - \hat{\beta}_1
+              X_n\right)^2
+      \end{align*}
+    \end{column}
+    
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE, cache = TRUE>>=
+      p + geom_smooth(method = "lm", color = "blue", se = FALSE) +
+          geom_segment(aes(x = Price, y = Horsepower, xend = Price, yend = yHat),
+                       color = "red") +
+          geom_point()
+      @
+      
+    \end{column}
+  \end{columns}
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\subsection{Assumptions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{Assumptions}
+  
+  \begin{enumerate}
+  \item The model is linear in the parameters.
+    \begin{itemize}
+    \item \emph{Otherwise:} We are not working with linear regression.
+    \end{itemize}
+    \vc
+  \item The predictor matrix is \emph{full rank}.
+    \begin{itemize}
+    \item \emph{Otherwise:} The model is not estimable.
+    \end{itemize}
+    \vc
+  \item The predictors are strictly exogenous.\label{exo}
+    \begin{itemize}
+    \item \emph{Otherwise:} The estimated regression coefficients will be biased.
+    \end{itemize}
+    \vc
+  \item The errors have constant, finite variance.\label{constVar}
+    \begin{itemize}
+    \item \emph{Otherwise:} Standard errors will be biased.
+    \end{itemize}
+    \vc
+  \item The errors are uncorrelated.\label{indErr}
+    \begin{itemize}
+    \item \emph{Otherwise:} Standard errors will be biased.
+    \end{itemize}
+    \vc
+  \item The errors are normally distributed.\label{normErr}
+    \begin{itemize}
+    \item \emph{Otherwise:} Small-sample inferences and some estimates are not 
+      justified.
+    \end{itemize}
+    
+  \end{enumerate}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Moderation}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}{Moderated Regression}
+
+  The effect of $X$ on $Y$ varies \textbf{as a function} of $Z$.
+
+  \begin{columns}
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/3d_data_plot}
+    \end{column}
+
+    \begin{column}{0.1\textwidth}
+      \begin{center}\Huge{$\rightarrow$}\end{center}
+    \end{column}
+
+    \begin{column}{0.45\textwidth}
+      \includegraphics[width = 1.1\textwidth]{figures/response_surface_plot}
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Interpretation}
+
+  Given the following equation:
+  \begin{align*}
+    Y = \hat{\beta}_0 + \hat{\beta}_1X + \hat{\beta}_2Z + \hat{\beta}_3XZ +
+    \hat{\varepsilon}
+  \end{align*}
+  \vx{-16}
+  \begin{itemize}
+  \item $\hat{\beta}_3$ quantifies the effect of $Z$ on the focal effect (the $X
+    \rightarrow Y$ effect).
+    \vc
+    \begin{itemize}
+    \item For a unit change in $Z$, $\hat{\beta}_3$ is the expected change in
+      the effect of $X$ on $Y$.
+    \end{itemize}
+    \vb
+  \item $\hat{\beta}_1$ and $\hat{\beta}_2$ are \emph{conditional effects}.
+    \vc
+    \begin{itemize}
+      \item Interpreted where the other predictor is zero.
+        \vc
+      \item For a unit change in $X$, $\hat{\beta}_1$ is the expected change in
+        $Y$, when $Z = 0$.
+        \vc
+      \item For a unit change in $Z$, $\hat{\beta}_2$ is the expected change in
+        $Y$, when $X = 0$.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Continuous Moderators}
+
+  <<>>=
+  ## Load data:
+  diabetes <- readRDS(paste0(dataDir, "diabetes.rds"))
+
+  ## Moderated Model:
+  out2 <- lm(bp ~ bmi * ldl, data = diabetes)
+  partSummary(out2, -c(1, 2))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Visualizing the Interaction}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      We can get a better idea of the patterns of moderation by plotting the
+      focal effect at conditional values of the moderator.
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      
+      <<echo = FALSE>>=
+      m1 <- mean(diabetes$ldl)
+      s1 <- sd(diabetes$ldl)
+      
+      diabetes$ldlLo  <- diabetes$ldl - (m1 - s1)
+      diabetes$ldlMid <- diabetes$ldl - m1
+      diabetes$ldlHi  <- diabetes$ldl - (m1 + s1)
+      
+      outLo  <- lm(bp ~ bmi*ldlLo, data = diabetes)
+      outMid <- lm(bp ~ bmi*ldlMid, data = diabetes)
+      outHi  <- lm(bp ~ bmi*ldlHi, data = diabetes)
+      
+      b0Lo <- coef(outLo)[1]
+      b1Lo <- coef(outLo)["bmi"]
+      
+      b0Mid <- coef(outMid)[1]
+      b1Mid <- coef(outMid)["bmi"]
+      
+      b0Hi <- coef(outHi)[1]
+      b1Hi <- coef(outHi)["bmi"]
+      
+      x    <- seq(min(diabetes$bmi), max(diabetes$bmi), 0.1)
+      dat1 <- data.frame(x    = x,
+                         yLo  = b0Lo + b1Lo * x,
+                         yMid = b0Mid + b1Mid * x,
+                         yHi  = b0Hi + b1Hi * x)
+      
+      p1 <- ggplot(data = diabetes, aes(x = bmi, y = bp)) +
+          theme_classic() +
+          theme(text = element_text(family = "Courier", size = 16))
+      p2 <- p1 + geom_point(colour = "gray") +
+          geom_line(mapping = aes(x = x, y = yLo, colour = "Mean LDL - 1 SD"),
+                    data    = dat1,
+                    size    = 1.5) +
+          geom_line(mapping = aes(x = x, y = yMid, colour = "Mean LDL"),
+                    data    = dat1,
+                    size    = 1.5) +
+          geom_line(mapping = aes(x = x, y = yHi, colour = "Mean LDL + 1 SD"),
+                    data    = dat1,
+                    size    = 1.5) +
+          xlab("BMI") +
+          ylab("BP")
+      
+      p2 + scale_colour_manual(name = "", values = c("Mean LDL" = "black",
+                                                     "Mean LDL - 1 SD" = "red",
+                                                     "Mean LDL + 1 SD" = "blue")
+                               ) +
+          theme(legend.justification = c(1, 0), legend.position = c(0.975, 0.025))
+      @
+      
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Categorical Moderators}
+
+  <<>>=
+  ## Load data:
+  socSup <- readRDS("../data/social_support.rds")
+  
+  ## Estimate the moderated regression model:
+  out4 <- lm(bdi ~ tanSat * sex, data = socSup)
+  partSummary(out4, -c(1, 2))
+  @
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Visualizing Categorical Moderation}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      {\scriptsize
+        \vx{-12}
+        \begin{align*}
+          \hat{Y}_{BDI} &= \Sexpr{sprintf('%.2f', round(coef(out4)[1], 2))}
+            \Sexpr{sprintf('%.2f', round(coef(out4)[2], 2))} X_{tsat} +
+              \Sexpr{sprintf('%.2f', round(coef(out4)[3], 2))} Z_{male}\\
+                &\Sexpr{sprintf('%.2f', round(coef(out4)[4], 2))}
+                  X_{tsat} Z_{male}
+        \end{align*}
+        \vx{-12}
+      }
+      <<echo = FALSE, warning = FALSE>>=
+      socSup$sex2 <- relevel(socSup$sex, ref = "male")
+      
+      out5  <- lm(bdi ~ tanSat * sex2, data = socSup)
+      out66 <- lm(bdi ~ tanSat + sex, data = socSup)
+      
+      p3 <- ggplot(data    = socSup,
+                   mapping = aes(x = tanSat, y = bdi, colour = sex)) +
+          theme_classic() +
+          theme(text = element_text(family = "Courier", size = 16))
+      
+      p4 <- p3 + geom_jitter(na.rm = TRUE) +
+          scale_colour_manual(values = c("red", "blue"))
+      
+      p4 + geom_abline(slope     = coef(out4)["tanSat"],
+                       intercept = coef(out4)[1],
+                       colour    = "red",
+                       size      = 1.5) +
+          geom_abline(slope     = coef(out5)["tanSat"],
+                      intercept = coef(out5)[1],
+                      colour    = "blue",
+                      size      = 1.5) +
+          ggtitle("Moderation by Gender") +
+          xlab("Tangible Satisfaction") +
+          theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+      @
+      
+    \end{column}
+
+    \begin{column}{0.5\textwidth}
+      {\scriptsize
+        \begin{align*}
+          \hat{Y}_{BDI} = \Sexpr{sprintf('%.2f', round(coef(out66)[1], 2))}
+          \Sexpr{sprintf('%.2f', round(coef(out66)[2], 2))} X_{tsat}
+          \Sexpr{sprintf('%.2f', round(coef(out66)[3], 2))} Z_{male}
+        \end{align*}
+        \vx{-6}
+      }
+      <<echo = FALSE>>=
+      p4 + geom_abline(slope     = coef(out66)["tanSat"],
+                       intercept = coef(out66)[1],
+                       colour    = "red",
+                       size      = 1.5) +
+          geom_abline(slope     = coef(out66)["tanSat"],
+                      intercept = (coef(out66)[1] + coef(out66)["sexmale"]),
+                      colour    = "blue",
+                      size      = 1.5) +
+          ggtitle("Additive Gender Effect") +
+          xlab("Tangible Satisfaction") +
+          theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+      @
+      
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\sectionslide{Prediction}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Prediction Example}
+
+  Let's fit the following model using the \emph{diabetes} data:
+  \begin{align*}
+    Y_{LDL} = \beta_0 + \beta_1 X_{BP} + \beta_2 X_{gluc} + \beta_3 X_{BMI} +
+    \varepsilon
+  \end{align*}
+  
+  <<echo = FALSE>>=
+  trainDat <- diabetes[1 : 400, ]
+  testDat  <- diabetes[401 : 442, ]
+  
+  out1 <- lm(ldl ~ bp + glu + bmi, data = trainDat)
+  b0 <- round(coef(out1)[1], 3)
+  b1 <- round(coef(out1)[2], 3)
+  b2 <- round(coef(out1)[3], 3)
+  b3 <- round(coef(out1)[4], 3)
+  
+  x1 <- testDat[1, "bp"]
+  x2 <- testDat[1, "glu"]
+  x3 <- testDat[1, "bmi"]
+  
+  confInt <- round(
+      predict(out1, newdat = testDat, interval = "confidence")[1, 2 : 3], 2
+  )
+  predInt <- round(
+      predict(out1, newdat = testDat, interval = "prediction")[1, 2 : 3], 2
+  )
+  @
+  
+  Training this model on the first $N = 400$ patients' data produces the following
+  fitted model:
+  \begin{align*}
+    \hat{Y}_{LDL} = \Sexpr{b0} + \Sexpr{b1} X_{BP} + \Sexpr{b2} X_{gluc} +
+    \Sexpr{b3} X_{BMI}
+  \end{align*}
+  \pause
+  Suppose a new patient presents with $BP = \Sexpr{x1}$, $gluc = \Sexpr{x2}$, and
+  $BMI = \Sexpr{x3}$. We can predict their $LDL$ score by:
+  \begin{align*}
+    \hat{Y}_{LDL} &= \Sexpr{b0} + \Sexpr{b1} (\Sexpr{x1}) + \Sexpr{b2}
+                    (\Sexpr{x2}) + \Sexpr{b3} (\Sexpr{x3})\\
+                  &= \Sexpr{round(predict(out1, testDat[1 : 2, ])[1], 3)}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Interval Estimates for Prediction}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Interval Estimates Example}
+
+  Two flavors of interval to quantify prediction uncertainty:
+  \begin{enumerate}
+  \item Confidence intervals
+  \item Prediction intervals
+  \end{enumerate}
+  \vb
+  In our example, we get the following $95\%$ interval estimates:
+  \begin{align*}
+    95\% ~ CI_{\hat{Y}} &= [\Sexpr{confInt[1]}; \Sexpr{confInt[2]}]\\[6pt]
+    95\% ~ PI &= [\Sexpr{predInt[1]}; \Sexpr{predInt[2]}]
+  \end{align*}
+  \vx{-16}
+  \begin{itemize}
+  \item We can be 95\% confident that the \underline{average \emph{LDL}} of
+    patients with \emph{Glucose} = 89, \emph{BP} = 121, and \emph{BMI} = 30.6
+    will be somewhere between \Sexpr{confInt[1]} and \Sexpr{confInt[2]}.
+    \vb
+  \item We can be 95\% confident that the \underline{\emph{LDL} of a specific
+    patient} with \emph{Glucose} = 89, \emph{BP} = 121, and \emph{BMI} = 30.6
+    will be somewhere between \Sexpr{predInt[1]} and \Sexpr{predInt[2]}.
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Model Fit}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[shrink = 5]{Model Fit}
+
+  We quantify the proportion of the outcome's variance that is explained by our
+  model using the $R^2$ statistic:
+  \begin{align*}
+    R^2 = \frac{TSS - RSS}{TSS} = 1 - \frac{RSS}{TSS}
+  \end{align*}
+  where
+  \begin{align*}
+    TSS = \sum_{n = 1}^N \left(Y_n - \bar{Y}\right)^2 =
+    \textrm{Var}(Y)\times (N - 1)
+  \end{align*}
+  
+  <<echo = FALSE, cache = TRUE>>=
+  ssr <- round(crossprod(resid(out1)))
+  sst <- round(crossprod(scale(trainDat$ldl, scale = FALSE)))
+  r2 <- round(1 - (ssr / sst), 2)
+  @
+  
+  For the model we estimated in the above prediction example, we get:
+  \begin{align*}
+    R^2 = 1 - \frac{\Sexpr{as.integer(ssr)}}{\Sexpr{as.integer(sst)}} \approx
+    \Sexpr{r2}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Model Fit for Prediction}
+
+  We use the \emph{mean squared error} (MSE) to assess predictive performance.
+  \vb
+  \begin{align*}
+    MSE &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{Y}_n\right)^2\\
+    &= \frac{1}{N} \sum_{n = 1}^N \left(Y_n - \hat{\beta}_0 -
+    \sum_{p = 1}^P \hat{\beta}_p X_{np} \right)^2\\
+    &= \frac{RSS}{N}
+  \end{align*}
+
+  <<echo = FALSE, cache = TRUE>>=  
+  mseTrain <- round(ssr / nrow(trainDat), 2)
+  @
+  
+  For our example problem, we get:
+  \begin{align*}
+    MSE = \frac{\Sexpr{sprintf("%.0f", ssr)}}{\Sexpr{nrow(trainDat)}} \approx \Sexpr{mseTrain}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Information Criteria}
+
+  We can use \emph{information criteria} to quickly compare \emph{non-nested}
+  (or nested) models while accounting for model complexity.
+  
+  \vb
+  \begin{itemize}
+  \item Akaike's Information Criterion (AIC)
+    \begin{align*}
+      AIC = {\color{red}2K} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+    \end{align*}
+    
+  \item Bayesian Information Criterion (BIC)
+    \begin{align*}
+      BIC = {\color{red}K\ln(N)} - 2 {\color{blue}\hat{\ell}(\theta|X)}
+    \end{align*}
+  \end{itemize}
+  
+  <<include = FALSE>>=
+  ll1 <- logLik(out1)
+  
+  6 - 2 * ll1
+  AIC(out1)
+  
+  k <- 3
+  n <- nrow(trainDat)
+  @
+  
+  For our example, we get the following estimates of AIC and BIC:
+  \begin{align*}
+    AIC &= 2(\Sexpr{k}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(AIC(out1), 2)}\\[8pt]
+    BIC &= \Sexpr{k}\ln(\Sexpr{n}) - 2(\Sexpr{round(ll1, 2)})\\
+        &= \Sexpr{round(BIC(out1), 2)}
+  \end{align*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Logistic Regression}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Probabilities \& Odds}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Probabilities \& Odds}
+
+  <<echo = FALSE, results = "asis">>=
+  utmb <- readRDS("../data/utmb_finish_2017.rds")
+  tab  <- xtabs(~ Sex + Finish, data = utmb)
+  xTab <- xtable(tab, digits = 0)
+  
+  pCM <- round(xTab["Male", "Yes"] / sum(xTab["Male", ]), 3)
+  pCF <- round(xTab["Female", "Yes"] / sum(xTab["Female", ]), 3)
+  
+  adds <- list(pos = list(0, 0),
+               command = c("& \\multicolumn{2}{c}{Complete} \\\\\n",
+                           "Sex & No & Yes \\\\\n")
+               )
+  
+  print(xTab, add.to.row = adds, include.colnames = FALSE)
+  @
+  
+\begin{columns}
+  \begin{column}{0.45\textwidth}
+    
+    \begin{alignat*}{2}
+      P(C | M) &=
+      \frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "Yes"]} + \Sexpr{xTab["Male", "No"]}} &&=
+      \Sexpr{pCM}\\[8pt]
+      P(C | F) &=
+      \frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "Yes"]} + \Sexpr{xTab["Female", "No"]}} &&=
+      \Sexpr{pCF}
+    \end{alignat*}
+    
+  \end{column}
+  \begin{column}{0.55\textwidth}
+    
+    \begin{alignat*}{3}
+      O(C | M) &=
+      \frac{\Sexpr{xTab["Male", "Yes"]}}{\Sexpr{xTab["Male", "No"]}} &&=
+      \Sexpr{round(xTab["Male", "Yes"] / xTab["Male", "No"], 3)} &&\approx
+      \frac{\Sexpr{pCM}}{1 - \Sexpr{pCM}}\\[8pt]
+      O(C | F) &=
+      \frac{\Sexpr{xTab["Female", "Yes"]}}{\Sexpr{xTab["Female", "No"]}} &&=
+      \Sexpr{round(xTab["Female", "Yes"] / xTab["Female", "No"], 3)} &&\approx
+      \frac{\Sexpr{pCF}}{1 - \Sexpr{pCF}}
+    \end{alignat*}
+    
+  \end{column}
+\end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{The Generalized Linear Model}
+
+  Every GLM is built from three components:
+  \vb
+  \begin{enumerate}
+  \item The systematic component, $\eta$.
+    \begin{itemize}
+    \item A linear function of the predictors, $\{X_p\}$.
+    \item Describes the association between $\mathbf{X}$ and $Y$.
+    \end{itemize}
+    \vb
+  \item The link function, $g(\mu_Y)$.
+    \begin{itemize}
+    \item Transforms $\mu_Y$ so that it can take any value on the real line.
+    \end{itemize}
+    \vb
+  \item The random component, $P(Y|g^{-1}(\eta))$
+    \begin{itemize}
+    \item The distribution of the observed $Y$.
+    \item Quantifies the error variance around $\eta$.
+    \end{itemize}
+  \end{enumerate}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{The Logistic Regression Model}
+
+  The logistic regression model can be represented as:
+  \begin{align*}
+    Y &\sim \mathrm{Bin}(\pi, 1)\\
+    \mathrm{logit}(\pi) &= \beta_0 + \sum_{p = 1}^P \beta_p X_p
+  \end{align*}
+  The fitted model can be represented as:
+  \begin{align*}
+    \mathrm{logit}(\hat{\pi}) = \hat{\beta}_0 + \sum_{p = 1}^P \hat{\beta}_p X_p
+  \end{align*}
+  To convert fitted values, $\hat{\eta} = \hat{\beta}_0 + \sum_{p = 1}^P \hat{\beta}_p X_p$, 
+  from a logit scale to a probability scale, we apply the \emph{logistic} function:
+  \begin{align*}
+    \mathrm{logistic}(\hat{\eta}) = \frac{e^{\hat{\eta}}}{1 + e^{\hat{\eta}}}
+  \end{align*}
+  
+\end{frame}
+
+\watermarkoff %----------------------------------------------------------------%
+
+\begin{frame}[fragile]{Logistic Regression Example}
+
+  <<>>=
+  ## Coarsen the blood glucose variable:
+  diabetes %<>% mutate(highGlu = as.numeric(glu > 90))
+  
+  ## Estimate the model:
+  out1 <- glm(highGlu ~ age + bmi + bp, data = diabetes, family = binomial())
+  partSummary(out1, -c(1, 2))
+  @ 
+  
+  <<echo = FALSE>>=
+  beta1  <- coef(out1)
+  eBeta1 <- exp(beta1)
+  
+  b0 <- round(beta1[1], 3)
+  b1 <- round(beta1[2], 3)
+  b2 <- round(beta1[3], 3)
+  b3 <- round(beta1[4], 3)
+  
+  eB0 <- round(eBeta1[1], 3)
+  eB1 <- round(eBeta1[2], 3)
+  eB2 <- round(eBeta1[3], 3)
+  eB3 <- round(eBeta1[4], 3)
+  @
+  
+\end{frame}
+
+\watermarkon %-----------------------------------------------------------------%
+
+\subsection{Assumptions}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}{Assumptions}
+
+  We can state the assumptions of logistic regression as follows:
+
+  \begin{enumerate}
+  \item The predictors are linearly related to $logit(\pi)$.
+  \item The predictor matrix is full-rank.
+  \item The outcome is iid binomial with mean $\pi_n = \mathrm{logistic}\left(\eta_n\right)$.
+  \end{enumerate}
+  
+  \vb
+  
+  Unlike linear regression, we don't need to assume
+  
+  \begin{itemize}
+  \item Constant, finite error variance
+  \item Normally distributed errors
+  \end{itemize}
+  
+  \vb
+  
+  For computational reasons, we also need the following:
+  
+  \begin{itemize}
+  \item Large (enough) sample
+  \item Relatively well-balance outcome
+  \item No perfect prediction 
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\sectionslide{Classification}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[allowframebreaks]{Classification Example}
+
+  <<echo = FALSE>>=
+  xn   <- c(1, 57, 28, 92)
+  eta1 <- crossprod(xn, beta1)
+  pi1  <- round(exp(eta1) / (1 + exp(eta1)), 3)
+  eta1 <- round(eta1, 3)
+  g    <- as.numeric(pi1 > 0.5) + 1
+  @
+  
+  Say we want to classify a new patient into either the ``high glucose'' group
+  or the ``not high glucose'' group using the model fit above.
+  \begin{itemize}
+  \item Assume this patient has the following characteristics:
+    \begin{itemize}
+    \item They are 57 years old
+    \item Their BMI is 28
+    \item Their average blood pressure is 92
+    \end{itemize}
+  \end{itemize}
+  \vb
+  First we plug their predictor data into the fitted model to get their
+  model-implied $\eta$:
+  \begin{align*}
+    \hat{\eta} &= \Sexpr{b0} + \Sexpr{b1} \times 57 + \Sexpr{b2} \times 28 + \Sexpr{b3} \times 92\\
+               &= \Sexpr{eta1}
+  \end{align*}
+  
+  \pagebreak
+  
+  Next we convert the predicted $\eta$ value into a model-implied success
+  probability by applying the logistic function:
+  \begin{align*}
+    \hat{\pi} = \mathrm{logistic(\Sexpr{eta1})} = \frac{e^{\Sexpr{eta1}}}{1 + e^{\Sexpr{eta1}}} = \Sexpr{pi1}
+  \end{align*}\\
+  \vb
+  Finally, to make the classification, assume a threshold of $\hat{\pi} = 0.5$ as
+  the decision boundary.
+  \vc
+  \begin{itemize}
+  \item Because $\Sexpr{pi1} \Sexpr{c("<", ">")[g]} 0.5$ we would classify this
+    patient into the ``\Sexpr{c("low", "high")[g]} glucose'' group.
+  \end{itemize}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\subsection{Evaluating Classification Performance}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Confusion Matrix}
+  
+  <<echo = FALSE, results = "asis">>=
+  yTrue <- factor(diabetes$highGlu, labels = c("Low", "High"))
+  yPred <- factor(predict(out1, type = "response") > 0.5, labels = c("Low", "High"))
+  
+  tab  <- table(True = yTrue, Predicted = yPred)
+  xTab <- xtable(tab, caption = "Confusion Matrix of Blood Glucose Level", digits = 0)
+  
+  adds <- list(pos = list(0, 0),
+               command = c("& \\multicolumn{2}{c}{Predicted} \\\\\n",
+                           "True & Low & High \\\\\n")
+               )
+  
+  print(xTab, add.to.row = adds, include.colnames = FALSE)
+  @
+  \vx{-12}
+  \begin{alignat*}{2}
+    Sensitivity &= \frac{\Sexpr{tab[2, 2]}}{\Sexpr{tab[2, 2]} + \Sexpr{tab[2, 1]}} &&=
+                                                                                      \Sexpr{round(tab[2, 2] / sum(tab[2, ]), 3)}\\[8pt]
+    Specificity &= \frac{\Sexpr{tab[1, 1]}}{\Sexpr{tab[1, 1]} + \Sexpr{tab[1, 2]}} &&=
+                                                                                      \Sexpr{round(tab[1, 1] / sum(tab[1, ]), 3)}\\[8pt]
+    Accuracy &= \frac{\Sexpr{tab[2, 2]} + \Sexpr{tab[1, 1]}}{\Sexpr{tab[2, 2]} +
+               \Sexpr{tab[1, 1]} + \Sexpr{tab[2, 1]} + \Sexpr{tab[1, 2]}} &&=
+                                                                             \Sexpr{round((tab[2, 2] + tab[1, 1])/ sum(tab), 3)}
+  \end{alignat*}
+  
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{ROC Curve}
+
+<<echo = FALSE, out.width = "65%">>=
+predict(out1, type = "response") %>% roc(yTrue, .) %>% plot()
+@
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\end{document}
+

@@ -1,0 +1,407 @@
+---
+title: "Fundamental Techniques in Data Science with `R` - Practical 4"
+params:
+  answers: true
+mainfont: Arial
+fontsize: 12pt
+urlcolor: blue
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    df_print: paged
+    theme: paper
+    pandoc_args: --output=Practical4_answers.html
+    
+---
+
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 13px;
+  }
+td {  /* Table  */
+  font-size: 12px;
+}
+h1.title {
+  font-size: 30px;
+  color: DarkBlue;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+    font-size: 18px;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.pos = 'H')
+```
+  
+---
+
+# Introduction
+
+
+We will use the following packages in this practical:
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(magrittr)
+library(ggplot2)
+library(gridExtra)
+```
+
+In this practical, you will learn how to perform regression analyses in `R` using `lm()` and inspect variables by plotting these variables, using `ggplot()`, repeating some topics of the last 3 weeks. 
+
+---
+
+# Loading the dataset
+
+In the this practical, we will use the build-in data set `iris`. This data set contains the measurement of different iris species (flowers), you can find more information [here](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/iris). 
+
+
+1. __Load the dataset and explain what variables are measured in the first three columns of your data set.__
+
+```{r, include = params$answers}
+data <- iris # load the data
+head(iris)   # inspect the data
+
+# The data set contains three different kinds of flowers. The petal leaves and sepal leaves are measured in length and width. All measurements are in centimeters.
+```
+
+---
+
+# Inspecting the dataset 
+
+A good way of eyeballing on a relation between two continuous variables is by creating a scatterplot. 
+
+2. __Plot the sepal length and the petal width variables in a `ggplot` scatter plot (`geom_points`)__
+
+
+```{r, message=FALSE, include = params$answers}
+ggplot(data) +
+  geom_point(aes(Sepal.Length, Petal.Width)) +
+  xlab("Sepal length (in cm)") +
+  ylab("Petal width (in cm)") +
+  labs(col = "Species") +
+  theme_minimal() +
+  ggtitle("Plot of 2 continous variables")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+A loess curve can be added to the plot to get a general idea of the relation between the two variables. You can add a loess curve to a ggplot with `stat_smooth(method = "loess")`.
+
+3. __Add a loess curve to the plot under question 2, for further inspection.__
+
+```{r, message=FALSE, include = params$answers}
+ggplot(data, aes(x = Sepal.Length, y = Petal.Width)) +
+  geom_point() +
+  stat_smooth(method = "loess", se=F, col = "blue") +
+  xlab("Sepal length (in cm)") +
+  ylab("Petal width (in cm)") +
+  labs(col = "Species") +
+  theme_minimal() +
+  ggtitle("Plot of 2 continous variables")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# The curve is added to the previous plot by the line `stat_smooth(method = "loess, se = F, col = "blue")`.
+```
+
+To get a clearer idea of the general trend in the data (or of the relation), a regression line can be added to the plot. A regression line can be added in the same way as a loess curve, the method argument in the function needs to be altered to `lm` to do so. 
+
+4. __Change the loess curve of the previous plot to a regression line. Describe the relation that the line indicates.__  
+
+```{r, message=FALSE, include = params$answers}
+# In comparison to the previous plot, we now adjust "method = "loess"" to "method = "lm"".
+ggplot(data, aes(x = Sepal.Length, y = Petal.Width)) +
+  geom_point() +
+  stat_smooth(method = "lm", se=F, col = "blue") +
+  xlab("Sepal length (in cm)") +
+  ylab("Petal width (in cm)") +
+  labs(col = "Species") +
+  theme_minimal() +
+  ggtitle("Plot of 2 continous variables")  + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+# The line indicates that there seems to be a more or less linear relation between the two plotted variables. This means that an increase in sepal length probably indicates an increase in petal width as well.
+```
+
+---
+
+# Simple linear regression
+
+With the `lm()` function, you can specify a linear regression model. You can save a model in an object and request summary statistics with the `summary()` command. The model is always specified with the code `outcome_variable ~ predictor`.
+
+When a model is stored in an object, you can ask for the coefficients with `coefficients()`. The next code block shows how you would specify a model where petal width is predicted by sepal width, and how summary statistics for this model would look like
+
+```{r}
+# Specify model: outcome = petal width, predictor = sepal width
+iris_model1 <- lm(Petal.Width ~ Sepal.Width,
+                  data = iris)
+
+summary(iris_model1)
+```
+
+The summary of the model provides:
+
+- The model formula;
+- Estimated coefficients (with standard errors and their significance tests);
+- Information on the residuals;
+- A general test for the significance of the model (F-test);
+- The (adjusted) R squared as a metric for model performance.
+
+Individual elements can be extracted by calling specific model elements (e.g. `iris_model1$coefficients`).
+
+
+5. __Specify a regression model where Sepal length is predicted by Petal width. Store this model as `model1. Supply summary statistics for this model.__
+
+```{r, include = params$answers}
+# specify model
+model1 <- lm(Sepal.Length ~ Petal.Width, 
+             data = data)
+
+# ask for summary
+summary(model1)
+```
+
+6. __Based on the summary of the model, give a substantive interpretation of the regression coefficient.__
+
+```{r, include = params$answers}
+# The regression coefficient indicates the amount of change in the predicted variable when the predictor variable is changed with one unit. In case of the example model, this means that for every centimeter that a petal leave is width, the predicted length of a sepal leave increases with .89 cm.
+```
+
+7. __Relate the summary statistics and coefficients to the plots you made in questions 2 - 4.__
+
+```{r, include = params$answers}
+# The coefficients seem to be in accordance with the earlier plots. They are not exactly the same, but indicate a similar positive relationship.
+```
+
+---
+
+# Multiple linear regression
+
+You can add additional predictors to a model. This can improve the fit and the predictions. When multiple predictors are used in a regression model, it's called a Multiple linear regression. You specify this model as `outcome_variable ~ predictor_1 + predictor_2 + ... + predictor_n`.
+
+8. __Add Petal length as a second predictor to the model specified as `model1` and store this under the name `model2`, and supply summary statistics. Again, give a substantive interpretation of the coefficients and the model.__
+
+```{r, include = params$answers}
+# Specify additional predictors
+model2 <- lm(Sepal.Length ~ Petal.Width + Petal.Length, 
+             data = data)
+
+# Ask for summary statistics again
+summary(model2)
+
+# When comparing the coefficients of model 2 with the coefficients of model 1, we can see that adding a predictor can change the coefficients of other predictors as well (it is a new model after all). In this example, it is notable that the coefficient for petal width has become a negative number, while it was positive in model 1.
+```
+
+---
+
+# Categorical predictors
+
+Up to here, we only included continuous predictors in our models. We will now include a categorical predictor in the model as well. 
+
+When a categorical predictor is added, this predictor is split in several contrasts (or dummies), where each group is compared to a reference group. In our example Iris data, the variable 'Species' is a categorical variable that indicate the species of flower. This variable can be added as example for a categorical predictor. Contrasts, and thus the dummy coding, can be inspected through `contrasts()`.
+
+
+9. __Add species as a predictor to the model specified as `model2`, store it under the name `model3` and interpret the categorical coefficients of this new model.__
+
+
+```{r, include = params$answers}
+# Create 3rd model with categorical predictor
+model3 <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Species,
+             data = data)
+
+# Ask for summary data
+summary(model3)
+
+# In the output, we see that 'Species' has multiple rows of output, and that one species (Setosa) does not seem to show. Setosa is the reference group. The other two lines are those respecitve groups compared to the setosa group. This means that that the predicted sepal length of a versicolor would be .9558 lower than the predicted value of a setosas with the same values on the other variables.
+
+```
+
+---
+
+# Model comparison
+
+Now you have created multiple models, you can compare how well these models function (compare the model fit). There are multiple ways of testing the model fit and to compare models, as explained in the lecture and the reading material. In this practical, we use the following:
+
+* AIC (use the function `AIC()` on the model object)
+* BIC (use the function `BIC()` on the model object)
+* MSE (use `MSE()` of the `MLmetrics` package, or calculate by transforming the `model$residuals`)
+* Deviance test (use `anova()` to compare 2 models)
+
+10. __Compare the fit of the model specified under question 5 and the model specified under question 8. Use all four fit comparison methods listed above. Interpret the fit statistics you obtain/tests you use to compare the fit.__
+
+```{r, include = params$answers}
+AICvalues <- rbind(AIC(model1), AIC(model2))
+BICvalues <- rbind(BIC(model1), BIC(model2))
+RMSEvalues <- rbind(mean(model1$residuals^2), 
+                    mean(model2$residuals^2))
+
+modelfitvalues <- cbind(AICvalues, BICvalues, RMSEvalues)
+rownames(modelfitvalues) <- c("model1", "model2")
+colnames(modelfitvalues) <- c("AIC", "BIC", "RMSE")
+modelfitvalues 
+
+# We see that the second AIC is lower, and thus this model has a better fit-complexity trade-off. The BIC has the same conclusion as the AIC in this case. The RMSE of the second model is lower, and therefore indicates less error and a better fit.
+
+# R2 difference test (deviance)
+anova(model1, model2)
+
+# The residual sum of squares is significantly lower for model 2, indicating a better fit for this model
+```
+
+---
+
+# *OPTIONAL* - Residuals: observed vs. predicted
+
+When fitting a regression line, the predicted values have some error in comparison to the observed values. The sum of the squared values of these errors is the sum of squares. A regression analysis finds the line such that the lowest sum of squares possible is obtained.
+
+The image below shows how the predicted (on the blue regression line) and observed values (black dots) differ and how the predicted values have some error (red vertical lines).
+
+![](errorterms.PNG)
+
+When having multiple predictors, it becomes harder or impossible to make such a plot as above (you need a plot with more dimensions). You can, however, still plot the observed values against the predicted values and infer the error terms from there.
+
+11. __Create a dataset of predicted values for model 1 by taking the outcome variable `Sepal.Length` and the `fitted.values` from the model.__
+```{r, include = params$answers}
+predvals1           <- cbind(data$Sepal.Length, model1$fitted.values)
+colnames(predvals1) <- c("observed", "predicted")
+predvals1           <- as.data.frame(predvals1)
+```
+
+12. __Create an observed vs. predicted plot for model 1 (the red vertial lines are no must).__
+```{r, include = params$answers}
+obspred1 <- ggplot(data = predvals1, aes(x = observed, y = predicted)) +
+  geom_segment(aes(xend = observed, yend = observed), col = "red") +
+  geom_abline(slope = 1, intercept = 0, col = "blue") +
+  geom_point() +
+  ggtitle("Observed vs. Predicted - model 1")
+```
+
+13. __Create a dataset of predicted values and create a plot for model 2.__
+```{r, include = params$answers}
+predvals2 <- cbind(data$Sepal.Length, model2$fitted.values)
+colnames(predvals2) <- c("observed", "predicted")
+predvals2 <- as.data.frame(predvals2)
+
+obspred2 <- ggplot(data = predvals2, aes(x = observed, y = predicted)) +
+  geom_segment(aes(xend = observed, yend = observed), col = "red") +
+  geom_abline(slope = 1, intercept = 0, col = "blue") +
+  geom_point() +
+  ggtitle("Observed vs. Predicted - model 2")
+
+```
+
+14. __Compare the two plots and discuss the fit of the models based on what you see in the plots. You can combine them in one figure using the `grid.arrange()` function.__
+```{r, include = params$answers}
+grid.arrange(obspred1, obspred2, ncol = 2)
+
+# Above, the observed vs. predicted plots for both model 1 (1 predictor) and model 2 (an additional predictor) are shown. In the second plot, it can be seen that all the red lines are shorter, indicating less error, a lower sum of squares, and thus a better fit.
+```
+
+---
+
+# Calculating new predicted values with a regression equation
+
+A regression model can be used to predict values for new cases that were not used to built the model.
+The regression equation always consists of coefficients ($\beta$s) and observed variables ($X$):
+
+<br>
+
+$$\hat{y} = \beta_0 + \beta_1 * X_{a}* + \beta_2 * X_b +  \ldots  + \beta_n * X_n$$
+
+<br>
+
+All terms can be made specific for the regression equation of the created model. For example, if we have a model where 'happiness' is predicted by age and income (scored from 1-50), the equation could look like:
+
+<br>
+
+$$\hat{y}_{happiness} = \beta_{intercept} + \beta_{age} * X_{age} + \beta_{income} * X_{income}$$
+
+<br>
+
+Then, we could impute the coefficients obtained through the model.
+Given $\beta_{intercept} = 10.2$, $\beta_{age} = 0.7$, and $\beta_{income} = 1.3$, the equation would become:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income}$$
+
+<br>
+
+If we now want to predict the happiness score for someone of age 28 and with an income score of 35, the prediction would become:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * 28 + 1.3 * 35 = 75.3$$
+
+<br>
+
+15. __Given this regression equation, calculate the predicted value for someone of age 44 and an income score of 27.__
+
+```{r include = params$answers}
+# Calculate score
+10.2 + .7*44 + 1.3*27 # 76.1
+```
+## Prediction with a categorical variable
+
+Adding a categorical predictor to the regression equation gives the number of contrasts as coefficient terms added. The previous regression equation for predicting happiness could be adjusted by adding 'living density' as a categorical predictor with levels 'big city', 'smaller city', 'rural', where 'big city' would be the reference category. The equation could then be:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income} + 8.4 * X_{smaller city} + 17.9 * X_{rural}$$
+
+<br>
+
+When predicting a score for an equation with a categorical predictor, you just impute a 1 for the category that the observation belongs to, and 0s for all other categories.
+
+16. __Given this equation, calculate the predicted score for someone of age 29, an income score of 21, and living in a smaller city. And what would this score be if the person would live in a big city instead?__
+
+```{r include = params$answers, eval=FALSE}
+# impute X_age with 29, X_income with 21, X_smallercity with 1, and X_rural with 0
+10.2 + .7*29 + 1.3*21 + 8.4*1 + 17.9*0 # = 66.2
+
+# If this person would live in a big city, the equation would become
+10.2 + .7*29 + 1.3*21 + 8.4*0 + 17.9*0 # = 57.8
+```
+
+## Prediction with an interaction
+
+In regression equations with an interaction, an extra coefficient is added to the equation. For example, the happiness equation with age and income as predictors could have an added interaction term. The equation could then look like:
+
+<br>
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income} + 0.01 * X_{age} * X_{income}$$
+
+<br>
+
+For a person of age 36 and income score 30, the predicted score would be:
+
+$$\hat{y}_{happiness} = 10.2 + 0.7 * 36 + 1.3 * 30 + 0.01 * 36 * 30 = 85.2$$
+
+<br>
+
+17. __Given this regression equation with interaction term, what would be the predicted happiness score for someone of age 52 and income score 26?__
+
+```{r include=params$answers}
+# Imputed equation X_age = 52, X_income = 26
+10.2 + 0.7 * 52 + 1.3 * 26 + 0.01 * 52 * 26 # 93.92
+```
+
+
+---
+
+# End of the practical
