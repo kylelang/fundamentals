@@ -645,7 +645,6 @@ You can find suggested answers to the practical exercises here:
 
 <!----------------------------------------------------------------------------->
 
-<div class='hidden'>
 
 # Week 4
 
@@ -715,11 +714,10 @@ You can find suggested answers to the practical here:
 
 - [Practical 4 answers](wk4/practical/Practical4_answers.html).
 
-</div>
+
 
 <!----------------------------------------------------------------------------->
 
-<div class='hidden'>
 
 # Week 5
 
@@ -789,7 +787,6 @@ You can find suggested answers to the practical here:
 
 - [Practical 5 answers](wk5/practical/Practical5_answers.html).
 
-</div>
 
 <!----------------------------------------------------------------------------->
 
