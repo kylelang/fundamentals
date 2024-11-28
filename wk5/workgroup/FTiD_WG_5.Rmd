@@ -81,5 +81,5 @@ knitr::opts_chunk$set(warning = FALSE,
 ## For Next Meeting
 
 <br><br>
-<p id = "centertext"><b> Hand in assignment 1 before Monday December 18, 17:00!!!</b></p>
+<p id = "centertext"><b> Hand in assignment 1 before Monday December 16, 17:00!!!</b></p>
 

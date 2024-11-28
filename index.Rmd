@@ -794,7 +794,7 @@ You can find the slides for this workgroup meeting [here](wk5/workgroup/FTiD_WG_
 
 ### Deadlines
 
-You must submit Assignment 1 by ***Monday December 19, 17:00***. 
+You must submit Assignment 1 by ***Monday December 16, 17:00***. 
 
 - See the *Course Manual* page for details.
 
@@ -971,7 +971,7 @@ polish the figures and tables in your markdown document.
 
 ### Deadlines
 
-You must submit Assignment 2 by ***Thursday January 19, 17:00***. 
+You must submit Assignment 2 by ***Thursday January 16, 17:00***. 
 
 - See the *Course Manual* page for details.
 
