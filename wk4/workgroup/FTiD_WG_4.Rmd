@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 4"
 author: "Fundamental Techniques in Data Science with R"
-date: "December 7, 2023"
+date: ""
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -62,7 +62,7 @@ knitr::opts_chunk$set(warning = FALSE,
 ## Recap on R output - Iris data
 
 <center>
-![R output](Iris_snippet.PNG){width=60%}
+![](Iris_snippet.PNG){width=60%}
 </center>
 
 ## Recap on R output - Iris levels
@@ -70,13 +70,13 @@ knitr::opts_chunk$set(warning = FALSE,
 <center>
 <br><br><br>
 
-![R snippet](Iris_levels.PNG){width=100%}
+![](Iris_levels.PNG){width=100%}
 </center>
 
 ## Recap on R output - Simple model
 
 <center>
-![R output](Model_output_easy.PNG)
+![](Model_output_easy.PNG)
 </center>
 
 ## Recap on R output - Plot with intervals
@@ -93,7 +93,7 @@ knitr::opts_chunk$set(warning = FALSE,
 ## Recap on R output - Complex model
 
 <center>
-![R output](Model_output.PNG)
+![](Model_output.PNG)
 </center>
 
 ## Assignment 1 - Next part
@@ -124,5 +124,5 @@ knitr::opts_chunk$set(warning = FALSE,
 ## For Next Meeting
 
 <br><br>
-<p id = "centertext"> Keep working on your assignment! Deadline (Monday 18th of December, 17:00) approaches faster than you think! </p>
+<p id = "centertext"> Keep working on your assignment! Deadline (Monday 16th of December, 17:00) approaches faster than you think! </p>
 
