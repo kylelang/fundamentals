@@ -1407,6 +1407,89 @@ partSummary(out, -c(1, 2))
 
 %------------------------------------------------------------------------------%
 
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
+
+<<echo = FALSE, include = FALSE>>=
+results <- getRegStats(out)
+@
+
+  \rmsc{Interaction}
+
+  \vb
+
+  LDL cholesterol level significantly influences the effect of BMI on average 
+  blood pressure (%
+    $\beta = \Sexpr{results$b[4]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[4]}$,
+    $\Sexpr{results$p[4]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item For each additional point of LDL cholesterol, the effect of BMI on BP
+      \Sexpr{ifelse(results$b[4] > 0, "increases", "decreases")} by \Sexpr{abs(results$b[4])} units.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Conditional Effects}
+  
+  \vb
+
+  There is significant conditional effect of BMI on average blood pressure, when LDL = 0 (%
+    $\beta = \Sexpr{results$b[2]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[2]}$,
+    $\Sexpr{results$p[2]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item For patients with zero LDL cholesterol, each additional point of BMI
+      produces a change of \Sexpr{results$b[2]} units in expected average blood pressure.
+  \end{itemize}
+
+  \va
+
+  There is significant conditional effect of LDL cholesterol level on average
+  blood pressure, when BMI = 0 (%
+    $\beta = \Sexpr{results$b[3]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[3]}$,
+    $\Sexpr{results$p[3]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item For patients with BMI = 0, each additional point of LDL cholesterol
+      increases their expected average blood pressure by \Sexpr{results$b[3]} units.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Intercept}
+
+  \vb
+
+  The expected average blood pressure for a patient with BMI = 0 and zero LDL
+  cholesterol is \Sexpr{results$b[1]}.
+
+  \va
+
+  \rmsc{Model Fit}
+
+  \vb
+
+  BMI, LDL cholesterol level, and the interaction therebetween explain approximately 
+  \Sexpr{100 * results$fit$r2}\% of the variability in average blood pressure.
+  \vc
+  \begin{itemize}
+    \item This proportion of explained variability is significantly greater than
+      zero (%
+      $F[\Sexpr{paste(results$fit$df, collapse = ", ")}] = \Sexpr{results$fit$f}$,
+      $\Sexpr{results$fit$p}$%
+      ).
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
 \begin{frame}<0>[fragile, noframenumbering]{Visualizing the Interaction}
   
   \begin{columns}
@@ -1552,6 +1635,95 @@ partSummary(out, -c(1, 2))
 
 %------------------------------------------------------------------------------%
 
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
+
+<<echo = FALSE, include = FALSE>>=
+results <- getRegStats(out)
+@
+
+  \rmsc{Interaction}
+
+  \vb
+
+  Sex does not significantly influence the effect of tangible satisfaction ratings
+  on depression levels (%
+    $\beta = \Sexpr{results$b[4]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[4]}$,
+    $\Sexpr{results$p[4]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item In other words, there is not significant a difference between males and
+      females in the way that tangible satisfaction ratings affect depression levels.
+      \vc
+    \item In this sample, the effect of tangible satisfaction ratings on depression
+      is \Sexpr{abs(results$b[4])} units \Sexpr{ifelse(results$b[4] > 0, "higher", "lower")}
+      for males than for females.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Conditional Effects}
+  
+  \vb
+
+  There is not a significant effect of tangible satisfaction ratings on depression
+  levels for females (%
+    $\beta = \Sexpr{results$b[2]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[2]}$,
+    $\Sexpr{results$p[2]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item For females in this sample, each additional point of rated tangible satisfaction
+      produces a change of \Sexpr{results$b[2]} units in expected depression level.
+  \end{itemize}
+
+  \va
+
+  There is not a significant conditional effect of sex on depression levels, when
+  tangible satisfaction rating is zero (%
+    $\beta = \Sexpr{results$b[3]}$,
+    $t[\Sexpr{results$df}] = \Sexpr{results$t[3]}$,
+    $\Sexpr{results$p[3]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item In this sample, males with zero tangible satisfaction have
+      \Sexpr{abs(results$b[3])} \Sexpr{ifelse(results$b[3] > 0, "higher", "lower")}
+      depression levels than females with zero tangible satisfaction.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Intercept}
+
+  \vb
+
+  The expected depression level for females with a zero tangible satisfaction rating
+  is \Sexpr{results$b[1]}.
+
+  \va
+
+  \rmsc{Model Fit}
+
+  \vb
+
+  Sex, tangible satisfaction rating, and their interaction explain approximately
+  \Sexpr{100 * results$fit$r2}\% of the variability in depression levels.
+  \vc
+  \begin{itemize}
+    \item This proportion of explained variability is significantly greater than
+      zero (%
+      $F[\Sexpr{paste(results$fit$df, collapse = ", ")}] = \Sexpr{results$fit$f}$,
+      $\Sexpr{results$fit$p}$%
+      ).
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
 \begin{frame}[fragile]{Visualizing Categorical Moderation}
 
   \begin{columns}
@@ -1574,10 +1746,9 @@ out5  <- lm(bdi ~ tanSat * sex2, data = socSup)
 out66 <- lm(BDI ~ tangiblesat + gender, data = socsupport)
 
 p3 <- ggplot(data    = socsupport,
-             mapping = aes(x = tangiblesat, y = BDI, colour = gender)) +
+             mapping = aes(x = tangiblesat, y = BDI, colour = factor(gender))) +
     theme_classic() +
     theme(text = element_text(family = "Courier", size = 16))
-
 p4 <- p3 + geom_jitter(na.rm = TRUE) +
     scale_colour_manual(values = c("red", "blue"))
 
@@ -1589,9 +1760,10 @@ p4 + geom_abline(slope     = coef(out)["tanSat"],
                 intercept = coef(out5)[1],
                 colour    = "blue",
                 linewidth = 1.5) +
-    ggtitle("Moderation by Gender") +
+    ggtitle("Moderation by Sex") +
     xlab("Tangible Satisfaction") +
-    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2),
+          legend.position = "none")
 @
 
 \end{column}
@@ -1614,9 +1786,12 @@ p4 + geom_abline(slope     = coef(out66)["tangiblesat"],
                 intercept = (coef(out66)[1] + coef(out66)["gendermale"]),
                 colour    = "blue",
                 linewidth = 1.5) +
-    ggtitle("Additive Gender Effect") +
+    ggtitle("Additive Sex Effect") +
     xlab("Tangible Satisfaction") +
-    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2))
+    labs(colour = "Sex") +
+    theme(plot.title = element_text(hjust = 0.5, size = 20, face = 2),
+          legend.position = "inside",
+          legend.position.inside = c(0.9, 0.9))
 @
 
 \end{column}
