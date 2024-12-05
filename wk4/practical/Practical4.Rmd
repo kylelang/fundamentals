@@ -69,7 +69,7 @@ In this practical, you will learn how to perform regression analyses in `R` usin
 
 # Loading the dataset
 
-In the this practical, we will use the build-in data set `iris`. This data set contains the measurement of different iris species (flowers), you can find more information [here](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/iris). 
+In the this practical, we will use the built-in data set `iris`. This data set contains the measurement of different iris species (flowers), you can find more information [here](https://www.rdocumentation.org/packages/datasets/versions/3.6.2/topics/iris). 
 
 
 1. __Load the dataset and explain what variables are measured in the first three columns of your data set.__
@@ -135,7 +135,7 @@ ggplot(data, aes(x = Sepal.Length, y = Petal.Width)) +
   ggtitle("Plot of 2 continous variables")  + 
   theme(plot.title = element_text(hjust = 0.5))
 
-# The line indicates that there seems to be a more or less linear relation between the two plotted variables. This means that an increase in sepal length probably indicates an increase in petal width as well.
+# The line indicates that there seems to be a more or less linear positive relation between the two plotted variables. This means that an increase in sepal length probably indicates an increase in petal width as well.
 ```
 
 ---
@@ -179,7 +179,7 @@ summary(model1)
 6. __Based on the summary of the model, give a substantive interpretation of the regression coefficient.__
 
 ```{r, include = params$answers}
-# The regression coefficient indicates the amount of change in the predicted variable when the predictor variable is changed with one unit. In case of the example model, this means that for every centimeter that a petal leave is width, the predicted length of a sepal leave increases with .89 cm.
+# The regression coefficient indicates the amount of change in the predicted variable when the predictor variable is changed with one unit. In case of the example model, this means that for every centimeter increase in the width of a petal leaf, the predicted length of a sepal leaf increases by 0.89 cm.
 ```
 
 7. __Relate the summary statistics and coefficients to the plots you made in questions 2 - 4.__
@@ -247,15 +247,15 @@ Now you have created multiple models, you can compare how well these models func
 ```{r, include = params$answers}
 AICvalues <- rbind(AIC(model1), AIC(model2))
 BICvalues <- rbind(BIC(model1), BIC(model2))
-RMSEvalues <- rbind(mean(model1$residuals^2), 
+MSEvalues <- rbind(mean(model1$residuals^2), 
                     mean(model2$residuals^2))
 
-modelfitvalues <- cbind(AICvalues, BICvalues, RMSEvalues)
+modelfitvalues <- cbind(AICvalues, BICvalues, MSEvalues)
 rownames(modelfitvalues) <- c("model1", "model2")
-colnames(modelfitvalues) <- c("AIC", "BIC", "RMSE")
+colnames(modelfitvalues) <- c("AIC", "BIC", "MSE")
 modelfitvalues 
 
-# We see that the second AIC is lower, and thus this model has a better fit-complexity trade-off. The BIC has the same conclusion as the AIC in this case. The RMSE of the second model is lower, and therefore indicates less error and a better fit.
+# We see that the second AIC is lower, and thus this model has a better fit-complexity trade-off. The BIC has the same conclusion as the AIC in this case. The MSE of the second model is lower, and therefore indicates less error and a better fit.
 
 # R2 difference test (deviance)
 anova(model1, model2)
@@ -366,7 +366,7 @@ $$\hat{y}_{happiness} = 10.2 + 0.7 * X_{age} + 1.3 * X_{income} + 8.4 * X_{small
 
 <br>
 
-When predicting a score for an equation with a categorical predictor, you just impute a 1 for the category that the observation belongs to, and 0s for all other categories.
+When predicting a score for an equation with a categorical predictor, you just assign a 1 to the category that the observation belongs to, and 0s for all other categories.
 
 16. __Given this equation, calculate the predicted score for someone of age 29, an income score of 21, and living in a smaller city. And what would this score be if the person would live in a big city instead?__
 

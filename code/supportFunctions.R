@@ -1,7 +1,7 @@
 ### Title:    Support Functions for Examples
 ### Author:   Kyle M. Lang
 ### Created:  2017-08-24
-### Modified: 2020-02-24
+### Modified: 2024-12-05
 
 
 ## Create an basic ggplot object using my preferred styling:
@@ -355,4 +355,58 @@ cenPlot8 <- function(center, xLab, xInt = 0, linSlope = FALSE) {
                          size      = 1)
     else
         p2
+}
+
+###--------------------------------------------------------------------------###
+
+## Calculate p-values for t/f-tests and process them for printing
+
+prettyPValue <- function(stat, df, fTest = FALSE, h1 = 0, threshold = 0.001, digits = 3) {
+  if(fTest) {
+    p <- pf(stat, df1 = df[1], df2 = df[2], lower.tail = FALSE)
+  } else {
+    ## P-value for a correct directional hypothesis:
+    p <- pt(abs(stat), df = df, lower.tail = FALSE)
+
+    if(h1 == 0) { # Two-tailed test
+      p <- 2 * p
+    } else if((h1 * stat) < 0) { # Estimate is opposite direction of hypothesis
+      p <- 1 - p
+    }
+  }
+
+  ifelse(p < threshold, "p < 0.001", paste("p =", round(p, digits)))
+}
+
+###--------------------------------------------------------------------------###
+
+## Extract the results from a fitted lm object and process them for printing
+
+getRegStats <- function(lmObj, hypotheses = 0, digits = 2, fit = TRUE) {
+  b  <- coef(lmObj)
+  se <- vcov(lmObj) |> diag() |> sqrt()
+  t  <- b / se
+
+  n <- length(t)
+  p <- rep(NA, n)
+  h <- rep_len(hypotheses, length.out = n)
+
+  for(i in 1:n)
+    p[i] <- prettyPValue(t[i], df = lmObj$df.residual, h1 = h[i])
+
+  out <- list(b = b, se = se, t = t) |>
+    lapply(round, digits = digits) |> 
+    append(list(p = p, df = lmObj$df.residual, fit = fit))
+
+  if(!fit) return(out)
+
+  fit0 <- summary(lmObj)[c("r.squared", "fstatistic")]
+  out$fit <- list(
+    r2 = round(fit0$r.squared, 3),
+    f  = round(fit0$fstatistic[[1]], digits),
+    df = round(fit0$fstatistic[-1]),
+    p  = prettyPValue(fit0$fstatistic[[1]], df = fit0$fstatistic[-1], fTest = TRUE)
+  )
+
+  out
 }
