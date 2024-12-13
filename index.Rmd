@@ -822,8 +822,6 @@ You can find suggested answers to the practical here:
 
 <!----------------------------------------------------------------------------->
 
-<div class='hidden'>
-
 # Week 6
 
 ## Column 1
@@ -884,11 +882,8 @@ You can find suggested answers to the practical here:
 
 - [Practical 6 Answers](wk6/practical/Practical6_answers.html)
 
-</div>
 
 <!----------------------------------------------------------------------------->
-
-<div class='hidden'>
 
 # Week 7
 
@@ -941,11 +936,9 @@ You can find suggested answers to the practical here:
 
 - [Practical 7 Answers](wk7/practical/Practical7_answers.html)
 
-</div>
 
 <!----------------------------------------------------------------------------->
 
-<div class='hidden'>
 
 # Week 8
 
@@ -956,7 +949,6 @@ You can find suggested answers to the practical here:
 In this week's lecture, we will wrap up the course, and I'll give an overview of 
 the main points we've covered. 
 
-You can find the lecture slides [here](wk8/lecture/summary.pdf)
 
 ## Column 2
 
@@ -980,11 +972,9 @@ You must submit Assignment 2 by ***Thursday January 16, 17:00***.
 There is no R practical this week. Use your time to finish the second assignment 
 and prepare for the exam.
 
-</div>
 
 <!----------------------------------------------------------------------------->
 
-<div class='hidden'>
 
 # Exam Material
 
@@ -1066,7 +1056,6 @@ final lecture meeting (even if your concerns relate to content from earlier week
 
 **We well devote part (most?) of the final lecture to a dedicated Q&A session**
 
-</div>
 
 <!----------------------------------------------------------------------------->
 
