@@ -418,7 +418,7 @@ model_animals2 %>%
 plot(dfbetas(model_animals2)[,1],
      main = "intercept")
 
-plot(dfbetas(model_animals2)[,1],
+plot(dfbetas(model_animals2)[,2],
      main = "slope")
 
 # We see that new influential observations arise. These were earlier overshadowed by observation 26. If you look at these cases, you see these are the cases with very heavy animals. In this case the solution should be to transform the data and take the log of the weights, instead of these values. This means that the assumption of linearity was probably not met for this data set.*
