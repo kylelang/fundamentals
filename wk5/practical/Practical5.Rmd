@@ -375,7 +375,7 @@ model_animals1 %>%
 plot(dfbetas(model_animals1)[,1],
      main = "intercept")
 
-plot(dfbetas(model_animals1)[,1],
+plot(dfbetas(model_animals1)[,2],
      main = "slope")
 
 # Note that because of the structure of the output of `dfbetas` it is not very convenient to process it using a pipe structure.
