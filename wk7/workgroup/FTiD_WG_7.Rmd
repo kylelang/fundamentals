@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 7"
 author: "Fundamental Techniques in Data Science with R"
-date: "January 11, 2024"
+date: ""
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -126,7 +126,7 @@ knitr::opts_chunk$set(warning = FALSE,
 ## For Next Meeting
 
 <br><br>
-<p id = "centertext"><b> Work on Assignment 2, deadline is next week: Thursday 18th of January, 17:00! </b></p>
+<p id = "centertext"><b> Work on Assignment 2, deadline is next week: Thursday 16th of January, 17:00! </b></p>
 
 <h3 id = "centerh3"> Next workgroup meeting to finish up the assignment </h3>
 

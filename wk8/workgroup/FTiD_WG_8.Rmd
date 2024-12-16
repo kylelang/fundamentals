@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 8"
 author: "Fundamental Techniques in Data Science with R"
-date: "January 18, 2024"
+date: ""
 output:
   ioslides_presentation:
     logo: UU_logo.jpg

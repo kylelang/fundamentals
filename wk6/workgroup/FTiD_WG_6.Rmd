@@ -1,7 +1,7 @@
 ---
 title: "Work Group Meeting 6"
 author: "Fundamental Techniques in Data Science with R"
-date: "December 21, 2023"
+date: ""
 output:
   ioslides_presentation:
     logo: UU_logo.jpg
@@ -70,7 +70,7 @@ knitr::opts_chunk$set(warning = FALSE,
 <br><br>
 <h4> - Same groups as Assignment 1</h4>
 <h4> - 25% of final course grade </h4>
-<h4> - <b>Deadline: Thursday 18th of January, 17:00 </b></h4>
+<h4> - <b>Deadline: Thursday 16th of January, 17:00 </b></h4>
 
 ## Assignment 2 - Grading
 
