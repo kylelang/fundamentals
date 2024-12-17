@@ -1,7 +1,7 @@
 %%% Title:    GLM and Logistic Regression
 %%% Author:   Kyle M. Lang
 %%% Created:  2017-09-12
-%%% Modified: 2023-12-15
+%%% Modified: 2024-12-16
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -434,17 +434,10 @@ ggplot(dat2, aes(X, qlogis(y))) +
   \pagebreak
 
   <<>>=
-  partSummary(lmFit, 2)
+  partSummary(lmFit, 3)
   partSummary(glmFit, 2)
   @
 
-  \pagebreak
-
-  <<>>=
-  partSummary(lmFit, 3)
-  partSummary(glmFit, 3)
-  @ 
-  
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -655,63 +648,33 @@ print(xTab, add.to.row = adds, include.colnames = FALSE)
 
 \end{frame}
 
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Link Function for Logistic Regression}
-
-  Because $\pi$ is bounded by 0 and 1 and not linear related to $\mathbf{X}$, 
-  we cannot model it directly---we must apply an appropriate link function.
-  \vc
-  \begin{itemize}
-  \item Logistic regression uses the \emph{logit link}.
-    \vc
-  \item Given $\pi$, we can define the \emph{odds} of success as:
-    \begin{align*}
-      O_s = \frac{\pi}{1 - \pi}
-    \end{align*}
-  \item Because $\pi \in [0, 1]$, we know that $O_s \geq 0$.
-    \vc
-  \item We take the natural log of the odds as the last step to fully map
-    $\pi$ to the real line.
-    \begin{align*}
-      \mathrm{logit}(\pi) = \ln \left(\frac{\pi}{1 - \pi}\right)
-    \end{align*}
-  \end{itemize}
-
-\end{frame}
-
-%------------------------------------------------------------------------------%
-
-\begin{frame}{Fully Specified Logistic Regression Model}
-
-  Our final logistic regression model is:
-  \begin{align*}
-    Y &\sim \mathrm{Bin}(\pi, 1)\\
-    \mathrm{logit}(\pi) &= \beta_0 + \sum_{p = 1}^P \beta_p X_p
-  \end{align*}
-  The fitted model can be represented as:
-  \begin{align*}
-    \mathrm{logit}(\hat{\pi}) = \hat{\beta}_0 + \sum_{p = 1}^P \hat{\beta}_p X_p
-  \end{align*}
-  The fitted coefficients, $\{\hat{\beta}_0, \hat{\beta}_p\}$, are interpreted
-  in units of \emph{log odds}.
-
-\end{frame}
-
 \watermarkoff %----------------------------------------------------------------%
 
-\begin{frame}[fragile]{Visualizing Logistic Regression}
+\begin{frame}[fragile]{Link Function for Logistic Regression}
 
   \begin{columns}
     \begin{column}{0.5\textwidth}
 
+      Because $\pi$ is bounded by 0 and 1 and not linear related to $\mathbf{X}$, 
+      we cannot model it directly---we must apply an appropriate link function.
+      \vc
+      \begin{itemize}
+        \item Logistic regression uses the \emph{logit link}.
+      \end{itemize}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
 <<echo = FALSE>>=
+library(ggplot2)
+
 x <- 3 + seq(-5, 5, length.out = 10000)
-y <- plogis(x - 3)
+p <- plogis(x - 3)
+o <- p / (1 - p)
 
-dat2 <- data.frame(X = x, y)
+dat2 <- data.frame(X = x, p, o)
 
-ggplot(dat2, aes(X, y)) +
+ggplot(dat2, aes(X, p)) +
   geom_line(color = "blue", linewidth = 1) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
@@ -725,10 +688,65 @@ ggplot(dat2, aes(X, y)) +
 @
 
     \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Link Function for Logistic Regression}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      Given $\pi$, we can define the \emph{odds} of success as:
+      \begin{align*}
+        O_s = \frac{\pi}{1 - \pi}
+      \end{align*}
+      \begin{itemize}
+        \item Because $\pi \in [0, 1]$, we know that $O_s \geq 0$.
+      \end{itemize}
+
+    \end{column}
     \begin{column}{0.5\textwidth}
 
 <<echo = FALSE>>=
-ggplot(dat2, aes(X, qlogis(y))) +
+ggplot(dat2, aes(X, o)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  ylab("O(Y = 1)")  +
+  ggtitle("Odds Model\n") +
+  theme(axis.title = element_text(family = "serif", face = "italic", size = 14),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16)
+       )
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Link Function for Logistic Regression}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+      We take the natural log of the odds as the last step to fully map $\pi$ to
+      the real line.
+      \begin{align*}
+        \mathrm{logit}(\pi) = \ln \left(\frac{\pi}{1 - \pi}\right)
+      \end{align*}
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(dat2, aes(X, qlogis(p))) +
   geom_line(color = "blue", linewidth = 1) +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
@@ -747,6 +765,24 @@ ggplot(dat2, aes(X, qlogis(y))) +
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}{Fully Specified Logistic Regression Model}
+
+  Our final logistic regression model is:
+  \begin{align*}
+    Y &\sim \mathrm{Bin}(\pi, 1)\\
+    \mathrm{logit}(\pi) &= \beta_0 + \sum_{p = 1}^P \beta_p X_p
+  \end{align*}
+  The fitted model can be represented as:
+  \begin{align*}
+    \mathrm{logit}(\hat{\pi}) = \hat{\beta}_0 + \sum_{p = 1}^P \hat{\beta}_p X_p
+  \end{align*}
+  The fitted coefficients, $\{\hat{\beta}_0, \hat{\beta}_p\}$, are interpreted
+  in units of \emph{log odds}.
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
 
 \begin{frame}{Logistic Regression Example}
 
@@ -836,6 +872,99 @@ Log odds do not lend themselves to interpretation.
 
 \watermarkoff %----------------------------------------------------------------%
 
+\begin{frame}[fragile]{Visualizing Interpretations}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+dat1$p <- predict(out1, type = "response")
+dat1$o <- with(dat1, p / (1 - p))
+
+ggplot(dat1, aes(x, qlogis(p))) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  ylab("Log-Odds of Passing")  +
+  xlab("Study Hours") +
+  ggtitle("Logit Model\n") +
+  theme(text = element_text(family = "Courier", size = 16),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16)
+  )
+@
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(dat1, aes(x, o)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  ylab("Odds of Passing")  +
+  xlab("Study Hours") +
+  ggtitle("Odds Model\n") +
+  theme(text = element_text(family = "Courier", size = 16),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16)
+  )
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile]{Visualizing Interpretations}
+
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(dat1, aes(x, o)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  ylab("Odds of Passing")  +
+  xlab("Study Hours") +
+  ggtitle("Odds Model\n") +
+  theme(text = element_text(family = "Courier", size = 16),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16)
+  )
+@
+
+    \end{column}
+    \begin{column}{0.5\textwidth}
+
+<<echo = FALSE>>=
+ggplot(dat1, aes(x, p)) +
+  geom_line(color = "blue", linewidth = 1) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  theme_minimal() +
+  scale_x_continuous(expand = c(0, 0)) +
+  ylab("Probability of Passing")  +
+  xlab("Study Hours") +
+  ggtitle("Probability Model\n") +
+  theme(text = element_text(family = "Courier", size = 16),
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 16)
+  )
+@
+
+    \end{column}
+  \end{columns}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
 \begin{frame}[fragile, allowframebreaks]{Example}
 
   Let's use logistic regression to compute the odds of finishing the UTMB.
@@ -853,7 +982,7 @@ Log odds do not lend themselves to interpretation.
     \begin{enumerate}
     \item Specify a binary outcome variable
       \vc
-    \item Specify the \src{family = "binomial"} argument.
+    \item Specify the \src{family = 'binomial'} argument.
     \end{enumerate}
   \end{itemize}
   

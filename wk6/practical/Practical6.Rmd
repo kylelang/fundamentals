@@ -1,7 +1,7 @@
 ---
 title: "Fundamental Techniques in Data Science with `R` Practical 6"
 params:
-  answers: true
+  answers: false
 mainfont: Arial
 fontsize: 12pt
 urlcolor: blue
