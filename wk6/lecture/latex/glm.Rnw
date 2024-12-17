@@ -997,7 +997,45 @@ ggplot(dat1, aes(x, p)) +
   partSummary(fit, -1)
   @
 
-  \pagebreak
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
+
+<<echo = FALSE, include = FALSE>>=
+results <- getRegStats(fit, fit = FALSE)
+@
+
+  \rmsc{Intercept}
+
+  \vb
+
+  The expected log-odds of a female finishing the race are \Sexpr{results$b[1]}.
+
+  \va
+
+  \rmsc{Slope}
+
+  \vb
+
+  A runner's sex significantly predicts their probability of finishing the race (%
+    $\beta = \Sexpr{results$b[2]}$,
+    $z = \Sexpr{results$t[2]}$,
+    $\Sexpr{results$p[2]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item The expected log-odds of males finishing the race are \Sexpr{results$b[2]}
+      units higher than expected log-odds of females finishing the race.
+  \end{itemize}
+
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
 
   The raw coefficient estimates are in units of log-odds.
   \begin{itemize}
@@ -1009,7 +1047,26 @@ ggplot(dat1, aes(x, p)) +
   
   coef(fit) %>% exp()
   @
-  
+
+  <<echo = FALSE, include = FALSE>>=
+  oHat <- coef(fit) |> exp() |> round(2)
+  @
+
+  \rmsc{Intercept}
+
+  \vc
+
+  The expected odds of a female finishing the race are \Sexpr{oHat[1]}.
+
+  \vb
+
+  \rmsc{Slope}
+
+  \vc
+
+  The expected odds of males finishing the race are \Sexpr{oHat[2]} times the
+  expected odds of females finishing the race.
+
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
@@ -1056,6 +1113,88 @@ ggplot(dat1, aes(x, p)) +
   <<>>=
   partSummary(fit, -1)
   @
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
+
+<<echo = FALSE, include = FALSE>>=
+results <- getRegStats(fit, fit = FALSE)
+@
+
+  \rmsc{Intercept}
+
+  \vb
+
+  The expected log-odds of survival for a zero-year-old female passenger in
+  first class are \Sexpr{results$b[1]}.
+
+  \va
+
+  \rmsc{Age Effect}
+
+  \vb
+
+  A passenger's age significantly predicts their probability of survival, after
+  controlling for their gender and ticket class (%
+    $\beta = \Sexpr{results$b[2]}$,
+    $z = \Sexpr{results$t[2]}$,
+    $\Sexpr{results$p[2]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item For each additional year of age, the expected log-odds of survival
+      decrease by \Sexpr{abs(results$b[2])} units, after controlling for gender
+      and ticket class.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Gender Effect}
+
+  \vb
+
+  A passenger's gender significantly predicts their probability of survival, after
+  controlling for their age and ticket class (%
+    $\beta = \Sexpr{results$b[3]}$,
+    $z = \Sexpr{results$t[3]}$,
+    $\Sexpr{results$p[3]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item The expected log-odds of survival are \Sexpr{abs(results$b[3])} units
+      lower for men/boys than for women/girls, after controlling for age and ticket class.
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Class Effect}
+
+  \vb
+
+  After controlling for age and gender, there is a significant difference in
+  predicted survival probability between passengers in second class and
+  passengers in first class (%
+    $\beta = \Sexpr{results$b[4]}$,
+    $z = \Sexpr{results$t[4]}$,
+    $\Sexpr{results$p[4]}$%
+  ) and between passengers in third class and passengers in first class (%
+    $\beta = \Sexpr{results$b[5]}$,
+    $z = \Sexpr{results$t[5]}$,
+    $\Sexpr{results$p[5]}$%
+  ).
+  \vc
+  \begin{itemize}
+    \item The expected log-odds of survival are \Sexpr{abs(results$b[4])} units
+      lower for passengers in second class than for passengers in first class,
+      after controlling for age and gender.
+      \vc
+    \item The expected log-odds of survival are \Sexpr{abs(results$b[5])} units
+      lower for passengers in third class than for passengers in first class,
+      after controlling for age and gender.
+  \end{itemize}
 
 \end{frame}
 
@@ -1114,6 +1253,102 @@ ggplot(dat1, aes(x, p)) +
 \end{frame}
 
 \watermarkon %-----------------------------------------------------------------%
+
+\begin{frame}[fragile, allowframebreaks]{Interpretation}
+
+<<echo = FALSE, include = FALSE>>=
+or1 <- round(or, 2)
+or2 <- round(1 / or, 2)
+@
+
+  \rmsc{Intercept}
+
+  \vb
+
+  \begin{itemize}
+    \item The expected odds of survival for a zero-year-old female passenger in
+      first class are \Sexpr{or1[1]}.
+
+      \vc
+
+    \item The expected odds of death for a zero-year-old female passenger in
+      first class are \Sexpr{or2[1]}.
+
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Age Effect}
+
+  \vb
+
+  \begin{itemize}
+    \item For each additional year of age, the expected odds of survival change by a
+      factor of \Sexpr{or1[2]} times, after controlling for gender and ticket class.
+
+      \vc
+
+    \item For any two passengers with a one year age difference, the expected odds of
+      the older passenger surviving are \Sexpr{or1[2]} times the expected odds of
+      the younger passenger surviving, after controlling for their genders and
+      ticket classes.
+
+      \vc
+
+    \item For each additional year of age, the expected odds of death are \Sexpr{or2[2]}
+      times higher, after controlling for gender and ticket class.
+
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Gender Effect}
+
+  \vb
+
+  \begin{itemize}
+    \item The expected odds of survival for men/boys are \Sexpr{or1[3]} times the expected
+      odds of survival for women/girls, after controlling for age and ticket class.
+
+      \vc
+
+    \item The expected odds of death are \Sexpr{or2[3]} times higher for men/boys than
+      for women/girls, after controlling for age and ticket class.
+
+  \end{itemize}
+
+  \pagebreak
+
+  \rmsc{Class Effect}
+
+  \vb
+
+  \begin{itemize}
+    \item The expected odds of survival for passengers in second class are \Sexpr{or1[4]}
+      times the expected odds of survival for passengers in first class, after
+      controlling for gender and age.
+
+      \vc
+
+    \item The expected odds of death are \Sexpr{or2[4]} times higher for passengers in
+      second class than for passengers in first class, after controlling for gender and age.
+
+      \vc
+
+    \item The expected odds of survival for passengers in third class are \Sexpr{or1[5]}
+      times the expected odds of survival for passengers in first class, after
+      controlling for gender and age.
+
+      \vc
+
+    \item The expected odds of death are \Sexpr{or2[5]} times higher for passengers in
+      third class than for passengers in first class, after controlling for gender and age.
+
+  \end{itemize}
+
+\end{frame}
+
+%------------------------------------------------------------------------------%
 
 \begin{frame}{Example in Equations}
 
