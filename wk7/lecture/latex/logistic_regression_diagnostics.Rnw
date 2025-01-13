@@ -1,7 +1,7 @@
 %%% Title:    FTDS Lecture 7: Logistic Regression Diagnostics
 %%% Author:   Kyle M. Lang & Mingyang Cai
 %%% Created:  2022-12-03
-%%% Modified: 2024-01-09
+%%% Modified: 2025-01-13
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -242,7 +242,7 @@ knit_theme$set('edit-kwrite')
 
 \begin{frame}{Assumptions of Logistic Regression}
 
-  The variance of the binomial distribution is a function of it's mean.
+  The variance of the binomial distribution is a function of its mean.
   \vb
   \begin{itemize}
     \item Linear regression
@@ -550,7 +550,7 @@ car::crPlots(glmFit, terms = ~ age + fare)
   Assumption 2 implies two conditions:
   \vc
   \begin{enumerate}
-    \item $P > N$
+    \item $P < N$
     \item No severe (multi)collinearity among the predictors
   \end{enumerate}
 
@@ -617,7 +617,7 @@ table(titanic$survived)
       \vc
     \item Counts: Poisson regression
       \begin{itemize}
-        \item \src{glm()} with \src{family = "poisson"}
+        \item \src{glm()} with \src{family = 'poisson'}
       \end{itemize}
   \end{itemize}
 

@@ -1,7 +1,7 @@
 %%% Title:    Course Summary
 %%% Author:   Kyle M. Lang
 %%% Created:  2022-01-17
-%%% Modified: 2024-01-12
+%%% Modified: 2025-01-13
 
 \documentclass[10pt]{beamer}
 \usetheme{Utrecht}
@@ -111,9 +111,9 @@ knit_theme$set('edit-kwrite')
   Dates
   \vc
   \begin{itemize}
-  \item Exam: Wednesday 24 January
+  \item Exam: Wednesday 22 January
     \vc
-  \item Resit: Monday 26 February
+  \item Resit: Wednesday 12 February
   \end{itemize}
   \vb
   Structure
@@ -582,7 +582,7 @@ knit_theme$set('edit-kwrite')
       out66 <- lm(bdi ~ tanSat + sex, data = socSup)
       
       p3 <- ggplot(data    = socSup,
-                   mapping = aes(x = tanSat, y = bdi, colour = sex)) +
+                   mapping = aes(x = tanSat, y = bdi, colour = factor(sex))) +
           theme_classic() +
           theme(text = element_text(family = "Courier", size = 16))
       

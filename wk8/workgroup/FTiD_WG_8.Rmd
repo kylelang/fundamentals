@@ -73,7 +73,7 @@ knitr::opts_chunk$set(warning = FALSE,
 
 ## Exam
 
-<h3> Wednesday January 24th, 19:00, <br> EDUC: ALFA (general) / Ruppert Blauw (extra time) </h3> <br>
+<h3> Wednesday January 22th, 19:00, <br> EDUC: ALFA (general) / Ruppert D (extra time) </h3> <br>
 
 
 <h4> Check your Remindo access beforehand! </h4> 

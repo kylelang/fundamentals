@@ -80,7 +80,6 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h3> Interpretation of the Model </h3>
 
-* R squared for variance
 * Coefficients (for logistic quite important)
 * Significance tests for coefficients and model 
 
@@ -89,13 +88,11 @@ knitr::opts_chunk$set(warning = FALSE,
 
 <h3> Interpretation of the Model </h3>
 
-* R squared for variance
 * Coefficients (for logistic quite important)
 * Significance tests for coefficients and model 
 
 <h3> Assumptions & Outliers </h3>
 
-* Book and Slides are complementary, check both! 
 * Show/explain why you meet the assumption 
 * Check outliers substantially when removing (or explain very clearly why removing). 
 
